@@ -1,0 +1,15 @@
+spring.application.name=doctodoc-api
+
+# Configuration de la base de données PostgreSQL
+spring.datasource.url=
+spring.datasource.username=
+spring.datasource.password=
+
+# Configuration de Hibernate (JPA)
+spring.jpa.database-platform=org.hibernate.dialect.PostgreSQLDialect
+spring.jpa.properties.hibernate.format_sql=true
+
+spring.datasource.hikari.maximum-pool-size=10
+spring.datasource.hikari.minimum-idle=2
+spring.datasource.hikari.idle-timeout=30000
+spring.datasource.hikari.max-lifetime=1800000
