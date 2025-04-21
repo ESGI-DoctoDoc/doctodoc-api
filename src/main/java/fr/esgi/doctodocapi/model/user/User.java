@@ -25,6 +25,7 @@ public class User {
         this.createdAt = createdAt;
     }
 
+
     public UUID getId() {
         return id;
     }

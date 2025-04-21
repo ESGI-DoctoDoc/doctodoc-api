@@ -15,7 +15,7 @@ public class PatientRepositoryImpl implements PatientRepository {
     }
 
     @Override
-    public boolean isExistPatientByUserId(UUID userId) {
+    public boolean isExistByUserId(UUID userId) {
         return this.patientJpaRepository.existsByUser_Id(userId);
     }
 
