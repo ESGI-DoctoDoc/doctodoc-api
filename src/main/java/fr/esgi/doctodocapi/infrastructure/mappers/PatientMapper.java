@@ -14,6 +14,7 @@ public class PatientMapper {
                 patientEntity.getUser().getPhoneNumber(),
                 patientEntity.getUser().isEmailVerified(),
                 patientEntity.getUser().isDoubleAuthActive(),
+                patientEntity.getUser().isFirstConnexion(),
                 patientEntity.getUser().getDoubleAuthCode(),
                 patientEntity.getUser().getCreatedAt(),
                 patientEntity.getId(),

@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
-import fr.esgi.doctodocapi.dtos.requets.LoginViaEmailRequest;
+import fr.esgi.doctodocapi.dtos.requets.LoginRequest;
 import fr.esgi.doctodocapi.use_cases.patient.AuthenticatePatient;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
@@ -16,19 +16,11 @@ public class AuthController {
         this.authenticatePatient = authenticatePatient;
     }
 
-    @PostMapping("login-with-email")
+    @PostMapping("login")
     @ResponseStatus(value = HttpStatus.OK)
-    public String loginWithEmail(HttpServletRequest request, @Valid @RequestBody LoginViaEmailRequest loginViaEmailRequest, @RequestHeader String host) {
+    public String login(HttpServletRequest request, @Valid @RequestBody LoginRequest loginRequest, @RequestHeader String host) {
         String protocol = request.getScheme();
         String hostComplete = protocol + "://" + host + "/";
-        return this.authenticatePatient.loginWithEmail(loginViaEmailRequest, hostComplete);
+        return this.authenticatePatient.login(loginRequest, hostComplete);
     }
-
-//    @PostMapping("login-with-phoneNumber")
-//    @ResponseStatus(value = HttpStatus.OK)
-//    public String loginWithPhoneNumber(HttpServletRequest request, @Valid @RequestBody LoginViaEmailRequest loginViaEmailRequest, @RequestHeader String host) {
-//        String protocol = request.getScheme();
-//        String hostComplete = protocol + "://" + host + "/";
-//        return this.authenticatePatient.loginWithEmail(loginViaEmailRequest, hostComplete);
-//    }
 }

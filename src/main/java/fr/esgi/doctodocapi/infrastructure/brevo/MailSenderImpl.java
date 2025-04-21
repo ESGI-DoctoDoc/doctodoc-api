@@ -30,9 +30,10 @@ public class MailSenderImpl implements MailSender {
 
         try {
             mailSender.send(message);
-            logger.info("Mail send : {}", message);
+            logger.info("Mail send: Subject = {}, To = {}, From = {}", message.getSubject(), message.getTo(), message.getFrom());
         } catch (MailException ex) {
-            logger.error("Error mail : {}", message);
+            logger.error("Error Mail : Subject = {}, To = {}, From = {}", message.getSubject(), message.getTo(), message.getFrom());
+
         }
     }
 }

@@ -1,14 +1,15 @@
 package fr.esgi.doctodocapi.dtos.requets;
 
 import jakarta.validation.constraints.NotBlank;
-import jakarta.validation.constraints.Size;
+import jakarta.validation.constraints.NotNull;
 
-public record LoginViaPhoneNumberRequest(
+public record LoginRequest(
         @NotBlank
-        @Size(min = 10, max = 10)
-        String phoneNumber,
+        @NotNull
+        String identifier,
 
         @NotBlank
+        @NotNull
         String password
 ) {
 }

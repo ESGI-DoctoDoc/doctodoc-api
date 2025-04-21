@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.patient;
 
-import fr.esgi.doctodocapi.dtos.requets.LoginViaEmailRequest;
+import fr.esgi.doctodocapi.dtos.requets.LoginRequest;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.*;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -29,28 +29,27 @@ public class AuthenticatePatient {
     }
 
 
-    public String loginWithEmail(LoginViaEmailRequest loginViaEmailRequest, String host) {
-        String email = loginViaEmailRequest.email().trim();
-        String password = loginViaEmailRequest.password().trim();
-        this.authenticate(email, password);
+    public String login(LoginRequest loginRequest, String host) {
+        String identifier = loginRequest.identifier().trim();
+        String password = loginRequest.password().trim();
 
-        User userFoundByEmail = this.userRepository.findByEmail(email);
+        this.authenticate(identifier, password);
 
-        if (!userFoundByEmail.isEmailVerified()) {
-            this.sendEmailToValidateAccount(email, userFoundByEmail.getId(), host);
+        User userFoundByIdentifier = this.userRepository.findByEmailOrPhoneNumber(identifier, identifier);
+
+        if (!userFoundByIdentifier.isEmailVerified()) {
+            this.sendEmailToValidateAccount(userFoundByIdentifier.getEmail(), userFoundByIdentifier.getId(), host);
             return "send email to activate your account";
         }
 
-        boolean isPatientExist = this.patientRepository.isExistByUserId(userFoundByEmail.getId());
+        boolean isPatientExist = this.patientRepository.isExistByUserId(userFoundByIdentifier.getId());
         if (isPatientExist) {
-            this.sendMessageWithDoubleAuthCode(userFoundByEmail);
+            this.sendMessageWithDoubleAuthCode(userFoundByIdentifier);
             return "send message to validate double auth code";
         } else {
             throw new AuthenticationException();
         }
-
     }
-
 
     private void authenticate(String username, String password) {
         this.authenticationManager.authenticate(
@@ -77,5 +76,4 @@ public class AuthenticatePatient {
         String text = "Voici le code de vérification pour valider votre authentification à votre compte Doctodoc : " + code;
         this.messageSender.sendMessage(user.getPhoneNumber(), text);
     }
-
 }

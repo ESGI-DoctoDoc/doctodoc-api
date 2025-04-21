@@ -21,8 +21,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public User findByEmail(String email) {
-        UserEntity userFoundByMail = this.userJpaRepository.findByEmailIgnoreCase(email).orElseThrow(UserNotFoundException::new);
+    public User findByEmailOrPhoneNumber(String email, String phoneNumber) {
+        UserEntity userFoundByMail = this.userJpaRepository.findByEmailIgnoreCaseOrPhoneNumber(email, phoneNumber).orElseThrow(UserNotFoundException::new);
         return this.userMapper.toDomain(userFoundByMail);
     }
 
