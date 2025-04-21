@@ -26,7 +26,7 @@ public class AuthenticatePatient {
         this.doubleAuthCodeGenerator = doubleAuthCodeGenerator;
     }
 
-
+    // todo : voir le return
     public String loginWithEmail(LoginViaEmailRequest loginViaEmailRequest) {
         String email = loginViaEmailRequest.email().trim();
         String password = loginViaEmailRequest.password().trim();
@@ -41,7 +41,7 @@ public class AuthenticatePatient {
 
         boolean isPatientExist = this.patientRepository.isExistByUserId(userFoundByEmail.getId());
         if (isPatientExist) {
-            this.sendMessageWithDoubleAuthCode(userFoundByEmail.getPhoneNumber());
+            this.sendMessageWithDoubleAuthCode(userFoundByEmail);
             return "send message to validate double auth code";
         } else {
             throw new AuthenticationException();
@@ -67,10 +67,12 @@ public class AuthenticatePatient {
         this.mailSender.sendMail(email, subject, body);
     }
 
-    private void sendMessageWithDoubleAuthCode(String phoneNumber) {
+    private void sendMessageWithDoubleAuthCode(User user) {
         String code = this.doubleAuthCodeGenerator.generateDoubleAuthCode();
+        this.userRepository.updateDoubleAuthCode(code, user);
+
         String text = "Voici le code de verification : " + code;
-        this.messageSender.sendMessage(phoneNumber, text);
+        this.messageSender.sendMessage(user.getPhoneNumber(), text);
     }
 
 }

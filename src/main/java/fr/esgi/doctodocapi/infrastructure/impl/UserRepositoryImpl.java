@@ -23,4 +23,12 @@ public class UserRepositoryImpl implements UserRepository {
         UserEntity userFoundByMail = this.userJpaRepository.findByEmailIgnoreCase(email).orElseThrow(UserNotFoundException::new);
         return this.userMapper.toDomain(userFoundByMail);
     }
+
+    @Override
+    public void updateDoubleAuthCode(String code, User user) {
+        UserEntity userEntity = this.userJpaRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+        userEntity.setDoubleAuthCode(code);
+        userEntity.setDoubleAuthActive(true);
+        this.userJpaRepository.save(userEntity);
+    }
 }
