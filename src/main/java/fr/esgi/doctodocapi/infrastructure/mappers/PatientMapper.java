@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.infrastructure.jpa.mapper;
+package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.PatientEntity;
 import fr.esgi.doctodocapi.model.patient.Patient;

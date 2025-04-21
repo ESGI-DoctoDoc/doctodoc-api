@@ -1,7 +1,8 @@
 package fr.esgi.doctodocapi.model.patient;
 
-import java.util.List;
+import java.util.UUID;
 
 public interface PatientRepository {
-    List<Patient> findAll();
+    boolean isExistPatientByUserId(UUID userId);
+
 }

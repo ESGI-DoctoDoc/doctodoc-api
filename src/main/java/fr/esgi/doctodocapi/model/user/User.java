@@ -1,10 +1,10 @@
-package fr.esgi.doctodocapi.model;
+package fr.esgi.doctodocapi.model.user;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
-public abstract class User {
+public class User {
     private UUID id;
     private String email;
     private String password;

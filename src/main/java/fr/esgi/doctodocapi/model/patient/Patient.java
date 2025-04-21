@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.model.patient;
 
-import fr.esgi.doctodocapi.model.User;
+import fr.esgi.doctodocapi.model.user.User;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
