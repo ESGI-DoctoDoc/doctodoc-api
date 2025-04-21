@@ -8,6 +8,8 @@ import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class UserRepositoryImpl implements UserRepository {
     private final UserJpaRepository userJpaRepository;
@@ -25,8 +27,8 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void updateDoubleAuthCode(String code, User user) {
-        UserEntity userEntity = this.userJpaRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+    public void updateDoubleAuthCode(String code, UUID userId) {
+        UserEntity userEntity = this.userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
         userEntity.setDoubleAuthCode(code);
         userEntity.setDoubleAuthActive(true);
         this.userJpaRepository.save(userEntity);

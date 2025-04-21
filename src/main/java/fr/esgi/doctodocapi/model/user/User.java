@@ -10,21 +10,22 @@ public class User {
     private String password;
     private String phoneNumber;
     private boolean isEmailVerified;
+    private boolean isFirstConnexion;
     private boolean isDoubleAuthActive;
     private String doubleAuthCode;
     private LocalDateTime createdAt;
 
-    public User(UUID id, String email, String password, String phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt) {
+    public User(UUID id, String email, String password, String phoneNumber, boolean isEmailVerified, boolean isFirstConnexion, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.isEmailVerified = isEmailVerified;
+        this.isFirstConnexion = isFirstConnexion;
         this.isDoubleAuthActive = isDoubleAuthActive;
         this.doubleAuthCode = doubleAuthCode;
         this.createdAt = createdAt;
     }
-
 
     public UUID getId() {
         return id;
@@ -90,29 +91,23 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    public boolean isFirstConnexion() {
+        return isFirstConnexion;
+    }
+
+    public void setFirstConnexion(boolean firstConnexion) {
+        isFirstConnexion = firstConnexion;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         User user = (User) o;
-        return isEmailVerified == user.isEmailVerified && isDoubleAuthActive == user.isDoubleAuthActive && Objects.equals(id, user.id) && Objects.equals(email, user.email) && Objects.equals(password, user.password) && Objects.equals(phoneNumber, user.phoneNumber) && Objects.equals(doubleAuthCode, user.doubleAuthCode) && Objects.equals(createdAt, user.createdAt);
+        return Objects.equals(id, user.id);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, email, password, phoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
-    }
-
-    @Override
-    public String toString() {
-        return "User{" +
-                "id=" + id +
-                ", email='" + email + '\'' +
-                ", password='" + password + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", isEmailVerified=" + isEmailVerified +
-                ", isDoubleAuthActive=" + isDoubleAuthActive +
-                ", doubleAuthCode='" + doubleAuthCode + '\'' +
-                ", createdAt=" + createdAt +
-                '}';
+        return Objects.hashCode(id);
     }
 }

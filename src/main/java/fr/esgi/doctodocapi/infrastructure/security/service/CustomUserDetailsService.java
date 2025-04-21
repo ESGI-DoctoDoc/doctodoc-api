@@ -31,19 +31,11 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<UserEntity> userFoundByEmail = this.userJpaRepository.findByEmailIgnoreCase(authMethod);
         Optional<UserEntity> userFoundByPhoneNumber = this.userJpaRepository.findByPhoneNumber(authMethod);
 
-        if (userFoundByEmail.isPresent() && userFoundByPhoneNumber.isPresent()) {
+        if (userFoundByEmail.isEmpty() && userFoundByPhoneNumber.isEmpty()) {
             throw new UsernameNotFoundException(authMethod);
         }
 
-        UserEntity userEntity;
-
-        if (userFoundByPhoneNumber.isPresent()) {
-            userEntity = userFoundByPhoneNumber.get();
-        } else if (userFoundByEmail.isPresent()) {
-            userEntity = userFoundByEmail.get();
-        } else {
-            throw new UsernameNotFoundException(authMethod);
-        }
+        UserEntity userEntity = userFoundByPhoneNumber.orElseGet(userFoundByEmail::get);
 
         GrantedAuthority grantedAuthority = this.isAdminOrUser(userEntity);
 

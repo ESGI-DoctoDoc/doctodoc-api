@@ -7,6 +7,8 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.stereotype.Service;
 
+import java.util.UUID;
+
 @Service
 public class AuthenticatePatient {
     private final AuthenticationManager authenticationManager;
@@ -26,8 +28,8 @@ public class AuthenticatePatient {
         this.doubleAuthCodeGenerator = doubleAuthCodeGenerator;
     }
 
-    // todo : voir le return
-    public String loginWithEmail(LoginViaEmailRequest loginViaEmailRequest) {
+
+    public String loginWithEmail(LoginViaEmailRequest loginViaEmailRequest, String host) {
         String email = loginViaEmailRequest.email().trim();
         String password = loginViaEmailRequest.password().trim();
         this.authenticate(email, password);
@@ -35,7 +37,7 @@ public class AuthenticatePatient {
         User userFoundByEmail = this.userRepository.findByEmail(email);
 
         if (!userFoundByEmail.isEmailVerified()) {
-            this.sendEmailToValidateAccount(email);
+            this.sendEmailToValidateAccount(email, userFoundByEmail.getId(), host);
             return "send email to activate your account";
         }
 
@@ -56,22 +58,23 @@ public class AuthenticatePatient {
         );
     }
 
-    private void sendEmailToValidateAccount(String email) {
+    private void sendEmailToValidateAccount(String email, UUID userId, String host) {
         String subject = "Activer votre compte sur Doctodoc";
-
-        String body = """
+        String url = host + "api/v1/verify-email/" + userId.toString();
+        String body = String.format("""
                 Merci de cliquer sur le lien pour valider votre compte Doctodoc
-                lien...
-                L'équipe de Doctodoc""";
+                %s
+                Ce mail est valide 30 minutes.
+                L'équipe de Doctodoc""", url);
 
         this.mailSender.sendMail(email, subject, body);
     }
 
     private void sendMessageWithDoubleAuthCode(User user) {
         String code = this.doubleAuthCodeGenerator.generateDoubleAuthCode();
-        this.userRepository.updateDoubleAuthCode(code, user);
+        this.userRepository.updateDoubleAuthCode(code, user.getId());
 
-        String text = "Voici le code de verification : " + code;
+        String text = "Voici le code de vérification pour valider votre authentification à votre compte Doctodoc : " + code;
         this.messageSender.sendMessage(user.getPhoneNumber(), text);
     }
 
