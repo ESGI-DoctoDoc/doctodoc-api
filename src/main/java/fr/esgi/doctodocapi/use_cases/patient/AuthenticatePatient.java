@@ -1,12 +1,16 @@
 package fr.esgi.doctodocapi.use_cases.patient;
 
 import fr.esgi.doctodocapi.dtos.requets.LoginRequest;
+import fr.esgi.doctodocapi.dtos.requets.ValidateDoubleAuthRequest;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.*;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -17,15 +21,17 @@ public class AuthenticatePatient {
     private final MessageSender messageSender;
     private final MailSender mailSender;
     private final DoubleAuthCodeGenerator doubleAuthCodeGenerator;
+    private final GeneratorToken generatorToken;
 
 
-    public AuthenticatePatient(AuthenticationManager authenticationManager, UserRepository userRepository, PatientRepository patientRepository, MessageSender messageSender, MailSender mailSender, DoubleAuthCodeGenerator doubleAuthCodeGenerator) {
+    public AuthenticatePatient(AuthenticationManager authenticationManager, UserRepository userRepository, PatientRepository patientRepository, MessageSender messageSender, MailSender mailSender, DoubleAuthCodeGenerator doubleAuthCodeGenerator, GeneratorToken generatorToken) {
         this.authenticationManager = authenticationManager;
         this.userRepository = userRepository;
         this.patientRepository = patientRepository;
         this.messageSender = messageSender;
         this.mailSender = mailSender;
         this.doubleAuthCodeGenerator = doubleAuthCodeGenerator;
+        this.generatorToken = generatorToken;
     }
 
 
@@ -36,19 +42,39 @@ public class AuthenticatePatient {
         this.authenticate(identifier, password);
 
         User userFoundByIdentifier = this.userRepository.findByEmailOrPhoneNumber(identifier, identifier);
+        UUID userId = userFoundByIdentifier.getId();
+        String email = userFoundByIdentifier.getEmail();
+
 
         if (!userFoundByIdentifier.isEmailVerified()) {
-            this.sendEmailToValidateAccount(userFoundByIdentifier.getEmail(), userFoundByIdentifier.getId(), host);
+            this.sendEmailToValidateAccount(email, userId, host);
             return "send email to activate your account";
         }
 
-        boolean isPatientExist = this.patientRepository.isExistByUserId(userFoundByIdentifier.getId());
+        boolean isPatientExist = this.patientRepository.isExistByUserId(userId);
         if (isPatientExist) {
             this.sendMessageWithDoubleAuthCode(userFoundByIdentifier);
-            return "send message to validate double auth code";
+            return this.generatorToken.generate(email, "PATIENT", 2);
         } else {
             throw new AuthenticationException();
         }
+    }
+
+    public String validateDoubleAuth(ValidateDoubleAuthRequest validateDoubleAuthRequest) {
+        String doubleAuthCode = validateDoubleAuthRequest.doubleAuthCode().trim();
+
+        UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        String email = userDetails.getUsername();
+
+        User userFoundByEmail = this.userRepository.findByEmail(email);
+
+        if (userFoundByEmail.isEmailVerified() && Objects.equals(userFoundByEmail.getDoubleAuthCode(), doubleAuthCode)) {
+            this.userRepository.updateDoubleAuthCode(null, userFoundByEmail.getId());
+            return this.generatorToken.generate(email, "PATIENT", 120);
+        } else {
+            throw new AuthenticationException();
+        }
+
     }
 
     private void authenticate(String username, String password) {
@@ -76,4 +102,5 @@ public class AuthenticatePatient {
         String text = "Voici le code de vérification pour valider votre authentification à votre compte Doctodoc : " + code;
         this.messageSender.sendMessage(user.getPhoneNumber(), text);
     }
+
 }

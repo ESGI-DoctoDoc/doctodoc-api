@@ -33,4 +33,10 @@ public class UserRepositoryImpl implements UserRepository {
         userEntity.setDoubleAuthActive(true);
         this.userJpaRepository.save(userEntity);
     }
+
+    @Override
+    public User findByEmail(String email) throws UserNotFoundException {
+        UserEntity userFoundByMail = this.userJpaRepository.findByEmailIgnoreCase(email).orElseThrow(UserNotFoundException::new);
+        return this.userMapper.toDomain(userFoundByMail);
+    }
 }
