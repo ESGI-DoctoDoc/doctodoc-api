@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
-import fr.esgi.doctodocapi.dtos.requets.LoginRequest;
-import fr.esgi.doctodocapi.dtos.requets.ValidateDoubleAuthRequest;
+import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
+import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
 import fr.esgi.doctodocapi.use_cases.patient.AuthenticatePatient;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;

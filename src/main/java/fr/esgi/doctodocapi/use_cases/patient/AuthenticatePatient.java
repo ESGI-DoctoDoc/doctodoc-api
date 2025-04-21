@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.patient;
 
-import fr.esgi.doctodocapi.dtos.requets.LoginRequest;
-import fr.esgi.doctodocapi.dtos.requets.ValidateDoubleAuthRequest;
+import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
+import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.*;
 import org.springframework.security.authentication.AuthenticationManager;

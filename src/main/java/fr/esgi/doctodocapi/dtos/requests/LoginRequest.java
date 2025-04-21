@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.dtos.requets;
+package fr.esgi.doctodocapi.dtos.requests;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
