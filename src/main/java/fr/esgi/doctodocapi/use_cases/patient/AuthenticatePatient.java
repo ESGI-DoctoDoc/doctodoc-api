@@ -99,7 +99,7 @@ public class AuthenticatePatient {
         String code = this.doubleAuthCodeGenerator.generateDoubleAuthCode();
         this.userRepository.updateDoubleAuthCode(code, user.getId());
 
-        String text = "Voici le code de vérification pour valider votre authentification à votre compte Doctodoc : " + code;
+        String text = "Voici le code de vérification pour valider le numéro de téléphone lié à votre compte Doctodoc : " + code;
         this.messageSender.sendMessage(user.getPhoneNumber(), text);
     }
 

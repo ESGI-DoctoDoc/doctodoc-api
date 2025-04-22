@@ -37,7 +37,11 @@ public class WebSecurityConfig {
         http
                 .csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(requests -> requests
-                        .requestMatchers("/patients/login").permitAll()
+                        .requestMatchers(
+                                "/patients/login",
+                                "/doctors/login"
+
+                        ).permitAll()
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(exception -> exception
