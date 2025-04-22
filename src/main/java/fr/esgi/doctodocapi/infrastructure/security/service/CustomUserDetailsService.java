@@ -1,8 +1,10 @@
 package fr.esgi.doctodocapi.infrastructure.security.service;
 
+import fr.esgi.doctodocapi.exceptions.AuthentificationMessageException;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.AdminJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.UserJpaRepository;
+import fr.esgi.doctodocapi.exceptions.AuthenticationException;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
@@ -32,7 +34,7 @@ public class CustomUserDetailsService implements UserDetailsService {
         Optional<UserEntity> userFoundByPhoneNumber = this.userJpaRepository.findByPhoneNumber(authMethod);
 
         if (userFoundByEmail.isEmpty() && userFoundByPhoneNumber.isEmpty()) {
-            throw new UsernameNotFoundException(authMethod);
+            throw new AuthenticationException(AuthentificationMessageException.BAD_CREDENTIALS);
         }
 
         UserEntity userEntity = userFoundByPhoneNumber.orElseGet(userFoundByEmail::get);
