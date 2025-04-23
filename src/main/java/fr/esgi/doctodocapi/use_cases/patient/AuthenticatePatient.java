@@ -2,6 +2,9 @@ package fr.esgi.doctodocapi.use_cases.patient;
 
 import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
 import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
+import fr.esgi.doctodocapi.dtos.responses.LoginResponse;
+import fr.esgi.doctodocapi.exceptions.AuthenticationException;
+import fr.esgi.doctodocapi.exceptions.AuthentificationMessageException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.*;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -10,7 +13,6 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
-import java.util.Objects;
 import java.util.UUID;
 
 @Service
@@ -35,52 +37,75 @@ public class AuthenticatePatient {
     }
 
 
-    public String login(LoginRequest loginRequest, String host) {
+    public LoginResponse login(LoginRequest loginRequest, String host) {
         String identifier = loginRequest.identifier().trim();
         String password = loginRequest.password().trim();
 
-        this.authenticate(identifier, password);
+        try {
+            this.authenticate(identifier, password);
 
-        User userFoundByIdentifier = this.userRepository.findByEmailOrPhoneNumber(identifier, identifier);
-        UUID userId = userFoundByIdentifier.getId();
-        String email = userFoundByIdentifier.getEmail();
+            User userFoundByIdentifier = this.userRepository.findByEmailOrPhoneNumber(identifier, identifier);
+            UUID userId = userFoundByIdentifier.getId();
+            String email = userFoundByIdentifier.getEmail();
 
+            this.verifyEmail(userFoundByIdentifier, host);
 
-        if (!userFoundByIdentifier.isEmailVerified()) {
-            this.sendEmailToValidateAccount(email, userId, host);
-            return "send email to activate your account";
-        }
+            boolean isPatientExist = this.patientRepository.isExistByUserId(userId);
+            if (isPatientExist) {
 
-        boolean isPatientExist = this.patientRepository.isExistByUserId(userId);
-        if (isPatientExist) {
-            this.sendMessageWithDoubleAuthCode(userFoundByIdentifier);
-            return this.generatorToken.generate(email, "PATIENT", 2);
-        } else {
-            throw new AuthenticationException();
+                this.sendMessageWithDoubleAuthCode(userFoundByIdentifier);
+                String token = this.generatorToken.generate(email, "PATIENT", 2);
+                return new LoginResponse(token);
+
+            } else {
+                throw new AuthenticationException(AuthentificationMessageException.BAD_CREDENTIALS);
+            }
+
+        } catch (Exception e) {
+            throw new AuthenticationException(AuthentificationMessageException.BAD_CREDENTIALS);
         }
     }
 
-    public String validateDoubleAuth(ValidateDoubleAuthRequest validateDoubleAuthRequest) {
+    public LoginResponse validateDoubleAuth(ValidateDoubleAuthRequest validateDoubleAuthRequest) {
         String doubleAuthCode = validateDoubleAuthRequest.doubleAuthCode().trim();
 
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         String email = userDetails.getUsername();
 
-        User userFoundByEmail = this.userRepository.findByEmail(email);
+        try {
 
-        if (userFoundByEmail.isEmailVerified() && Objects.equals(userFoundByEmail.getDoubleAuthCode(), doubleAuthCode)) {
-            this.userRepository.updateDoubleAuthCode(null, userFoundByEmail.getId());
-            return this.generatorToken.generate(email, "PATIENT", 120);
-        } else {
-            throw new AuthenticationException();
+            User userFoundByEmail = this.userRepository.findByEmail(email);
+
+            if (userFoundByEmail.getDoubleAuthCode().equals(doubleAuthCode)) {
+                this.userRepository.updateDoubleAuthCode(null, userFoundByEmail.getId());
+
+                String token = this.generatorToken.generate(email, "PATIENT", 120);
+                return new LoginResponse(token);
+            } else {
+                throw new AuthenticationException(AuthentificationMessageException.BAD_DOUBLE_AUTH_CODE);
+            }
+
+        } catch (Exception e) {
+            throw new AuthenticationException(AuthentificationMessageException.BAD_DOUBLE_AUTH_CODE);
         }
 
     }
 
     private void authenticate(String username, String password) {
-        this.authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(username, password)
-        );
+        try {
+            this.authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(username, password)
+            );
+        } catch (Exception e) {
+            throw new AuthenticationException(AuthentificationMessageException.BAD_CREDENTIALS);
+        }
+    }
+
+    private void verifyEmail(User user, String host) {
+        if (!user.isEmailVerified()) {
+            this.sendEmailToValidateAccount(user.getEmail(), user.getId(), host);
+            throw new AuthenticationException(AuthentificationMessageException.ACCOUNT_NOT_ACTIVATED);
+        }
     }
 
     private void sendEmailToValidateAccount(String email, UUID userId, String host) {
