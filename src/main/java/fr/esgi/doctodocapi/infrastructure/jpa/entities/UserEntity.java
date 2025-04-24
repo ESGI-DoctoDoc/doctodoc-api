@@ -27,9 +27,6 @@ public class UserEntity {
     @Column(name = "is_email_verified", nullable = false)
     private boolean isEmailVerified;
 
-    @Column(name = "is_first_connexion", nullable = false)
-    private boolean isFirstConnexion;
-
     @Column(name = "is_double_auth_active", nullable = false)
     private boolean isDoubleAuthActive;
 
@@ -102,14 +99,6 @@ public class UserEntity {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public boolean isFirstConnexion() {
-        return isFirstConnexion;
-    }
-
-    public void setFirstConnexion(boolean firstConnexion) {
-        isFirstConnexion = firstConnexion;
     }
 
     @Override

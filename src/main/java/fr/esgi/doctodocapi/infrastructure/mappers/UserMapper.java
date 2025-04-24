@@ -13,7 +13,6 @@ public class UserMapper {
                 userEntity.getPassword(),
                 userEntity.getPhoneNumber(),
                 userEntity.isEmailVerified(),
-                userEntity.isFirstConnexion(),
                 userEntity.isDoubleAuthActive(),
                 userEntity.getDoubleAuthCode(),
                 userEntity.getCreatedAt()

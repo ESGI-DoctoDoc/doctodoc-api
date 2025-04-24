@@ -1,8 +1,7 @@
 package fr.esgi.doctodocapi.dtos.responses;
 
 public record SuccessResponse(
-        String status,
-        int code,
+        boolean success,
         Object data
 ) {
 }

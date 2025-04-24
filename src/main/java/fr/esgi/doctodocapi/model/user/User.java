@@ -10,18 +10,16 @@ public class User {
     private String password;
     private String phoneNumber;
     private boolean isEmailVerified;
-    private boolean isFirstConnexion;
     private boolean isDoubleAuthActive;
     private String doubleAuthCode;
     private LocalDateTime createdAt;
 
-    public User(UUID id, String email, String password, String phoneNumber, boolean isEmailVerified, boolean isFirstConnexion, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt) {
+    public User(UUID id, String email, String password, String phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.isEmailVerified = isEmailVerified;
-        this.isFirstConnexion = isFirstConnexion;
         this.isDoubleAuthActive = isDoubleAuthActive;
         this.doubleAuthCode = doubleAuthCode;
         this.createdAt = createdAt;
@@ -91,13 +89,6 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    public boolean isFirstConnexion() {
-        return isFirstConnexion;
-    }
-
-    public void setFirstConnexion(boolean firstConnexion) {
-        isFirstConnexion = firstConnexion;
-    }
 
     @Override
     public boolean equals(Object o) {

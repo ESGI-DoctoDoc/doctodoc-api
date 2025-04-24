@@ -10,6 +10,9 @@ import java.util.UUID;
 
 public class Doctor extends User {
     private UUID id;
+    private String firstName;
+    private String lastName;
+    private boolean isVerified;
     private String rpps;
     private String profilePictureUrl;
     private String bio;
@@ -22,10 +25,12 @@ public class Doctor extends User {
     private BigDecimal clinicLatitude;
     private BigDecimal clinicLongitude;
 
-    public Doctor(UUID userId, String userEmail, String password, String userPhoneNumber, boolean isEmailVerified,
-                  boolean isDoubleAuthActive, boolean isFirstConnexion, String doubleAuthCode, LocalDateTime createdAt, UUID id, String rpps, String profilePictureUrl, String bio, List<String> specialties, Short experienceYears, List<String> medicalConcerns, List<String> languages, BigDecimal consultationClinicPrice, String address, BigDecimal clinicLatitude, BigDecimal clinicLongitude) {
-        super(userId, userEmail, password, userPhoneNumber, isEmailVerified, isDoubleAuthActive, isFirstConnexion, doubleAuthCode, createdAt);
-        this.id = id;
+    public Doctor(UUID id, String email, String password, String phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id1, String firstName, String lastName, boolean isVerified, String rpps, String profilePictureUrl, String bio, List<String> specialties, Short experienceYears, List<String> medicalConcerns, List<String> languages, BigDecimal consultationClinicPrice, String address, BigDecimal clinicLatitude, BigDecimal clinicLongitude) {
+        super(id, email, password, phoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
+        this.id = id1;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.isVerified = isVerified;
         this.rpps = rpps;
         this.profilePictureUrl = profilePictureUrl;
         this.bio = bio;
@@ -47,6 +52,30 @@ public class Doctor extends User {
     @Override
     public void setId(UUID id) {
         this.id = id;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 
     public String getRpps() {
@@ -148,23 +177,5 @@ public class Doctor extends User {
     @Override
     public int hashCode() {
         return Objects.hash(super.hashCode(), id);
-    }
-
-    @Override
-    public String toString() {
-        return "Doctor{" +
-                "id=" + id +
-                ", rpps='" + rpps + '\'' +
-                ", profilePictureUrl='" + profilePictureUrl + '\'' +
-                ", bio='" + bio + '\'' +
-                ", specialties=" + specialties +
-                ", experienceYears=" + experienceYears +
-                ", medicalConcerns=" + medicalConcerns +
-                ", languages=" + languages +
-                ", consultationClinicPrice=" + consultationClinicPrice +
-                ", address='" + address + '\'' +
-                ", clinicLatitude=" + clinicLatitude +
-                ", clinicLongitude=" + clinicLongitude +
-                '}';
     }
 }

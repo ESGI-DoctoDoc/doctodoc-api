@@ -17,9 +17,9 @@ public class Patient extends User {
     private boolean isMainAccount;
 
     public Patient(UUID userId, String userEmail, String password, String userPhoneNumber, boolean isEmailVerified,
-                   boolean isDoubleAuthActive, boolean isFirstConnexion, String doubleAuthCode, LocalDateTime createdAt, UUID id, String firstName,
+                   boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, String firstName,
                    String lastName, String email, String phoneNumber, LocalDate birthDate, boolean isMainAccount) {
-        super(userId, userEmail, password, userPhoneNumber, isEmailVerified, isFirstConnexion, isDoubleAuthActive, doubleAuthCode, createdAt);
+        super(userId, userEmail, password, userPhoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
         this.id = id;
         this.firstName = firstName;
         this.lastName = lastName;
