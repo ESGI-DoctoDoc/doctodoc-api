@@ -32,6 +32,12 @@ public class DoctorEntity {
     @Column(name ="bio", columnDefinition = "text", nullable = false)
     private String bio;
 
+    @Column(name ="first_name", nullable = false)
+    private String firstName;
+
+    @Column(name ="last_name", nullable = false)
+    private String lastName;
+
     @Column(name = "specialities", columnDefinition = "text[]", nullable = false)
     @JdbcTypeCode(SqlTypes.ARRAY)
     private String[] specialities;
@@ -58,6 +64,9 @@ public class DoctorEntity {
 
     @Column(name = "clinic_longitude", nullable = false, precision = 9, scale = 6)
     private BigDecimal clinicLongitude;
+
+    @Column(name = "is_verified", nullable = false)
+    private boolean isVerified;
 
     public UUID getId() {
         return id;
@@ -161,6 +170,30 @@ public class DoctorEntity {
 
     public void setClinicLongitude(BigDecimal clinicLongitude) {
         this.clinicLongitude = clinicLongitude;
+    }
+
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public boolean isVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
     }
 
     @Override

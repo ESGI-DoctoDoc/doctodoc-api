@@ -6,6 +6,7 @@ import fr.esgi.doctodocapi.infrastructure.mappers.UserMapper;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserRepository;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -14,10 +15,12 @@ import java.util.UUID;
 public class UserRepositoryImpl implements UserRepository {
     private final UserJpaRepository userJpaRepository;
     private final UserMapper userMapper;
+    private final PasswordEncoder passwordEncoder;
 
-    public UserRepositoryImpl(UserJpaRepository userJpaRepository, UserMapper userMapper) {
+    public UserRepositoryImpl(UserJpaRepository userJpaRepository, UserMapper userMapper, PasswordEncoder passwordEncoder) {
         this.userJpaRepository = userJpaRepository;
         this.userMapper = userMapper;
+        this.passwordEncoder = passwordEncoder;
     }
 
     @Override
@@ -38,5 +41,18 @@ public class UserRepositoryImpl implements UserRepository {
     public User findByEmail(String email) throws UserNotFoundException {
         UserEntity userFoundByMail = this.userJpaRepository.findByEmailIgnoreCase(email).orElseThrow(UserNotFoundException::new);
         return this.userMapper.toDomain(userFoundByMail);
+    }
+
+    @Override
+    public void save(User user) {
+        String hashPassword = this.passwordEncoder.encode(user.getPassword().getValue());
+        UserEntity entity = this.userMapper.toEntity(user, hashPassword);
+        UserEntity savedEntity = this.userJpaRepository.save(entity);
+        user.setId(savedEntity.getId());
+    }
+
+    @Override
+    public boolean isExistUser(String email, String phoneNumber) {
+        return this.userJpaRepository.findByEmailIgnoreCaseOrPhoneNumber(email, phoneNumber).isPresent();
     }
 }

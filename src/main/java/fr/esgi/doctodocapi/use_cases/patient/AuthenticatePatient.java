@@ -2,8 +2,10 @@ package fr.esgi.doctodocapi.use_cases.patient;
 
 import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
 import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
+import fr.esgi.doctodocapi.error.exceptions.AuthenticationException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.*;
+import fr.esgi.doctodocapi.model.user.email.Email;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -43,7 +45,7 @@ public class AuthenticatePatient {
 
         User userFoundByIdentifier = this.userRepository.findByEmailOrPhoneNumber(identifier, identifier);
         UUID userId = userFoundByIdentifier.getId();
-        String email = userFoundByIdentifier.getEmail();
+        String email = userFoundByIdentifier.getEmail().getValue();
 
 
         if (!userFoundByIdentifier.isEmailVerified()) {
@@ -100,7 +102,7 @@ public class AuthenticatePatient {
         this.userRepository.updateDoubleAuthCode(code, user.getId());
 
         String text = "Voici le code de vérification pour valider le numéro de téléphone lié à votre compte Doctodoc : " + code;
-        this.messageSender.sendMessage(user.getPhoneNumber(), text);
+        this.messageSender.sendMessage(user.getPhoneNumber().getValue(), text);
     }
 
 }

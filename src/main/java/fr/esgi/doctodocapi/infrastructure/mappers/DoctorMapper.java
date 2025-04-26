@@ -2,6 +2,9 @@ package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.user.email.Email;
+import fr.esgi.doctodocapi.model.user.password.Password;
+import fr.esgi.doctodocapi.model.user.phone_number.PhoneNumber;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -11,18 +14,19 @@ public class DoctorMapper {
     public Doctor toDomain(DoctorEntity doctorEntity) {
         return new Doctor(
                 doctorEntity.getUser().getId(),
-                doctorEntity.getUser().getEmail(),
-                doctorEntity.getUser().getPassword(),
-                doctorEntity.getUser().getPhoneNumber(),
+                Email.of(doctorEntity.getUser().getEmail()),
+                Password.of(doctorEntity.getUser().getPassword()),
+                PhoneNumber.of(doctorEntity.getUser().getPhoneNumber()),
                 doctorEntity.getUser().isEmailVerified(),
                 doctorEntity.getUser().isDoubleAuthActive(),
-                doctorEntity.getUser().isFirstConnexion(),
                 doctorEntity.getUser().getDoubleAuthCode(),
                 doctorEntity.getUser().getCreatedAt(),
                 doctorEntity.getId(),
                 doctorEntity.getRpps(),
                 doctorEntity.getProfilePictureUrl(),
                 doctorEntity.getBio(),
+                doctorEntity.getFirstName(),
+                doctorEntity.getLastName(),
                 Arrays.asList(doctorEntity.getSpecialities()),
                 doctorEntity.getExperienceYears(),
                 Arrays.asList(doctorEntity.getMedicalConcerns()),
@@ -30,7 +34,8 @@ public class DoctorMapper {
                 doctorEntity.getConsultationClinicPrice(),
                 doctorEntity.getAddress(),
                 doctorEntity.getClinicLatitude(),
-                doctorEntity.getClinicLongitude()
+                doctorEntity.getClinicLongitude(),
+                doctorEntity.isVerified()
         );
     }
 }

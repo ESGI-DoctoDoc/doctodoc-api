@@ -1,6 +1,9 @@
 package fr.esgi.doctodocapi.model.doctor;
 
 import fr.esgi.doctodocapi.model.user.User;
+import fr.esgi.doctodocapi.model.user.email.Email;
+import fr.esgi.doctodocapi.model.user.password.Password;
+import fr.esgi.doctodocapi.model.user.phone_number.PhoneNumber;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -13,6 +16,8 @@ public class Doctor extends User {
     private String rpps;
     private String profilePictureUrl;
     private String bio;
+    private String firstName;
+    private String lastName;
     private List<String> specialties;
     private Short experienceYears;
     private List<String> medicalConcerns;
@@ -21,14 +26,17 @@ public class Doctor extends User {
     private String address;
     private BigDecimal clinicLatitude;
     private BigDecimal clinicLongitude;
+    private boolean isVerified;
 
-    public Doctor(UUID userId, String userEmail, String password, String userPhoneNumber, boolean isEmailVerified,
-                  boolean isDoubleAuthActive, boolean isFirstConnexion, String doubleAuthCode, LocalDateTime createdAt, UUID id, String rpps, String profilePictureUrl, String bio, List<String> specialties, Short experienceYears, List<String> medicalConcerns, List<String> languages, BigDecimal consultationClinicPrice, String address, BigDecimal clinicLatitude, BigDecimal clinicLongitude) {
-        super(userId, userEmail, password, userPhoneNumber, isEmailVerified, isDoubleAuthActive, isFirstConnexion, doubleAuthCode, createdAt);
+    public Doctor(UUID userId, Email userEmail, Password password, PhoneNumber userPhoneNumber, boolean isEmailVerified,
+                  boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, String rpps, String profilePictureUrl, String bio, String firstName, String lastName, List<String> specialties, Short experienceYears, List<String> medicalConcerns, List<String> languages, BigDecimal consultationClinicPrice, String address, BigDecimal clinicLatitude, BigDecimal clinicLongitude, boolean isVerified) {
+        super(userId, userEmail, password, userPhoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
         this.id = id;
         this.rpps = rpps;
         this.profilePictureUrl = profilePictureUrl;
         this.bio = bio;
+        this.firstName = firstName;
+        this.lastName = lastName;
         this.specialties = specialties;
         this.experienceYears = experienceYears;
         this.medicalConcerns = medicalConcerns;
@@ -37,6 +45,7 @@ public class Doctor extends User {
         this.address = address;
         this.clinicLatitude = clinicLatitude;
         this.clinicLongitude = clinicLongitude;
+        this.isVerified = isVerified;
     }
 
     @Override
@@ -137,6 +146,30 @@ public class Doctor extends User {
         this.clinicLongitude = clinicLongitude;
     }
 
+    public String getFirstName() {
+        return firstName;
+    }
+
+    public void setFirstName(String firstName) {
+        this.firstName = firstName;
+    }
+
+    public String getLastName() {
+        return lastName;
+    }
+
+    public void setLastName(String lastName) {
+        this.lastName = lastName;
+    }
+
+    public boolean getVerified() {
+        return isVerified;
+    }
+
+    public void setVerified(boolean verified) {
+        isVerified = verified;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -149,7 +182,7 @@ public class Doctor extends User {
     public int hashCode() {
         return Objects.hash(super.hashCode(), id);
     }
-
+    
     @Override
     public String toString() {
         return "Doctor{" +
@@ -157,6 +190,8 @@ public class Doctor extends User {
                 ", rpps='" + rpps + '\'' +
                 ", profilePictureUrl='" + profilePictureUrl + '\'' +
                 ", bio='" + bio + '\'' +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
                 ", specialties=" + specialties +
                 ", experienceYears=" + experienceYears +
                 ", medicalConcerns=" + medicalConcerns +
@@ -165,6 +200,7 @@ public class Doctor extends User {
                 ", address='" + address + '\'' +
                 ", clinicLatitude=" + clinicLatitude +
                 ", clinicLongitude=" + clinicLongitude +
+                ", isVerified=" + isVerified +
                 '}';
     }
 }

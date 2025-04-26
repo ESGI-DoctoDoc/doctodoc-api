@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.patient;
+package fr.esgi.doctodocapi.error.exceptions;
 
 public class AuthenticationException extends RuntimeException {
     public AuthenticationException() {

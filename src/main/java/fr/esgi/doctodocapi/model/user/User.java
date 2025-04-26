@@ -1,30 +1,57 @@
 package fr.esgi.doctodocapi.model.user;
 
+import fr.esgi.doctodocapi.model.user.email.Email;
+import fr.esgi.doctodocapi.model.user.password.Password;
+import fr.esgi.doctodocapi.model.user.phone_number.PhoneNumber;
+
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 public class User {
     private UUID id;
-    private String email;
-    private String password;
-    private String phoneNumber;
+    private Email email;
+    private Password password;
+    private PhoneNumber phoneNumber;
     private boolean isEmailVerified;
-    private boolean isFirstConnexion;
     private boolean isDoubleAuthActive;
     private String doubleAuthCode;
     private LocalDateTime createdAt;
 
-    public User(UUID id, String email, String password, String phoneNumber, boolean isEmailVerified, boolean isFirstConnexion, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt) {
+    private User(Email email, Password password, PhoneNumber phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt) {
+        this.email = email;
+        this.password = password;
+        this.phoneNumber = phoneNumber;
+        this.isEmailVerified = isEmailVerified;
+        this.isDoubleAuthActive = isDoubleAuthActive;
+        this.doubleAuthCode = doubleAuthCode;
+        this.createdAt = createdAt;
+    }
+
+    public User(UUID id, Email email, Password password, PhoneNumber phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt) {
         this.id = id;
         this.email = email;
         this.password = password;
         this.phoneNumber = phoneNumber;
         this.isEmailVerified = isEmailVerified;
-        this.isFirstConnexion = isFirstConnexion;
         this.isDoubleAuthActive = isDoubleAuthActive;
         this.doubleAuthCode = doubleAuthCode;
         this.createdAt = createdAt;
+    }
+
+    public static User create(String emailValue, String passwordValue, String phoneNumberValue) {
+        Email email = Email.of(emailValue);
+        Password password = Password.of(passwordValue);
+        PhoneNumber phoneNumber = PhoneNumber.of(phoneNumberValue);
+        return new User(
+                email,
+                password,
+                phoneNumber,
+                false,
+                false,
+                null,
+                LocalDateTime.now()
+        );
     }
 
     public UUID getId() {
@@ -35,27 +62,27 @@ public class User {
         this.id = id;
     }
 
-    public String getEmail() {
+    public Email getEmail() {
         return email;
     }
 
-    public void setEmail(String email) {
+    public void setEmail(Email email) {
         this.email = email;
     }
 
-    public String getPassword() {
+    public Password getPassword() {
         return password;
     }
 
-    public void setPassword(String password) {
+    public void setPassword(Password password) {
         this.password = password;
     }
 
-    public String getPhoneNumber() {
+    public PhoneNumber getPhoneNumber() {
         return phoneNumber;
     }
 
-    public void setPhoneNumber(String phoneNumber) {
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
         this.phoneNumber = phoneNumber;
     }
 
@@ -86,17 +113,8 @@ public class User {
     public LocalDateTime getCreatedAt() {
         return createdAt;
     }
-
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public boolean isFirstConnexion() {
-        return isFirstConnexion;
-    }
-
-    public void setFirstConnexion(boolean firstConnexion) {
-        isFirstConnexion = firstConnexion;
     }
 
     @Override
