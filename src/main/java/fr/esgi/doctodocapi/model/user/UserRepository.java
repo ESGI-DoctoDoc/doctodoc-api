@@ -8,4 +8,5 @@ public interface UserRepository {
     User findByEmail(String email) throws UserNotFoundException;
     void save(User user);
     boolean isExistUser(String email, String phoneNumber);
+    void validateEmail(UUID userId) throws UserNotFoundException;
 }

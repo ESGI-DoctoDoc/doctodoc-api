@@ -40,8 +40,8 @@ public class WebSecurityConfig {
                         .requestMatchers(
                                 "/patients/login",
                                 "/doctors/login",
+                                "/users/validate-email",
                                 "/doctors/register"
-
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

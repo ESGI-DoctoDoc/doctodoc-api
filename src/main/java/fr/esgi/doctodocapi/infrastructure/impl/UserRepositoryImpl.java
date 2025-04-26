@@ -55,4 +55,11 @@ public class UserRepositoryImpl implements UserRepository {
     public boolean isExistUser(String email, String phoneNumber) {
         return this.userJpaRepository.findByEmailIgnoreCaseOrPhoneNumber(email, phoneNumber).isPresent();
     }
+
+    @Override
+    public void validateEmail(UUID userId) {
+        UserEntity userFoundByMail = this.userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        userFoundByMail.setEmailVerified(true);
+        this.userJpaRepository.save(userFoundByMail);
+    }
 }

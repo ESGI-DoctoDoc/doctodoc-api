@@ -2,6 +2,8 @@ package fr.esgi.doctodocapi.presentation.doctor;
 
 import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
 import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
+import fr.esgi.doctodocapi.dtos.responses.DoubleAuthenticationResponse;
+import fr.esgi.doctodocapi.dtos.responses.LoginResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.AuthenticateDoctor;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -18,13 +20,13 @@ public class AuthDoctorController {
 
     @PostMapping("login")
     @ResponseStatus(value = HttpStatus.OK)
-    public String login(@Valid @RequestBody LoginRequest loginRequest) {
+    public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest) {
         return this.authenticateDoctor.login(loginRequest);
     }
 
     @PostMapping("validate-double-auth")
     @ResponseStatus(value = HttpStatus.OK)
-    public String validateDoubleAuth(@Valid @RequestBody ValidateDoubleAuthRequest validateDoubleAuthRequest) {
-        return this.authenticateDoctor.validateDoubleAuth(validateDoubleAuthRequest);
+    public DoubleAuthenticationResponse validateDoubleAuth(@Valid @RequestBody ValidateDoubleAuthRequest validateDoubleAuthRequest) {
+        return this.authenticateDoctor.validateDoubleAuthCode(validateDoubleAuthRequest);
     }
 }
