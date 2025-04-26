@@ -13,7 +13,7 @@ public class ErrorHandler {
     public ResponseEntity<ErrorResponse> handleGlobalException(Exception ex) {
         ApiException exception = ApiException.from(ex);
         HttpStatus status = exception.getStatus();
-        ErrorResponse errorResponse = new ErrorResponse(status.name(), status.value(), exception.getClass().getSimpleName(), exception.getMessage());
+        ErrorResponse errorResponse = new ErrorResponse(status.name(), exception.getCode(), exception.getMessage());
         return ResponseEntity.status(status).body(errorResponse);
     }
 }

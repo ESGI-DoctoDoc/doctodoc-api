@@ -2,8 +2,9 @@ package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
 import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
+import fr.esgi.doctodocapi.dtos.responses.DoubleAuthenticationResponse;
 import fr.esgi.doctodocapi.dtos.responses.LoginResponse;
-import fr.esgi.doctodocapi.use_cases.user.AuthenticateUser;
+import fr.esgi.doctodocapi.use_cases.patient.AuthenticatePatient;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -13,22 +14,22 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/patients")
 public class AuthPatientController {
 
-    private final AuthenticateUser authenticateUser;
+    private final AuthenticatePatient authenticatePatient;
 
-    public AuthPatientController(AuthenticateUser authenticateUser) {
-        this.authenticateUser = authenticateUser;
+    public AuthPatientController(AuthenticatePatient authenticatePatient) {
+        this.authenticatePatient = authenticatePatient;
     }
 
     @PostMapping("login")
     @ResponseStatus(value = HttpStatus.OK)
     public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest) {
-        return this.authenticateUser.loginUser(loginRequest, "PATIENT");
+        return this.authenticatePatient.login(loginRequest);
     }
 
     @PostMapping("validate-double-auth")
     @ResponseStatus(value = HttpStatus.OK)
-    public LoginResponse validateDoubleAuth(@Valid @RequestBody ValidateDoubleAuthRequest validateDoubleAuthRequest) {
-        return this.authenticateUser.validateDoubleAuth(validateDoubleAuthRequest);
+    public DoubleAuthenticationResponse validateDoubleAuth(@Valid @RequestBody ValidateDoubleAuthRequest validateDoubleAuthRequest) {
+        return this.authenticatePatient.validateDoubleAuthCode(validateDoubleAuthRequest);
     }
 
     @GetMapping("hey")

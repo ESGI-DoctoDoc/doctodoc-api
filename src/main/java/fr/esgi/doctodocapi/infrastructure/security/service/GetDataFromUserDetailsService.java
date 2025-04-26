@@ -15,13 +15,15 @@ public class GetDataFromUserDetailsService implements GetCurrentUserContext {
     }
 
     @Override
-    public String[] getRole() {
+    public String getRole() {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
 
-        return userDetails.getAuthorities().toString()
+        String[] roles = userDetails.getAuthorities().toString()
                 .replace("[", "")
                 .replace("]", "")
                 .replace("ROLE_", "")
                 .split(",");
+
+        return roles.length == 1 ? roles[0] : "";
     }
 }

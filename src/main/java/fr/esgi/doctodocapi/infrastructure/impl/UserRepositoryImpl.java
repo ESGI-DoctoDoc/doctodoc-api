@@ -39,4 +39,11 @@ public class UserRepositoryImpl implements UserRepository {
         UserEntity userFoundByMail = this.userJpaRepository.findByEmailIgnoreCase(email).orElseThrow(UserNotFoundException::new);
         return this.userMapper.toDomain(userFoundByMail);
     }
+
+    @Override
+    public void validateEmail(UUID userId) {
+        UserEntity userFoundByMail = this.userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+        userFoundByMail.setEmailVerified(true);
+        this.userJpaRepository.save(userFoundByMail);
+    }
 }

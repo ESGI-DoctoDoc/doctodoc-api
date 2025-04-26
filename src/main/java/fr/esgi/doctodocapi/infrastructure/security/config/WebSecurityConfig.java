@@ -39,8 +39,8 @@ public class WebSecurityConfig {
                 .authorizeHttpRequests(requests -> requests
                         .requestMatchers(
                                 "/patients/login",
-                                "/doctors/login"
-
+                                "/doctors/login",
+                                "/users/validate-email"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

@@ -1,31 +1,32 @@
 package fr.esgi.doctodocapi.exceptions;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 public class ApiException extends RuntimeException {
     private final HttpStatus status;
+    private final String code;
 
-    public ApiException(HttpStatus status, String message) {
+    public ApiException(HttpStatus status, String code, String message) {
         super(message);
+        this.code = code;
         this.status = status;
     }
 
     public static ApiException from(Exception exception) {
-        if (exception instanceof ApiException apiException) {
-            return apiException;
-        }
-//        else if (exception instanceof MethodArgumentNotValidException methodArgumentNotValidException) {
-//            String message = ValidationException.getMessageFromException(methodArgumentNotValidException);
-//            return new ValidationException(message);
-//        }
-        else {
-            return new UnknownApiException(exception.getMessage());
-        }
-
+        return switch (exception) {
+            case ApiException apiException -> apiException;
+            case MethodArgumentNotValidException methodArgumentNotValidException ->
+                    ValidationException.of(methodArgumentNotValidException);
+            default -> new UnknownApiException(exception.getMessage());
+        };
     }
 
     public HttpStatus getStatus() {
         return status;
     }
 
+    public String getCode() {
+        return code;
+    }
 }
