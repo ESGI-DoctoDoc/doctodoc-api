@@ -1,7 +1,5 @@
 package fr.esgi.doctodocapi.model.user.email;
 
-import fr.esgi.doctodocapi.error.exceptions.WrongEmailFormatException;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -10,6 +8,7 @@ public class Email {
             Pattern.compile("^[A-Z0-9._%+-]+@[A-Z0-9.-]+\\.[A-Z]{2,6}$", Pattern.CASE_INSENSITIVE);
 
     private final String value;
+
     private Email(String value) {
         this.value = value;
     }

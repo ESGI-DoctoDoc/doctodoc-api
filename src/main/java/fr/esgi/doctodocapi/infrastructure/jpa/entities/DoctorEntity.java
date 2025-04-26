@@ -22,15 +22,6 @@ public class DoctorEntity {
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UserEntity user;
 
-    @Column(name = "first_name", nullable = false)
-    private String firstName;
-
-    @Column(name = "last_name", nullable = false)
-    private String lastName;
-
-    @Column(name = "is_verified", nullable = false)
-    private boolean isVerified;
-
     @Column(name = "rpps", nullable = false, unique = true)
     @Length(max = 11, min = 11)
     private String rpps;

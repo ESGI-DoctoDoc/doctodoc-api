@@ -43,6 +43,7 @@ public class User {
         Email email = Email.of(emailValue);
         Password password = Password.of(passwordValue);
         PhoneNumber phoneNumber = PhoneNumber.of(phoneNumberValue);
+
         return new User(
                 email,
                 password,

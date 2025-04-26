@@ -1,7 +1,5 @@
 package fr.esgi.doctodocapi.model.user.phone_number;
 
-import fr.esgi.doctodocapi.error.exceptions.WrongPhoneNumberFormatException;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

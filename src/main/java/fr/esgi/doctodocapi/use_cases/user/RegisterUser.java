@@ -2,9 +2,9 @@ package fr.esgi.doctodocapi.use_cases.user;
 
 import fr.esgi.doctodocapi.dtos.requests.RegisterRequest;
 import fr.esgi.doctodocapi.dtos.responses.RegisterResponse;
+import fr.esgi.doctodocapi.exceptions.UserAlreadyExistException;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.error.exceptions.UserAlreadyExistException;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -19,12 +19,17 @@ public class RegisterUser {
         String email = registerRequest.email().toLowerCase().trim();
         String password = registerRequest.password().trim();
         String phoneNumber = registerRequest.phoneNumber().trim();
+
         boolean isExistUser = this.userRepository.isExistUser(email, phoneNumber);
         if (isExistUser) {
             throw new UserAlreadyExistException();
         }
+
         User user = User.create(email, password, phoneNumber);
         this.userRepository.save(user);
-        return new RegisterResponse(user.getId());
+        // todo Pas censé envoyer un mail de validation genre même flow que les patients ?
+        return new RegisterResponse(user.getId()); // todo pourquoi renvoyer l'id ?
+
+
     }
 }

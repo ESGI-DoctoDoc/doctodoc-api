@@ -61,7 +61,7 @@ public class AuthenticateUser {
         User userFoundByIdentifier = this.getUserByEmailOrPhoneNumber(identifier, identifier);
 
         if (userRole.equals(UserRoles.ADMIN.name())) {
-            String token = this.generatorToken.generate(userFoundByIdentifier.getEmail(), role,
+            String token = this.generatorToken.generate(userFoundByIdentifier.getEmail().getValue(), role,
                     TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES);
             return new LoginResponse(token);
         }
@@ -69,7 +69,8 @@ public class AuthenticateUser {
         this.verifyEmail(userFoundByIdentifier);
         this.sendMessageWithDoubleAuthCode(userFoundByIdentifier);
 
-        String token = this.generatorToken.generate(userFoundByIdentifier.getEmail(), role, TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES);
+        String token = this.generatorToken.generate(userFoundByIdentifier.getEmail().getValue(), role,
+                TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES);
         return new LoginResponse(token);
     }
 
@@ -128,12 +129,12 @@ public class AuthenticateUser {
         this.userRepository.updateDoubleAuthCode(code, user.getId());
 
         String text = "Voici le code de vérification lié à votre compte Doctodoc : " + code;
-        this.messageSender.sendMessage(user.getPhoneNumber(), text);
+        this.messageSender.sendMessage(user.getPhoneNumber().getValue(), text);
     }
 
     private void verifyEmail(User userFoundByIdentifier) {
         if (!userFoundByIdentifier.isEmailVerified()) {
-            this.sendEmailToValidateAccount(userFoundByIdentifier.getEmail(), userFoundByIdentifier.getId());
+            this.sendEmailToValidateAccount(userFoundByIdentifier.getEmail().getValue(), userFoundByIdentifier.getId());
             throw new AuthenticationException(ACCOUNT_NOT_ACTIVATED);
         }
     }

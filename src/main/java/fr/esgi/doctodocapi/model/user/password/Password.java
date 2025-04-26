@@ -1,7 +1,5 @@
 package fr.esgi.doctodocapi.model.user.password;
 
-import fr.esgi.doctodocapi.error.exceptions.WrongPasswordFormatException;
-
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -11,6 +9,7 @@ public class Password {
      */
     private static final Pattern VALID_PASSWORD_REGEX =
             Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\\-_]).{6,}$");
+
     private final String value;
 
     private Password(String value) {
@@ -30,6 +29,7 @@ public class Password {
     }
 
     public static Password fromDatabase(String value) {
+        // todo non sinon c pas cohérent avec notre domaine
         return new Password(value); // pas de validation pour les user déjà inséré (via le populate)
     }
 
