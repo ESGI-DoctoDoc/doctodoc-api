@@ -32,8 +32,8 @@ public class RegisterUser {
 
         try {
             User user = User.create(email, password, phoneNumber);
-            this.userRepository.save(user);
-            this.sendAccountValidationEmail.send(user.getEmail().getValue(), user.getId());
+            User userSaved = this.userRepository.save(user);
+            this.sendAccountValidationEmail.send(userSaved.getEmail().getValue(), userSaved.getId());
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }

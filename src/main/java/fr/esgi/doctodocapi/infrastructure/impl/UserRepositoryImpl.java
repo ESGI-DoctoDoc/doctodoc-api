@@ -44,10 +44,11 @@ public class UserRepositoryImpl implements UserRepository {
     }
 
     @Override
-    public void save(User user) {
+    public User save(User user) {
         String hashPassword = this.passwordEncoder.encode(user.getPassword().getValue());
-        UserEntity entity = this.userMapper.toEntity(user, hashPassword);
-        this.userJpaRepository.save(entity);
+        UserEntity userSaved = this.userMapper.toEntity(user, hashPassword);
+        this.userJpaRepository.save(userSaved);
+        return this.userMapper.toDomain(userSaved);
     }
 
     @Override
