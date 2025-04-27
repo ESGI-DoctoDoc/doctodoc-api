@@ -9,10 +9,7 @@ import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.*;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.AuthenticateUserInContext;
-import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentRequestContext;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 import java.util.UUID;
@@ -21,33 +18,29 @@ import static fr.esgi.doctodocapi.exceptions.authentication.AuthentificationMess
 
 @Service
 public class AuthenticateUser {
-    private static final Logger logger = LoggerFactory.getLogger(AuthenticateUser.class);
-
     private static final int TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES = 120;
     private static final int TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES = 2;
 
     private final AuthenticateUserInContext authenticateUserInContext;
     private final GetCurrentUserContext getCurrentUserContext;
-    private final GetCurrentRequestContext getCurrentRequestContext;
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final MessageSender messageSender;
     private final DoubleAuthCodeGenerator doubleAuthCodeGenerator;
     private final GeneratorToken generatorToken;
-    private final MailSender mailSender;
+    private final SendAccountValidationEmail sendAccountValidationEmail;
 
-    public AuthenticateUser(AuthenticateUserInContext authenticateUserInContext, GetCurrentUserContext getCurrentUserContext, GetCurrentRequestContext getCurrentRequestContext, UserRepository userRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, MessageSender messageSender, DoubleAuthCodeGenerator doubleAuthCodeGenerator, GeneratorToken generatorToken, MailSender mailSender) {
+    public AuthenticateUser(AuthenticateUserInContext authenticateUserInContext, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, MessageSender messageSender, DoubleAuthCodeGenerator doubleAuthCodeGenerator, GeneratorToken generatorToken, SendAccountValidationEmail sendAccountValidationEmail) {
         this.authenticateUserInContext = authenticateUserInContext;
         this.getCurrentUserContext = getCurrentUserContext;
-        this.getCurrentRequestContext = getCurrentRequestContext;
         this.userRepository = userRepository;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.messageSender = messageSender;
         this.doubleAuthCodeGenerator = doubleAuthCodeGenerator;
         this.generatorToken = generatorToken;
-        this.mailSender = mailSender;
+        this.sendAccountValidationEmail = sendAccountValidationEmail;
     }
 
     public LoginResponse loginUser(LoginRequest loginRequest, String role) {
@@ -134,29 +127,8 @@ public class AuthenticateUser {
 
     private void verifyEmail(User userFoundByIdentifier) {
         if (!userFoundByIdentifier.isEmailVerified()) {
-            this.sendEmailToValidateAccount(userFoundByIdentifier.getEmail().getValue(), userFoundByIdentifier.getId());
+            this.sendAccountValidationEmail.send(userFoundByIdentifier.getEmail().getValue(), userFoundByIdentifier.getId());
             throw new AuthenticationException(ACCOUNT_NOT_ACTIVATED);
         }
     }
-
-    private void sendEmailToValidateAccount(String email, UUID userId) {
-        String currentDomainName = this.getCurrentRequestContext.getCurrentDomain();
-
-        if (!currentDomainName.isEmpty()) {
-            String subject = "Activer votre compte sur Doctodoc";
-            String url = currentDomainName + "/api/v1/users/validate-email?userId=" + userId.toString();
-            String body = String.format("""
-                    Merci de cliquer sur le lien pour valider votre compte Doctodoc
-                    %s
-                    Ce mail est valide 30 minutes.
-                    L'équipe de Doctodoc""", url);
-
-            this.mailSender.sendMail(email, subject, body);
-
-        } else {
-            logger.error("Failed to create url");
-        }
-
-    }
-
 }

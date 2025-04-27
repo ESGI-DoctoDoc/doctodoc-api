@@ -8,7 +8,7 @@ public class Password {
      * au moins 1 caractère spécial, une maj, un chiffre et 6 caractères minimum en tout
      */
     private static final Pattern VALID_PASSWORD_REGEX =
-            Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\\-_]).{6,}$");
+            Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\\-_#$]).{6,}$");
 
     private final String value;
 
@@ -26,11 +26,6 @@ public class Password {
             throw new WrongPasswordFormatException();
         }
         return new Password(value);
-    }
-
-    public static Password fromDatabase(String value) {
-        // todo non sinon c pas cohérent avec notre domaine
-        return new Password(value); // pas de validation pour les user déjà inséré (via le populate)
     }
 
     public String getValue() {

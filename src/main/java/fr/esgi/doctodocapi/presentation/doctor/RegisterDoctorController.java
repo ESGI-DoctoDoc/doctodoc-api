@@ -1,7 +1,6 @@
 package fr.esgi.doctodocapi.presentation.doctor;
 
 import fr.esgi.doctodocapi.dtos.requests.RegisterRequest;
-import fr.esgi.doctodocapi.dtos.responses.RegisterResponse;
 import fr.esgi.doctodocapi.use_cases.user.RegisterUser;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -19,7 +18,7 @@ public class RegisterDoctorController {
 
     @PostMapping("register")
     @ResponseStatus(HttpStatus.CREATED)
-    public RegisterResponse registerDoctor(@Valid @RequestBody RegisterRequest registerRequest) {
-        return this.registerUser.register(registerRequest);
+    public void registerDoctor(@Valid @RequestBody RegisterRequest registerRequest) {
+        this.registerUser.register(registerRequest);
     }
 }

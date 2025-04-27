@@ -1,8 +1,13 @@
 package fr.esgi.doctodocapi.exceptions;
 
-public class UserAlreadyExistException extends RuntimeException {
-    // todo : extends an ApiException with a status, a code and a message
+import org.springframework.http.HttpStatus;
+
+public class UserAlreadyExistException extends ApiException {
+    private static final HttpStatus STATUS = HttpStatus.BAD_REQUEST;
+    private static final String CODE = "user.already.exist";
+    private static final String MESSAGE = "User already exist";
+
     public UserAlreadyExistException() {
-        super();
+        super(STATUS, CODE, MESSAGE);
     }
 }
