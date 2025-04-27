@@ -1,0 +1,15 @@
+package fr.esgi.doctodocapi.dtos.requests;
+
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+
+public record LoginRequest(
+        @NotBlank
+        @NotNull
+        String identifier,
+
+        @NotBlank
+        @NotNull
+        String password
+) {
+}

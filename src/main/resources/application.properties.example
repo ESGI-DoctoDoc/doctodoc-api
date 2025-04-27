@@ -13,3 +13,11 @@ spring.datasource.hikari.maximum-pool-size=10
 spring.datasource.hikari.minimum-idle=2
 spring.datasource.hikari.idle-timeout=30000
 spring.datasource.hikari.max-lifetime=1800000
+
+
+# Configuration de mail
+spring.mail.host=
+spring.mail.port=
+spring.mail.username=
+spring.mail.password=
+spring.mail.test-connection=

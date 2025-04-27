@@ -1,6 +1,9 @@
 package fr.esgi.doctodocapi.model.patient;
 
-import fr.esgi.doctodocapi.model.User;
+import fr.esgi.doctodocapi.model.user.User;
+import fr.esgi.doctodocapi.model.user.email.Email;
+import fr.esgi.doctodocapi.model.user.password.Password;
+import fr.esgi.doctodocapi.model.user.phone_number.PhoneNumber;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -16,7 +19,7 @@ public class Patient extends User {
     private LocalDate birthDate;
     private boolean isMainAccount;
 
-    public Patient(UUID userId, String userEmail, String password, String userPhoneNumber, boolean isEmailVerified,
+    public Patient(UUID userId, Email userEmail, Password password, PhoneNumber userPhoneNumber, boolean isEmailVerified,
                    boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, String firstName,
                    String lastName, String email, String phoneNumber, LocalDate birthDate, boolean isMainAccount) {
         super(userId, userEmail, password, userPhoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
@@ -53,26 +56,6 @@ public class Patient extends User {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
-    }
-
-    @Override
-    public String getEmail() {
-        return email;
-    }
-
-    @Override
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    @Override
-    public String getPhoneNumber() {
-        return phoneNumber;
-    }
-
-    @Override
-    public void setPhoneNumber(String phoneNumber) {
-        this.phoneNumber = phoneNumber;
     }
 
     public LocalDate getBirthDate() {
