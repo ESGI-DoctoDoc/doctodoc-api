@@ -41,7 +41,8 @@ public class WebSecurityConfig {
                                 "/patients/login",
                                 "/doctors/login",
                                 "/users/validate-email",
-                                "/doctors/register"
+                                "/doctors/register",
+                                "/patients/register"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )
