@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.model.user.password;
+package fr.esgi.doctodocapi.model.vo.password;
 
 import fr.esgi.doctodocapi.model.DomainException;
 

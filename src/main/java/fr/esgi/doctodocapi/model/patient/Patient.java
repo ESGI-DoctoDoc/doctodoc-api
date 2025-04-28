@@ -1,36 +1,57 @@
 package fr.esgi.doctodocapi.model.patient;
 
+import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.user.User;
-import fr.esgi.doctodocapi.model.user.email.Email;
-import fr.esgi.doctodocapi.model.user.password.Password;
-import fr.esgi.doctodocapi.model.user.phone_number.PhoneNumber;
+import fr.esgi.doctodocapi.model.vo.birthdate.Birthdate;
+import fr.esgi.doctodocapi.model.vo.email.Email;
+import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 public class Patient extends User {
     private UUID id;
+    private Doctor doctor;
     private String firstName;
     private String lastName;
-    private String email;
-    private String phoneNumber;
-    private LocalDate birthDate;
+    private Email email;
+    private PhoneNumber phoneNumber;
+    private Birthdate birthdate;
     private boolean isMainAccount;
 
-    public Patient(UUID userId, Email userEmail, Password password, PhoneNumber userPhoneNumber, boolean isEmailVerified,
-                   boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, String firstName,
-                   String lastName, String email, String phoneNumber, LocalDate birthDate, boolean isMainAccount) {
-        super(userId, userEmail, password, userPhoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
-        this.id = id;
+    private Patient(User user, Doctor doctor, String firstName, String lastName, Email email, PhoneNumber phoneNumber,
+                    Birthdate birthdate, boolean isMainAccount) {
+        super(user.getId(), user.getEmail(), user.getPassword(), user.getPhoneNumber(), true, true,
+                user.getDoubleAuthCode(), user.getCreatedAt());
+
+        this.id = UUID.randomUUID();
+        if (doctor != null) {
+            this.doctor = doctor;
+        }
         this.firstName = firstName;
         this.lastName = lastName;
         this.email = email;
         this.phoneNumber = phoneNumber;
-        this.birthDate = birthDate;
+        this.birthdate = birthdate;
         this.isMainAccount = isMainAccount;
     }
+
+    public static Patient createFromOnBoarding(User user, String firstName, String lastName, LocalDate birthDateValue, Doctor doctor) {
+        Birthdate birthDate = Birthdate.of(birthDateValue);
+        verifyAge(birthDate.getValue());
+        return new Patient(user, doctor, firstName, lastName, user.getEmail(), user.getPhoneNumber(), birthDate, true);
+    }
+
+    private static void verifyAge(LocalDate birthDate) {
+        int minimumAgeToHave = 18;
+
+        LocalDate now = LocalDate.now().minusYears(minimumAgeToHave);
+        if (birthDate.isAfter(now)) {
+            throw new PatientMustHaveMajority();
+        }
+    }
+
 
     @Override
     public UUID getId() {
@@ -58,12 +79,32 @@ public class Patient extends User {
         this.lastName = lastName;
     }
 
-    public LocalDate getBirthDate() {
-        return birthDate;
+    @Override
+    public Email getEmail() {
+        return email;
     }
 
-    public void setBirthDate(LocalDate birthDate) {
-        this.birthDate = birthDate;
+    @Override
+    public void setEmail(Email email) {
+        this.email = email;
+    }
+
+    @Override
+    public PhoneNumber getPhoneNumber() {
+        return phoneNumber;
+    }
+
+    @Override
+    public void setPhoneNumber(PhoneNumber phoneNumber) {
+        this.phoneNumber = phoneNumber;
+    }
+
+    public Birthdate getBirthdate() {
+        return birthdate;
+    }
+
+    public void setBirthdate(Birthdate birthdate) {
+        this.birthdate = birthdate;
     }
 
     public boolean isMainAccount() {
@@ -74,28 +115,41 @@ public class Patient extends User {
         isMainAccount = mainAccount;
     }
 
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
+    }
+
+    public UUID getUserId() {
+        return super.getId();
+    }
+
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         Patient patient = (Patient) o;
-        return isMainAccount == patient.isMainAccount && Objects.equals(id, patient.id) && Objects.equals(firstName, patient.firstName) && Objects.equals(lastName, patient.lastName) && Objects.equals(email, patient.email) && Objects.equals(phoneNumber, patient.phoneNumber) && Objects.equals(birthDate, patient.birthDate);
+        return isMainAccount == patient.isMainAccount && Objects.equals(id, patient.id) && Objects.equals(firstName, patient.firstName) && Objects.equals(lastName, patient.lastName) && Objects.equals(email, patient.email) && Objects.equals(phoneNumber, patient.phoneNumber) && Objects.equals(birthdate, patient.birthdate);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, email, phoneNumber, birthDate, isMainAccount);
+        return Objects.hash(id, firstName, lastName, email, phoneNumber, birthdate, isMainAccount);
     }
 
     @Override
     public String toString() {
-        return super.toString() +
-                "Patient{" +
+        return "Patient{" +
                 "id=" + id +
+                ", doctor=" + doctor +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", birthDate=" + birthDate +
+                ", email=" + email +
+                ", phoneNumber=" + phoneNumber +
+                ", birthdate=" + birthdate +
                 ", isMainAccount=" + isMainAccount +
                 '}';
     }

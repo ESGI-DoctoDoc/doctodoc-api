@@ -2,9 +2,9 @@ package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.user.email.Email;
-import fr.esgi.doctodocapi.model.user.password.Password;
-import fr.esgi.doctodocapi.model.user.phone_number.PhoneNumber;
+import fr.esgi.doctodocapi.model.vo.email.Email;
+import fr.esgi.doctodocapi.model.vo.password.Password;
+import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
 import org.springframework.stereotype.Service;
 
 import java.util.Arrays;
@@ -27,7 +27,7 @@ public class DoctorMapper {
                 doctorEntity.getBio(),
                 doctorEntity.getFirstName(),
                 doctorEntity.getLastName(),
-                Arrays.asList(doctorEntity.getSpecialities()),
+                doctorEntity.getSpecialities(),
                 doctorEntity.getExperienceYears(),
                 Arrays.asList(doctorEntity.getMedicalConcerns()),
                 Arrays.asList(doctorEntity.getLanguages()),

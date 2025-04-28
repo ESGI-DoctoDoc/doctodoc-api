@@ -7,7 +7,6 @@ import fr.esgi.doctodocapi.dtos.responses.LoginResponse;
 import fr.esgi.doctodocapi.use_cases.patient.AuthenticatePatient;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -31,13 +30,5 @@ public class AuthPatientController {
     public DoubleAuthenticationResponse validateDoubleAuth(@Valid @RequestBody ValidateDoubleAuthRequest validateDoubleAuthRequest) {
         return this.authenticatePatient.validateDoubleAuthCode(validateDoubleAuthRequest);
     }
-
-    @GetMapping("hey")
-    @PreAuthorize("hasRole('ROLE_PATIENT')")
-    @ResponseStatus(value = HttpStatus.OK)
-    public String hey() {
-        return "hey";
-    }
-
 
 }

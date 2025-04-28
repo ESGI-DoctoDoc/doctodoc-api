@@ -12,6 +12,7 @@ import fr.esgi.doctodocapi.use_cases.user.ports.in.AuthenticateUserInContext;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
 import org.springframework.stereotype.Service;
 
+import java.util.Objects;
 import java.util.UUID;
 
 import static fr.esgi.doctodocapi.exceptions.authentication.AuthentificationMessageException.*;
@@ -77,7 +78,7 @@ public class AuthenticateUser {
 
             User userFoundByEmail = this.userRepository.findByEmail(email);
 
-            if (userFoundByEmail.getDoubleAuthCode().equals(doubleAuthCode)) {
+            if (Objects.equals(userFoundByEmail.getDoubleAuthCode(), doubleAuthCode)) {
                 this.userRepository.updateDoubleAuthCode(null, userFoundByEmail.getId());
 
                 boolean userHasOnBoardingDone = this.userHasOnBoardingDone(userFoundByEmail.getId());

@@ -4,5 +4,7 @@ import java.util.UUID;
 
 public interface PatientRepository {
     boolean isExistByUserId(UUID userId);
+    void save(Patient patient);
 
+    boolean isExistMainAccount(UUID userId);
 }

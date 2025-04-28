@@ -1,9 +1,9 @@
 package fr.esgi.doctodocapi.model.doctor;
 
 import fr.esgi.doctodocapi.model.user.User;
-import fr.esgi.doctodocapi.model.user.email.Email;
-import fr.esgi.doctodocapi.model.user.password.Password;
-import fr.esgi.doctodocapi.model.user.phone_number.PhoneNumber;
+import fr.esgi.doctodocapi.model.vo.email.Email;
+import fr.esgi.doctodocapi.model.vo.password.Password;
+import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
@@ -18,7 +18,7 @@ public class Doctor extends User {
     private String bio;
     private String firstName;
     private String lastName;
-    private List<String> specialties;
+    private String speciality;
     private Short experienceYears;
     private List<String> medicalConcerns;
     private List<String> languages;
@@ -29,7 +29,8 @@ public class Doctor extends User {
     private boolean isVerified;
 
     public Doctor(UUID userId, Email userEmail, Password password, PhoneNumber userPhoneNumber, boolean isEmailVerified,
-                  boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, String rpps, String profilePictureUrl, String bio, String firstName, String lastName, List<String> specialties, Short experienceYears, List<String> medicalConcerns, List<String> languages, BigDecimal consultationClinicPrice, String address, BigDecimal clinicLatitude, BigDecimal clinicLongitude, boolean isVerified) {
+                  boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, String rpps,
+                  String profilePictureUrl, String bio, String firstName, String lastName, String speciality, Short experienceYears, List<String> medicalConcerns, List<String> languages, BigDecimal consultationClinicPrice, String address, BigDecimal clinicLatitude, BigDecimal clinicLongitude, boolean isVerified) {
         super(userId, userEmail, password, userPhoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
         this.id = id;
         this.rpps = rpps;
@@ -37,7 +38,7 @@ public class Doctor extends User {
         this.bio = bio;
         this.firstName = firstName;
         this.lastName = lastName;
-        this.specialties = specialties;
+        this.speciality = speciality;
         this.experienceYears = experienceYears;
         this.medicalConcerns = medicalConcerns;
         this.languages = languages;
@@ -82,12 +83,12 @@ public class Doctor extends User {
         this.bio = bio;
     }
 
-    public List<String> getSpecialties() {
-        return specialties;
+    public String getSpeciality() {
+        return speciality;
     }
 
-    public void setSpecialties(List<String> specialties) {
-        this.specialties = specialties;
+    public void setSpeciality(String speciality) {
+        this.speciality = speciality;
     }
 
     public Short getExperienceYears() {
@@ -192,7 +193,7 @@ public class Doctor extends User {
                 ", bio='" + bio + '\'' +
                 ", firstName='" + firstName + '\'' +
                 ", lastName='" + lastName + '\'' +
-                ", specialties=" + specialties +
+                ", specialties=" + speciality +
                 ", experienceYears=" + experienceYears +
                 ", medicalConcerns=" + medicalConcerns +
                 ", languages=" + languages +

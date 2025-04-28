@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.model.user.password;
+package fr.esgi.doctodocapi.model.vo.password;
 
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;

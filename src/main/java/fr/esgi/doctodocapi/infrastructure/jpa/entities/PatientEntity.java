@@ -37,6 +37,10 @@ public class PatientEntity {
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
 
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private DoctorEntity doctor;
+
     public UUID getId() {
         return id;
     }
@@ -101,6 +105,14 @@ public class PatientEntity {
         this.user = user;
     }
 
+    public DoctorEntity getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(DoctorEntity doctor) {
+        this.doctor = doctor;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -111,5 +123,20 @@ public class PatientEntity {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "PatientEntity{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", birthDate=" + birthDate +
+                ", isMainAccount=" + isMainAccount +
+                ", user=" + user +
+                ", doctor=" + doctor +
+                '}';
     }
 }

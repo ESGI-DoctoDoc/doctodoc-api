@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.model.user.phone_number;
+package fr.esgi.doctodocapi.model.vo.phone_number;
 
 import fr.esgi.doctodocapi.model.DomainException;
 

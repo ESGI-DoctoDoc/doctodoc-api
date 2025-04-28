@@ -8,5 +8,7 @@ import java.util.UUID;
 public interface PatientJpaRepository extends JpaRepository<PatientEntity, UUID> {
     boolean existsByUser_Id(UUID userId);
 
+    boolean existsByUser_idAndMainAccount(UUID userId, boolean mainAccount);
+
 
 }
