@@ -38,9 +38,8 @@ public class DoctorEntity {
     @Column(name ="last_name", nullable = false)
     private String lastName;
 
-    @Column(name = "specialities", columnDefinition = "text[]", nullable = false)
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    private String[] specialities;
+    @Column(name = "speciality", nullable = false)
+    private String speciality;
 
     @Column(name = "experience_years", nullable = false)
     private Short experienceYears;
@@ -108,12 +107,12 @@ public class DoctorEntity {
         this.bio = bio;
     }
 
-    public String[] getSpecialities() {
-        return specialities;
+    public String getSpeciality() {
+        return speciality;
     }
 
-    public void setSpecialities(String[] specialities) {
-        this.specialities = specialities;
+    public void setSpeciality(String speciality) {
+        this.speciality = speciality;
     }
 
     public Short getExperienceYears() {

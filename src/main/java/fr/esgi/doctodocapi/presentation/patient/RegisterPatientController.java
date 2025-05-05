@@ -12,8 +12,8 @@ public class RegisterPatientController {
     private final RegisterUser registerUser;
 
 
-    public RegisterPatientController(RegisterUser registerDoctor) {
-        this.registerUser = registerDoctor;
+    public RegisterPatientController(RegisterUser registerPatient) {
+        this.registerUser = registerPatient;
     }
 
     @PostMapping("register")

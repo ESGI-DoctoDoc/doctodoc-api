@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.model.user.email;
+package fr.esgi.doctodocapi.model.vo.email;
 
 import fr.esgi.doctodocapi.model.DomainException;
 

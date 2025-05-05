@@ -1,8 +1,8 @@
 package fr.esgi.doctodocapi.model.user;
 
-import fr.esgi.doctodocapi.model.user.email.Email;
-import fr.esgi.doctodocapi.model.user.password.Password;
-import fr.esgi.doctodocapi.model.user.phone_number.PhoneNumber;
+import fr.esgi.doctodocapi.model.vo.email.Email;
+import fr.esgi.doctodocapi.model.vo.password.Password;
+import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
 
 import java.time.LocalDateTime;
 import java.util.Objects;
@@ -28,7 +28,8 @@ public class User {
         this.createdAt = createdAt;
     }
 
-    public User(UUID id, Email email, Password password, PhoneNumber phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt) {
+    public User(UUID id, Email email, Password password, PhoneNumber phoneNumber, boolean isEmailVerified,
+                boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt) {
         this.id = id;
         this.email = email;
         this.password = password;
@@ -128,5 +129,19 @@ public class User {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "User{" +
+                "id=" + id +
+                ", email=" + email +
+                ", password=" + password +
+                ", phoneNumber=" + phoneNumber +
+                ", isEmailVerified=" + isEmailVerified +
+                ", isDoubleAuthActive=" + isDoubleAuthActive +
+                ", doubleAuthCode='" + doubleAuthCode + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }

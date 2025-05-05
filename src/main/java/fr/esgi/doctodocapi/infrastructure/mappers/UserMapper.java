@@ -2,8 +2,8 @@ package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
 import fr.esgi.doctodocapi.model.user.User;
-import fr.esgi.doctodocapi.model.user.email.Email;
-import fr.esgi.doctodocapi.model.user.phone_number.PhoneNumber;
+import fr.esgi.doctodocapi.model.vo.email.Email;
+import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
 import org.springframework.stereotype.Service;
 
 @Service
@@ -12,7 +12,7 @@ public class UserMapper {
         return new User(
                 userEntity.getId(),
                 Email.of(userEntity.getEmail()),
-                null,
+                null, // to decode
                 PhoneNumber.of(userEntity.getPhoneNumber()),
                 userEntity.isEmailVerified(),
                 userEntity.isDoubleAuthActive(),
