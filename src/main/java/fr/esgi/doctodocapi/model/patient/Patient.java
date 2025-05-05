@@ -4,9 +4,11 @@ import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.vo.birthdate.Birthdate;
 import fr.esgi.doctodocapi.model.vo.email.Email;
+import fr.esgi.doctodocapi.model.vo.password.Password;
 import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -20,9 +22,24 @@ public class Patient extends User {
     private Birthdate birthdate;
     private boolean isMainAccount;
 
+
+    public Patient(UUID userId, Email emailUser, Password password, PhoneNumber userPhoneNumber, boolean isEmailVerified,
+                   boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, Doctor doctor,
+                   String firstName, String lastName, Email email, PhoneNumber phoneNumber, Birthdate birthdate, boolean isMainAccount) {
+        super(userId, emailUser, password, userPhoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
+        this.id = id;
+        this.doctor = doctor;
+        this.firstName = firstName;
+        this.lastName = lastName;
+        this.email = email;
+        this.phoneNumber = phoneNumber;
+        this.birthdate = birthdate;
+        this.isMainAccount = isMainAccount;
+    }
+
     private Patient(User user, Doctor doctor, String firstName, String lastName, Email email, PhoneNumber phoneNumber,
                     Birthdate birthdate, boolean isMainAccount) {
-        super(user.getId(), user.getEmail(), user.getPassword(), user.getPhoneNumber(), true, true,
+        super(user.getId(), user.getEmail(), user.getPassword(), user.getPhoneNumber(), user.isEmailVerified(), user.isDoubleAuthActive(),
                 user.getDoubleAuthCode(), user.getCreatedAt());
 
         this.id = UUID.randomUUID();

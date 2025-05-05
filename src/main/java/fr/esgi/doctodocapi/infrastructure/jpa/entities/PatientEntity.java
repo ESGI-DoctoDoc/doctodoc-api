@@ -89,12 +89,12 @@ public class PatientEntity {
         this.birthDate = birthDate;
     }
 
-    public boolean isMainAccount() {
+    public boolean getIsMainAccount() {
         return isMainAccount;
     }
 
-    public void setMainAccount(boolean mainAccount) {
-        isMainAccount = mainAccount;
+    public void setIsMainAccount(boolean isMainAccount) {
+        this.isMainAccount = isMainAccount;
     }
 
     public UserEntity getUser() {

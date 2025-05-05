@@ -2,18 +2,14 @@ package fr.esgi.doctodocapi.use_cases.user;
 
 import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
 import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
-import fr.esgi.doctodocapi.dtos.responses.DoubleAuthenticationResponse;
 import fr.esgi.doctodocapi.dtos.responses.LoginResponse;
 import fr.esgi.doctodocapi.exceptions.authentication.AuthenticationException;
-import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
-import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.*;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.AuthenticateUserInContext;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;
-import java.util.UUID;
 
 import static fr.esgi.doctodocapi.exceptions.authentication.AuthentificationMessageException.*;
 
@@ -25,19 +21,15 @@ public class AuthenticateUser {
     private final AuthenticateUserInContext authenticateUserInContext;
     private final GetCurrentUserContext getCurrentUserContext;
     private final UserRepository userRepository;
-    private final PatientRepository patientRepository;
-    private final DoctorRepository doctorRepository;
     private final MessageSender messageSender;
     private final DoubleAuthCodeGenerator doubleAuthCodeGenerator;
     private final GeneratorToken generatorToken;
     private final SendAccountValidationEmail sendAccountValidationEmail;
 
-    public AuthenticateUser(AuthenticateUserInContext authenticateUserInContext, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, MessageSender messageSender, DoubleAuthCodeGenerator doubleAuthCodeGenerator, GeneratorToken generatorToken, SendAccountValidationEmail sendAccountValidationEmail) {
+    public AuthenticateUser(AuthenticateUserInContext authenticateUserInContext, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, MessageSender messageSender, DoubleAuthCodeGenerator doubleAuthCodeGenerator, GeneratorToken generatorToken, SendAccountValidationEmail sendAccountValidationEmail) {
         this.authenticateUserInContext = authenticateUserInContext;
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
-        this.patientRepository = patientRepository;
-        this.doctorRepository = doctorRepository;
         this.messageSender = messageSender;
         this.doubleAuthCodeGenerator = doubleAuthCodeGenerator;
         this.generatorToken = generatorToken;
@@ -55,7 +47,7 @@ public class AuthenticateUser {
         User userFoundByIdentifier = this.getUserByEmailOrPhoneNumber(identifier, identifier);
 
         if (userRole.equals(UserRoles.ADMIN.name())) {
-            String token = this.generatorToken.generate(userFoundByIdentifier.getEmail().getValue(), role,
+            String token = this.generatorToken.generate(userFoundByIdentifier.getEmail().getValue(), UserRoles.ADMIN.name(),
                     TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES);
             return new LoginResponse(token);
         }
@@ -68,11 +60,9 @@ public class AuthenticateUser {
         return new LoginResponse(token);
     }
 
-    public DoubleAuthenticationResponse validateDoubleAuth(ValidateDoubleAuthRequest validateDoubleAuthRequest) {
+    public User validateDoubleAuth(ValidateDoubleAuthRequest validateDoubleAuthRequest) {
         String doubleAuthCode = validateDoubleAuthRequest.doubleAuthCode().trim();
-
         String email = this.getCurrentUserContext.getUsername();
-        String role = this.getCurrentUserContext.getRole();
 
         try {
 
@@ -80,11 +70,7 @@ public class AuthenticateUser {
 
             if (Objects.equals(userFoundByEmail.getDoubleAuthCode(), doubleAuthCode)) {
                 this.userRepository.updateDoubleAuthCode(null, userFoundByEmail.getId());
-
-                boolean userHasOnBoardingDone = this.userHasOnBoardingDone(userFoundByEmail.getId());
-
-                String token = this.generatorToken.generate(email, role, TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES);
-                return new DoubleAuthenticationResponse(token, userHasOnBoardingDone);
+                return userFoundByEmail;
             } else {
                 throw new AuthenticationException(BAD_DOUBLE_AUTH_CODE);
             }
@@ -104,19 +90,6 @@ public class AuthenticateUser {
 
     }
 
-    private boolean userHasOnBoardingDone(UUID userId) {
-        String currentRole = this.getCurrentUserContext.getRole();
-
-        if (currentRole.equals(UserRoles.PATIENT.name())) {
-            return this.patientRepository.isExistByUserId(userId);
-        }
-
-        if (currentRole.equals(UserRoles.DOCTOR.name())) {
-            return this.doctorRepository.isExistByUserId(userId);
-        }
-
-        return false;
-    }
 
     private void sendMessageWithDoubleAuthCode(User user) {
         String code = this.doubleAuthCodeGenerator.generateDoubleAuthCode();

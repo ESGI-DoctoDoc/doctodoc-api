@@ -27,7 +27,7 @@ public class DoctorMapper {
                 doctorEntity.getBio(),
                 doctorEntity.getFirstName(),
                 doctorEntity.getLastName(),
-                doctorEntity.getSpecialities(),
+                doctorEntity.getSpeciality(),
                 doctorEntity.getExperienceYears(),
                 Arrays.asList(doctorEntity.getMedicalConcerns()),
                 Arrays.asList(doctorEntity.getLanguages()),

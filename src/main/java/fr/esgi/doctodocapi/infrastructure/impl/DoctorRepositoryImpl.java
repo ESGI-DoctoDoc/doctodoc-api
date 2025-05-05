@@ -8,6 +8,7 @@ import fr.esgi.doctodocapi.model.doctor.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -21,14 +22,20 @@ public class DoctorRepositoryImpl implements DoctorRepository {
     }
 
     @Override
-    public boolean isExistByUserId(UUID userId) {
-        return this.doctorJpaRepository.existsByUser_Id(userId);
+    public Doctor getById(UUID treatingDoctorId) throws DoctorNotFoundException {
+        DoctorEntity entity = this.doctorJpaRepository.findById(treatingDoctorId).orElseThrow(DoctorNotFoundException::new);
+        return this.doctorMapper.toDomain(entity);
     }
 
     @Override
-    public Doctor getById(UUID treatingDoctorId) throws DoctorNotFoundException {
-        System.out.println(treatingDoctorId);
-        DoctorEntity entity = this.doctorJpaRepository.findById(treatingDoctorId).orElseThrow(DoctorNotFoundException::new);
-        return this.doctorMapper.toDomain(entity);
+    public Optional<Doctor> getByUserId(UUID userId) {
+        Optional<DoctorEntity> doctor = this.doctorJpaRepository.findByUser_Id(userId);
+
+        if (doctor.isPresent()) {
+            DoctorEntity entity = doctor.get();
+            return Optional.of(this.doctorMapper.toDomain(entity));
+        } else {
+            return Optional.empty();
+        }
     }
 }

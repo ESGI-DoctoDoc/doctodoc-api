@@ -7,7 +7,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DoctorJpaRepository extends JpaRepository<DoctorEntity, UUID> {
-    boolean existsByUser_Id(UUID userId);
-
     Optional<DoctorEntity> findById(UUID id);
+
+    Optional<DoctorEntity> findByUser_Id(UUID userId);
 }

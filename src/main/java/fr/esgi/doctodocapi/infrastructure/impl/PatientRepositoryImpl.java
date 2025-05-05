@@ -12,6 +12,7 @@ import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
 import java.util.UUID;
 
 @Service
@@ -21,7 +22,8 @@ public class PatientRepositoryImpl implements PatientRepository {
     private final DoctorJpaRepository doctorJpaRepository;
     private final PatientMapper patientMapper;
 
-    public PatientRepositoryImpl(PatientJpaRepository patientJpaRepository, UserJpaRepository userJpaRepository, DoctorJpaRepository doctorJpaRepository, PatientMapper patientMapper) {
+    public PatientRepositoryImpl(PatientJpaRepository patientJpaRepository, UserJpaRepository userJpaRepository,
+                                 DoctorJpaRepository doctorJpaRepository, PatientMapper patientMapper) {
         this.patientJpaRepository = patientJpaRepository;
         this.userJpaRepository = userJpaRepository;
         this.doctorJpaRepository = doctorJpaRepository;
@@ -29,8 +31,15 @@ public class PatientRepositoryImpl implements PatientRepository {
     }
 
     @Override
-    public boolean isExistByUserId(UUID userId) {
-        return this.patientJpaRepository.existsByUser_Id(userId);
+    public Optional<Patient> getByUserId(UUID userId) {
+        Optional<PatientEntity> patient = this.patientJpaRepository.findByUser_Id(userId);
+
+        if (patient.isPresent()) {
+            PatientEntity entity = patient.get();
+            return Optional.of(this.patientMapper.toDomain(entity));
+        } else {
+            return Optional.empty();
+        }
     }
 
     @Override
@@ -50,7 +59,7 @@ public class PatientRepositoryImpl implements PatientRepository {
 
     @Override
     public boolean isExistMainAccount(UUID userId) {
-        return this.patientJpaRepository.existsByUser_idAndMainAccount(userId, true);
+        return this.patientJpaRepository.existsByUser_IdAndIsMainAccount(userId, true);
     }
 
 }
