@@ -18,7 +18,7 @@ public class RegisterPatientController {
 
     @PostMapping("register")
     @ResponseStatus(HttpStatus.CREATED)
-    public void registerDoctor(@Valid @RequestBody RegisterRequest registerRequest) {
+    public void registerPatient(@Valid @RequestBody RegisterRequest registerRequest) {
         this.registerUser.register(registerRequest);
     }
 }

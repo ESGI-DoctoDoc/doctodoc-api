@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.use_cases.doctor;
 
 import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
 import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
-import fr.esgi.doctodocapi.dtos.responses.DoubleAuthenticationResponse;
+import fr.esgi.doctodocapi.dtos.responses.DoubleAuthenticationUserResponse;
 import fr.esgi.doctodocapi.dtos.responses.LoginResponse;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
@@ -13,6 +13,7 @@ import fr.esgi.doctodocapi.use_cases.user.AuthenticateUser;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class AuthenticateDoctor {
@@ -32,13 +33,14 @@ public class AuthenticateDoctor {
         return this.authenticateUser.loginUser(loginRequest, UserRoles.DOCTOR.name());
     }
 
-    public DoubleAuthenticationResponse validateDoubleAuthCode(ValidateDoubleAuthRequest validateDoubleAuthRequest) {
+    public DoubleAuthenticationUserResponse validateDoubleAuthCode(ValidateDoubleAuthRequest validateDoubleAuthRequest) {
         User user = this.authenticateUser.validateDoubleAuth(validateDoubleAuthRequest);
 
         String token = this.generatorToken.generate(user.getEmail().getValue(), UserRoles.PATIENT.name(),
                 TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES);
 
         Optional<Doctor> optionalDoctor = this.doctorRepository.getByUserId(user.getId());
+        UUID id = null;
         String email = null;
         String firstName = null;
         String lastName = null;
@@ -47,6 +49,7 @@ public class AuthenticateDoctor {
 
         if (optionalDoctor.isPresent()) {
             Doctor doctor = optionalDoctor.get();
+            id = doctor.getId();
             email = doctor.getEmail().getValue();
             firstName = doctor.getFirstName();
             lastName = doctor.getLastName();
@@ -54,7 +57,8 @@ public class AuthenticateDoctor {
             hasOnBoardingDone = true;
         }
 
-        return new DoubleAuthenticationResponse(
+        return new DoubleAuthenticationUserResponse(
+                id,
                 token,
                 hasOnBoardingDone,
                 email,

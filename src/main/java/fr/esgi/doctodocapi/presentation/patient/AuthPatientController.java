@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
 import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
-import fr.esgi.doctodocapi.dtos.responses.DoubleAuthenticationResponse;
+import fr.esgi.doctodocapi.dtos.responses.DoubleAuthenticationUserResponse;
 import fr.esgi.doctodocapi.dtos.responses.LoginResponse;
 import fr.esgi.doctodocapi.use_cases.patient.AuthenticatePatient;
 import jakarta.validation.Valid;
@@ -27,7 +27,7 @@ public class AuthPatientController {
 
     @PostMapping("validate-double-auth")
     @ResponseStatus(value = HttpStatus.OK)
-    public DoubleAuthenticationResponse validateDoubleAuth(@Valid @RequestBody ValidateDoubleAuthRequest validateDoubleAuthRequest) {
+    public DoubleAuthenticationUserResponse validateDoubleAuth(@Valid @RequestBody ValidateDoubleAuthRequest validateDoubleAuthRequest) {
         return this.authenticatePatient.validateDoubleAuthCode(validateDoubleAuthRequest);
     }
 

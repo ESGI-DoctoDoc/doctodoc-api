@@ -1,8 +1,9 @@
 package fr.esgi.doctodocapi.dtos.responses;
 
-public record DoubleAuthenticationResponse(
-        String token,
-        boolean hasOnBoardingDone,
+import java.util.UUID;
+
+public record OnBoardingPatientResponse(
+        UUID id,
         String email,
         String firstName,
         String lastName,

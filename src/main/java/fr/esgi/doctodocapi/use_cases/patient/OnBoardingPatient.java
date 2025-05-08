@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.use_cases.patient;
 
 import fr.esgi.doctodocapi.dtos.requests.patient.PatientOnBoardingRequest;
 import fr.esgi.doctodocapi.dtos.requests.patient.SaveDoctorRecruitmentRequest;
+import fr.esgi.doctodocapi.dtos.responses.OnBoardingPatientResponse;
 import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.exceptions.on_boarding.HasAlreadyMainAccount;
 import fr.esgi.doctodocapi.model.DomainException;
@@ -29,7 +30,9 @@ public class OnBoardingPatient {
     private final DoctorRepository doctorRepository;
     private final DoctorRecruitmentRepository doctorRecruitmentRepository;
 
-    public OnBoardingPatient(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, DoctorRecruitmentRepository doctorRecruitmentRepository) {
+    public OnBoardingPatient(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository,
+                             PatientRepository patientRepository, DoctorRepository doctorRepository,
+                             DoctorRecruitmentRepository doctorRecruitmentRepository) {
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
         this.patientRepository = patientRepository;
@@ -37,7 +40,7 @@ public class OnBoardingPatient {
         this.doctorRecruitmentRepository = doctorRecruitmentRepository;
     }
 
-    public void process(PatientOnBoardingRequest patientOnBoardingRequest) {
+    public OnBoardingPatientResponse process(PatientOnBoardingRequest patientOnBoardingRequest) {
         String firstName = patientOnBoardingRequest.firstName().trim();
         String lastName = patientOnBoardingRequest.lastName().trim();
         LocalDate birthdate = patientOnBoardingRequest.birthdate();
@@ -46,20 +49,26 @@ public class OnBoardingPatient {
         String username = this.getCurrentUserContext.getUsername();
 
         try {
-            User user = this.userRepository.findByEmail(username);
 
-            boolean hasAlreadyMainAccount = this.patientRepository.isExistMainAccount(user.getId());
-            if (hasAlreadyMainAccount) {
-                throw new HasAlreadyMainAccount();
-            }
+            User user = this.userRepository.findByEmail(username);
+            this.checkIfHasMainAccount(user.getId());
 
             Doctor doctor = null;
 
             if (treatingDoctorId != null) {
                 doctor = this.doctorRepository.getById(treatingDoctorId);
             }
+
             Patient patient = Patient.createFromOnBoarding(user, firstName, lastName, birthdate, doctor);
             this.patientRepository.save(patient);
+
+            return new OnBoardingPatientResponse(
+                    patient.getId(),
+                    patient.getEmail().getValue(),
+                    patient.getFirstName(),
+                    patient.getLastName(),
+                    patient.getPhoneNumber().getValue()
+            );
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
@@ -73,6 +82,13 @@ public class OnBoardingPatient {
         DoctorRecruitment doctorToRecruit = DoctorRecruitment.create(firstName, lastName);
 
         this.doctorRecruitmentRepository.save(doctorToRecruit);
+    }
+
+    private void checkIfHasMainAccount(UUID userId) {
+        boolean hasAlreadyMainAccount = this.patientRepository.isExistMainAccount(userId);
+        if (hasAlreadyMainAccount) {
+            throw new HasAlreadyMainAccount();
+        }
     }
 
 }
