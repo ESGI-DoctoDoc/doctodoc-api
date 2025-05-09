@@ -5,10 +5,10 @@ import java.util.regex.Pattern;
 
 public class PhoneNumber {
     /**
-     * exemple de num qui marche : +330783476669, +33783476669, 0783476669
+     * exemple de num qui marche : +33783476669
      */
     private static final Pattern VALID_PHONE_NUMBER_REGEX =
-            Pattern.compile("^(0[1-9][0-9]{8}|\\+33[0]?[1-9][0-9]{8})$");
+            Pattern.compile("^\\+33[1-9]\\d{8}$");
 
     private final String value;
 

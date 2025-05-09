@@ -1,0 +1,33 @@
+package fr.esgi.doctodocapi.dtos.requests.doctor;
+
+import jakarta.validation.constraints.*;
+
+import java.time.LocalDate;
+import java.util.List;
+
+public record OnBoardingDoctorRequest (
+        @NotBlank String rpps,
+        @NotBlank String specialty,
+        @NotNull @Min(0) Short experienceYears,
+        @NotEmpty List<String> medicalConcerns,
+        @NotNull Boolean acceptPublicCoverage,
+        @NotBlank String firstName,
+        @NotBlank String lastName,
+        @NotNull LocalDate birthDate,
+        @NotBlank String bio,
+        @NotBlank String profilePictureUrl,
+        @NotEmpty List<String> languages,
+        @NotEmpty List<String> doctorDocuments
+){
+    public OnBoardingDoctorRequest {
+        rpps = rpps.trim();
+        specialty = specialty.trim();
+        firstName = firstName.trim();
+        lastName = lastName.trim();
+        bio = bio.trim();
+        profilePictureUrl = profilePictureUrl.trim();
+        medicalConcerns = medicalConcerns.stream().map(String::trim).toList();
+        languages = languages.stream().map(String::trim).toList();
+        doctorDocuments = doctorDocuments.stream().map(String::trim).toList();
+    }
+}

@@ -1,11 +1,13 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
+import fr.esgi.doctodocapi.model.doctor.DoctorStatus;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -14,13 +16,15 @@ import java.util.UUID;
 public class DoctorEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "doctor_id")
     private UUID id;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UserEntity user;
+
+    @Column(name = "doctor_status", nullable = false)
+    private String doctorStatus = DoctorStatus.INACTIVE.getValue();
 
     @Column(name = "rpps", nullable = false, unique = true)
     @Length(max = 11, min = 11)
@@ -29,7 +33,7 @@ public class DoctorEntity {
     @Column(name = "profile_picture_url", nullable = false)
     private String profilePictureUrl;
 
-    @Column(name ="bio", columnDefinition = "text", nullable = false)
+    @Column(name ="bio", columnDefinition = "text")
     private String bio;
 
     @Column(name ="first_name", nullable = false)
@@ -37,6 +41,9 @@ public class DoctorEntity {
 
     @Column(name ="last_name", nullable = false)
     private String lastName;
+
+    @Column(name = "birth_date", nullable = false)
+    private LocalDate birthDate;
 
     @Column(name = "speciality", nullable = false)
     private String speciality;
@@ -52,20 +59,27 @@ public class DoctorEntity {
     @JdbcTypeCode(SqlTypes.ARRAY)
     private String[] languages;
 
-    @Column(name = "consultation_clinic_price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "consultation_clinic_price", precision = 10, scale = 2)
     private BigDecimal consultationClinicPrice;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address")
     private String address;
 
-    @Column(name = "clinic_latitude", nullable = false, precision = 9, scale = 6)
+    @Column(name = "clinic_latitude", precision = 9, scale = 6)
     private BigDecimal clinicLatitude;
 
-    @Column(name = "clinic_longitude", nullable = false, precision = 9, scale = 6)
+    @Column(name = "clinic_longitude", precision = 9, scale = 6)
     private BigDecimal clinicLongitude;
 
     @Column(name = "is_verified", nullable = false)
     private boolean isVerified;
+
+    @Column(name = "accept_public_coverage", nullable = false)
+    private boolean acceptPublicCoverage;
+
+    @Column(name = "doctor_documents", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private String[] doctorDocuments;
 
     public UUID getId() {
         return id;
@@ -81,6 +95,14 @@ public class DoctorEntity {
 
     public void setUser(UserEntity user) {
         this.user = user;
+    }
+
+    public String getDoctorStatus() {
+        return doctorStatus;
+    }
+
+    public void setDoctorStatus(String doctorStatus) {
+        this.doctorStatus = doctorStatus;
     }
 
     public String getRpps() {
@@ -187,12 +209,36 @@ public class DoctorEntity {
         this.lastName = lastName;
     }
 
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
     public boolean isVerified() {
         return isVerified;
     }
 
     public void setVerified(boolean verified) {
         isVerified = verified;
+    }
+
+    public boolean isAcceptPublicCoverage() {
+        return acceptPublicCoverage;
+    }
+
+    public void setAcceptPublicCoverage(boolean acceptPublicCoverage) {
+        this.acceptPublicCoverage = acceptPublicCoverage;
+    }
+
+    public String[] getDoctorDocuments() {
+        return doctorDocuments;
+    }
+
+    public void setDoctorDocuments(String[] doctorDocuments) {
+        this.doctorDocuments = doctorDocuments;
     }
 
     @Override
