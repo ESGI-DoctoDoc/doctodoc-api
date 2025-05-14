@@ -11,6 +11,15 @@ public enum DoctorStatus {
         this.value = value;
     }
 
+    public static DoctorStatus fromValue(String value) {
+        for (DoctorStatus type : DoctorStatus.values()) {
+            if (type.value.equalsIgnoreCase(value)) {
+                return type;
+            }
+        }
+        throw new DoctorStatusNotFoundException();
+    }
+
     public String getValue() {
         return value;
     }

@@ -8,6 +8,7 @@ import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -53,11 +54,11 @@ public class DoctorEntity {
 
     @Column(name = "medical_concerns", columnDefinition = "text[]", nullable = false)
     @JdbcTypeCode(SqlTypes.ARRAY)
-    private String[] medicalConcerns;
+    private List<String> medicalConcerns;
 
     @Column(name = "languages", columnDefinition = "text[]", nullable = false)
     @JdbcTypeCode(SqlTypes.ARRAY)
-    private String[] languages;
+    private List<String> languages;
 
     @Column(name = "consultation_clinic_price", precision = 10, scale = 2)
     private BigDecimal consultationClinicPrice;
@@ -79,7 +80,7 @@ public class DoctorEntity {
 
     @Column(name = "doctor_documents", columnDefinition = "text[]", nullable = false)
     @JdbcTypeCode(SqlTypes.ARRAY)
-    private String[] doctorDocuments;
+    private List<String> doctorDocuments;
 
     public UUID getId() {
         return id;
@@ -145,19 +146,19 @@ public class DoctorEntity {
         this.experienceYears = experienceYears;
     }
 
-    public String[] getMedicalConcerns() {
+    public List<String> getMedicalConcerns() {
         return medicalConcerns;
     }
 
-    public void setMedicalConcerns(String[] medicalConcerns) {
+    public void setMedicalConcerns(List<String> medicalConcerns) {
         this.medicalConcerns = medicalConcerns;
     }
 
-    public String[] getLanguages() {
+    public List<String> getLanguages() {
         return languages;
     }
 
-    public void setLanguages(String[] languages) {
+    public void setLanguages(List<String> languages) {
         this.languages = languages;
     }
 
@@ -233,11 +234,11 @@ public class DoctorEntity {
         this.acceptPublicCoverage = acceptPublicCoverage;
     }
 
-    public String[] getDoctorDocuments() {
+    public List<String> getDoctorDocuments() {
         return doctorDocuments;
     }
 
-    public void setDoctorDocuments(String[] doctorDocuments) {
+    public void setDoctorDocuments(List<String> doctorDocuments) {
         this.doctorDocuments = doctorDocuments;
     }
 
