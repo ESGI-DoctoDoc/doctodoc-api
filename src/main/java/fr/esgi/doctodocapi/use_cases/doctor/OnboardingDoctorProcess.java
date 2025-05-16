@@ -1,13 +1,11 @@
 package fr.esgi.doctodocapi.use_cases.doctor;
 
-import fr.esgi.doctodocapi.dtos.requests.doctor.DoctorValidationRequest;
 import fr.esgi.doctodocapi.dtos.requests.doctor.OnBoardingDoctorRequest;
 import fr.esgi.doctodocapi.dtos.responses.doctor.OnboardingProcessResponse;
 import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.exceptions.on_boarding.DoctorAccountAlreadyExist;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
@@ -44,13 +42,6 @@ public class OnboardingDoctorProcess {
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
-    }
-
-    public void validateDoctorAccount(DoctorValidationRequest request) {
-        Doctor doctor = this.doctorRepository.findDoctorByUserId(request.doctorId());
-
-        Doctor.validateAccount(doctor);
-        this.doctorRepository.save(doctor);
     }
 
     private User getAuthenticatedUserOrThrow() {

@@ -1,5 +1,7 @@
 package fr.esgi.doctodocapi.model.doctor.professionnal_informations;
 
+import fr.esgi.doctodocapi.model.vo.rpps.Rpps;
+
 import java.util.List;
 
 public class DoctorProfessionalInformations {

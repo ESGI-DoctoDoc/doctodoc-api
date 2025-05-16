@@ -4,6 +4,7 @@ import fr.esgi.doctodocapi.dtos.requests.doctor.DoctorValidationRequest;
 import fr.esgi.doctodocapi.dtos.requests.doctor.OnBoardingDoctorRequest;
 import fr.esgi.doctodocapi.exceptions.on_boarding.DoctorAccountAlreadyExist;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
@@ -12,6 +13,7 @@ import fr.esgi.doctodocapi.model.vo.email.Email;
 import fr.esgi.doctodocapi.model.vo.password.Password;
 import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
 import fr.esgi.doctodocapi.use_cases.doctor.OnboardingDoctorProcess;
+import fr.esgi.doctodocapi.use_cases.user.ValidateDoctorAccount;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -20,8 +22,6 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -36,13 +36,15 @@ import static org.mockito.Mockito.when;
 @ExtendWith(MockitoExtension.class)
 class OnboardingDoctorProcessTest {
 
-    private static final Logger log = LoggerFactory.getLogger(OnboardingDoctorProcessTest.class);
     @Mock private DoctorRepository doctorRepository;
     @Mock private UserRepository userRepository;
     @Mock private GetCurrentUserContext authContext;
 
     @InjectMocks
     private OnboardingDoctorProcess onboarding;
+
+    @InjectMocks
+    private ValidateDoctorAccount validateDoctorAccount;
 
     private final UUID userId = UUID.randomUUID();
     private User mockUser;
@@ -140,15 +142,15 @@ class OnboardingDoctorProcessTest {
         verify(doctorRepository).save(captor.capture());
 
         Doctor saved = captor.getValue();
-//        assertThat(saved.getRpps()).isEqualTo("12345678801");
-//        assertThat(saved.getFirstName()).isEqualTo("John");
-//        assertThat(saved.getLastName()).isEqualTo("Doe");
-//        assertThat(saved.getSpecialty()).isEqualTo("Cardiology");
-//        assertThat(saved.getBio()).isEqualTo("bio");
-//        assertThat(saved.getProfilePictureUrl()).isEqualTo("url");
-//        assertThat(saved.getMedicalConcerns()).containsExactly("cardiology", "general");
-//        assertThat(saved.getLanguages()).containsExactly("English", "French");
-//        assertThat(saved.getDoctorDocuments()).containsExactly("https://ex.com/1.pdf", "https://ex.com/2.pdf");
+        assertThat(saved.getProfessionalInformations().getRpps().getValue()).isEqualTo("12345678801");
+        assertThat(saved.getPersonalInformations().getFirstName()).isEqualTo("John");
+        assertThat(saved.getPersonalInformations().getLastName()).isEqualTo("Doe");
+        assertThat(saved.getProfessionalInformations().getSpeciality()).isEqualTo("Cardiology");
+        assertThat(saved.getProfessionalInformations().getBio()).isEqualTo("bio");
+        assertThat(saved.getPersonalInformations().getProfilePictureUrl()).isEqualTo("url");
+        assertThat(saved.getConsultationInformations().getMedicalConcerns()).containsExactly("cardiology", "general");
+        assertThat(saved.getProfessionalInformations().getLanguages()).containsExactly("English", "French");
+        assertThat(saved.getProfessionalInformations().getDoctorDocuments()).containsExactly("https://ex.com/1.pdf", "https://ex.com/2.pdf");
     }
 
     @Test
@@ -158,8 +160,8 @@ class OnboardingDoctorProcessTest {
 
         DoctorValidationRequest request = new DoctorValidationRequest(unknownDoctorId);
 
-        assertThatThrownBy(() -> onboarding.validateDoctorAccount(request))
-                .isInstanceOf(NullPointerException.class);
+        assertThatThrownBy(() -> validateDoctorAccount.validateDoctorAccount(request))
+                .isInstanceOf(DoctorNotFoundException.class);
     }
 
     @Test

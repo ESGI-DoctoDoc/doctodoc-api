@@ -68,7 +68,7 @@ public class DoctorMapper {
 
         DoctorEntity entity = new DoctorEntity();
         entity.setUser(userEntity);
-        entity.setId(doctor.getId());
+        entity.setId(doctor.getUserId());
         entity.setRpps(professionalInformations.getRpps().getValue());
         entity.setDoctorStatus(doctor.getDoctorStatus().getValue());
         entity.setProfilePictureUrl(personnalInformations.getProfilePictureUrl());

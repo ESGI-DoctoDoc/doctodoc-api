@@ -48,8 +48,8 @@ public class AuthenticateDoctor {
         if (optionalDoctor.isPresent()) {
             Doctor doctor = optionalDoctor.get();
             email = doctor.getEmail().getValue();
-            firstName = doctor.getFirstName();
-            lastName = doctor.getLastName();
+            firstName = doctor.getPersonalInformations().getFirstName();
+            lastName = doctor.getPersonalInformations().getLastName();
             phoneNumber = doctor.getPhoneNumber().getValue();
             hasOnBoardingDone = true;
         }
