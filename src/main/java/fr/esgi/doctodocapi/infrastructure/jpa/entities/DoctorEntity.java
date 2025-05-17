@@ -6,6 +6,8 @@ import org.hibernate.type.SqlTypes;
 import org.hibernate.validator.constraints.Length;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -14,7 +16,6 @@ import java.util.UUID;
 public class DoctorEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "doctor_id")
     private UUID id;
 
@@ -29,7 +30,7 @@ public class DoctorEntity {
     @Column(name = "profile_picture_url", nullable = false)
     private String profilePictureUrl;
 
-    @Column(name ="bio", columnDefinition = "text", nullable = false)
+    @Column(name ="bio", columnDefinition = "text")
     private String bio;
 
     @Column(name ="first_name", nullable = false)
@@ -38,34 +39,44 @@ public class DoctorEntity {
     @Column(name ="last_name", nullable = false)
     private String lastName;
 
+    @Column(name = "birth_date", nullable = false)
+    private LocalDate birthDate;
+
     @Column(name = "speciality", nullable = false)
     private String speciality;
 
     @Column(name = "experience_years", nullable = false)
     private Short experienceYears;
 
-    @Column(name = "medical_concerns", columnDefinition = "text[]", nullable = false)
+    @Column(name = "medical_concerns", columnDefinition = "text[]")
     @JdbcTypeCode(SqlTypes.ARRAY)
-    private String[] medicalConcerns;
+    private List<String> medicalConcerns;
 
-    @Column(name = "languages", columnDefinition = "text[]", nullable = false)
+    @Column(name = "languages", columnDefinition = "text[]")
     @JdbcTypeCode(SqlTypes.ARRAY)
-    private String[] languages;
+    private List<String> languages;
 
-    @Column(name = "consultation_clinic_price", nullable = false, precision = 10, scale = 2)
+    @Column(name = "consultation_clinic_price", precision = 10, scale = 2)
     private BigDecimal consultationClinicPrice;
 
-    @Column(name = "address", nullable = false)
+    @Column(name = "address")
     private String address;
 
-    @Column(name = "clinic_latitude", nullable = false, precision = 9, scale = 6)
+    @Column(name = "clinic_latitude", precision = 9, scale = 6)
     private BigDecimal clinicLatitude;
 
-    @Column(name = "clinic_longitude", nullable = false, precision = 9, scale = 6)
+    @Column(name = "clinic_longitude", precision = 9, scale = 6)
     private BigDecimal clinicLongitude;
 
     @Column(name = "is_verified", nullable = false)
     private boolean isVerified;
+
+    @Column(name = "accept_public_coverage", nullable = false)
+    private boolean acceptPublicCoverage;
+
+    @Column(name = "doctor_documents", columnDefinition = "text[]", nullable = false)
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private List<String> doctorDocuments;
 
     public UUID getId() {
         return id;
@@ -123,19 +134,19 @@ public class DoctorEntity {
         this.experienceYears = experienceYears;
     }
 
-    public String[] getMedicalConcerns() {
+    public List<String> getMedicalConcerns() {
         return medicalConcerns;
     }
 
-    public void setMedicalConcerns(String[] medicalConcerns) {
+    public void setMedicalConcerns(List<String> medicalConcerns) {
         this.medicalConcerns = medicalConcerns;
     }
 
-    public String[] getLanguages() {
+    public List<String> getLanguages() {
         return languages;
     }
 
-    public void setLanguages(String[] languages) {
+    public void setLanguages(List<String> languages) {
         this.languages = languages;
     }
 
@@ -187,12 +198,36 @@ public class DoctorEntity {
         this.lastName = lastName;
     }
 
+    public LocalDate getBirthDate() {
+        return birthDate;
+    }
+
+    public void setBirthDate(LocalDate birthDate) {
+        this.birthDate = birthDate;
+    }
+
     public boolean isVerified() {
         return isVerified;
     }
 
     public void setVerified(boolean verified) {
         isVerified = verified;
+    }
+
+    public boolean isAcceptPublicCoverage() {
+        return acceptPublicCoverage;
+    }
+
+    public void setAcceptPublicCoverage(boolean acceptPublicCoverage) {
+        this.acceptPublicCoverage = acceptPublicCoverage;
+    }
+
+    public List<String> getDoctorDocuments() {
+        return doctorDocuments;
+    }
+
+    public void setDoctorDocuments(List<String> doctorDocuments) {
+        this.doctorDocuments = doctorDocuments;
     }
 
     @Override
