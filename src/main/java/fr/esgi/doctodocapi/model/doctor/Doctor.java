@@ -2,10 +2,8 @@ package fr.esgi.doctodocapi.model.doctor;
 
 import fr.esgi.doctodocapi.dtos.requests.doctor.OnBoardingDoctorRequest;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.DoctorConsultationInformations;
-import fr.esgi.doctodocapi.model.doctor.personal_information.CoordinatesGps;
 import fr.esgi.doctodocapi.model.doctor.personal_information.DoctorPersonnalInformations;
 import fr.esgi.doctodocapi.model.doctor.professionnal_informations.DoctorProfessionalInformations;
-import fr.esgi.doctodocapi.model.patient.PatientMustHaveMajority;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.vo.birthdate.Birthdate;
 import fr.esgi.doctodocapi.model.vo.email.Email;
@@ -19,33 +17,27 @@ import java.util.UUID;
 
 public class Doctor extends User {
     private UUID id;
-    private DoctorStatus doctorStatus;
     private DoctorPersonnalInformations personalInformations;
     private DoctorProfessionalInformations professionalInformations;
     private DoctorConsultationInformations consultationInformations;
     private boolean isVerified;
-    private boolean acceptPublicCoverage;
 
-    private Doctor(User user, UUID id, DoctorStatus doctorStatus, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified, boolean acceptPublicCoverage) {
+    private Doctor(User user, UUID id, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified) {
         super(user.getId(), user.getEmail(), user.getPassword(), user.getPhoneNumber(), user.isEmailVerified(), user.isDoubleAuthActive(), user.getDoubleAuthCode(), user.getCreatedAt());
         this.id = id;
-        this.doctorStatus = doctorStatus;
         this.personalInformations = personalInformations;
         this.professionalInformations = professionalInformations;
         this.consultationInformations = consultationInformations;
         this.isVerified = isVerified;
-        this.acceptPublicCoverage = acceptPublicCoverage;
     }
 
-    public Doctor(UUID userId, Email email, Password password, PhoneNumber phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, DoctorStatus doctorStatus, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified, boolean acceptPublicCoverage) {
+    public Doctor(UUID userId, Email email, Password password, PhoneNumber phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified) {
         super(userId, email, password, phoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
         this.id = id;
-        this.doctorStatus = doctorStatus;
         this.personalInformations = personalInformations;
         this.professionalInformations = professionalInformations;
         this.consultationInformations = consultationInformations;
         this.isVerified = isVerified;
-        this.acceptPublicCoverage = acceptPublicCoverage;
     }
 
     private static void verifyAge(LocalDate birthDate) {
@@ -53,7 +45,7 @@ public class Doctor extends User {
 
         LocalDate now = LocalDate.now().minusYears(minimumAgeToHave);
         if (birthDate.isAfter(now)) {
-            throw new PatientMustHaveMajority(); // todo mettre une erreur docteur
+            throw new DoctorMustHaveMajority();
         }
     }
 
@@ -73,26 +65,25 @@ public class Doctor extends User {
                 onBoardingDoctorRequest.specialty(),
                 onBoardingDoctorRequest.experienceYears(),
                 onBoardingDoctorRequest.languages(),
-                onBoardingDoctorRequest.doctorDocuments()
+                onBoardingDoctorRequest.doctorDocuments(),
+                onBoardingDoctorRequest.acceptPublicCoverage()
         );
 
         DoctorConsultationInformations consultationInformations = new DoctorConsultationInformations(
                 null,
                 null,
-                CoordinatesGps.of(null, null),
-                onBoardingDoctorRequest.medicalConcerns()
+                null,
+                null
         );
 
 
         return new Doctor(
                 user,
                 UUID.randomUUID(),
-                DoctorStatus.PENDING_VALIDATION,
                 personalInformations,
                 professionalInformations,
                 consultationInformations,
-                false,
-                onBoardingDoctorRequest.acceptPublicCoverage()
+                false
         );
     }
 
@@ -104,14 +95,6 @@ public class Doctor extends User {
     @Override
     public void setId(UUID id) {
         this.id = id;
-    }
-
-    public DoctorStatus getDoctorStatus() {
-        return doctorStatus;
-    }
-
-    public void setDoctorStatus(DoctorStatus doctorStatus) {
-        this.doctorStatus = doctorStatus;
     }
 
     public DoctorPersonnalInformations getPersonalInformations() {
@@ -144,14 +127,6 @@ public class Doctor extends User {
 
     public void setVerified(boolean verified) {
         isVerified = verified;
-    }
-
-    public boolean isAcceptPublicCoverage() {
-        return acceptPublicCoverage;
-    }
-
-    public void setAcceptPublicCoverage(boolean acceptPublicCoverage) {
-        this.acceptPublicCoverage = acceptPublicCoverage;
     }
 
     public UUID getUserId() {

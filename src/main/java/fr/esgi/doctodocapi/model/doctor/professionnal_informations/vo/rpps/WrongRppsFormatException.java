@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.model.vo.rpps;
+package fr.esgi.doctodocapi.model.doctor.professionnal_informations.vo.rpps;
 
 import fr.esgi.doctodocapi.model.DomainException;
 

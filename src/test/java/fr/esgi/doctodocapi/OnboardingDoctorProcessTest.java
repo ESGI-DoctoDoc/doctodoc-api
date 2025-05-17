@@ -69,7 +69,7 @@ class OnboardingDoctorProcessTest {
                 "12345678801",
                 "Cardiology",
                 (short) 5,
-                List.of("cardiology", "general"),
+
                 true,
                 "John",
                 "Doe",
@@ -93,7 +93,7 @@ class OnboardingDoctorProcessTest {
                 "12345678801",
                 "Cardiology",
                 (short) 5,
-                List.of("cardiology", "general"),
+
                 true,
                 "John",
                 "Doe",
@@ -125,7 +125,6 @@ class OnboardingDoctorProcessTest {
                 "  12345678801  ",
                 "  Cardiology ",
                 (short) 5,
-                List.of(" cardiology ", " general "),
                 true,
                 " John ",
                 " Doe ",
@@ -172,7 +171,7 @@ class OnboardingDoctorProcessTest {
 
         OnBoardingDoctorRequest request = new OnBoardingDoctorRequest(
                 "12345678801", "Cardiology", (short) 5,
-                List.of("cardiology", "general"), true,
+                 true,
                 "John", "Doe", LocalDate.of(1980, 5, 12), "bio", "url",
                 List.of("English"), List.of("http://doc1.pdf")
         );

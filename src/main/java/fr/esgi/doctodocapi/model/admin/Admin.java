@@ -1,7 +1,6 @@
 package fr.esgi.doctodocapi.model.admin;
 
 import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.DoctorStatus;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.vo.email.Email;
 import fr.esgi.doctodocapi.model.vo.password.Password;
@@ -19,7 +18,6 @@ public class Admin extends User {
 
     public static void validateDoctorAccount(Doctor doctor) {
         doctor.setVerified(true);
-        doctor.setDoctorStatus(DoctorStatus.ACTIVE);
     }
 
     @Override

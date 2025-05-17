@@ -12,6 +12,9 @@ public class CoordinatesGps {
     }
 
     public static CoordinatesGps of(BigDecimal clinicLatitude, BigDecimal clinicLongitude) {
+        if (clinicLatitude == null || clinicLongitude == null) {
+            return null;
+        }
         return new CoordinatesGps(clinicLatitude, clinicLongitude);
     }
 

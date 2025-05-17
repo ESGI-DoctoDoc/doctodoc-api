@@ -1,6 +1,5 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
-import fr.esgi.doctodocapi.model.doctor.DoctorStatus;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
@@ -23,9 +22,6 @@ public class DoctorEntity {
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UserEntity user;
-
-    @Column(name = "doctor_status", nullable = false)
-    private String doctorStatus = DoctorStatus.INACTIVE.getValue();
 
     @Column(name = "rpps", nullable = false, unique = true)
     @Length(max = 11, min = 11)
@@ -52,11 +48,11 @@ public class DoctorEntity {
     @Column(name = "experience_years", nullable = false)
     private Short experienceYears;
 
-    @Column(name = "medical_concerns", columnDefinition = "text[]", nullable = false)
+    @Column(name = "medical_concerns", columnDefinition = "text[]")
     @JdbcTypeCode(SqlTypes.ARRAY)
     private List<String> medicalConcerns;
 
-    @Column(name = "languages", columnDefinition = "text[]", nullable = false)
+    @Column(name = "languages", columnDefinition = "text[]")
     @JdbcTypeCode(SqlTypes.ARRAY)
     private List<String> languages;
 
@@ -96,14 +92,6 @@ public class DoctorEntity {
 
     public void setUser(UserEntity user) {
         this.user = user;
-    }
-
-    public String getDoctorStatus() {
-        return doctorStatus;
-    }
-
-    public void setDoctorStatus(String doctorStatus) {
-        this.doctorStatus = doctorStatus;
     }
 
     public String getRpps() {
