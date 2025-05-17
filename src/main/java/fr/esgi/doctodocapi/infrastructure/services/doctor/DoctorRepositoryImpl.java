@@ -1,13 +1,13 @@
-package fr.esgi.doctodocapi.infrastructure.impl;
+package fr.esgi.doctodocapi.infrastructure.services.doctor;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DoctorJpaRepository;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.UserJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.DoctorMapper;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.DoctorNotFoundException;
-import fr.esgi.doctodocapi.infrastructure.jpa.repositories.UserJpaRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
+import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
@@ -17,14 +17,16 @@ import java.util.UUID;
 @Service
 public class DoctorRepositoryImpl implements DoctorRepository {
     private final DoctorJpaRepository doctorJpaRepository;
-    private final UserJpaRepository userJpaRepository;
     private final DoctorMapper doctorMapper;
+    private final UserJpaRepository userJpaRepository;
 
-    public DoctorRepositoryImpl(DoctorJpaRepository doctorJpaRepository, UserJpaRepository userJpaRepository, DoctorMapper doctorMapper) {
+
+    public DoctorRepositoryImpl(DoctorJpaRepository doctorJpaRepository, DoctorMapper doctorMapper, UserJpaRepository userJpaRepository) {
         this.doctorJpaRepository = doctorJpaRepository;
-        this.userJpaRepository = userJpaRepository;
         this.doctorMapper = doctorMapper;
+        this.userJpaRepository = userJpaRepository;
     }
+
 
     @Override
     public Doctor getById(UUID treatingDoctorId) throws DoctorNotFoundException {
@@ -62,4 +64,5 @@ public class DoctorRepositoryImpl implements DoctorRepository {
                 .orElseThrow(DoctorNotFoundException::new);
         return doctorMapper.toDomain(entity);
     }
+
 }

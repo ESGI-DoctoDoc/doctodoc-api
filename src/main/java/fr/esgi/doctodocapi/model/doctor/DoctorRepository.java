@@ -1,5 +1,7 @@
 package fr.esgi.doctodocapi.model.doctor;
 
+import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
+
 import java.util.Optional;
 import java.util.UUID;
 
@@ -9,6 +11,5 @@ public interface DoctorRepository {
     Doctor findDoctorByUserId(UUID doctorId);
     Doctor getById(UUID treatingDoctorId) throws DoctorNotFoundException;
     boolean isExistsById(UUID doctorId);
-
     Optional<Doctor> getByUserId(UUID id);
 }

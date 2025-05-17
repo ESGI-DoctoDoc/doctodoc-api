@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.infrastructure.impl;
+package fr.esgi.doctodocapi.infrastructure.services;
 
 import fr.esgi.doctodocapi.model.user.DoubleAuthCodeGenerator;
 import org.springframework.stereotype.Service;

@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.infrastructure.impl;
+package fr.esgi.doctodocapi.infrastructure.services.patient;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.PatientEntity;
@@ -12,6 +12,7 @@ import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -32,7 +33,7 @@ public class PatientRepositoryImpl implements PatientRepository {
 
     @Override
     public Optional<Patient> getByUserId(UUID userId) {
-        Optional<PatientEntity> patient = this.patientJpaRepository.findByUser_Id(userId);
+        Optional<PatientEntity> patient = this.patientJpaRepository.findByUser_IdAndIsMainAccount(userId, true);
 
         if (patient.isPresent()) {
             PatientEntity entity = patient.get();
@@ -60,6 +61,12 @@ public class PatientRepositoryImpl implements PatientRepository {
     @Override
     public boolean isExistMainAccount(UUID userId) {
         return this.patientJpaRepository.existsByUser_IdAndIsMainAccount(userId, true);
+    }
+
+    @Override
+    public List<Patient> getCloseMembers(UUID id) {
+        List<PatientEntity> closeMembers = this.patientJpaRepository.findAllByUser_IdAndIsMainAccount(id, false);
+        return closeMembers.stream().map(this.patientMapper::toDomain).toList();
     }
 
 }

@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.infrastructure.impl;
+package fr.esgi.doctodocapi.infrastructure.services;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.UserJpaRepository;
