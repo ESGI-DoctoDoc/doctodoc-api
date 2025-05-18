@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.dtos.responses.making_appointment.doctor_questions;
+package fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.doctor_questions;
 
 public class GetDoctorQuestionsResponse {
     private final String type;

@@ -9,7 +9,8 @@ import java.util.UUID;
 public interface DoctorRepository {
     void save(Doctor doctor);
     Doctor findDoctorByUserId(UUID doctorId);
-    Doctor getById(UUID treatingDoctorId) throws DoctorNotFoundException;
+
+    Doctor getById(UUID id) throws DoctorNotFoundException;
     boolean isExistsById(UUID doctorId);
     Optional<Doctor> getByUserId(UUID id);
 }

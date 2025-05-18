@@ -8,6 +8,7 @@ import fr.esgi.doctodocapi.infrastructure.jpa.repositories.PatientJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.UserJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.PatientMapper;
 import fr.esgi.doctodocapi.model.patient.Patient;
+import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import org.springframework.stereotype.Service;
@@ -67,6 +68,12 @@ public class PatientRepositoryImpl implements PatientRepository {
     public List<Patient> getCloseMembers(UUID id) {
         List<PatientEntity> closeMembers = this.patientJpaRepository.findAllByUser_IdAndIsMainAccount(id, false);
         return closeMembers.stream().map(this.patientMapper::toDomain).toList();
+    }
+
+    @Override
+    public Patient getById(UUID id) {
+        PatientEntity entity = this.patientJpaRepository.findById(id).orElseThrow(PatientNotFoundException::new);
+        return this.patientMapper.toDomain(entity);
     }
 
 }

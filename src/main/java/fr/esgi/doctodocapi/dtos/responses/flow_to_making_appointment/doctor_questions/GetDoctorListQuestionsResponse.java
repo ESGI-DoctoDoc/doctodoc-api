@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.dtos.responses.making_appointment.doctor_questions;
+package fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.doctor_questions;
 
 import java.util.List;
 

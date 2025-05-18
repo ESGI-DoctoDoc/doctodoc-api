@@ -3,7 +3,7 @@ package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 import jakarta.persistence.*;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -24,10 +24,10 @@ public class SlotEntity {
     private LocalDate date;
 
     @Column(name = "start_hour", nullable = false)
-    private LocalDateTime startHour;
+    private LocalTime startHour;
 
     @Column(name = "end_hour", nullable = false)
-    private LocalDateTime endHour;
+    private LocalTime endHour;
 
     @ManyToMany
     @JoinTable(
@@ -56,19 +56,19 @@ public class SlotEntity {
         this.doctor = doctor;
     }
 
-    public LocalDateTime getStartHour() {
+    public LocalTime getStartHour() {
         return startHour;
     }
 
-    public void setStartHour(LocalDateTime startHour) {
+    public void setStartHour(LocalTime startHour) {
         this.startHour = startHour;
     }
 
-    public LocalDateTime getEndHour() {
+    public LocalTime getEndHour() {
         return endHour;
     }
 
-    public void setEndHour(LocalDateTime endHour) {
+    public void setEndHour(LocalTime endHour) {
         this.endHour = endHour;
     }
 

@@ -6,6 +6,7 @@ import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DoctorQuestionJpaRepo
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.MedicalConcernJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.DoctorQuestionsMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.MedicalConcernMapper;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
@@ -32,19 +33,19 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
 
 
     @Override
-    public List<MedicalConcern> getMedicalConcerns(UUID doctorId) {
-        List<MedicalConcernEntity> entities = this.medicalConcernJpaRepository.findAllByDoctor_Id(doctorId);
+    public List<MedicalConcern> getMedicalConcerns(Doctor doctor) {
+        List<MedicalConcernEntity> entities = this.medicalConcernJpaRepository.findAllByDoctor_Id(doctor.getId());
         return entities.stream().map(medicalConcernMapper::toDomain).toList();
     }
 
     @Override
-    public List<Question> getDoctorQuestions(UUID medicalConcernId) {
-        List<DoctorQuestionEntity> entities = this.doctorQuestionJpaRepository.findAllByMedicalConcern_Id(medicalConcernId);
+    public List<Question> getDoctorQuestions(MedicalConcern medicalConcern) {
+        List<DoctorQuestionEntity> entities = this.doctorQuestionJpaRepository.findAllByMedicalConcern_Id(medicalConcern.getId());
         return entities.stream().map(doctorQuestionsMapper::toDomain).toList();
     }
 
     @Override
-    public MedicalConcern getMedicalConcernById(UUID medicalConcernId) throws MedicalConcernNotFoundException {
+    public MedicalConcern getById(UUID medicalConcernId) throws MedicalConcernNotFoundException {
         MedicalConcernEntity medicalConcern = this.medicalConcernJpaRepository.findById(medicalConcernId).orElseThrow(MedicalConcernNotFoundException::new);
         return this.medicalConcernMapper.toDomain(medicalConcern);
     }

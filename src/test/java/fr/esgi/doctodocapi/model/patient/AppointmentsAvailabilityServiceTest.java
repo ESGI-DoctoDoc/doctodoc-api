@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.model.patient;
 
-import fr.esgi.doctodocapi.dtos.responses.GetAppointmentAvailableResponse;
+import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
@@ -43,34 +43,34 @@ class AppointmentsAvailabilityServiceTest {
         // generate slot
         LocalDate defaultDate = LocalDate.of(2025, 3, 10);
         LocalTime defaultHour = LocalTime.of(9, 0, 0);
-        Slot slot1 = new Slot(UUID.randomUUID(), defaultDate, defaultHour, defaultHour.plusHours(3), List.of(medicalConcern1, medicalConcern2));
+        Slot slot1 = new Slot(UUID.randomUUID(), defaultDate, defaultHour, defaultHour.plusHours(3), List.of(), List.of(medicalConcern1, medicalConcern2));
 
         LocalDate defaultDate2 = LocalDate.of(2025, 3, 12);
         LocalTime defaultHour2 = LocalTime.of(11, 0, 0);
-        Slot slot2 = new Slot(UUID.randomUUID(), defaultDate2, defaultHour2, defaultHour2.plusHours(1), List.of(medicalConcern1));
+        Slot slot2 = new Slot(UUID.randomUUID(), defaultDate2, defaultHour2, defaultHour2.plusHours(1), List.of(), List.of(medicalConcern1));
 
 
         // response expected
-        List<GetAppointmentAvailableResponse> expected = List.of(
+        List<GetAppointmentAvailabilityResponse> expected = List.of(
                 // slot 1
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(9, 0), LocalTime.of(9, 15), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(9, 15), LocalTime.of(9, 30), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(9, 30), LocalTime.of(9, 45), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(9, 45), LocalTime.of(10, 0), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(10, 0), LocalTime.of(10, 15), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(10, 15), LocalTime.of(10, 30), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(10, 30), LocalTime.of(10, 45), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(10, 45), LocalTime.of(11, 0), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(11, 0), LocalTime.of(11, 15), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(11, 15), LocalTime.of(11, 30), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(11, 30), LocalTime.of(11, 45), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(11, 45), LocalTime.of(12, 0), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 0), LocalTime.of(9, 15), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 15), LocalTime.of(9, 30), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 30), LocalTime.of(9, 45), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 45), LocalTime.of(10, 0), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 0), LocalTime.of(10, 15), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 15), LocalTime.of(10, 30), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 30), LocalTime.of(10, 45), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 45), LocalTime.of(11, 0), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 0), LocalTime.of(11, 15), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 15), LocalTime.of(11, 30), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 30), LocalTime.of(11, 45), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 45), LocalTime.of(12, 0), false),
 
                 // slot 2
-                new GetAppointmentAvailableResponse(defaultDate2, LocalTime.of(11, 0), LocalTime.of(11, 15), false),
-                new GetAppointmentAvailableResponse(defaultDate2, LocalTime.of(11, 15), LocalTime.of(11, 30), false),
-                new GetAppointmentAvailableResponse(defaultDate2, LocalTime.of(11, 30), LocalTime.of(11, 45), false),
-                new GetAppointmentAvailableResponse(defaultDate2, LocalTime.of(11, 45), LocalTime.of(12, 0), false)
+                new GetAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 0), LocalTime.of(11, 15), false),
+                new GetAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 15), LocalTime.of(11, 30), false),
+                new GetAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 30), LocalTime.of(11, 45), false),
+                new GetAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 45), LocalTime.of(12, 0), false)
         );
 
 
@@ -80,7 +80,7 @@ class AppointmentsAvailabilityServiceTest {
         when(this.appointmentRepository.getAppointmentsBySlot(slot1.getId())).thenReturn(List.of());
         when(this.appointmentRepository.getAppointmentsBySlot(slot2.getId())).thenReturn(List.of());
 
-        List<GetAppointmentAvailableResponse> results = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern1, slot1.getDate());
+        List<GetAppointmentAvailabilityResponse> results = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern1, slot1.getDate());
 
         assertEquals(expected, results);
         verifyNoMoreInteractions(this.slotRepository, this.appointmentRepository);
@@ -95,11 +95,11 @@ class AppointmentsAvailabilityServiceTest {
         // generate slot
         LocalDate defaultDate = LocalDate.of(2025, 3, 10);
         LocalTime defaultHour = LocalTime.of(9, 0, 0);
-        Slot slot1 = new Slot(UUID.randomUUID(), defaultDate, defaultHour, defaultHour.plusHours(3), List.of(medicalConcern1, medicalConcern2));
+        Slot slot1 = new Slot(UUID.randomUUID(), defaultDate, defaultHour, defaultHour.plusHours(3), List.of(), List.of(medicalConcern1, medicalConcern2));
 
         LocalDate defaultDate2 = LocalDate.of(2025, 3, 12);
         LocalTime defaultHour2 = LocalTime.of(11, 0, 0);
-        Slot slot2 = new Slot(UUID.randomUUID(), defaultDate2, defaultHour2, defaultHour2.plusHours(1), List.of(medicalConcern1));
+        Slot slot2 = new Slot(UUID.randomUUID(), defaultDate2, defaultHour2, defaultHour2.plusHours(1), List.of(), List.of(medicalConcern1));
 
         // generate appointment
         LocalTime startHourAppointment1 = LocalTime.of(9, 0);
@@ -107,6 +107,7 @@ class AppointmentsAvailabilityServiceTest {
         Appointment appointment1 = new Appointment(
                 UUID.randomUUID(),
                 slot1,
+                null,
                 null,
                 medicalConcern1,
                 startHourAppointment1,
@@ -121,6 +122,7 @@ class AppointmentsAvailabilityServiceTest {
                 UUID.randomUUID(),
                 slot1,
                 null,
+                null,
                 medicalConcern2,
                 startHourAppointment2,
                 endHourAppointment2,
@@ -134,6 +136,7 @@ class AppointmentsAvailabilityServiceTest {
                 UUID.randomUUID(),
                 slot2,
                 null,
+                null,
                 medicalConcern1,
                 startHourAppointment3,
                 endHourAppointment3,
@@ -143,26 +146,26 @@ class AppointmentsAvailabilityServiceTest {
 
 
         // response expected
-        List<GetAppointmentAvailableResponse> expected = List.of(
+        List<GetAppointmentAvailabilityResponse> expected = List.of(
                 // slot 1
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(9, 0), LocalTime.of(9, 15), true),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(9, 15), LocalTime.of(9, 30), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(9, 30), LocalTime.of(9, 45), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(9, 45), LocalTime.of(10, 0), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(10, 0), LocalTime.of(10, 15), true),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(10, 15), LocalTime.of(10, 30), true),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(10, 30), LocalTime.of(10, 45), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(10, 45), LocalTime.of(11, 0), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(11, 0), LocalTime.of(11, 15), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(11, 15), LocalTime.of(11, 30), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(11, 30), LocalTime.of(11, 45), false),
-                new GetAppointmentAvailableResponse(defaultDate, LocalTime.of(11, 45), LocalTime.of(12, 0), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 0), LocalTime.of(9, 15), true),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 15), LocalTime.of(9, 30), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 30), LocalTime.of(9, 45), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 45), LocalTime.of(10, 0), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 0), LocalTime.of(10, 15), true),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 15), LocalTime.of(10, 30), true),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 30), LocalTime.of(10, 45), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 45), LocalTime.of(11, 0), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 0), LocalTime.of(11, 15), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 15), LocalTime.of(11, 30), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 30), LocalTime.of(11, 45), false),
+                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 45), LocalTime.of(12, 0), false),
 
                 // slot 2
-                new GetAppointmentAvailableResponse(defaultDate2, LocalTime.of(11, 0), LocalTime.of(11, 15), false),
-                new GetAppointmentAvailableResponse(defaultDate2, LocalTime.of(11, 15), LocalTime.of(11, 30), false),
-                new GetAppointmentAvailableResponse(defaultDate2, LocalTime.of(11, 30), LocalTime.of(11, 45), true),
-                new GetAppointmentAvailableResponse(defaultDate2, LocalTime.of(11, 45), LocalTime.of(12, 0), false)
+                new GetAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 0), LocalTime.of(11, 15), false),
+                new GetAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 15), LocalTime.of(11, 30), false),
+                new GetAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 30), LocalTime.of(11, 45), true),
+                new GetAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 45), LocalTime.of(12, 0), false)
         );
 
 
@@ -170,7 +173,7 @@ class AppointmentsAvailabilityServiceTest {
         when(this.appointmentRepository.getAppointmentsBySlot(slot1.getId())).thenReturn(List.of(appointment1, appointment2));
         when(this.appointmentRepository.getAppointmentsBySlot(slot2.getId())).thenReturn(List.of(appointment3));
 
-        List<GetAppointmentAvailableResponse> results = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern1, slot1.getDate());
+        List<GetAppointmentAvailabilityResponse> results = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern1, slot1.getDate());
 
         assertEquals(expected, results);
         verifyNoMoreInteractions(this.slotRepository, this.appointmentRepository);

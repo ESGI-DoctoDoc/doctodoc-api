@@ -3,6 +3,7 @@ package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.Objects;
@@ -34,7 +35,7 @@ public class AppointmentEntity {
     private MedicalConcernEntity medicalConcern;
 
     @Column(name = "date", nullable = false)
-    private LocalDateTime date;
+    private LocalDate date;
 
     @Column(name = "start_hour", nullable = false)
     private LocalTime startHour;
@@ -45,9 +46,8 @@ public class AppointmentEntity {
     @Column(name = "taken_at", nullable = false)
     private LocalDateTime takenAt = LocalDateTime.now();
 
-    @Enumerated(EnumType.STRING)
     @Column(name = "status", nullable = false)
-    private AppointmentStatus status = AppointmentStatus.LOCKED;
+    private String status = AppointmentStatus.LOCKED.getValue();
 
     public UUID getId() {
         return id;
@@ -89,11 +89,11 @@ public class AppointmentEntity {
         this.medicalConcern = medicalConcern;
     }
 
-    public LocalDateTime getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
-    public void setDate(LocalDateTime date) {
+    public void setDate(LocalDate date) {
         this.date = date;
     }
 
@@ -121,11 +121,11 @@ public class AppointmentEntity {
         this.takenAt = takenAt;
     }
 
-    public AppointmentStatus getStatus() {
+    public String getStatus() {
         return status;
     }
 
-    public void setStatus(AppointmentStatus status) {
+    public void setStatus(String status) {
         this.status = status;
     }
 

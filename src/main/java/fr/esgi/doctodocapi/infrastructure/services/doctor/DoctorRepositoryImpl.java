@@ -29,8 +29,8 @@ public class DoctorRepositoryImpl implements DoctorRepository {
 
 
     @Override
-    public Doctor getById(UUID treatingDoctorId) throws DoctorNotFoundException {
-        DoctorEntity entity = this.doctorJpaRepository.findById(treatingDoctorId).orElseThrow(DoctorNotFoundException::new);
+    public Doctor getById(UUID id) throws DoctorNotFoundException {
+        DoctorEntity entity = this.doctorJpaRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
         return this.doctorMapper.toDomain(entity);
     }
 
