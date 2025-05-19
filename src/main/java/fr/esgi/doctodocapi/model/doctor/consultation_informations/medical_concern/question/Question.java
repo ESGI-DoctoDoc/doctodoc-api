@@ -1,14 +1,17 @@
 package fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question;
 
 import java.util.List;
+import java.util.UUID;
 
 public class Question {
+    private UUID id;
     private QuestionType type;
     private String questionName;
     private List<String> options;
     private boolean isMandatory;
 
-    public Question(QuestionType type, String questionName, List<String> options, boolean isMandatory) {
+    public Question(UUID id, QuestionType type, String questionName, List<String> options, boolean isMandatory) {
+        this.id = id;
         this.type = type;
         this.questionName = questionName;
         this.options = options;
@@ -45,5 +48,9 @@ public class Question {
 
     public void setMandatory(boolean mandatory) {
         isMandatory = mandatory;
+    }
+
+    public UUID getId() {
+        return id;
     }
 }

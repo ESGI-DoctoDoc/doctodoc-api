@@ -1,12 +1,17 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.AppointmentEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.PreAppointmentAnswersEntity;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
+import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.calendar.Slot;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import org.springframework.stereotype.Service;
+
+import java.util.List;
 
 @Service
 public class AppointmentFacadeMapper {
@@ -15,13 +20,17 @@ public class AppointmentFacadeMapper {
     private final PatientMapper patientMapper;
     private final DoctorMapper doctorMapper;
     private final MedicalConcernMapper medicalConcernMapper;
+    private final PreAppointmentAnswersMapper preAppointmentAnswersMapper;
+    private final DoctorQuestionsMapper doctorQuestionsMapper;
 
-    public AppointmentFacadeMapper(AppointmentMapper appointmentMapper, SlotMapper slotMapper, PatientMapper patientMapper, DoctorMapper doctorMapper, MedicalConcernMapper medicalConcernMapper) {
+    public AppointmentFacadeMapper(AppointmentMapper appointmentMapper, SlotMapper slotMapper, PatientMapper patientMapper, DoctorMapper doctorMapper, MedicalConcernMapper medicalConcernMapper, PreAppointmentAnswersMapper preAppointmentAnswersMapper, DoctorQuestionsMapper doctorQuestionsMapper) {
         this.appointmentMapper = appointmentMapper;
         this.slotMapper = slotMapper;
         this.patientMapper = patientMapper;
         this.doctorMapper = doctorMapper;
         this.medicalConcernMapper = medicalConcernMapper;
+        this.preAppointmentAnswersMapper = preAppointmentAnswersMapper;
+        this.doctorQuestionsMapper = doctorQuestionsMapper;
     }
 
     public Appointment mapAppointmentToDomain(AppointmentEntity appointmentEntity) {
@@ -30,6 +39,12 @@ public class AppointmentFacadeMapper {
         Doctor doctor = this.doctorMapper.toDomain(appointmentEntity.getDoctor());
         MedicalConcern medicalConcern = this.medicalConcernMapper.toDomain(appointmentEntity.getMedicalConcern());
 
-        return this.appointmentMapper.toDomain(appointmentEntity, slot, patient, doctor, medicalConcern);
+        List<PreAppointmentAnswersEntity> answersEntities = appointmentEntity.getAppointmentQuestions();
+        List<PreAppointmentAnswers> answers = answersEntities.stream().map(entity -> {
+            Question question = this.doctorQuestionsMapper.toDomain(entity.getQuestion());
+            return this.preAppointmentAnswersMapper.toDomain(entity, question);
+        }).toList();
+
+        return this.appointmentMapper.toDomain(appointmentEntity, slot, patient, doctor, medicalConcern, answers);
     }
 }

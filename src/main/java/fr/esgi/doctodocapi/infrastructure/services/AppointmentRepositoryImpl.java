@@ -4,9 +4,12 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.*;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.*;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentMapper;
+import fr.esgi.doctodocapi.infrastructure.mappers.PreAppointmentAnswersMapper;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
+import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
 import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFound;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
@@ -58,6 +61,10 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
      */
     private final AppointmentFacadeMapper appointmentFacadeMapper;
 
+    private final PreAppointmentAnswersMapper preAppointmentAnswersMapper;
+    private final PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository;
+    private final DoctorQuestionJpaRepository doctorQuestionJpaRepository;
+
     /**
      * Constructs an AppointmentRepositoryImpl with the required repositories and mappers.
      *
@@ -75,7 +82,11 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
                                      DoctorJpaRepository doctorJpaRepository,
                                      MedicalConcernJpaRepository medicalConcernJpaRepository,
                                      AppointmentMapper appointmentMapper,
-                                     AppointmentFacadeMapper appointmentFacadeMapper
+                                     AppointmentFacadeMapper appointmentFacadeMapper,
+                                     PreAppointmentAnswersMapper preAppointmentAnswersMapper,
+                                     PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository,
+                                     DoctorQuestionJpaRepository doctorQuestionJpaRepository
+
     ) {
         this.appointmentJpaRepository = appointmentJpaRepository;
         this.slotJpaRepository = slotJpaRepository;
@@ -84,6 +95,9 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         this.medicalConcernJpaRepository = medicalConcernJpaRepository;
         this.appointmentMapper = appointmentMapper;
         this.appointmentFacadeMapper = appointmentFacadeMapper;
+        this.preAppointmentAnswersMapper = preAppointmentAnswersMapper;
+        this.preAppointmentAnswersJpaRepository = preAppointmentAnswersJpaRepository;
+        this.doctorQuestionJpaRepository = doctorQuestionJpaRepository;
     }
 
     /**
@@ -131,5 +145,14 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
         AppointmentEntity entity = this.appointmentMapper.toEntity(appointment, slotEntity, patientEntity, doctorEntity, medicalConcernEntity);
         this.appointmentJpaRepository.save(entity);
+
+
+        // save answers
+        List<PreAppointmentAnswers> answers = appointment.getPreAppointmentAnswers();
+        List<PreAppointmentAnswersEntity> answersEntities = answers.stream().map(preAppointmentAnswers -> {
+            DoctorQuestionEntity doctorQuestionEntity = this.doctorQuestionJpaRepository.findById(preAppointmentAnswers.getQuestion().getId()).orElseThrow(QuestionNotFoundException::new);
+            return this.preAppointmentAnswersMapper.toEntity(preAppointmentAnswers.getResponse(), entity, doctorQuestionEntity);
+        }).toList();
+        this.preAppointmentAnswersJpaRepository.saveAll(answersEntities);
     }
 }

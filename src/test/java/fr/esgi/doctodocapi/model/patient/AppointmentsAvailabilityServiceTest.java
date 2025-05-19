@@ -4,6 +4,7 @@ import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetAppointm
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
+import fr.esgi.doctodocapi.model.appointment.AppointmentsAvailabilityService;
 import fr.esgi.doctodocapi.model.doctor.calendar.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;

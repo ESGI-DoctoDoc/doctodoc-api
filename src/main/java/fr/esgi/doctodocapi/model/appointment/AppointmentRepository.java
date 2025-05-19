@@ -1,5 +1,7 @@
 package fr.esgi.doctodocapi.model.appointment;
 
+import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFound;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
@@ -12,5 +14,5 @@ public interface AppointmentRepository {
     Appointment getById(UUID id) throws AppointmentNotFound;
     List<Appointment> getAppointmentsBySlot(UUID slotId);
 
-    void save(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException;
+    void save(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException;
 }

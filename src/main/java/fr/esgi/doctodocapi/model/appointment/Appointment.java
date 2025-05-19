@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.model.appointment;
 
+import fr.esgi.doctodocapi.model.appointment.exceptions.CannotBookAppointmentException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.calendar.Slot;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
@@ -23,9 +24,9 @@ public class Appointment {
     private HoursRange hoursRange;
     private LocalDateTime takenAt;
     private AppointmentStatus status;
-//    private List<Answer> answers;
+    private List<PreAppointmentAnswers> preAppointmentAnswers;
 
-    public Appointment(UUID id, Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status) {
+    public Appointment(UUID id, Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers) {
         this.id = id;
         this.slot = slot;
         this.patient = patient;
@@ -35,9 +36,10 @@ public class Appointment {
         this.hoursRange = HoursRange.of(startHour, endHour);
         this.takenAt = takenAt;
         this.status = status;
+        this.preAppointmentAnswers = answers;
     }
 
-    public static Appointment init(Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime starHour) {
+    public static Appointment init(Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime starHour, List<PreAppointmentAnswers> answers) {
         HoursRange appointmentHoursRange = HoursRange.of(starHour, starHour.plusMinutes(medicalConcern.getDurationInMinutes().getValue()));
         verifyIfConflicts(slot, appointmentHoursRange);
 
@@ -50,7 +52,8 @@ public class Appointment {
                 appointmentHoursRange.getStart(),
                 appointmentHoursRange.getEnd(),
                 LocalDateTime.now(),
-                AppointmentStatus.LOCKED
+                AppointmentStatus.LOCKED,
+                answers
         );
     }
 
@@ -137,6 +140,14 @@ public class Appointment {
 
     public void setDoctor(Doctor doctor) {
         this.doctor = doctor;
+    }
+
+    public List<PreAppointmentAnswers> getPreAppointmentAnswers() {
+        return preAppointmentAnswers;
+    }
+
+    public void setPreAppointmentAnswers(List<PreAppointmentAnswers> preAppointmentAnswers) {
+        this.preAppointmentAnswers = preAppointmentAnswers;
     }
 
     @Override

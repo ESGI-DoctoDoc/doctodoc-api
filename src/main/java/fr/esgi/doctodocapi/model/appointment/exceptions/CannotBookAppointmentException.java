@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.model.appointment;
+package fr.esgi.doctodocapi.model.appointment.exceptions;
 
 import fr.esgi.doctodocapi.model.DomainException;
 

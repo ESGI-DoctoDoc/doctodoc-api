@@ -6,6 +6,7 @@ import jakarta.persistence.*;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -48,6 +49,9 @@ public class AppointmentEntity {
 
     @Column(name = "status", nullable = false)
     private String status = AppointmentStatus.LOCKED.getValue();
+
+    @OneToMany(mappedBy = "appointment")
+    private List<PreAppointmentAnswersEntity> appointmentQuestions;
 
     public UUID getId() {
         return id;
@@ -127,6 +131,14 @@ public class AppointmentEntity {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public List<PreAppointmentAnswersEntity> getAppointmentQuestions() {
+        return appointmentQuestions;
+    }
+
+    public void setAppointmentQuestions(List<PreAppointmentAnswersEntity> appointmentQuestions) {
+        this.appointmentQuestions = appointmentQuestions;
     }
 
     @Override

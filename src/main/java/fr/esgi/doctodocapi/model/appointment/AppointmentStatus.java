@@ -1,5 +1,7 @@
 package fr.esgi.doctodocapi.model.appointment;
 
+import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentStatusNotFound;
+
 public enum AppointmentStatus {
     CONFIRMED("confirmé"),
     LOCKED("bloqué"),

@@ -9,6 +9,7 @@ import org.springframework.stereotype.Service;
 public class DoctorQuestionsMapper {
     public Question toDomain(DoctorQuestionEntity entity) {
         return new Question(
+                entity.getId(),
                 QuestionType.fromValue(entity.getType()),
                 entity.getQuestion(),
                 entity.getOptions(),
