@@ -21,7 +21,7 @@ public class OnBoardingDoctorController {
         this.validateDoctorAccount = validateDoctorAccount;
     }
 
-    @PostMapping("/professional-info")
+    @PostMapping
     public OnboardingProcessResponse submit(@Valid @RequestBody OnBoardingDoctorRequest onBoardingDoctorRequest) {
         return this.onboardingDoctorProcess.process(onBoardingDoctorRequest);
     }

@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.user;
 
 import fr.esgi.doctodocapi.dtos.requests.RegisterRequest;
+import fr.esgi.doctodocapi.dtos.responses.RegisterResponse;
 import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.exceptions.UserAlreadyExistException;
 import fr.esgi.doctodocapi.model.DomainException;
@@ -20,7 +21,7 @@ public class RegisterUser {
         this.sendAccountValidationEmail = sendAccountValidationEmail;
     }
 
-    public void register(RegisterRequest registerRequest) {
+    public RegisterResponse register(RegisterRequest registerRequest) {
         String email = registerRequest.email().toLowerCase().trim();
         String password = registerRequest.password().trim();
         String phoneNumber = registerRequest.phoneNumber().trim();
@@ -34,6 +35,7 @@ public class RegisterUser {
             User user = User.create(email, password, phoneNumber);
             User userSaved = this.userRepository.save(user);
             this.sendAccountValidationEmail.send(userSaved.getEmail().getValue(), userSaved.getId());
+            return new RegisterResponse();
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
