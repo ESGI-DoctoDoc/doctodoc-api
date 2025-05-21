@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.use_cases.patient;
 
 import fr.esgi.doctodocapi.dtos.requests.patient.PatientOnBoardingRequest;
 import fr.esgi.doctodocapi.dtos.requests.patient.SaveDoctorRecruitmentRequest;
-import fr.esgi.doctodocapi.dtos.responses.OnBoardingPatientResponse;
+import fr.esgi.doctodocapi.dtos.responses.GetBasicPatientInfo;
 import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.exceptions.on_boarding.HasAlreadyMainAccount;
 import fr.esgi.doctodocapi.model.DomainException;
@@ -40,7 +40,7 @@ public class OnBoardingPatient {
         this.doctorRecruitmentRepository = doctorRecruitmentRepository;
     }
 
-    public OnBoardingPatientResponse process(PatientOnBoardingRequest patientOnBoardingRequest) {
+    public GetBasicPatientInfo process(PatientOnBoardingRequest patientOnBoardingRequest) {
         String firstName = patientOnBoardingRequest.firstName().trim();
         String lastName = patientOnBoardingRequest.lastName().trim();
         LocalDate birthdate = patientOnBoardingRequest.birthdate();
@@ -62,7 +62,7 @@ public class OnBoardingPatient {
             Patient patient = Patient.createFromOnBoarding(user, firstName, lastName, birthdate, doctor);
             this.patientRepository.save(patient);
 
-            return new OnBoardingPatientResponse(
+            return new GetBasicPatientInfo(
                     patient.getId(),
                     patient.getEmail().getValue(),
                     patient.getFirstName(),

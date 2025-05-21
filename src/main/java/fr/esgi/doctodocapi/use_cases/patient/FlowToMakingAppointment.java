@@ -1,7 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.patient;
 
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
-import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetCloseMemberResponse;
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetMedicalConcernsResponse;
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorListQuestionsResponse;
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorQuestionsResponse;
@@ -14,11 +13,6 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionType;
-import fr.esgi.doctodocapi.model.patient.Patient;
-import fr.esgi.doctodocapi.model.patient.PatientRepository;
-import fr.esgi.doctodocapi.model.user.User;
-import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
@@ -29,43 +23,17 @@ import java.util.UUID;
 
 @Service
 public class FlowToMakingAppointment {
-    private final PatientRepository patientRepository;
     private final MedicalConcernRepository medicalConcernRepository;
-    private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
 
     private final AppointmentsAvailabilityService appointmentsAvailabilityService;
-    private final GetCurrentUserContext getCurrentUserContext;
 
-    public FlowToMakingAppointment(UserRepository userRepository,
-                                   PatientRepository patientRepository,
-                                   MedicalConcernRepository medicalConcernRepository,
-                                   DoctorRepository doctorRepository,
-                                   AppointmentsAvailabilityService appointmentsAvailabilityService,
-                                   GetCurrentUserContext getCurrentUserContext) {
-        this.userRepository = userRepository;
+    public FlowToMakingAppointment(MedicalConcernRepository medicalConcernRepository, DoctorRepository doctorRepository, AppointmentsAvailabilityService appointmentsAvailabilityService) {
         this.medicalConcernRepository = medicalConcernRepository;
         this.doctorRepository = doctorRepository;
-        this.patientRepository = patientRepository;
         this.appointmentsAvailabilityService = appointmentsAvailabilityService;
-        this.getCurrentUserContext = getCurrentUserContext;
     }
 
-
-    public List<GetCloseMemberResponse> getCloseMembers() {
-        String email = this.getCurrentUserContext.getUsername();
-        User user = this.userRepository.findByEmail(email);
-
-        List<Patient> closeMembers = this.patientRepository.getCloseMembers(user.getId());
-
-        List<GetCloseMemberResponse> closeMemberResponses = new ArrayList<>();
-        closeMembers.forEach(closeMember -> {
-            String fullName = closeMember.getFirstName() + " " + closeMember.getLastName();
-            closeMemberResponses.add(new GetCloseMemberResponse(closeMember.getId(), fullName, false));
-        });
-
-        return closeMemberResponses;
-    }
 
     public List<GetMedicalConcernsResponse> getMedicalConcerns(UUID doctorId) {
         try {
@@ -91,10 +59,14 @@ public class FlowToMakingAppointment {
             doctorQuestions.forEach(question -> {
                 if (question.getType() == QuestionType.LIST) {
                     // todo do a mapper
-                    questionsResponses.add(new GetDoctorListQuestionsResponse(question.getType().getValue(),
-                            question.getQuestion(), question.isMandatory(), question.getOptions()));
+                    questionsResponses.add(new GetDoctorListQuestionsResponse(
+                            question.getId().toString(),
+                            question.getType().getValue(),
+                            question.getQuestion(),
+                            question.isMandatory(),
+                            question.getOptions()));
                 } else {
-                    questionsResponses.add(new GetDoctorQuestionsResponse(question.getType().getValue(),
+                    questionsResponses.add(new GetDoctorQuestionsResponse(question.getId().toString(), question.getType().getValue(),
                             question.getQuestion(), question.isMandatory()));
                 }
             });

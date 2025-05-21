@@ -5,8 +5,8 @@ import java.util.List;
 public class GetDoctorListQuestionsResponse extends GetDoctorQuestionsResponse {
     private final List<String> options;
 
-    public GetDoctorListQuestionsResponse(String type, String question, Boolean isMandatory, List<String> options) {
-        super(type, question, isMandatory);
+    public GetDoctorListQuestionsResponse(String id, String type, String question, Boolean isMandatory, List<String> options) {
+        super(id, type, question, isMandatory);
         this.options = options;
     }
 

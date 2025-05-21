@@ -1,7 +1,6 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
-import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetCloseMemberResponse;
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetMedicalConcernsResponse;
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorQuestionsResponse;
 import fr.esgi.doctodocapi.use_cases.patient.FlowToMakingAppointment;
@@ -20,12 +19,6 @@ public class FlowToMakingAppointmentController {
 
     public FlowToMakingAppointmentController(FlowToMakingAppointment flowToMakingAppointment) {
         this.flowToMakingAppointment = flowToMakingAppointment;
-    }
-
-    @GetMapping("patients/close-members")
-    @ResponseStatus(value = HttpStatus.OK)
-    public List<GetCloseMemberResponse> getCloseMembers() {
-        return this.flowToMakingAppointment.getCloseMembers();
     }
 
     @GetMapping("patients/doctors/{id}/medical-concerns")

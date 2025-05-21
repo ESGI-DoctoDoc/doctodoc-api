@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.dtos.requests.patient.PatientOnBoardingRequest;
 import fr.esgi.doctodocapi.dtos.requests.patient.SaveDoctorRecruitmentRequest;
-import fr.esgi.doctodocapi.dtos.responses.OnBoardingPatientResponse;
+import fr.esgi.doctodocapi.dtos.responses.GetBasicPatientInfo;
 import fr.esgi.doctodocapi.use_cases.patient.OnBoardingPatient;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,7 +23,7 @@ public class OnBoardingPatientController {
 
     @PostMapping("patients/on-boarding")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public OnBoardingPatientResponse onBoardingPatient(@Valid @RequestBody PatientOnBoardingRequest patientOnBoardingRequest) {
+    public GetBasicPatientInfo onBoardingPatient(@Valid @RequestBody PatientOnBoardingRequest patientOnBoardingRequest) {
         return this.onBoardingPatient.process(patientOnBoardingRequest);
     }
 
