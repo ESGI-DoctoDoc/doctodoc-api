@@ -20,7 +20,15 @@ import java.util.List;
 
 @Component
 public class JwtFilter extends OncePerRequestFilter {
-    private static final List<String> EXCLUDE_URL = List.of("/patients/login", "/doctors/login", "/users/validate-email", "/doctors/register", "/patients/register");
+    private static final List<String> EXCLUDE_URL = List.of(
+            "/patients/login",
+            "/doctors/login",
+            "/users/validate-email",
+            "/doctors/reset-password/request",
+            "/doctors/reset-password/update",
+            "/doctors/register",
+            "/patients/register"
+    );
 
     private final JwtService jwtService;
 

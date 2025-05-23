@@ -7,7 +7,7 @@ import java.util.List;
 
 public record OnBoardingDoctorRequest (
         @NotBlank String rpps,
-        @NotBlank String specialty,
+        @NotBlank String speciality,
         @NotNull Short experienceYears,
         @NotNull Boolean acceptPublicCoverage,
         @NotBlank String firstName,
@@ -20,7 +20,7 @@ public record OnBoardingDoctorRequest (
 ){
     public OnBoardingDoctorRequest {
         rpps = rpps.trim();
-        specialty = specialty.trim();
+        speciality = speciality.trim();
         firstName = firstName.trim();
         lastName = lastName.trim();
         bio = bio.trim();

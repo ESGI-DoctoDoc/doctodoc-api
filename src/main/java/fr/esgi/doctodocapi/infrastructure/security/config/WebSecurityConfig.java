@@ -73,6 +73,8 @@ public class WebSecurityConfig {
                                 "/patients/login",
                                 "/doctors/login",
                                 "/users/validate-email",
+                                "/doctors/reset-password/request",
+                                "/doctors/reset-password/update",
                                 "/doctors/register",
                                 "/patients/register"
                         ).permitAll()

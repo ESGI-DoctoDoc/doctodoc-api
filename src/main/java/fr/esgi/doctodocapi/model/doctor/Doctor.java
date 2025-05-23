@@ -62,7 +62,7 @@ public class Doctor extends User {
         DoctorProfessionalInformations professionalInformations = new DoctorProfessionalInformations(
                 onBoardingDoctorRequest.rpps(),
                 onBoardingDoctorRequest.bio(),
-                onBoardingDoctorRequest.specialty(),
+                onBoardingDoctorRequest.speciality(),
                 onBoardingDoctorRequest.experienceYears(),
                 onBoardingDoctorRequest.languages(),
                 onBoardingDoctorRequest.doctorDocuments(),

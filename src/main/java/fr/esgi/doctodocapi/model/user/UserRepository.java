@@ -10,4 +10,5 @@ public interface UserRepository {
     User save(User user);
     boolean isExistUser(String email, String phoneNumber);
     void validateEmail(UUID userId) throws UserNotFoundException;
+    void updatePassword(User user) throws UserNotFoundException;
 }

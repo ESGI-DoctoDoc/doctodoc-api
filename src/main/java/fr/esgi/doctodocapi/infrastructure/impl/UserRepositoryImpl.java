@@ -62,4 +62,12 @@ public class UserRepositoryImpl implements UserRepository {
         userFoundByMail.setEmailVerified(true);
         this.userJpaRepository.save(userFoundByMail);
     }
+
+    @Override
+    public void updatePassword(User user) {
+        String hashPassword = this.passwordEncoder.encode(user.getPassword().getValue());
+        UserEntity userSaved = this.userMapper.toEntity(user, hashPassword);
+        userSaved.setId(user.getId());
+        this.userJpaRepository.save(userSaved);
+    }
 }
