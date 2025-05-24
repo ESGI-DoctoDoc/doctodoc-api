@@ -137,14 +137,14 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
      * @throws MedicalConcernNotFoundException If the medical concern associated with the appointment does not exist
      */
     @Override
-    public void save(Appointment appointment) {
+    public UUID save(Appointment appointment) {
         SlotEntity slotEntity = this.slotJpaRepository.findById(appointment.getSlot().getId()).orElseThrow(SlotNotFoundException::new);
         PatientEntity patientEntity = this.patientJpaRepository.findById(appointment.getPatient().getId()).orElseThrow(PatientNotFoundException::new);
         DoctorEntity doctorEntity = this.doctorJpaRepository.findById(appointment.getDoctor().getId()).orElseThrow(DoctorNotFoundException::new);
         MedicalConcernEntity medicalConcernEntity = this.medicalConcernJpaRepository.findById(appointment.getDoctor().getId()).orElseThrow(MedicalConcernNotFoundException::new);
 
         AppointmentEntity entity = this.appointmentMapper.toEntity(appointment, slotEntity, patientEntity, doctorEntity, medicalConcernEntity);
-        this.appointmentJpaRepository.save(entity);
+        AppointmentEntity entityCreated = this.appointmentJpaRepository.save(entity);
 
 
         // save answers
@@ -154,5 +154,14 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
             return this.preAppointmentAnswersMapper.toEntity(preAppointmentAnswers.getResponse(), entity, doctorQuestionEntity);
         }).toList();
         this.preAppointmentAnswersJpaRepository.saveAll(answersEntities);
+
+        return entityCreated.getId();
+    }
+
+    @Override
+    public void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException {
+        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
+        appointmentEntity.setStatus(appointment.getStatus().getValue());
+        this.appointmentJpaRepository.save(appointmentEntity);
     }
 }

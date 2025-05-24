@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.use_cases.appointment;
 
 import fr.esgi.doctodocapi.dtos.requests.save_appointment_request.SaveAnswersForAnAppointmentRequest;
 import fr.esgi.doctodocapi.dtos.requests.save_appointment_request.SaveAppointmentRequest;
+import fr.esgi.doctodocapi.dtos.responses.LockedAppointmentResponse;
 import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
@@ -39,7 +40,7 @@ public class ValidateAppointment {
         this.doctorRepository = doctorRepository;
     }
 
-    public void confirm(SaveAppointmentRequest saveAppointmentRequest) {
+    public LockedAppointmentResponse lock(SaveAppointmentRequest saveAppointmentRequest) {
         try {
             Slot slot = this.slotRepository.getById(saveAppointmentRequest.slotId());
             Patient patient = this.patientRepository.getById(saveAppointmentRequest.patientId());
@@ -54,7 +55,10 @@ public class ValidateAppointment {
             }
 
             Appointment appointment = Appointment.init(slot, patient, doctor, medicalConcern, saveAppointmentRequest.time(), answers);
-            this.appointmentRepository.save(appointment);
+            UUID appointmentLockedId = this.appointmentRepository.save(appointment);
+
+            return new LockedAppointmentResponse(appointmentLockedId);
+
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
@@ -76,8 +80,7 @@ public class ValidateAppointment {
         try {
             Appointment appointment = this.appointmentRepository.getById(id);
             appointment.confirm();
-
-            this.appointmentRepository.save(appointment);
+            this.appointmentRepository.confirm(appointment);
             // todo send an email to inform the patient and if it's not main account, send to user
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());

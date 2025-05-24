@@ -10,7 +10,6 @@ import java.util.UUID;
 public record SaveAppointmentRequest(
         @NotNull UUID doctorId,
         @NotNull UUID patientId,
-        @NotNull UUID consultationConcernId,
         @NotNull UUID medicalConcernId,
         @NotNull UUID slotId,
         @NotNull LocalDate date,

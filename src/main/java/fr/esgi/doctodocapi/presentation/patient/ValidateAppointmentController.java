@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.dtos.requests.save_appointment_request.SaveAppointmentRequest;
+import fr.esgi.doctodocapi.dtos.responses.LockedAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.appointment.ValidateAppointment;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -20,8 +21,8 @@ public class ValidateAppointmentController {
 
     @PostMapping("patients/appointments")
     @ResponseStatus(value = HttpStatus.CREATED)
-    public void bookAppointment(@Valid @RequestBody SaveAppointmentRequest saveAppointmentRequest) {
-        this.validateAppointment.confirm(saveAppointmentRequest);
+    public LockedAppointmentResponse bookAppointment(@Valid @RequestBody SaveAppointmentRequest saveAppointmentRequest) {
+        return this.validateAppointment.lock(saveAppointmentRequest);
     }
 
     @PatchMapping("patients/appointments/{id}")
