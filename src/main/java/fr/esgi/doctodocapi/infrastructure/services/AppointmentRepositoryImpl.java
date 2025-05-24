@@ -164,4 +164,9 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         appointmentEntity.setStatus(appointment.getStatus().getValue());
         this.appointmentJpaRepository.save(appointmentEntity);
     }
+
+    @Override
+    public void delete(UUID id) {
+        this.appointmentJpaRepository.deleteById(id);
+    }
 }

@@ -76,6 +76,14 @@ public class ValidateAppointment {
         return answers;
     }
 
+    public void unlocked(UUID id) {
+        try {
+            this.appointmentRepository.delete(id);
+        } catch (DomainException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
+    }
+
     public void confirm(UUID id) {
         try {
             Appointment appointment = this.appointmentRepository.getById(id);

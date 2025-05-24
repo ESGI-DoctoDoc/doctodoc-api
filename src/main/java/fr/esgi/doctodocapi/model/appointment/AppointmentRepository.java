@@ -17,4 +17,6 @@ public interface AppointmentRepository {
     UUID save(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException;
 
     void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException;
+
+    void delete(UUID id);
 }

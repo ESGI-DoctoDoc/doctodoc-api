@@ -25,6 +25,12 @@ public class ValidateAppointmentController {
         return this.validateAppointment.lock(saveAppointmentRequest);
     }
 
+    @DeleteMapping("patients/appointments/{id}")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void unlockedAppointment(@PathVariable UUID id) {
+        this.validateAppointment.unlocked(id);
+    }
+
     @PatchMapping("patients/appointments/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public void confirmAppointment(@PathVariable UUID id) {
