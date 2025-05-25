@@ -7,16 +7,24 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller to handle doctor registration.
+ */
 @RestController
 @RequestMapping("/doctors")
 public class RegisterDoctorController {
     private final RegisterUser registerUser;
 
-
     public RegisterDoctorController(RegisterUser registerDoctor) {
         this.registerUser = registerDoctor;
     }
 
+    /**
+     * Registers a new doctor user.
+     *
+     * @param registerRequest contains email, password, and phone number
+     * @return response confirming registration
+     */
     @PostMapping("register")
     @ResponseStatus(HttpStatus.CREATED)
     public RegisterResponse registerDoctor(@Valid @RequestBody RegisterRequest registerRequest) {

@@ -15,24 +15,67 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service responsible for doctor authentication operations.
+ * This class handles doctor login and two-factor authentication validation,
+ * providing secure access to doctor-specific functionality in the application.
+ */
 @Service
 public class AuthenticateDoctor {
+    /**
+     * The expiration time in minutes for long-term authentication tokens.
+     */
     private static final int TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES = 120;
 
+    /**
+     * Service for authenticating users, used to delegate general user authentication operations.
+     */
     private final AuthenticateUser authenticateUser;
+
+    /**
+     * Service for generating authentication tokens.
+     */
     private final GeneratorToken generatorToken;
+
+    /**
+     * Repository for accessing doctor data.
+     */
     private final DoctorRepository doctorRepository;
 
+    /**
+     * Constructs an AuthenticateDoctor service with the required dependencies.
+     *
+     * @param authenticateUser Service for general user authentication operations
+     * @param generatorToken   Service for generating authentication tokens
+     * @param doctorRepository Repository for accessing doctor data
+     */
     public AuthenticateDoctor(AuthenticateUser authenticateUser, GeneratorToken generatorToken, DoctorRepository doctorRepository) {
         this.authenticateUser = authenticateUser;
         this.generatorToken = generatorToken;
         this.doctorRepository = doctorRepository;
     }
 
+    /**
+     * Authenticates a doctor using their login credentials.
+     * This method delegates to the general user authentication service,
+     * specifying the DOCTOR role for the authentication process.
+     *
+     * @param loginRequest The request containing the doctor's login credentials
+     * @return A response containing authentication information, including a token for double authentication
+     */
     public LoginResponse login(LoginRequest loginRequest) {
         return this.authenticateUser.loginUser(loginRequest, UserRoles.DOCTOR.name());
     }
 
+    /**
+     * Validates a doctor's double authentication code and generates a long-term authentication token.
+     * This method first validates the double authentication code through the general user authentication service,
+     * then retrieves the doctor's information if available, and generates a response with the doctor's details
+     * and a long-term authentication token.
+     *
+     * @param validateDoubleAuthRequest The request containing the double authentication code to validate
+     * @return A response containing the doctor's information and a long-term authentication token
+     */
     public DoubleAuthenticationUserResponse validateDoubleAuthCode(ValidateDoubleAuthRequest validateDoubleAuthRequest) {
         User user = this.authenticateUser.validateDoubleAuth(validateDoubleAuthRequest);
 

@@ -24,14 +24,47 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Service responsible for validating and managing appointment operations.
+ * This class handles the lifecycle of appointments including locking (reserving),
+ * confirming, and unlocking (cancelling) appointments.
+ */
 @Service
 public class ValidateAppointment {
+    /**
+     * Repository for accessing slot data.
+     */
     private final SlotRepository slotRepository;
+
+    /**
+     * Repository for accessing patient data.
+     */
     private final PatientRepository patientRepository;
+
+    /**
+     * Repository for accessing medical concern data.
+     */
     private final MedicalConcernRepository medicalConcernRepository;
+
+    /**
+     * Repository for accessing appointment data.
+     */
     private final AppointmentRepository appointmentRepository;
+
+    /**
+     * Repository for accessing doctor data.
+     */
     private final DoctorRepository doctorRepository;
 
+    /**
+     * Constructs a ValidateAppointment service with the required repositories.
+     *
+     * @param slotRepository           Repository for accessing slot data
+     * @param patientRepository        Repository for accessing patient data
+     * @param medicalConcernRepository Repository for accessing medical concern data
+     * @param appointmentRepository    Repository for accessing appointment data
+     * @param doctorRepository         Repository for accessing doctor data
+     */
     public ValidateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository) {
         this.slotRepository = slotRepository;
         this.patientRepository = patientRepository;
@@ -40,6 +73,15 @@ public class ValidateAppointment {
         this.doctorRepository = doctorRepository;
     }
 
+    /**
+     * Locks (reserves) an appointment slot based on the provided request.
+     * This method validates that the slot is authorized for the specified medical concern,
+     * creates a new appointment, and saves it with a status indicating it's locked.
+     *
+     * @param saveAppointmentRequest The request containing all necessary information to create an appointment
+     * @return A response containing the ID of the locked appointment
+     * @throws ApiException If any domain validation fails or if the appointment cannot be created
+     */
     public LockedAppointmentResponse lock(SaveAppointmentRequest saveAppointmentRequest) {
         try {
             Slot slot = this.slotRepository.getById(saveAppointmentRequest.slotId());
@@ -64,6 +106,14 @@ public class ValidateAppointment {
         }
     }
 
+    /**
+     * Extracts pre-appointment answers from the appointment request.
+     * This method processes the responses provided in the appointment request,
+     * retrieves the corresponding questions, and creates PreAppointmentAnswers objects.
+     *
+     * @param saveAppointmentRequest The request containing the responses to pre-appointment questions
+     * @return A list of PreAppointmentAnswers objects
+     */
     private List<PreAppointmentAnswers> extractedPreAppointmentAnswers(SaveAppointmentRequest saveAppointmentRequest) {
         List<PreAppointmentAnswers> answers = new ArrayList<>();
 
@@ -76,6 +126,13 @@ public class ValidateAppointment {
         return answers;
     }
 
+    /**
+     * Unlocks (cancels) a previously locked appointment.
+     * This method deletes the appointment with the specified ID from the repository.
+     *
+     * @param id The unique identifier of the appointment to unlock
+     * @throws ApiException If the appointment cannot be deleted or does not exist
+     */
     public void unlocked(UUID id) {
         try {
             this.appointmentRepository.delete(id);
@@ -84,6 +141,15 @@ public class ValidateAppointment {
         }
     }
 
+    /**
+     * Confirms a previously locked appointment.
+     * This method retrieves the appointment with the specified ID, changes its status to confirmed,
+     * and updates it in the repository.
+     * Note: There is a TODO to implement email notification to the patient and user.
+     *
+     * @param id The unique identifier of the appointment to confirm
+     * @throws ApiException If the appointment cannot be confirmed or does not exist
+     */
     public void confirm(UUID id) {
         try {
             Appointment appointment = this.appointmentRepository.getById(id);

@@ -15,6 +15,13 @@ import org.springframework.stereotype.Service;
 import java.util.Optional;
 import java.util.UUID;
 
+/**
+ * Service responsible for handling authentication logic specific to patients.
+ * <p>
+ * This includes login and two-factor authentication validation,
+ * and retrieves associated {@link Patient} details when applicable.
+ * </p>
+ */
 @Service
 public class AuthenticatePatient {
     private static final int TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES = 120;
@@ -23,7 +30,13 @@ public class AuthenticatePatient {
     private final PatientRepository patientRepository;
     private final GeneratorToken generatorToken;
 
-
+    /**
+     * Constructs the service with its dependencies.
+     *
+     * @param authenticateUser  the generic user authentication use case
+     * @param patientRepository the repository for accessing patient data
+     * @param generatorToken    the service responsible for generating authentication tokens
+     */
     public AuthenticatePatient(AuthenticateUser authenticateUser, PatientRepository patientRepository,
                                GeneratorToken generatorToken) {
         this.authenticateUser = authenticateUser;
@@ -31,10 +44,24 @@ public class AuthenticatePatient {
         this.generatorToken = generatorToken;
     }
 
+    /**
+     * Performs the login process for a patient.
+     * Delegates the logic to the generic user authentication service.
+     *
+     * @param loginRequest the login request containing credentials
+     * @return a {@link LoginResponse} with information related to the authentication attempt
+     */
     public LoginResponse login(LoginRequest loginRequest) {
         return this.authenticateUser.loginUser(loginRequest, UserRoles.PATIENT.name());
     }
 
+    /**
+     * Validates the 2FA (two-factor authentication) code for a patient,
+     * generates a long-term token, and returns associated patient information.
+     *
+     * @param validateDoubleAuthRequest the request containing the 2FA code and email
+     * @return a {@link DoubleAuthenticationUserResponse} containing token and patient profile data
+     */
     public DoubleAuthenticationUserResponse validateDoubleAuthCode(ValidateDoubleAuthRequest validateDoubleAuthRequest) {
         User user = this.authenticateUser.validateDoubleAuth(validateDoubleAuthRequest);
 
