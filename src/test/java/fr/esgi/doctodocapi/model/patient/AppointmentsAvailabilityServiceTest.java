@@ -114,7 +114,8 @@ class AppointmentsAvailabilityServiceTest {
                 startHourAppointment1,
                 endHourAppointment1,
                 LocalDateTime.of(2025, 3, 1, 10, 0),
-                AppointmentStatus.CONFIRMED
+                AppointmentStatus.CONFIRMED,
+                List.of()
         );
 
         LocalTime startHourAppointment2 = LocalTime.of(10, 0);
@@ -128,7 +129,8 @@ class AppointmentsAvailabilityServiceTest {
                 startHourAppointment2,
                 endHourAppointment2,
                 LocalDateTime.of(2025, 3, 1, 10, 0),
-                AppointmentStatus.CONFIRMED
+                AppointmentStatus.CONFIRMED,
+                List.of()
         );
 
         LocalTime startHourAppointment3 = LocalTime.of(11, 30);
@@ -142,7 +144,8 @@ class AppointmentsAvailabilityServiceTest {
                 startHourAppointment3,
                 endHourAppointment3,
                 LocalDateTime.of(2025, 3, 1, 10, 0),
-                AppointmentStatus.CANCELLED
+                AppointmentStatus.CANCELLED,
+                List.of()
         );
 
 

@@ -26,7 +26,6 @@ public class DoubleAuthCodeGeneratorImpl implements DoubleAuthCodeGenerator {
             code.append(random.nextInt(10));
         }
 
-//        return code.toString();
-        return "000000";
+        return code.toString();
     }
 }

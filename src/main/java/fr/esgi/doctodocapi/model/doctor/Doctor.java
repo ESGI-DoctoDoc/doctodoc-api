@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.model.doctor;
 
 import fr.esgi.doctodocapi.dtos.requests.doctor.OnBoardingDoctorRequest;
+import fr.esgi.doctodocapi.model.doctor.calendar.Calendar;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.DoctorConsultationInformations;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorMustHaveMajority;
 import fr.esgi.doctodocapi.model.doctor.personal_information.DoctorPersonnalInformations;
@@ -13,7 +14,6 @@ import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Calendar;
 import java.util.Objects;
 import java.util.UUID;
 
