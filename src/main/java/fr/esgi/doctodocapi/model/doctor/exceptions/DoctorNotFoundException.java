@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.model.doctor;
+package fr.esgi.doctodocapi.model.doctor.exceptions;
 
 import fr.esgi.doctodocapi.model.DomainException;
 
