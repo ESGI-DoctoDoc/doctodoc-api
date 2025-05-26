@@ -16,12 +16,16 @@ import java.util.UUID;
 public class DoctorEntity {
 
     @Id
+    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "doctor_id")
     private UUID id;
 
     @OneToOne
     @JoinColumn(name = "user_id", nullable = false, unique = true)
     private UserEntity user;
+
+    @OneToMany(mappedBy = "doctor")
+    private List<MedicalConcernEntity> medicalConcerns;
 
     @Column(name = "rpps", nullable = false, unique = true)
     @Length(max = 11, min = 11)
@@ -47,10 +51,6 @@ public class DoctorEntity {
 
     @Column(name = "experience_years", nullable = false)
     private Short experienceYears;
-
-    @Column(name = "medical_concerns", columnDefinition = "text[]")
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    private List<String> medicalConcerns;
 
     @Column(name = "languages", columnDefinition = "text[]")
     @JdbcTypeCode(SqlTypes.ARRAY)
@@ -134,11 +134,11 @@ public class DoctorEntity {
         this.experienceYears = experienceYears;
     }
 
-    public List<String> getMedicalConcerns() {
+    public List<MedicalConcernEntity> getMedicalConcerns() {
         return medicalConcerns;
     }
 
-    public void setMedicalConcerns(List<String> medicalConcerns) {
+    public void setMedicalConcerns(List<MedicalConcernEntity> medicalConcerns) {
         this.medicalConcerns = medicalConcerns;
     }
 
@@ -229,6 +229,7 @@ public class DoctorEntity {
     public void setDoctorDocuments(List<String> doctorDocuments) {
         this.doctorDocuments = doctorDocuments;
     }
+
 
     @Override
     public boolean equals(Object o) {

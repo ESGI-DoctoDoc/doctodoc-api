@@ -8,6 +8,10 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Represents a system user with authentication and contact details.
+ * Contains identity, email, password, phone number, verification status, 2FA settings, and account creation time.
+ */
 public class User {
     private UUID id;
     private Email email;
@@ -40,6 +44,15 @@ public class User {
         this.createdAt = createdAt;
     }
 
+    /**
+     * Factory method to create a new User instance from raw String values.
+     * Sets emailVerified and doubleAuthActive to false by default.
+     *
+     * @param emailValue       email as string
+     * @param passwordValue    password as string
+     * @param phoneNumberValue phone number as string
+     * @return new User instance with current timestamp as createdAt
+     */
     public static User create(String emailValue, String passwordValue, String phoneNumberValue) {
         Email email = Email.of(emailValue);
         Password password = Password.of(passwordValue);

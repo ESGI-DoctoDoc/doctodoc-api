@@ -14,6 +14,9 @@ import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+/**
+ * REST controller to handle patient authentication.
+ */
 @RestController
 @RequestMapping("/patients")
 public class AuthPatientController {
@@ -26,12 +29,24 @@ public class AuthPatientController {
         this.resetPassword = resetPassword;
     }
 
+    /**
+     * Authenticates a patient with email/phone and password.
+     *
+     * @param loginRequest contains identifier and password
+     * @return login response with authentication token
+     */
     @PostMapping("login")
     @ResponseStatus(value = HttpStatus.OK)
     public LoginResponse login(@Valid @RequestBody LoginRequest loginRequest) {
         return this.authenticatePatient.login(loginRequest);
     }
 
+    /**
+     * Validates the double authentication code sent to the patient.
+     *
+     * @param validateDoubleAuthRequest contains the double auth code
+     * @return response confirming double authentication success
+     */
     @PostMapping("validate-double-auth")
     @ResponseStatus(value = HttpStatus.OK)
     public DoubleAuthenticationUserResponse validateDoubleAuth(@Valid @RequestBody ValidateDoubleAuthRequest validateDoubleAuthRequest) {

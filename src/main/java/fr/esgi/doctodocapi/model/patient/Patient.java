@@ -12,6 +12,14 @@ import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
+/**
+ * Represents a Patient user with personal information, birthdate, linked doctor, and account details.
+ * <p>
+ * Extends User and adds patient-specific fields such as first and last name, linked doctor, birthdate,
+ * and a flag indicating if this is the main account.
+ * <p>
+ * Enforces minimum age of 18 years for patient creation.
+ */
 public class Patient extends User {
     private UUID id;
     private Doctor doctor;
@@ -54,12 +62,31 @@ public class Patient extends User {
         this.isMainAccount = isMainAccount;
     }
 
+    /**
+     * Creates a Patient from onboarding data.
+     * Checks that the patient is at least 18 years old.
+     *
+     * @param user           base User instance
+     * @param firstName      patient's first name
+     * @param lastName       patient's last name
+     * @param birthDateValue patient's birthdate
+     * @param doctor         linked Doctor
+     * @return new Patient instance marked as main account
+     * @throws PatientMustHaveMajority if patient is under 18 years old
+     */
     public static Patient createFromOnBoarding(User user, String firstName, String lastName, LocalDate birthDateValue, Doctor doctor) {
         Birthdate birthDate = Birthdate.of(birthDateValue);
         verifyAge(birthDate.getValue());
         return new Patient(user, doctor, firstName, lastName, user.getEmail(), user.getPhoneNumber(), birthDate, true);
     }
 
+
+    /**
+     * Verifies that the birthdate indicates an adult (18+ years).
+     *
+     * @param birthDate date of birth to verify
+     * @throws PatientMustHaveMajority if patient is underage
+     */
     private static void verifyAge(LocalDate birthDate) {
         int minimumAgeToHave = 18;
 

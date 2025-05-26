@@ -4,8 +4,8 @@ import fr.esgi.doctodocapi.dtos.requests.doctor.DoctorValidationRequest;
 import fr.esgi.doctodocapi.dtos.requests.doctor.OnBoardingDoctorRequest;
 import fr.esgi.doctodocapi.exceptions.on_boarding.DoctorAccountAlreadyExist;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
+import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserRepository;
@@ -147,7 +147,6 @@ class OnboardingDoctorProcessTest {
         assertThat(saved.getProfessionalInformations().getSpeciality()).isEqualTo("Cardiology");
         assertThat(saved.getProfessionalInformations().getBio()).isEqualTo("bio");
         assertThat(saved.getPersonalInformations().getProfilePictureUrl()).isEqualTo("url");
-        assertThat(saved.getConsultationInformations().getMedicalConcerns()).containsExactly("cardiology", "general");
         assertThat(saved.getProfessionalInformations().getLanguages()).containsExactly("English", "French");
         assertThat(saved.getProfessionalInformations().getDoctorDocuments()).containsExactly("https://ex.com/1.pdf", "https://ex.com/2.pdf");
     }

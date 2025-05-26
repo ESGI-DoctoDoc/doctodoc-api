@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.model.doctor.consultation_informations;
 
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.personal_information.CoordinatesGps;
 
 import java.math.BigDecimal;
@@ -9,9 +10,10 @@ public class DoctorConsultationInformations {
     private BigDecimal price;
     private String address;
     private CoordinatesGps coordinatesGps;
-    private List<String> medicalConcerns;
+    private List<MedicalConcern> medicalConcerns;
 
-    public DoctorConsultationInformations(BigDecimal price, String address, CoordinatesGps coordinatesGps, List<String> medicalConcerns) {
+    public DoctorConsultationInformations(BigDecimal price, String address, CoordinatesGps coordinatesGps,
+                                          List<MedicalConcern> medicalConcerns) {
         this.price = price;
         this.address = address;
         this.coordinatesGps = coordinatesGps;
@@ -42,11 +44,11 @@ public class DoctorConsultationInformations {
         this.coordinatesGps = coordinatesGps;
     }
 
-    public List<String> getMedicalConcerns() {
+    public List<MedicalConcern> getMedicalConcerns() {
         return medicalConcerns;
     }
 
-    public void setMedicalConcerns(List<String> medicalConcerns) {
+    public void setMedicalConcerns(List<MedicalConcern> medicalConcerns) {
         this.medicalConcerns = medicalConcerns;
     }
 }
