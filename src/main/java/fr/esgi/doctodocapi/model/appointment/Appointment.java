@@ -39,8 +39,20 @@ public class Appointment {
         this.preAppointmentAnswers = answers;
     }
 
-    public static Appointment init(Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime starHour, List<PreAppointmentAnswers> answers) {
-        HoursRange appointmentHoursRange = HoursRange.of(starHour, starHour.plusMinutes(medicalConcern.getDurationInMinutes().getValue()));
+    /**
+     * Initializes a new appointment, ensuring no conflicts with existing appointments in the slot.
+     *
+     * @param slot           the time slot to book the appointment in
+     * @param patient        the patient booking the appointment
+     * @param doctor         the doctor assigned to the appointment
+     * @param medicalConcern the medical concern for this appointment
+     * @param startHour      the desired start time of the appointment
+     * @param answers        pre-appointment questionnaire answers
+     * @return a new Appointment instance locked for booking
+     * @throws CannotBookAppointmentException if the new appointment overlaps with an existing one
+     */
+    public static Appointment init(Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, List<PreAppointmentAnswers> answers) {
+        HoursRange appointmentHoursRange = HoursRange.of(startHour, startHour.plusMinutes(medicalConcern.getDurationInMinutes().getValue()));
         verifyIfConflicts(slot, appointmentHoursRange);
 
         return new Appointment(
@@ -57,14 +69,24 @@ public class Appointment {
         );
     }
 
-    private static void verifyIfConflicts(Slot slot, HoursRange appointementToSaveHoursRange) {
+    /**
+     * Checks if the given appointment hours range conflicts with any existing appointments in the slot.
+     *
+     * @param slot                        the slot to check for conflicts
+     * @param appointmentToSaveHoursRange the proposed hours range for the new appointment
+     * @throws CannotBookAppointmentException if a conflict is detected
+     */
+    private static void verifyIfConflicts(Slot slot, HoursRange appointmentToSaveHoursRange) {
         List<Appointment> appointmentsOfSlot = slot.getAppointments();
-        boolean hasConflict = appointmentsOfSlot.stream().anyMatch(appointment -> HoursRange.isTimesOverlap(appointementToSaveHoursRange, appointment.getHoursRange()));
+        boolean hasConflict = appointmentsOfSlot.stream().anyMatch(appointment -> HoursRange.isTimesOverlap(appointmentToSaveHoursRange, appointment.getHoursRange()));
         if (hasConflict) {
             throw new CannotBookAppointmentException();
         }
     }
 
+    /**
+     * Confirms the appointment by changing its status to CONFIRMED.
+     */
     public void confirm() {
         this.status = AppointmentStatus.CONFIRMED;
     }

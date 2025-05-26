@@ -4,7 +4,7 @@ package fr.esgi.doctodocapi.model.doctor.calendar;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.vo.hours_range.HoursRange;
-import fr.esgi.doctodocapi.use_cases.appointment.MedicalConcernNotAuthorizedExecption;
+import fr.esgi.doctodocapi.use_cases.appointment.MedicalConcernNotAuthorizedException;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -37,7 +37,7 @@ public class Slot {
 
     public void validateIfSlotIsAuthorized(MedicalConcern medicalConcern) {
         if (!this.getAvailableMedicalConcerns().contains(medicalConcern)) {
-            throw new MedicalConcernNotAuthorizedExecption();
+            throw new MedicalConcernNotAuthorizedException();
         }
     }
 
