@@ -52,15 +52,27 @@ public class AuthDoctorController {
         return this.authenticateDoctor.validateDoubleAuthCode(validateDoubleAuthRequest);
     }
 
-    @PostMapping("/reset-password/request")
+    /**
+     * Initiates the password reset process for a doctor.
+     *
+     * @param resetPasswordRequest the request containing the doctor's email address
+     * @return a response indicating whether the reset process was successfully initiated
+     */
+    @PostMapping("/password-reset")
     @ResponseStatus(value = HttpStatus.OK)
-    public RequestResetPasswordResponse requestResetPassword(@Valid @RequestBody ResetPasswordRequest request) {
-        return this.resetPassword.requestResetPassword(request);
+    public RequestResetPasswordResponse requestResetPassword(@Valid @RequestBody ResetPasswordRequest resetPasswordRequest) {
+        return this.resetPassword.requestResetPassword(resetPasswordRequest);
     }
 
-    @PostMapping("/reset-password/update")
+    /**
+     * Updates the doctor's password using a valid reset token.
+     *
+     * @param updatePasswordRequest the request containing the new password and reset token
+     * @return a response indicating whether the password was successfully updated
+     */
+    @PutMapping("/password-reset")
     @ResponseStatus(value = HttpStatus.OK)
-    public UpdatePasswordResponse updatePassword(@Valid @RequestBody UpdatePasswordRequest request) {
-        return this.resetPassword.updatePassword(request);
+    public UpdatePasswordResponse updatePassword(@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest) {
+        return this.resetPassword.updatePassword(updatePasswordRequest);
     }
 }

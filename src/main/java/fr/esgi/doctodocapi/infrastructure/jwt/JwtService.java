@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.infrastructure.jwt;
 
-import fr.esgi.doctodocapi.model.user.GeneratorToken;
+import fr.esgi.doctodocapi.model.user.TokenManager;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;
@@ -18,7 +18,7 @@ import java.util.Map;
 import java.util.function.Function;
 
 @Service
-public class JwtService implements GeneratorToken  {
+public class JwtService implements TokenManager {
 
     private String secretKey = "";
     private static final String ROLE_KEY = "role";

@@ -6,7 +6,7 @@ import fr.esgi.doctodocapi.dtos.responses.DoubleAuthenticationUserResponse;
 import fr.esgi.doctodocapi.dtos.responses.LoginResponse;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
-import fr.esgi.doctodocapi.model.user.GeneratorToken;
+import fr.esgi.doctodocapi.model.user.TokenManager;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRoles;
 import fr.esgi.doctodocapi.use_cases.user.AuthenticateUser;
@@ -28,20 +28,20 @@ public class AuthenticatePatient {
 
     private final AuthenticateUser authenticateUser;
     private final PatientRepository patientRepository;
-    private final GeneratorToken generatorToken;
+    private final TokenManager tokenManager;
 
     /**
      * Constructs the service with its dependencies.
      *
      * @param authenticateUser  the generic user authentication use case
      * @param patientRepository the repository for accessing patient data
-     * @param generatorToken    the service responsible for generating authentication tokens
+     * @param tokenManager    the service responsible for generating authentication tokens
      */
     public AuthenticatePatient(AuthenticateUser authenticateUser, PatientRepository patientRepository,
-                               GeneratorToken generatorToken) {
+                               TokenManager tokenManager) {
         this.authenticateUser = authenticateUser;
         this.patientRepository = patientRepository;
-        this.generatorToken = generatorToken;
+        this.tokenManager = tokenManager;
     }
 
     /**
@@ -65,7 +65,7 @@ public class AuthenticatePatient {
     public DoubleAuthenticationUserResponse validateDoubleAuthCode(ValidateDoubleAuthRequest validateDoubleAuthRequest) {
         User user = this.authenticateUser.validateDoubleAuth(validateDoubleAuthRequest);
 
-        String token = this.generatorToken.generate(user.getEmail().getValue(), UserRoles.PATIENT.name(),
+        String token = this.tokenManager.generate(user.getEmail().getValue(), UserRoles.PATIENT.name(),
                 TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES);
 
         Optional<Patient> optionalPatient = this.patientRepository.getByUserId(user.getId());
