@@ -70,6 +70,7 @@ public class OnBoardingPatient {
         String lastName = patientOnBoardingRequest.lastName().trim();
         LocalDate birthdate = patientOnBoardingRequest.birthdate();
         UUID treatingDoctorId = patientOnBoardingRequest.doctorId();
+        String gender = patientOnBoardingRequest.gender();
 
         String username = this.getCurrentUserContext.getUsername();
 
@@ -82,7 +83,7 @@ public class OnBoardingPatient {
                 doctor = this.doctorRepository.getById(treatingDoctorId);
             }
 
-            Patient patient = Patient.createFromOnBoarding(user, firstName, lastName, birthdate, doctor);
+            Patient patient = Patient.createFromOnBoarding(user, firstName, lastName, birthdate, doctor, gender);
             this.patientRepository.save(patient);
 
             return new GetBasicPatientInfo(

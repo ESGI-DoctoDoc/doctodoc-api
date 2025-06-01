@@ -30,6 +30,9 @@ public class PatientEntity {
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
+    @Column(name = "gender")
+    private String gender;
+
     @Column(name = "is_main_account", nullable = false)
     private boolean isMainAccount;
 
@@ -112,6 +115,15 @@ public class PatientEntity {
     public void setDoctor(DoctorEntity doctor) {
         this.doctor = doctor;
     }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
 
     @Override
     public boolean equals(Object o) {
