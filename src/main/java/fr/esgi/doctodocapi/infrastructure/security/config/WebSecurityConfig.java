@@ -33,10 +33,12 @@ public class WebSecurityConfig {
 
     private final UserDetailsService userDetailsService;
     private final JwtFilter jwtFilter;
+    private final ApiKeyFilter apiKeyFilter;
 
-    public WebSecurityConfig(UserDetailsService userDetailsService, JwtFilter jwtFilter) {
+    public WebSecurityConfig(UserDetailsService userDetailsService, JwtFilter jwtFilter, ApiKeyFilter apiKeyFilter) {
         this.userDetailsService = userDetailsService;
         this.jwtFilter = jwtFilter;
+        this.apiKeyFilter = apiKeyFilter;
     }
 
     @Bean
@@ -89,6 +91,7 @@ public class WebSecurityConfig {
                 .sessionManagement(session -> session
                         .sessionCreationPolicy(SessionCreationPolicy.STATELESS)
                 )
+                .addFilterBefore(apiKeyFilter, UsernamePasswordAuthenticationFilter.class)
                 .addFilterBefore(jwtFilter, UsernamePasswordAuthenticationFilter.class)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .logout(LogoutConfigurer::permitAll);

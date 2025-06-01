@@ -1,5 +1,9 @@
 spring.application.name=doctodoc-api
 
+server.servlet.context-path=/api/v1
+
+api.key=
+
 # Configuration de la base de données PostgreSQL
 spring.datasource.url=
 spring.datasource.username=
