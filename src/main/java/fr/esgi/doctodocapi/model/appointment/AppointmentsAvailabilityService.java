@@ -8,6 +8,7 @@ import fr.esgi.doctodocapi.model.vo.hours_range.HoursRange;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Comparator;
@@ -21,6 +22,7 @@ import java.util.UUID;
  */
 @Service
 public class AppointmentsAvailabilityService {
+    public static final int LOCKED_MAX_TIME_IN_MINUTE = 5;
     /**
      * Repository for accessing appointment data.
      */
@@ -107,10 +109,25 @@ public class AppointmentsAvailabilityService {
                 if (appointment.getHoursRange().getStart().isAfter(slotFragment.end())) {
                     break;
                 }
+
                 if (HoursRange.isTimesOverlap(slotFragmentHoursRange, appointment.getHoursRange())) {
-                    isReserved = true;
-                    break;
+                    if (appointment.getStatus() == AppointmentStatus.CONFIRMED) {
+                        isReserved = true;
+                        break;
+                    }
+
+                    if (appointment.getStatus() == AppointmentStatus.LOCKED) {
+                        LocalDateTime unlockedTime = appointment.getLockedAt().plusMinutes(LOCKED_MAX_TIME_IN_MINUTE);
+                        LocalDateTime now = LocalDateTime.now();
+                        if (unlockedTime.isAfter(now)) {
+                            isReserved = true;
+                            break;
+                        }
+                    }
+
                 }
+
+
             }
 
             appointmentsAvailable.add(

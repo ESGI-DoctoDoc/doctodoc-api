@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
 import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "appointments")
+@SQLRestriction("deleted_at IS NULL")
 public class AppointmentEntity {
 
     @Id
@@ -46,6 +48,12 @@ public class AppointmentEntity {
 
     @Column(name = "taken_at", nullable = false)
     private LocalDateTime takenAt = LocalDateTime.now();
+
+    @Column(name = "locked_at")
+    private LocalDateTime lockedAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @Column(name = "status", nullable = false)
     private String status = AppointmentStatus.LOCKED.getValue();
@@ -125,6 +133,14 @@ public class AppointmentEntity {
         this.takenAt = takenAt;
     }
 
+    public LocalDateTime getLockedAt() {
+        return lockedAt;
+    }
+
+    public void setLockedAt(LocalDateTime lockedAt) {
+        this.lockedAt = lockedAt;
+    }
+
     public String getStatus() {
         return status;
     }
@@ -139,6 +155,14 @@ public class AppointmentEntity {
 
     public void setAppointmentQuestions(List<PreAppointmentAnswersEntity> appointmentQuestions) {
         this.appointmentQuestions = appointmentQuestions;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 
     @Override

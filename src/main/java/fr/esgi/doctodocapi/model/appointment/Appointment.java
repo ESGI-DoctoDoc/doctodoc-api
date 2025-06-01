@@ -14,6 +14,8 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
+import static fr.esgi.doctodocapi.model.appointment.AppointmentsAvailabilityService.LOCKED_MAX_TIME_IN_MINUTE;
+
 public class Appointment {
     private UUID id;
     private Slot slot;
@@ -23,10 +25,11 @@ public class Appointment {
     private LocalDate date;
     private HoursRange hoursRange;
     private LocalDateTime takenAt;
+    private LocalDateTime lockedAt;
     private AppointmentStatus status;
     private List<PreAppointmentAnswers> preAppointmentAnswers;
 
-    public Appointment(UUID id, Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers) {
+    public Appointment(UUID id, Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt) {
         this.id = id;
         this.slot = slot;
         this.patient = patient;
@@ -35,6 +38,7 @@ public class Appointment {
         this.date = slot.getDate();
         this.hoursRange = HoursRange.of(startHour, endHour);
         this.takenAt = takenAt;
+        this.lockedAt = lockedAt;
         this.status = status;
         this.preAppointmentAnswers = answers;
     }
@@ -65,7 +69,9 @@ public class Appointment {
                 appointmentHoursRange.getEnd(),
                 LocalDateTime.now(),
                 AppointmentStatus.LOCKED,
-                answers
+                answers,
+                LocalDateTime.now()
+
         );
     }
 
@@ -77,11 +83,19 @@ public class Appointment {
      * @throws CannotBookAppointmentException if a conflict is detected
      */
     private static void verifyIfConflicts(Slot slot, HoursRange appointmentToSaveHoursRange) {
-        List<Appointment> appointmentsOfSlot = slot.getAppointments();
+        List<Appointment> appointmentsOfSlot = slot.getAppointments().stream().filter(appointment ->
+                appointment.getStatus() == AppointmentStatus.CONFIRMED || !appointment.isLockExpired()
+        ).toList();
         boolean hasConflict = appointmentsOfSlot.stream().anyMatch(appointment -> HoursRange.isTimesOverlap(appointmentToSaveHoursRange, appointment.getHoursRange()));
         if (hasConflict) {
             throw new CannotBookAppointmentException();
         }
+    }
+
+    private boolean isLockExpired() {
+        LocalDateTime unlockedTime = this.getLockedAt().plusMinutes(LOCKED_MAX_TIME_IN_MINUTE);
+        LocalDateTime now = LocalDateTime.now();
+        return unlockedTime.isBefore(now);
     }
 
     /**
@@ -89,6 +103,7 @@ public class Appointment {
      */
     public void confirm() {
         this.status = AppointmentStatus.CONFIRMED;
+        this.lockedAt = null;
     }
 
 
@@ -168,6 +183,14 @@ public class Appointment {
         return preAppointmentAnswers;
     }
 
+    public LocalDateTime getLockedAt() {
+        return lockedAt;
+    }
+
+    public void setLockedAt(LocalDateTime lockedAt) {
+        this.lockedAt = lockedAt;
+    }
+
     public void setPreAppointmentAnswers(List<PreAppointmentAnswers> preAppointmentAnswers) {
         this.preAppointmentAnswers = preAppointmentAnswers;
     }
@@ -183,4 +206,6 @@ public class Appointment {
     public int hashCode() {
         return Objects.hashCode(id);
     }
+
+
 }

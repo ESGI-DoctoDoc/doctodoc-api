@@ -7,5 +7,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntity, UUID> {
-    List<AppointmentEntity> findAllBySlot_Id(UUID slotId);
+    List<AppointmentEntity> findAllBySlot_IdAndDeletedAtIsNull(UUID slotId);
 }
