@@ -4,6 +4,7 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.PatientEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.personal_information.Gender;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.vo.birthdate.Birthdate;
 import fr.esgi.doctodocapi.model.vo.email.Email;
@@ -25,6 +26,7 @@ public class PatientMapper {
         entity.setEmail(patient.getEmail().getValue());
         entity.setPhoneNumber(patient.getPhoneNumber().getValue());
         entity.setBirthDate(patient.getBirthdate().getValue());
+        entity.setGender(patient.getGender().name());
         entity.setIsMainAccount(patient.isMainAccount());
         entity.setUser(user);
 
@@ -57,6 +59,7 @@ public class PatientMapper {
                 Email.of(patientEntity.getEmail()),
                 PhoneNumber.of(patientEntity.getPhoneNumber()),
                 Birthdate.of(patientEntity.getBirthDate()),
+                Gender.valueOf(patientEntity.getGender()),
                 patientEntity.getIsMainAccount()
         );
     }

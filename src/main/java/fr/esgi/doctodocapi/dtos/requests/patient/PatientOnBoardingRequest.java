@@ -11,6 +11,8 @@ public record PatientOnBoardingRequest(
         String firstName,
         @NotBlank
         String lastName,
+        @NotBlank
+        String gender,
         @NotNull
         LocalDate birthdate,
         UUID doctorId

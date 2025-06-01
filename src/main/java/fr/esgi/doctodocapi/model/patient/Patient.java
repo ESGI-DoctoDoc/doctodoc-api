@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.model.patient;
 
 import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.personal_information.Gender;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.vo.birthdate.Birthdate;
 import fr.esgi.doctodocapi.model.vo.email.Email;
@@ -28,12 +29,13 @@ public class Patient extends User {
     private Email email;
     private PhoneNumber phoneNumber;
     private Birthdate birthdate;
+    private Gender gender;
     private boolean isMainAccount;
 
 
     public Patient(UUID userId, Email emailUser, Password password, PhoneNumber userPhoneNumber, boolean isEmailVerified,
                    boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, Doctor doctor,
-                   String firstName, String lastName, Email email, PhoneNumber phoneNumber, Birthdate birthdate, boolean isMainAccount) {
+                   String firstName, String lastName, Email email, PhoneNumber phoneNumber, Birthdate birthdate, Gender gender, boolean isMainAccount) {
         super(userId, emailUser, password, userPhoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
         this.id = id;
         this.doctor = doctor;
@@ -42,11 +44,12 @@ public class Patient extends User {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.birthdate = birthdate;
+        this.gender = gender;
         this.isMainAccount = isMainAccount;
     }
 
     private Patient(User user, Doctor doctor, String firstName, String lastName, Email email, PhoneNumber phoneNumber,
-                    Birthdate birthdate, boolean isMainAccount) {
+                    Birthdate birthdate, Gender gender, boolean isMainAccount) {
         super(user.getId(), user.getEmail(), user.getPassword(), user.getPhoneNumber(), user.isEmailVerified(), user.isDoubleAuthActive(),
                 user.getDoubleAuthCode(), user.getCreatedAt());
 
@@ -59,6 +62,7 @@ public class Patient extends User {
         this.email = email;
         this.phoneNumber = phoneNumber;
         this.birthdate = birthdate;
+        this.gender = gender;
         this.isMainAccount = isMainAccount;
     }
 
@@ -74,10 +78,10 @@ public class Patient extends User {
      * @return new Patient instance marked as main account
      * @throws PatientMustHaveMajority if patient is under 18 years old
      */
-    public static Patient createFromOnBoarding(User user, String firstName, String lastName, LocalDate birthDateValue, Doctor doctor) {
+    public static Patient createFromOnBoarding(User user, String firstName, String lastName, LocalDate birthDateValue, Doctor doctor, String gender) {
         Birthdate birthDate = Birthdate.of(birthDateValue);
         verifyAge(birthDate.getValue());
-        return new Patient(user, doctor, firstName, lastName, user.getEmail(), user.getPhoneNumber(), birthDate, true);
+        return new Patient(user, doctor, firstName, lastName, user.getEmail(), user.getPhoneNumber(), birthDate, Gender.valueOf(gender), true);
     }
 
 
@@ -171,6 +175,13 @@ public class Patient extends User {
         return super.getId();
     }
 
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
+    }
 
     @Override
     public boolean equals(Object o) {
