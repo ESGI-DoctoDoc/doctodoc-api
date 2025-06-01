@@ -60,4 +60,5 @@ public interface UserRepository {
      * @throws UserNotFoundException if the user does not exist
      */
     void validateEmail(UUID userId) throws UserNotFoundException;
+    void updatePassword(User user) throws UserNotFoundException;
 }

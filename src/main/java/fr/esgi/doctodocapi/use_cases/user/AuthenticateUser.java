@@ -31,7 +31,7 @@ public class AuthenticateUser {
     private final UserRepository userRepository;
     private final MessageSender messageSender;
     private final DoubleAuthCodeGenerator doubleAuthCodeGenerator;
-    private final GeneratorToken generatorToken;
+    private final TokenManager tokenManager;
     private final SendAccountValidationEmail sendAccountValidationEmail;
 
     /**
@@ -42,7 +42,7 @@ public class AuthenticateUser {
      * @param userRepository             user data access layer
      * @param messageSender              service to send SMS messages
      * @param doubleAuthCodeGenerator    service to generate double-authentication codes
-     * @param generatorToken             utility to generate JWT tokens
+     * @param tokenManager             utility to generate JWT tokens
      * @param sendAccountValidationEmail service to send email verification messages
      */
     public AuthenticateUser(AuthenticateUserInContext authenticateUserInContext,
@@ -50,14 +50,14 @@ public class AuthenticateUser {
                             UserRepository userRepository,
                             MessageSender messageSender,
                             DoubleAuthCodeGenerator doubleAuthCodeGenerator,
-                            GeneratorToken generatorToken,
+                            TokenManager tokenManager,
                             SendAccountValidationEmail sendAccountValidationEmail) {
         this.authenticateUserInContext = authenticateUserInContext;
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
         this.messageSender = messageSender;
         this.doubleAuthCodeGenerator = doubleAuthCodeGenerator;
-        this.generatorToken = generatorToken;
+        this.tokenManager = tokenManager;
         this.sendAccountValidationEmail = sendAccountValidationEmail;
     }
 
@@ -83,7 +83,7 @@ public class AuthenticateUser {
         User userFoundByIdentifier = this.getUserByEmailOrPhoneNumber(identifier, identifier);
 
         if (userRole.equals(UserRoles.ADMIN.name())) {
-            String token = this.generatorToken.generate(
+            String token = this.tokenManager.generate(
                     userFoundByIdentifier.getEmail().getValue(),
                     UserRoles.ADMIN.name(),
                     TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES
@@ -94,7 +94,7 @@ public class AuthenticateUser {
         this.verifyEmail(userFoundByIdentifier);
         this.sendMessageWithDoubleAuthCode(userFoundByIdentifier);
 
-        String token = this.generatorToken.generate(
+        String token = this.tokenManager.generate(
                 userFoundByIdentifier.getEmail().getValue(),
                 role,
                 TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES
