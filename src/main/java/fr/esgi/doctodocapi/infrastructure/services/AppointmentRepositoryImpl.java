@@ -16,6 +16,7 @@ import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -121,7 +122,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
      */
     @Override
     public List<Appointment> getAppointmentsBySlot(UUID slotId) {
-        List<AppointmentEntity> appointmentsFoundBySlot = this.appointmentJpaRepository.findAllBySlot_Id(slotId);
+        List<AppointmentEntity> appointmentsFoundBySlot = this.appointmentJpaRepository.findAllBySlot_IdAndDeletedAtIsNull(slotId);
         return appointmentsFoundBySlot.stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
     }
 
@@ -162,11 +163,14 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     public void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException {
         AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
         appointmentEntity.setStatus(appointment.getStatus().getValue());
+        appointmentEntity.setLockedAt(appointment.getLockedAt());
         this.appointmentJpaRepository.save(appointmentEntity);
     }
 
     @Override
     public void delete(UUID id) {
-        this.appointmentJpaRepository.deleteById(id);
+        AppointmentEntity entity = this.appointmentJpaRepository.findById(id).orElseThrow(AppointmentNotFound::new);
+        entity.setDeletedAt(LocalDateTime.now());
+        this.appointmentJpaRepository.save(entity);
     }
 }

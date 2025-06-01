@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -119,7 +120,8 @@ public class FlowToMakingAppointment {
     public List<GetAppointmentAvailabilityResponse> getAppointmentsAvailability(UUID medicalConcernId, LocalDate date) {
         try {
             MedicalConcern medicalConcern = this.medicalConcernRepository.getById(medicalConcernId);
-            return this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern, date);
+            List<GetAppointmentAvailabilityResponse> appointments = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern, date);
+            return appointments.stream().sorted(Comparator.comparing(GetAppointmentAvailabilityResponse::start)).toList();
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
