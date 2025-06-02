@@ -42,6 +42,9 @@ jobs:
       - name: run test
         run: mvn test
 
+      - name: clean
+        run: mvn clean
+
       - name: run javadoc
         run: mvn javadoc:javadoc
 
