@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Users")
+@Table(name = "users")
 public class UserEntity {
 
     @Id
@@ -105,11 +105,25 @@ public class UserEntity {
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
         UserEntity that = (UserEntity) o;
-        return id == that.id;
+        return Objects.equals(id, that.id);
     }
 
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "UserEntity{" +
+                "id=" + id +
+                ", email='" + email + '\'' +
+                ", password='" + password + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", isEmailVerified=" + isEmailVerified +
+                ", isDoubleAuthActive=" + isDoubleAuthActive +
+                ", doubleAuthCode='" + doubleAuthCode + '\'' +
+                ", createdAt=" + createdAt +
+                '}';
     }
 }

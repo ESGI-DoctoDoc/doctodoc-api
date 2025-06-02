@@ -7,7 +7,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "Patients")
+@Table(name = "patients")
 public class PatientEntity {
 
     @Id
@@ -30,12 +30,19 @@ public class PatientEntity {
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
 
+    @Column(name = "gender")
+    private String gender;
+
     @Column(name = "is_main_account", nullable = false)
     private boolean isMainAccount;
 
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     private UserEntity user;
+
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private DoctorEntity doctor;
 
     public UUID getId() {
         return id;
@@ -85,12 +92,12 @@ public class PatientEntity {
         this.birthDate = birthDate;
     }
 
-    public boolean isMainAccount() {
+    public boolean getIsMainAccount() {
         return isMainAccount;
     }
 
-    public void setMainAccount(boolean mainAccount) {
-        isMainAccount = mainAccount;
+    public void setIsMainAccount(boolean isMainAccount) {
+        this.isMainAccount = isMainAccount;
     }
 
     public UserEntity getUser() {
@@ -100,6 +107,23 @@ public class PatientEntity {
     public void setUser(UserEntity user) {
         this.user = user;
     }
+
+    public DoctorEntity getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(DoctorEntity doctor) {
+        this.doctor = doctor;
+    }
+
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
+
 
     @Override
     public boolean equals(Object o) {
@@ -111,5 +135,20 @@ public class PatientEntity {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "PatientEntity{" +
+                "id=" + id +
+                ", firstName='" + firstName + '\'' +
+                ", lastName='" + lastName + '\'' +
+                ", email='" + email + '\'' +
+                ", phoneNumber='" + phoneNumber + '\'' +
+                ", birthDate=" + birthDate +
+                ", isMainAccount=" + isMainAccount +
+                ", user=" + user +
+                ", doctor=" + doctor +
+                '}';
     }
 }
