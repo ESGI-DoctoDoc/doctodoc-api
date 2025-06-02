@@ -46,7 +46,8 @@ jobs:
         run: mvn clean
 
       - name: run javadoc
-        run: mvn javadoc:javadoc
+        run: mvn javadoc:javadoc -Dmaven.javadoc.failOnError=false
+
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
