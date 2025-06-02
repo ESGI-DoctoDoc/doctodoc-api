@@ -1,4 +1,4 @@
-name: Deploy on stage
+name: Deploy on prod
 
 on:
   workflow_dispatch:
