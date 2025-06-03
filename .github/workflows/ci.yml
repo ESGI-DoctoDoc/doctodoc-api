@@ -1,0 +1,63 @@
+name: Continuous Integration
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [ "main" ]
+  workflow_call:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+jobs:
+  ci:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+
+    runs-on: ubuntu-latest
+    steps:
+      # https://github.com/actions/checkout
+      - name: Init Checkout
+        uses: actions/checkout@v4
+
+      # https://github.com/actions/setup-java
+      - name: set up java 21 and maven
+        uses: actions/setup-java@v4
+        with:
+          distribution: 'temurin'
+          java-version: '21'
+
+      - name: test java
+        run: java --version
+
+      - name: test maven
+        run: mvn --version
+
+      - name: build application
+        run: mvn clean install -DskipTests
+
+      - name: run test
+        run: mvn test
+
+      - name: clean
+        run: mvn clean
+
+      - name: run javadoc
+        run: mvn javadoc:javadoc -Dmaven.javadoc.failOnError=false
+
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: './target/reports/apidocs'
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
+
