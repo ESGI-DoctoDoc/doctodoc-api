@@ -64,7 +64,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     private final PreAppointmentAnswersMapper preAppointmentAnswersMapper;
     private final PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository;
-    private final DoctorQuestionJpaRepository doctorQuestionJpaRepository;
+    private final QuestionJpaRepository questionJpaRepository;
 
     /**
      * Constructs an AppointmentRepositoryImpl with the required repositories and mappers.
@@ -86,7 +86,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
                                      AppointmentFacadeMapper appointmentFacadeMapper,
                                      PreAppointmentAnswersMapper preAppointmentAnswersMapper,
                                      PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository,
-                                     DoctorQuestionJpaRepository doctorQuestionJpaRepository
+                                     QuestionJpaRepository questionJpaRepository
 
     ) {
         this.appointmentJpaRepository = appointmentJpaRepository;
@@ -98,7 +98,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         this.appointmentFacadeMapper = appointmentFacadeMapper;
         this.preAppointmentAnswersMapper = preAppointmentAnswersMapper;
         this.preAppointmentAnswersJpaRepository = preAppointmentAnswersJpaRepository;
-        this.doctorQuestionJpaRepository = doctorQuestionJpaRepository;
+        this.questionJpaRepository = questionJpaRepository;
     }
 
     /**
@@ -151,8 +151,8 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         // save answers
         List<PreAppointmentAnswers> answers = appointment.getPreAppointmentAnswers();
         List<PreAppointmentAnswersEntity> answersEntities = answers.stream().map(preAppointmentAnswers -> {
-            DoctorQuestionEntity doctorQuestionEntity = this.doctorQuestionJpaRepository.findById(preAppointmentAnswers.getQuestion().getId()).orElseThrow(QuestionNotFoundException::new);
-            return this.preAppointmentAnswersMapper.toEntity(preAppointmentAnswers.getResponse(), entity, doctorQuestionEntity);
+            QuestionEntity questionEntity = this.questionJpaRepository.findById(preAppointmentAnswers.getQuestion().getId()).orElseThrow(QuestionNotFoundException::new);
+            return this.preAppointmentAnswersMapper.toEntity(preAppointmentAnswers.getResponse(), entity, questionEntity);
         }).toList();
         this.preAppointmentAnswersJpaRepository.saveAll(answersEntities);
 

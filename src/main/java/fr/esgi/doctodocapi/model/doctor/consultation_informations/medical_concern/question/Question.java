@@ -4,6 +4,11 @@ import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
+/**
+ * Represents a medical question related to a specific medical concern.
+ * A question can be of different types (text, list, yes/no, date), may include multiple options,
+ * and is linked to a medical concern by its ID.
+ */
 public class Question {
     private UUID id;
     private QuestionType type;
@@ -32,6 +37,17 @@ public class Question {
         this.createdAt = createdAt;
     }
 
+    /**
+     * Factory method to create a new Question instance.
+     * Automatically sets the creation date to today.
+     *
+     * @param type             question type (enum)
+     * @param questionName     label or content of the question
+     * @param options          list of answer options (can be empty)
+     * @param isMandatory      whether the question must be answered
+     * @param medicalConcernId identifier of the medical concern linked to the question
+     * @return a new {@link Question} instance
+     */
     public static Question create(QuestionType type, String questionName, List<String> options, boolean isMandatory, UUID medicalConcernId) {
         return new Question(type, questionName, options, isMandatory, medicalConcernId, LocalDate.now());
     }

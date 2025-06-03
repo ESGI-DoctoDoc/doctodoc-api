@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_conce
 
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -11,14 +12,31 @@ public class MedicalConcern {
     private String name;
     private Duration durationInMinutes;
     private Double price;
+    private UUID doctorId;
     private List<Question> questions;
+    private LocalDate createdAt;
 
-    public MedicalConcern(UUID id, String name, Integer durationInMinutesValue, List<Question> questions, Double price) {
+    public MedicalConcern(UUID id, String name, Integer durationInMinutesValue, List<Question> questions, Double price, UUID doctorId, LocalDate createdAt) {
         this.id = id;
         this.name = name;
         this.durationInMinutes = Duration.of(durationInMinutesValue);
         this.questions = questions;
         this.price = price;
+        this.doctorId = doctorId;
+        this.createdAt = createdAt;
+    }
+
+    private MedicalConcern(String name, Integer durationInMinutesValue, List<Question> questions, Double price, UUID doctorId, LocalDate createdAt) {
+        this.name = name;
+        this.durationInMinutes = Duration.of(durationInMinutesValue);
+        this.questions = questions;
+        this.price = price;
+        this.doctorId = doctorId;
+        this.createdAt = createdAt;
+    }
+
+    public static MedicalConcern create(String name, Integer durationInMinutesValue, List<Question> questions, Double price, UUID doctorId) {
+        return new MedicalConcern(name, durationInMinutesValue, questions, price, doctorId, LocalDate.now());
     }
 
     public UUID getId() {
@@ -59,6 +77,22 @@ public class MedicalConcern {
 
     public void setPrice(Double price) {
         this.price = price;
+    }
+
+    public UUID getDoctorId() {
+        return doctorId;
+    }
+
+    public void setDoctorId(UUID doctorId) {
+        this.doctorId = doctorId;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override

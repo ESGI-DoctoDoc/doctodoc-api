@@ -1,14 +1,14 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorQuestionEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.QuestionEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionType;
 import org.springframework.stereotype.Service;
 
 @Service
-public class DoctorQuestionsMapper {
-    public Question toDomain(DoctorQuestionEntity entity) {
+public class QuestionMapper {
+    public Question toDomain(QuestionEntity entity) {
         return new Question(
                 entity.getId(),
                 QuestionType.fromValue(entity.getType()),
@@ -20,8 +20,8 @@ public class DoctorQuestionsMapper {
         );
     }
 
-    public DoctorQuestionEntity toEntity(Question question) {
-        DoctorQuestionEntity entity = new DoctorQuestionEntity();
+    public QuestionEntity toEntity(Question question) {
+        QuestionEntity entity = new QuestionEntity();
         MedicalConcernEntity medicalConcernEntity = new MedicalConcernEntity();
         medicalConcernEntity.setId(question.getMedicalConcernId());
         entity.setMedicalConcern(medicalConcernEntity);

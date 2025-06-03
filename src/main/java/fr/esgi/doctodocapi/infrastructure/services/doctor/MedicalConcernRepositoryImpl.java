@@ -1,10 +1,12 @@
 package fr.esgi.doctodocapi.infrastructure.services.doctor;
 
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorQuestionEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.QuestionEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
-import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DoctorQuestionJpaRepository;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DoctorJpaRepository;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.QuestionJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.MedicalConcernJpaRepository;
-import fr.esgi.doctodocapi.infrastructure.mappers.DoctorQuestionsMapper;
+import fr.esgi.doctodocapi.infrastructure.mappers.QuestionMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.MedicalConcernMapper;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
@@ -12,10 +14,12 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
+import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the MedicalConcernRepository interface.
@@ -27,7 +31,7 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
     /**
      * Repository for accessing doctor question data in the database.
      */
-    private final DoctorQuestionJpaRepository doctorQuestionJpaRepository;
+    private final QuestionJpaRepository questionJpaRepository;
 
     /**
      * Repository for accessing medical concern data in the database.
@@ -37,7 +41,7 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
     /**
      * Mapper for converting between doctor question domain objects and entities.
      */
-    private final DoctorQuestionsMapper doctorQuestionsMapper;
+    private final QuestionMapper questionMapper;
 
     /**
      * Mapper for converting between medical concern domain objects and entities.
@@ -45,18 +49,25 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
     private final MedicalConcernMapper medicalConcernMapper;
 
     /**
+     * Repository for accessing doctor data in the database.
+     */
+    private final DoctorJpaRepository doctorJpaRepository;
+
+    /**
      * Constructs a MedicalConcernRepositoryImpl with the required repositories and mappers.
      *
-     * @param doctorQuestionJpaRepository Repository for doctor question data access
+     * @param questionJpaRepository Repository for doctor question data access
+     * @param doctorJpaRepository Repository for doctor data access
      * @param medicalConcernJpaRepository Repository for medical concern data access
-     * @param doctorQuestionsMapper       Mapper for doctor question domain objects and entities
+     * @param questionMapper       Mapper for doctor question domain objects and entities
      * @param medicalConcernMapper        Mapper for medical concern domain objects and entities
      */
-    public MedicalConcernRepositoryImpl(DoctorQuestionJpaRepository doctorQuestionJpaRepository, MedicalConcernJpaRepository medicalConcernJpaRepository, DoctorQuestionsMapper doctorQuestionsMapper, MedicalConcernMapper medicalConcernMapper) {
-        this.doctorQuestionJpaRepository = doctorQuestionJpaRepository;
+    public MedicalConcernRepositoryImpl(QuestionJpaRepository questionJpaRepository, MedicalConcernJpaRepository medicalConcernJpaRepository, QuestionMapper questionMapper, MedicalConcernMapper medicalConcernMapper, DoctorJpaRepository doctorJpaRepository) {
+        this.questionJpaRepository = questionJpaRepository;
         this.medicalConcernJpaRepository = medicalConcernJpaRepository;
-        this.doctorQuestionsMapper = doctorQuestionsMapper;
+        this.questionMapper = questionMapper;
         this.medicalConcernMapper = medicalConcernMapper;
+        this.doctorJpaRepository = doctorJpaRepository;
     }
 
 
@@ -80,14 +91,14 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
      */
     @Override
     public List<Question> getDoctorQuestions(MedicalConcern medicalConcern) {
-        List<DoctorQuestionEntity> entities = this.doctorQuestionJpaRepository.findAllByMedicalConcern_Id(medicalConcern.getId());
-        return entities.stream().map(doctorQuestionsMapper::toDomain).toList();
+        List<QuestionEntity> entities = this.questionJpaRepository.findAllByMedicalConcern_Id(medicalConcern.getId());
+        return entities.stream().map(questionMapper::toDomain).toList();
     }
 
     @Override
     public Question getQuestionById(UUID uuid) throws QuestionNotFoundException {
-        DoctorQuestionEntity entity = this.doctorQuestionJpaRepository.findById(uuid).orElseThrow(QuestionNotFoundException::new);
-        return this.doctorQuestionsMapper.toDomain(entity);
+        QuestionEntity entity = this.questionJpaRepository.findById(uuid).orElseThrow(QuestionNotFoundException::new);
+        return this.questionMapper.toDomain(entity);
     }
 
     /**
@@ -101,5 +112,34 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
     public MedicalConcern getById(UUID medicalConcernId) throws MedicalConcernNotFoundException {
         MedicalConcernEntity medicalConcern = this.medicalConcernJpaRepository.findById(medicalConcernId).orElseThrow(MedicalConcernNotFoundException::new);
         return this.medicalConcernMapper.toDomain(medicalConcern);
+    }
+
+    @Override
+    public MedicalConcern save(MedicalConcern medicalConcern) {
+        DoctorEntity doctorEntity = this.doctorJpaRepository.findById(medicalConcern.getDoctorId()).orElseThrow(UserNotFoundException::new);
+        doctorEntity.setId(medicalConcern.getDoctorId());
+        MedicalConcernEntity medicalConcernEntity = this.medicalConcernMapper.toEntity(medicalConcern, doctorEntity);
+
+        if(medicalConcern.getQuestions() != null && !medicalConcern.getQuestions().isEmpty()) {
+            List<QuestionEntity> questionEntities = medicalConcern.getQuestions().stream()
+                    .map(question -> {
+                        QuestionEntity questionEntity = this.questionMapper.toEntity(question);
+                        questionEntity.setMedicalConcern(medicalConcernEntity);
+                        return questionEntity;
+                    }).toList();
+            medicalConcernEntity.setQuestions(questionEntities);
+        }
+
+        MedicalConcernEntity savedEntity = this.medicalConcernJpaRepository.save(medicalConcernEntity);
+
+        List<QuestionEntity> savedQuestionEntities = this.questionJpaRepository.findAllByMedicalConcern_Id(savedEntity.getId());
+        List<Question> domainQuestionList = savedQuestionEntities.stream()
+                .map(questionMapper::toDomain)
+                .toList();
+
+        MedicalConcern toDomain = medicalConcernMapper.toDomain(savedEntity);
+        toDomain.setQuestions(domainQuestionList);
+
+        return this.medicalConcernMapper.toDomain(savedEntity);
     }
 }

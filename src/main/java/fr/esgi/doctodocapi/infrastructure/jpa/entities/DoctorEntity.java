@@ -16,7 +16,6 @@ import java.util.UUID;
 public class DoctorEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "doctor_id")
     private UUID id;
 
@@ -45,6 +44,9 @@ public class DoctorEntity {
 
     @Column(name = "birth_date", nullable = false)
     private LocalDate birthDate;
+
+    @Column(name = "gender")
+    private String gender;
 
     @Column(name = "speciality", nullable = false)
     private String speciality;
@@ -230,6 +232,13 @@ public class DoctorEntity {
         this.doctorDocuments = doctorDocuments;
     }
 
+    public String getGender() {
+        return gender;
+    }
+
+    public void setGender(String gender) {
+        this.gender = gender;
+    }
 
     @Override
     public boolean equals(Object o) {

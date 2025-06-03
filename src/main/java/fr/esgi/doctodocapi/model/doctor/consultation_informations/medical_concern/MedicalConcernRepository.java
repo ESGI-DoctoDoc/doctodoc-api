@@ -14,4 +14,5 @@ public interface MedicalConcernRepository {
 
     Question getQuestionById(UUID uuid) throws QuestionNotFoundException;
     MedicalConcern getById(UUID id) throws MedicalConcernNotFoundException;
+    MedicalConcern save(MedicalConcern medicalConcern);
 }

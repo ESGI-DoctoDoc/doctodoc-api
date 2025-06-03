@@ -16,8 +16,9 @@ public record OnBoardingDoctorRequest (
         @NotBlank String bio,
         @NotBlank String profilePictureUrl,
         @NotEmpty List<String> languages,
-        @NotEmpty List<String> doctorDocuments
-){
+        @NotEmpty List<String> doctorDocuments,
+        @NotBlank String gender
+        ){
     public OnBoardingDoctorRequest {
         rpps = rpps.trim();
         speciality = speciality.trim();

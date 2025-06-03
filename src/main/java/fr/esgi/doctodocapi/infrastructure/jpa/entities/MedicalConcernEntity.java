@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,11 +28,14 @@ public class MedicalConcernEntity {
     @JoinColumn(name = "doctor_id")
     private DoctorEntity doctor;
 
-    @OneToMany(mappedBy = "medicalConcern")
-    private List<DoctorQuestionEntity> questions;
+    @OneToMany(mappedBy = "medicalConcern", cascade = CascadeType.PERSIST)
+    private List<QuestionEntity> questions;
 
     @ManyToMany(mappedBy = "medicalConcerns")
     private List<SlotEntity> slots;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDate createdAt;
 
     public UUID getId() {
         return id;
@@ -73,11 +77,11 @@ public class MedicalConcernEntity {
         this.price = price;
     }
 
-    public List<DoctorQuestionEntity> getQuestions() {
+    public List<QuestionEntity> getQuestions() {
         return questions;
     }
 
-    public void setQuestions(List<DoctorQuestionEntity> questions) {
+    public void setQuestions(List<QuestionEntity> questions) {
         this.questions = questions;
     }
 
@@ -87,5 +91,13 @@ public class MedicalConcernEntity {
 
     public void setSlots(List<SlotEntity> slots) {
         this.slots = slots;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 }

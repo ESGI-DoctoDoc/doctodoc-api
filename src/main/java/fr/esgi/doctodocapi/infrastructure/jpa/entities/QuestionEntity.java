@@ -11,7 +11,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "doctor_questions")
-public class DoctorQuestionEntity {
+public class QuestionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -97,7 +97,7 @@ public class DoctorQuestionEntity {
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        DoctorQuestionEntity that = (DoctorQuestionEntity) o;
+        QuestionEntity that = (QuestionEntity) o;
         return Objects.equals(id, that.id);
     }
 
