@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -29,6 +30,9 @@ public class DoctorQuestionEntity {
 
     @Column(name = "is_mandatory", nullable = false)
     private boolean isMandatory;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDate createdAt;
 
     @ManyToOne
     @JoinColumn(name = "medical_concern_id")
@@ -80,6 +84,14 @@ public class DoctorQuestionEntity {
 
     public void setMedicalConcern(MedicalConcernEntity medicalConcern) {
         this.medicalConcern = medicalConcern;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override
