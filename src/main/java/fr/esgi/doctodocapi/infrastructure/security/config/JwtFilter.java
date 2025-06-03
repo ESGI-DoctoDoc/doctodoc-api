@@ -24,8 +24,8 @@ public class JwtFilter extends OncePerRequestFilter {
             "/patients/login",
             "/doctors/login",
             "/users/validate-email",
-            "/doctors/reset-password/request",
-            "/doctors/reset-password/update",
+            "/doctors/password-reset",
+            "/patients/password-reset",
             "/doctors/register",
             "/patients/register",
             "/actuator/health"

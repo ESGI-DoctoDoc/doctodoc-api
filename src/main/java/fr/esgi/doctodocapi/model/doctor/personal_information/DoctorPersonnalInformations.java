@@ -7,12 +7,14 @@ public class DoctorPersonnalInformations {
     private String firstName;
     private String lastName;
     private Birthdate birthDate;
+    private Gender gender;
 
-    public DoctorPersonnalInformations(String profilePictureUrl, String firstName, String lastName, Birthdate birthDate) {
+    public DoctorPersonnalInformations(String profilePictureUrl, String firstName, String lastName, Birthdate birthDate, Gender gender) {
         this.profilePictureUrl = profilePictureUrl;
         this.firstName = firstName;
         this.lastName = lastName;
         this.birthDate = birthDate;
+        this.gender = gender;
     }
 
     public String getProfilePictureUrl() {
@@ -45,5 +47,13 @@ public class DoctorPersonnalInformations {
 
     public void setBirthDate(Birthdate birthDate) {
         this.birthDate = birthDate;
+    }
+
+    public Gender getGender() {
+        return gender;
+    }
+
+    public void setGender(Gender gender) {
+        this.gender = gender;
     }
 }
