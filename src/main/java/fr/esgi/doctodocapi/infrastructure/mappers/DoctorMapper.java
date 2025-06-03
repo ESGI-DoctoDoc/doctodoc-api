@@ -8,6 +8,7 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.DoctorConsulta
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.personal_information.CoordinatesGps;
 import fr.esgi.doctodocapi.model.doctor.personal_information.DoctorPersonnalInformations;
+import fr.esgi.doctodocapi.model.doctor.personal_information.Gender;
 import fr.esgi.doctodocapi.model.doctor.professionnal_informations.DoctorProfessionalInformations;
 import fr.esgi.doctodocapi.model.vo.birthdate.Birthdate;
 import fr.esgi.doctodocapi.model.vo.email.Email;
@@ -30,7 +31,8 @@ public class DoctorMapper {
                 entity.getProfilePictureUrl(),
                 entity.getFirstName(),
                 entity.getLastName(),
-                Birthdate.of(entity.getBirthDate())
+                Birthdate.of(entity.getBirthDate()),
+                Gender.valueOf(entity.getGender())
         );
 
         DoctorProfessionalInformations professionalInformations = new DoctorProfessionalInformations(
@@ -87,6 +89,7 @@ public class DoctorMapper {
         entity.setFirstName(personnalInformations.getFirstName());
         entity.setLastName(personnalInformations.getLastName());
         entity.setBirthDate(personnalInformations.getBirthDate().getValue());
+        entity.setGender(personnalInformations.getGender().name());
         entity.setSpeciality(professionalInformations.getSpeciality());
         entity.setExperienceYears(professionalInformations.getExperienceYears().getValue());
 

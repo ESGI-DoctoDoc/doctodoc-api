@@ -5,6 +5,7 @@ import fr.esgi.doctodocapi.model.doctor.calendar.Calendar;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.DoctorConsultationInformations;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorMustHaveMajority;
 import fr.esgi.doctodocapi.model.doctor.personal_information.DoctorPersonnalInformations;
+import fr.esgi.doctodocapi.model.doctor.personal_information.Gender;
 import fr.esgi.doctodocapi.model.doctor.professionnal_informations.DoctorProfessionalInformations;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.vo.birthdate.Birthdate;
@@ -14,6 +15,7 @@ import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -120,7 +122,8 @@ public class Doctor extends User {
                 onBoardingDoctorRequest.profilePictureUrl(),
                 onBoardingDoctorRequest.firstName(),
                 onBoardingDoctorRequest.lastName(),
-                birthdate
+                birthdate,
+                Gender.valueOf(onBoardingDoctorRequest.gender())
         );
 
         DoctorProfessionalInformations professionalInformations = new DoctorProfessionalInformations(
@@ -137,7 +140,7 @@ public class Doctor extends User {
                 null,
                 null,
                 null,
-                null
+                List.of()
         );
 
 

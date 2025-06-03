@@ -6,6 +6,7 @@ import fr.esgi.doctodocapi.exceptions.on_boarding.DoctorAccountAlreadyExist;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
+import fr.esgi.doctodocapi.model.doctor.personal_information.Gender;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserRepository;
@@ -77,7 +78,8 @@ class OnboardingDoctorProcessTest {
                 "bio",
                 "url",
                 List.of("English"),
-                List.of("https://ex.com/1.pdf", "https://ex.com/2.pdf")
+                List.of("https://ex.com/1.pdf", "https://ex.com/2.pdf"),
+                "FEMALE"
         );
 
         assertThatThrownBy(() -> onboarding.process(request))
@@ -101,7 +103,8 @@ class OnboardingDoctorProcessTest {
                 "bio",
                 "url",
                 List.of("English"),
-                List.of("https://ex.com/1.pdf", "https://ex.com/2.pdf")
+                List.of("https://ex.com/1.pdf", "https://ex.com/2.pdf"),
+                "FEMALE"
         );
 
         onboarding.process(request);
@@ -132,7 +135,8 @@ class OnboardingDoctorProcessTest {
                 " bio ",
                 " url ",
                 List.of(" English ", " French "),
-                List.of("  https://ex.com/1.pdf  ", "  https://ex.com/2.pdf  ")
+                List.of("  https://ex.com/1.pdf  ", "  https://ex.com/2.pdf  "),
+                "FEMALE"
         );
 
         onboarding.process(request);
@@ -172,7 +176,7 @@ class OnboardingDoctorProcessTest {
                 "12345678801", "Cardiology", (short) 5,
                  true,
                 "John", "Doe", LocalDate.of(1980, 5, 12), "bio", "url",
-                List.of("English"), List.of("http://doc1.pdf")
+                List.of("English"), List.of("http://doc1.pdf"), "FEMALE"
         );
 
         assertThatThrownBy(() -> onboarding.process(request))
