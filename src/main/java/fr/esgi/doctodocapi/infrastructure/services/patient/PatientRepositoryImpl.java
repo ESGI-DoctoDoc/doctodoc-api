@@ -13,6 +13,7 @@ import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -87,7 +88,7 @@ public class PatientRepositoryImpl implements PatientRepository {
      * @throws UserNotFoundException If the user or doctor associated with the patient does not exist
      */
     @Override
-    public void save(Patient patient) {
+    public Patient save(Patient patient) {
         UserEntity user = this.userJpaRepository.findById(patient.getUserId()).orElseThrow(UserNotFoundException::new);
 
         DoctorEntity doctor = null;
@@ -98,7 +99,8 @@ public class PatientRepositoryImpl implements PatientRepository {
 
         PatientEntity entityToSaved = this.patientMapper.toEntity(patient, user, doctor);
 
-        this.patientJpaRepository.save(entityToSaved);
+        PatientEntity patientSaved = this.patientJpaRepository.save(entityToSaved);
+        return this.patientMapper.toDomain(patientSaved);
     }
 
     /**
@@ -135,6 +137,22 @@ public class PatientRepositoryImpl implements PatientRepository {
     public Patient getById(UUID id) {
         PatientEntity entity = this.patientJpaRepository.findById(id).orElseThrow(PatientNotFoundException::new);
         return this.patientMapper.toDomain(entity);
+    }
+
+    @Override
+    public Patient update(Patient patient) {
+        UserEntity user = this.userJpaRepository.findById(patient.getUserId()).orElseThrow(UserNotFoundException::new);
+        PatientEntity entityToSaved = this.patientMapper.toEntity(patient, user, null);
+        entityToSaved.setId(patient.getId());
+        PatientEntity patientSaved = this.patientJpaRepository.save(entityToSaved);
+        return this.patientMapper.toDomain(patientSaved);
+    }
+
+    @Override
+    public void delete(UUID id) {
+        PatientEntity entity = this.patientJpaRepository.findById(id).orElseThrow(PatientNotFoundException::new);
+        entity.setDeletedAt(LocalDateTime.now());
+        this.patientJpaRepository.save(entity);
     }
 
 }
