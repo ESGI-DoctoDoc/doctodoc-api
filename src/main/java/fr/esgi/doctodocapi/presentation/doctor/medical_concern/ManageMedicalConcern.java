@@ -25,7 +25,6 @@ public class ManageMedicalConcern {
         this.getAllMedicalConcern = getAllMedicalConcern;
     }
 
-
     /**
      * Retrieves all medical concerns associated with the currently authenticated doctor.
      *

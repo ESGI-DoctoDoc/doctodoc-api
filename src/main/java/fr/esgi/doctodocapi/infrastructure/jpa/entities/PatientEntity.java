@@ -1,13 +1,16 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "patients")
+@SQLRestriction("deleted_at IS NULL")
 public class PatientEntity {
 
     @Id
@@ -43,6 +46,9 @@ public class PatientEntity {
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private DoctorEntity doctor;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public UUID getId() {
         return id;
@@ -125,6 +131,14 @@ public class PatientEntity {
     }
 
 
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
@@ -135,20 +149,5 @@ public class PatientEntity {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "PatientEntity{" +
-                "id=" + id +
-                ", firstName='" + firstName + '\'' +
-                ", lastName='" + lastName + '\'' +
-                ", email='" + email + '\'' +
-                ", phoneNumber='" + phoneNumber + '\'' +
-                ", birthDate=" + birthDate +
-                ", isMainAccount=" + isMainAccount +
-                ", user=" + user +
-                ", doctor=" + doctor +
-                '}';
     }
 }
