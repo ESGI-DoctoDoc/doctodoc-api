@@ -32,7 +32,6 @@ public class Patient extends User {
     private Gender gender;
     private boolean isMainAccount;
 
-
     public Patient(UUID userId, Email emailUser, Password password, PhoneNumber userPhoneNumber, boolean isEmailVerified,
                    boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, Doctor doctor,
                    String firstName, String lastName, Email email, PhoneNumber phoneNumber, Birthdate birthdate, Gender gender, boolean isMainAccount) {
@@ -82,6 +81,20 @@ public class Patient extends User {
         Birthdate birthDate = Birthdate.of(birthDateValue);
         verifyAge(birthDate.getValue());
         return new Patient(user, doctor, firstName, lastName, user.getEmail(), user.getPhoneNumber(), birthDate, Gender.valueOf(gender), true);
+    }
+
+    public static Patient createCloseMember(User user, String firstName, String lastName, LocalDate birthDateValue, String emailValue, String gender, String phoneNumberValue) {
+        Birthdate birthDate = Birthdate.of(birthDateValue);
+        return new Patient(user, null, firstName, lastName, Email.of(emailValue), PhoneNumber.of(phoneNumberValue), birthDate, Gender.valueOf(gender), false);
+    }
+
+    public void update(Patient patient, String firstName, String lastName, String gender, String email, String phoneNumber, LocalDate birthdate) {
+        patient.setFirstName(firstName);
+        patient.setLastName(lastName);
+        patient.setGender(Gender.valueOf(gender));
+        patient.setEmail(Email.of(email));
+        patient.setPhoneNumber(PhoneNumber.of(phoneNumber));
+        patient.setBirthdate(Birthdate.of(birthdate));
     }
 
 

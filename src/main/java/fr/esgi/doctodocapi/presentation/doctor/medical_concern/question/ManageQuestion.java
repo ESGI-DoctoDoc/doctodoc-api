@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.presentation.doctor.medical_concern.question;
 
 import fr.esgi.doctodocapi.dtos.requests.doctor.medical_concern.question.QuestionsInputRequest;
 import fr.esgi.doctodocapi.dtos.responses.doctor.question.GetQuestionResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.medical_concern.question.AddQuestion;
+import fr.esgi.doctodocapi.use_cases.doctor.medical_concern.question.SynchronizeQuestions;
 import fr.esgi.doctodocapi.use_cases.doctor.medical_concern.question.GetAllQuestions;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -17,11 +17,11 @@ import java.util.UUID;
 @RequestMapping("doctors")
 @RestController
 public class ManageQuestion {
-    private final AddQuestion addQuestion;
+    private final SynchronizeQuestions synchronizeQuestions;
     private final GetAllQuestions getAllQuestions;
 
-    public ManageQuestion(AddQuestion addQuestion, GetAllQuestions getAllQuestions) {
-        this.addQuestion = addQuestion;
+    public ManageQuestion(SynchronizeQuestions synchronizeQuestions, GetAllQuestions getAllQuestions) {
+        this.synchronizeQuestions = synchronizeQuestions;
         this.getAllQuestions = getAllQuestions;
     }
 
@@ -46,6 +46,6 @@ public class ManageQuestion {
     @PostMapping("/medical-concerns/{id}/questions")
     @ResponseStatus(HttpStatus.CREATED)
     public List<GetQuestionResponse> addQuestion(@PathVariable UUID id, @Valid @RequestBody QuestionsInputRequest addQuestionRequest) {
-        return this.addQuestion.execute(id, addQuestionRequest);
+        return this.synchronizeQuestions.execute(id, addQuestionRequest);
     }
 }

@@ -19,7 +19,6 @@ import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 /**
  * Implementation of the MedicalConcernRepository interface.
@@ -70,7 +69,6 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
         this.doctorJpaRepository = doctorJpaRepository;
     }
 
-
     /**
      * Retrieves all medical concerns associated with a specific doctor.
      *
@@ -91,10 +89,17 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
      */
     @Override
     public List<Question> getDoctorQuestions(MedicalConcern medicalConcern) {
-        List<QuestionEntity> entities = this.questionJpaRepository.findAllByMedicalConcern_Id(medicalConcern.getId());
+        List<QuestionEntity> entities = this.questionJpaRepository.findAllByMedicalConcern_IdAndDeletedAtIsNull(medicalConcern.getId());
         return entities.stream().map(questionMapper::toDomain).toList();
     }
 
+    /**
+     * Retrieves a specific question by its unique identifier.
+     *
+     * @param uuid the ID of the question
+     * @return the {@link Question} domain object
+     * @throws QuestionNotFoundException if the question does not exist
+     */
     @Override
     public Question getQuestionById(UUID uuid) throws QuestionNotFoundException {
         QuestionEntity entity = this.questionJpaRepository.findById(uuid).orElseThrow(QuestionNotFoundException::new);
@@ -114,31 +119,21 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
         return this.medicalConcernMapper.toDomain(medicalConcern);
     }
 
+    /**
+     * Saves a medical concern to the database.
+     * Converts the domain model to an entity, persists it, and returns the updated domain model.
+     *
+     * @param medicalConcern the {@link MedicalConcern} to be saved
+     * @return the persisted {@link MedicalConcern} domain object
+     * @throws UserNotFoundException if the associated doctor does not exist
+     */
     @Override
     public MedicalConcern save(MedicalConcern medicalConcern) {
         DoctorEntity doctorEntity = this.doctorJpaRepository.findById(medicalConcern.getDoctorId()).orElseThrow(UserNotFoundException::new);
         doctorEntity.setId(medicalConcern.getDoctorId());
         MedicalConcernEntity medicalConcernEntity = this.medicalConcernMapper.toEntity(medicalConcern, doctorEntity);
 
-        if(medicalConcern.getQuestions() != null && !medicalConcern.getQuestions().isEmpty()) {
-            List<QuestionEntity> questionEntities = medicalConcern.getQuestions().stream()
-                    .map(question -> {
-                        QuestionEntity questionEntity = this.questionMapper.toEntity(question);
-                        questionEntity.setMedicalConcern(medicalConcernEntity);
-                        return questionEntity;
-                    }).toList();
-            medicalConcernEntity.setQuestions(questionEntities);
-        }
-
         MedicalConcernEntity savedEntity = this.medicalConcernJpaRepository.save(medicalConcernEntity);
-
-        List<QuestionEntity> savedQuestionEntities = this.questionJpaRepository.findAllByMedicalConcern_Id(savedEntity.getId());
-        List<Question> domainQuestionList = savedQuestionEntities.stream()
-                .map(questionMapper::toDomain)
-                .toList();
-
-        MedicalConcern toDomain = medicalConcernMapper.toDomain(savedEntity);
-        toDomain.setQuestions(domainQuestionList);
 
         return this.medicalConcernMapper.toDomain(savedEntity);
     }
