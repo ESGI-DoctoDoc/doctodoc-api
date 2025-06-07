@@ -158,7 +158,15 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     }
 
     @Override
-    public List<Appointment> getAllByUserAndStatus(User user, AppointmentStatus status, int page, int size) {
+    public List<Appointment> getAllByUserAndStatusOrderByDateAsc(User user, AppointmentStatus status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByPatient_User_IdAndStatusOrderByDateAsc(user.getId(), status.name(), pageable);
+
+        return appointments.getContent().stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
+    }
+
+    @Override
+    public List<Appointment> getAllByUserAndStatusOrderByDateDesc(User user, AppointmentStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
         Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByPatient_User_IdAndStatusOrderByDateDesc(user.getId(), status.name(), pageable);
 

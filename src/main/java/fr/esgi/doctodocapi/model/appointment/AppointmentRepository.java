@@ -22,7 +22,9 @@ public interface AppointmentRepository {
 
     void delete(UUID id);
 
-    List<Appointment> getAllByUserAndStatus(User user, AppointmentStatus status, int page, int size);
+    List<Appointment> getAllByUserAndStatusOrderByDateAsc(User user, AppointmentStatus status, int page, int size);
+
+    List<Appointment> getAllByUserAndStatusOrderByDateDesc(User user, AppointmentStatus status, int page, int size);
 
     Optional<Appointment> getMostRecentUpcomingAppointment(User user);
 }
