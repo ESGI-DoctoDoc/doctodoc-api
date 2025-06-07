@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.model.doctor.calendar;
+package fr.esgi.doctodocapi.model.doctor.calendar.slot;
 
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
@@ -30,4 +30,6 @@ public interface SlotRepository {
      * @throws SlotNotFoundException if no Slot with the given ID exists
      */
     Slot getById(UUID id) throws SlotNotFoundException;
+
+    List<Slot> saveAll(List<Slot> slots);
 }

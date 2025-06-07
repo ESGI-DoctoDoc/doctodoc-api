@@ -24,6 +24,14 @@ public interface MedicalConcernRepository {
     List<MedicalConcern> getMedicalConcerns(Doctor doctor);
 
     /**
+     * Retrieves multiple medical concerns by their unique identifiers.
+     *
+     * @param ids the list of medical concern UUIDs
+     * @return a list of corresponding {@link MedicalConcern} objects
+     */
+    List<MedicalConcern> findAllById(List<UUID> ids);
+
+    /**
      * Retrieves all questions associated with a given medical concern.
      *
      * @param medicalConcern the medical concern whose questions should be retrieved

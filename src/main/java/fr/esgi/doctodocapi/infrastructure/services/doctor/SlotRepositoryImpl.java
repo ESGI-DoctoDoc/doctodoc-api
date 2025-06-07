@@ -1,13 +1,16 @@
 package fr.esgi.doctodocapi.infrastructure.services.doctor;
 
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.SlotEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.MedicalConcernJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.SlotJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.MedicalConcernMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotMapper;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
-import fr.esgi.doctodocapi.model.doctor.calendar.Slot;
-import fr.esgi.doctodocapi.model.doctor.calendar.SlotRepository;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
 import org.springframework.stereotype.Service;
@@ -44,6 +47,11 @@ public class SlotRepositoryImpl implements SlotRepository {
     private final MedicalConcernMapper medicalConcernMapper;
 
     /**
+     * Repository for accessing medical concern data in the database.
+     */
+    private final MedicalConcernJpaRepository medicalConcernJpaRepository;
+
+    /**
      * Constructs a SlotRepositoryImpl with the required repositories and mappers.
      *
      * @param slotJpaRepository       Repository for slot data access
@@ -51,11 +59,12 @@ public class SlotRepositoryImpl implements SlotRepository {
      * @param appointmentFacadeMapper Facade mapper for appointment entities and domain objects
      * @param medicalConcernMapper    Mapper for medical concern domain objects and entities
      */
-    public SlotRepositoryImpl(SlotJpaRepository slotJpaRepository, SlotMapper slotMapper, AppointmentFacadeMapper appointmentFacadeMapper, MedicalConcernMapper medicalConcernMapper) {
+    public SlotRepositoryImpl(SlotJpaRepository slotJpaRepository, SlotMapper slotMapper, AppointmentFacadeMapper appointmentFacadeMapper, MedicalConcernMapper medicalConcernMapper, MedicalConcernJpaRepository medicalConcernJpaRepository) {
         this.slotJpaRepository = slotJpaRepository;
         this.slotMapper = slotMapper;
         this.appointmentFacadeMapper = appointmentFacadeMapper;
         this.medicalConcernMapper = medicalConcernMapper;
+        this.medicalConcernJpaRepository = medicalConcernJpaRepository;
     }
 
     /**
@@ -94,5 +103,31 @@ public class SlotRepositoryImpl implements SlotRepository {
         return this.slotMapper.toDomain(entity, appointments, medicalConcerns);
     }
 
+    @Override
+    public List<Slot> saveAll(List<Slot> slots) {
+        List<SlotEntity> entities = slots.stream()
+                .map(this::mapSlotToEntity)
+                .toList();
 
+        List<SlotEntity> savedEntities = this.slotJpaRepository.saveAll(entities);
+        return savedEntities.stream().map(this.slotMapper::toDomain).toList();
+    }
+
+    private SlotEntity mapSlotToEntity(Slot slot) {
+        DoctorEntity doctorEntity = new DoctorEntity();
+        doctorEntity.setId(slot.getDoctorId());
+
+        List<UUID> medicalConcernIds = slot.getAvailableMedicalConcerns().stream()
+                .map(MedicalConcern::getId)
+                .toList();
+
+        List<MedicalConcernEntity> medicalConcernEntities = this.medicalConcernJpaRepository.findAllById(medicalConcernIds);
+
+        return this.slotMapper.toEntity(
+                slot,
+                List.of(),
+                medicalConcernEntities,
+                doctorEntity
+        );
+    }
 }
