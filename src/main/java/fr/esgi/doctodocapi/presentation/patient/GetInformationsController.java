@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
-import fr.esgi.doctodocapi.dtos.responses.GetBasicPatientInfo;
+import fr.esgi.doctodocapi.dtos.responses.GetProfileResponse;
 import fr.esgi.doctodocapi.use_cases.patient.GetInformations;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -28,7 +28,7 @@ public class GetInformationsController {
      */
     @GetMapping("patients/user/infos")
     @ResponseStatus(value = HttpStatus.OK)
-    public GetBasicPatientInfo getBasicPatientInfo() {
+    public GetProfileResponse getBasicPatientInfo() {
         return this.getInformations.getBasicPatientInfo();
     }
 }

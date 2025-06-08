@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.patient;
 
 import fr.esgi.doctodocapi.dtos.requests.patient.UpdateProfileRequest;
-import fr.esgi.doctodocapi.dtos.responses.UpdateProfileResponse;
+import fr.esgi.doctodocapi.dtos.responses.GetProfileResponse;
 import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.patient.Patient;
@@ -31,7 +31,7 @@ public class ManageProfile {
         this.profilePresentationMapper = profilePresentationMapper;
     }
 
-    public UpdateProfileResponse update(UpdateProfileRequest updateProfileRequest) {
+    public GetProfileResponse update(UpdateProfileRequest updateProfileRequest) {
         String username = this.getCurrentUserContext.getUsername();
 
         String firstName = updateProfileRequest.firstName();

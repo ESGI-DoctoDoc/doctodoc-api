@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.dtos.requests.patient.UpdateProfileRequest;
-import fr.esgi.doctodocapi.dtos.responses.UpdateProfileResponse;
+import fr.esgi.doctodocapi.dtos.responses.GetProfileResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ManageProfile;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -21,7 +21,7 @@ public class ManageProfileController {
     }
 
     @PutMapping
-    public UpdateProfileResponse update(@Valid @RequestBody UpdateProfileRequest request) {
+    public GetProfileResponse update(@Valid @RequestBody UpdateProfileRequest request) {
         return this.manageProfile.update(request);
     }
 }
