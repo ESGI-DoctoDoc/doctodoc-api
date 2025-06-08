@@ -17,6 +17,10 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.util.Optional;
 
+/**
+ * Service responsible for managing a patient's profile.
+ * Provides functionality to update the profile information of the currently authenticated patient.
+ */
 @Service
 public class ManageProfile {
     private final GetCurrentUserContext getCurrentUserContext;
@@ -31,6 +35,14 @@ public class ManageProfile {
         this.profilePresentationMapper = profilePresentationMapper;
     }
 
+    /**
+     * Updates the profile of the currently authenticated patient.
+     * If the patient does not exist or if the update data is invalid, appropriate exceptions are thrown.
+     *
+     * @param updateProfileRequest DTO containing the new profile data
+     * @return A response DTO with the updated profile information
+     * @throws ApiException if any domain-related validation fails
+     */
     public GetProfileResponse update(UpdateProfileRequest updateProfileRequest) {
         String username = this.getCurrentUserContext.getUsername();
 

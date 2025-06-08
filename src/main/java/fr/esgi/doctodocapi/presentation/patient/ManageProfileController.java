@@ -10,6 +10,10 @@ import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
+/**
+ * REST controller for managing patient profiles.
+ * Only accessible to authenticated users with the role 'ROLE_PATIENT'.
+ */
 @RestController
 @PreAuthorize("hasRole('ROLE_PATIENT')")
 @RequestMapping("/patients/profile")
@@ -20,6 +24,12 @@ public class ManageProfileController {
         this.manageProfile = manageProfile;
     }
 
+    /**
+     * Updates the profile of the authenticated patient.
+     *
+     * @param request The profile update request containing new patient information
+     * @return A response DTO with the updated profile data
+     */
     @PutMapping
     public GetProfileResponse update(@Valid @RequestBody UpdateProfileRequest request) {
         return this.manageProfile.update(request);
