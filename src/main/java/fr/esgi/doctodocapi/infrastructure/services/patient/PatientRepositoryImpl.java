@@ -126,10 +126,24 @@ public class PatientRepositoryImpl implements PatientRepository {
         return this.patientMapper.toDomain(entity);
     }
 
+    /**
+     * Updates an existing patient in the database.
+     * Retrieves associated user and doctor references,
+     * maps the domain model to an entity, persists it, and returns the updated domain model.
+     *
+     * @param patient the Patient domain object to update
+     * @return the updated Patient domain object
+     */
     @Override
     public Patient update(Patient patient) {
         UserEntity user = this.entityManager.getReference(UserEntity.class, patient.getUserId());
-        PatientEntity entityToSaved = this.patientMapper.toEntity(patient, user, null);
+
+        DoctorEntity doctor = null;
+        if (patient.getDoctor() != null) {
+            doctor = this.entityManager.getReference(DoctorEntity.class, patient.getDoctor().getId());
+        }
+
+        PatientEntity entityToSaved = this.patientMapper.toEntity(patient, user, doctor);
         entityToSaved.setId(patient.getId());
         PatientEntity patientSaved = this.patientJpaRepository.save(entityToSaved);
         return this.patientMapper.toDomain(patientSaved);

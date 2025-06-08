@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.use_cases.patient;
 
 import fr.esgi.doctodocapi.dtos.requests.patient.PatientOnBoardingRequest;
 import fr.esgi.doctodocapi.dtos.requests.patient.SaveDoctorRecruitmentRequest;
-import fr.esgi.doctodocapi.dtos.responses.GetBasicPatientInfo;
+import fr.esgi.doctodocapi.dtos.responses.GetProfileResponse;
 import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.exceptions.on_boarding.HasAlreadyMainAccount;
 import fr.esgi.doctodocapi.model.DomainException;
@@ -14,6 +14,7 @@ import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
+import fr.esgi.doctodocapi.use_cases.patient.mappers.ProfilePresentationMapper;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -36,6 +37,7 @@ public class OnBoardingPatient {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final DoctorRecruitmentRepository doctorRecruitmentRepository;
+    private final ProfilePresentationMapper profilePresentationMapper;
 
     /**
      * Constructs the OnBoardingPatient service with its dependencies.
@@ -46,16 +48,13 @@ public class OnBoardingPatient {
      * @param doctorRepository            repository for accessing doctor entities
      * @param doctorRecruitmentRepository repository for storing doctor recruitment suggestions
      */
-    public OnBoardingPatient(GetCurrentUserContext getCurrentUserContext,
-                             UserRepository userRepository,
-                             PatientRepository patientRepository,
-                             DoctorRepository doctorRepository,
-                             DoctorRecruitmentRepository doctorRecruitmentRepository) {
+    public OnBoardingPatient(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, DoctorRecruitmentRepository doctorRecruitmentRepository, ProfilePresentationMapper profilePresentationMapper) {
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.doctorRecruitmentRepository = doctorRecruitmentRepository;
+        this.profilePresentationMapper = profilePresentationMapper;
     }
 
     /**
@@ -65,7 +64,7 @@ public class OnBoardingPatient {
      * @return basic patient information after successful registration
      * @throws ApiException if the user already has a main patient account or a domain validation fails
      */
-    public GetBasicPatientInfo process(PatientOnBoardingRequest patientOnBoardingRequest) {
+    public GetProfileResponse process(PatientOnBoardingRequest patientOnBoardingRequest) {
         String firstName = patientOnBoardingRequest.firstName().trim();
         String lastName = patientOnBoardingRequest.lastName().trim();
         LocalDate birthdate = patientOnBoardingRequest.birthdate();
@@ -85,14 +84,7 @@ public class OnBoardingPatient {
 
             Patient patient = Patient.createFromOnBoarding(user, firstName, lastName, birthdate, doctor, gender);
             this.patientRepository.save(patient);
-
-            return new GetBasicPatientInfo(
-                    patient.getId(),
-                    patient.getEmail().getValue(),
-                    patient.getFirstName(),
-                    patient.getLastName(),
-                    patient.getPhoneNumber().getValue()
-            );
+            return this.profilePresentationMapper.toDto(patient);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
