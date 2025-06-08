@@ -88,15 +88,41 @@ public class Patient extends User {
         return new Patient(user, null, firstName, lastName, Email.of(emailValue), PhoneNumber.of(phoneNumberValue), birthDate, Gender.valueOf(gender), false);
     }
 
-    public void update(Patient patient, String firstName, String lastName, String gender, String email, String phoneNumber, LocalDate birthdate) {
-        patient.setFirstName(firstName);
-        patient.setLastName(lastName);
-        patient.setGender(Gender.valueOf(gender));
-        patient.setEmail(Email.of(email));
-        patient.setPhoneNumber(PhoneNumber.of(phoneNumber));
-        patient.setBirthdate(Birthdate.of(birthdate));
+    /**
+     * Updates patient profile including contact info and gender.
+     *
+     * @param firstName   New first name
+     * @param lastName    New last name
+     * @param gender      New gender
+     * @param email       New email
+     * @param phoneNumber New phone number
+     * @param birthdate   New birthdate
+     */
+    public void update(String firstName, String lastName, String gender, String email, String phoneNumber, LocalDate birthdate) {
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
+        this.setGender(Gender.valueOf(gender));
+        this.setEmail(Email.of(email));
+        this.setPhoneNumber(PhoneNumber.of(phoneNumber));
+        this.setBirthdate(Birthdate.of(birthdate));
     }
 
+    /**
+     * Updates only the core personal data of the main account.
+     * Validates that the new birthdate still meets age requirements.
+     *
+     * @param firstName New first name
+     * @param lastName  New last name
+     * @param gender    New gender
+     * @param birthdate New birthdate
+     */
+    public void updateMainAccount(String firstName, String lastName, String gender, LocalDate birthdate) {
+        verifyAge(birthdate);
+        this.setFirstName(firstName);
+        this.setLastName(lastName);
+        this.setGender(Gender.valueOf(gender));
+        this.setBirthdate(Birthdate.of(birthdate));
+    }
 
     /**
      * Verifies that the birthdate indicates an adult (18+ years).

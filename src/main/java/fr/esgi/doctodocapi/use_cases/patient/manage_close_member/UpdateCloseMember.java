@@ -31,7 +31,7 @@ public class UpdateCloseMember {
         try {
 
             Patient patient = this.patientRepository.getById(closeMemberId);
-            patient.update(patient, firstName, lastName, gender, email, phoneNumber, birthdate);
+            patient.update(firstName, lastName, gender, email, phoneNumber, birthdate);
             Patient closeMemberSaved = this.patientRepository.update(patient);
             return new GetCloseMemberResponse(closeMemberSaved.getId(), closeMemberSaved.getLastName(), closeMemberSaved.getFirstName(), closeMemberSaved.getEmail().getValue(), closeMemberSaved.getGender().name(), closeMemberSaved.getPhoneNumber().getValue(), closeMemberSaved.getBirthdate().getValue().toString(), false);
 
