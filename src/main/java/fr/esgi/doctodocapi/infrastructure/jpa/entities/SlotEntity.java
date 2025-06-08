@@ -37,9 +37,6 @@ public class SlotEntity {
     )
     private List<MedicalConcernEntity> medicalConcerns;
 
-    @Column(name = "recurrence_type", nullable = false)
-    private String recurrenceType;
-
     @OneToMany(mappedBy = "slot")
     private List<AppointmentEntity> appointments;
 
@@ -98,15 +95,5 @@ public class SlotEntity {
     public void setDate(LocalDate date) {
         this.date = date;
     }
-
-    public String getRecurrenceType() {
-        return recurrenceType;
-    }
-
-    public void setRecurrenceType(String recurrenceType) {
-        this.recurrenceType = recurrenceType;
-    }
-
-
 }
 

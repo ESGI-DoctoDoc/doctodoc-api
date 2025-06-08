@@ -22,7 +22,6 @@ public class SlotMapper {
                 entity.getEndHour(),
                 appointments,
                 medicalConcerns,
-                RecurrenceType.fromValue(entity.getRecurrenceType()),
                 entity.getDoctor().getId()
         );
     }
@@ -41,7 +40,6 @@ public class SlotMapper {
         entity.setDate(slot.getDate());
         entity.setStartHour(slot.getHoursRange().getStart());
         entity.setEndHour(slot.getHoursRange().getEnd());
-        entity.setRecurrenceType(slot.getRecurrenceType().getValue());
         entity.setMedicalConcerns(medicalConcerns);
         entity.setAppointments(appointments);
         entity.setDoctor(doctor);
