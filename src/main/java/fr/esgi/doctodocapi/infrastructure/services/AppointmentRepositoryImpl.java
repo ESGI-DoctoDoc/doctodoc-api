@@ -2,8 +2,8 @@ package fr.esgi.doctodocapi.infrastructure.services;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.*;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.AppointmentJpaRepository;
-import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DoctorQuestionJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.PreAppointmentAnswersJpaRepository;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.QuestionJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.PreAppointmentAnswersMapper;
@@ -54,7 +54,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     private final PreAppointmentAnswersMapper preAppointmentAnswersMapper;
     private final PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository;
-    private final DoctorQuestionJpaRepository doctorQuestionJpaRepository;
+    private final QuestionJpaRepository questionJpaRepository;
 
     private final EntityManager entityManager;
 
@@ -73,7 +73,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
                                      AppointmentFacadeMapper appointmentFacadeMapper,
                                      PreAppointmentAnswersMapper preAppointmentAnswersMapper,
                                      PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository,
-                                     DoctorQuestionJpaRepository doctorQuestionJpaRepository
+                                     QuestionJpaRepository questionJpaRepository
 
     ) {
         this.appointmentJpaRepository = appointmentJpaRepository;
@@ -81,7 +81,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         this.appointmentFacadeMapper = appointmentFacadeMapper;
         this.preAppointmentAnswersMapper = preAppointmentAnswersMapper;
         this.preAppointmentAnswersJpaRepository = preAppointmentAnswersJpaRepository;
-        this.doctorQuestionJpaRepository = doctorQuestionJpaRepository;
+        this.questionJpaRepository = questionJpaRepository;
         this.entityManager = entityManager;
     }
 
@@ -134,8 +134,8 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         // save answers
         List<PreAppointmentAnswers> answers = appointment.getPreAppointmentAnswers();
         List<PreAppointmentAnswersEntity> answersEntities = answers.stream().map(preAppointmentAnswers -> {
-            DoctorQuestionEntity doctorQuestionEntity = this.doctorQuestionJpaRepository.findById(preAppointmentAnswers.getQuestion().getId()).orElseThrow(QuestionNotFoundException::new);
-            return this.preAppointmentAnswersMapper.toEntity(preAppointmentAnswers.getResponse(), entity, doctorQuestionEntity);
+            QuestionEntity questionEntity = this.questionJpaRepository.findById(preAppointmentAnswers.getQuestion().getId()).orElseThrow(QuestionNotFoundException::new);
+            return this.preAppointmentAnswersMapper.toEntity(preAppointmentAnswers.getResponse(), entity, questionEntity);
         }).toList();
         this.preAppointmentAnswersJpaRepository.saveAll(answersEntities);
 

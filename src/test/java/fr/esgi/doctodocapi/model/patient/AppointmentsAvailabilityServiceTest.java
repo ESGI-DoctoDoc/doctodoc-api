@@ -36,9 +36,12 @@ class AppointmentsAvailabilityServiceTest {
 
     @Test
     void should_return_slot_divisions_if_no_appointments() {
+        UUID doctorId = UUID.randomUUID();
+        LocalDate createdAt = LocalDate.now();
+
         // generate medical concerns
-        MedicalConcern medicalConcern1 = new MedicalConcern(UUID.randomUUID(), "A", 15, List.of(), 10.0);
-        MedicalConcern medicalConcern2 = new MedicalConcern(UUID.randomUUID(), "B", 30, List.of(), 15.0);
+        MedicalConcern medicalConcern1 = new MedicalConcern(UUID.randomUUID(), "A", 15, List.of(), 10.0, doctorId, createdAt);
+        MedicalConcern medicalConcern2 = new MedicalConcern(UUID.randomUUID(), "B", 30, List.of(), 15.0, doctorId, createdAt);
 
         // generate slot
         LocalDate defaultDate = LocalDate.of(2025, 3, 10);
@@ -88,9 +91,12 @@ class AppointmentsAvailabilityServiceTest {
 
     @Test
     void should_divide_slot_and_filter_with_all_statuses() {
+        UUID doctorId = UUID.randomUUID();
+        LocalDate createdAt = LocalDate.now();
+
         // Given
-        MedicalConcern medicalConcern = new MedicalConcern(UUID.randomUUID(), "Consultation", 15, List.of(), 10.0);
-        MedicalConcern medicalConcern2 = new MedicalConcern(UUID.randomUUID(), "Consultation plus longue", 30, List.of(), 10.0);
+        MedicalConcern medicalConcern = new MedicalConcern(UUID.randomUUID(), "A", 15, List.of(), 10.0, doctorId, createdAt);
+        MedicalConcern medicalConcern2 = new MedicalConcern(UUID.randomUUID(), "B", 30, List.of(), 15.0, doctorId, createdAt);
 
         LocalDate date = LocalDate.of(2025, 6, 5);
         LocalTime startTime = LocalTime.of(9, 0);

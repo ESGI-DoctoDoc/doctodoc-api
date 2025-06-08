@@ -21,16 +21,16 @@ public class AppointmentFacadeMapper {
     private final DoctorMapper doctorMapper;
     private final MedicalConcernMapper medicalConcernMapper;
     private final PreAppointmentAnswersMapper preAppointmentAnswersMapper;
-    private final DoctorQuestionsMapper doctorQuestionsMapper;
+    private final QuestionMapper questionMapper;
 
-    public AppointmentFacadeMapper(AppointmentMapper appointmentMapper, SlotMapper slotMapper, PatientMapper patientMapper, DoctorMapper doctorMapper, MedicalConcernMapper medicalConcernMapper, PreAppointmentAnswersMapper preAppointmentAnswersMapper, DoctorQuestionsMapper doctorQuestionsMapper) {
+    public AppointmentFacadeMapper(AppointmentMapper appointmentMapper, SlotMapper slotMapper, PatientMapper patientMapper, DoctorMapper doctorMapper, MedicalConcernMapper medicalConcernMapper, PreAppointmentAnswersMapper preAppointmentAnswersMapper, QuestionMapper questionMapper) {
         this.appointmentMapper = appointmentMapper;
         this.slotMapper = slotMapper;
         this.patientMapper = patientMapper;
         this.doctorMapper = doctorMapper;
         this.medicalConcernMapper = medicalConcernMapper;
         this.preAppointmentAnswersMapper = preAppointmentAnswersMapper;
-        this.doctorQuestionsMapper = doctorQuestionsMapper;
+        this.questionMapper = questionMapper;
     }
 
     public Appointment mapAppointmentToDomain(AppointmentEntity appointmentEntity) {
@@ -41,7 +41,7 @@ public class AppointmentFacadeMapper {
 
         List<PreAppointmentAnswersEntity> answersEntities = appointmentEntity.getAppointmentQuestions();
         List<PreAppointmentAnswers> answers = answersEntities.stream().map(entity -> {
-            Question question = this.doctorQuestionsMapper.toDomain(entity.getQuestion());
+            Question question = this.questionMapper.toDomain(entity.getQuestion());
             return this.preAppointmentAnswersMapper.toDomain(entity, question);
         }).toList();
 
