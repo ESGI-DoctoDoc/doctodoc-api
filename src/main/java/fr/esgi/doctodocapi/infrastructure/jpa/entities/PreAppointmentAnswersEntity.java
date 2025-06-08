@@ -20,7 +20,7 @@ public class PreAppointmentAnswersEntity {
 
     @ManyToOne
     @JoinColumn(name = "question_id", nullable = false)
-    private DoctorQuestionEntity question;
+    private QuestionEntity question;
 
     @Column(name = "answer", nullable = false)
     private String answer;
@@ -41,11 +41,11 @@ public class PreAppointmentAnswersEntity {
         this.appointment = appointment;
     }
 
-    public DoctorQuestionEntity getQuestion() {
+    public QuestionEntity getQuestion() {
         return question;
     }
 
-    public void setQuestion(DoctorQuestionEntity question) {
+    public void setQuestion(QuestionEntity question) {
         this.question = question;
     }
 

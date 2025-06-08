@@ -3,7 +3,7 @@ package fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_conce
 public enum QuestionType {
     LIST("list"),
     DATE("date"),
-    YES_OR_NO("yes_no"),
+    YES_NO("yes_no"),
     TEXT("text");
 
     private final String value;

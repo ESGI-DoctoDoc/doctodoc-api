@@ -1,12 +1,15 @@
 package fr.esgi.doctodocapi.infrastructure.services;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.*;
-import fr.esgi.doctodocapi.infrastructure.jpa.repositories.*;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.AppointmentJpaRepository;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.PreAppointmentAnswersJpaRepository;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.QuestionJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.PreAppointmentAnswersMapper;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
+import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
 import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFound;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
@@ -14,10 +17,17 @@ import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
+import fr.esgi.doctodocapi.model.user.User;
+import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -33,26 +43,6 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     private final AppointmentJpaRepository appointmentJpaRepository;
 
     /**
-     * Repository for accessing slot data in the database.
-     */
-    private final SlotJpaRepository slotJpaRepository;
-
-    /**
-     * Repository for accessing patient data in the database.
-     */
-    private final PatientJpaRepository patientJpaRepository;
-
-    /**
-     * Repository for accessing doctor data in the database.
-     */
-    private final DoctorJpaRepository doctorJpaRepository;
-
-    /**
-     * Repository for accessing medical concern data in the database.
-     */
-    private final MedicalConcernJpaRepository medicalConcernJpaRepository;
-
-    /**
      * Mapper for converting between appointment domain objects and entities.
      */
     private final AppointmentMapper appointmentMapper;
@@ -64,41 +54,35 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     private final PreAppointmentAnswersMapper preAppointmentAnswersMapper;
     private final PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository;
-    private final DoctorQuestionJpaRepository doctorQuestionJpaRepository;
+    private final QuestionJpaRepository questionJpaRepository;
+
+    private final EntityManager entityManager;
+
 
     /**
      * Constructs an AppointmentRepositoryImpl with the required repositories and mappers.
      *
      * @param appointmentJpaRepository    Repository for appointment data access
-     * @param slotJpaRepository           Repository for slot data access
-     * @param patientJpaRepository        Repository for patient data access
-     * @param doctorJpaRepository         Repository for doctor data access
-     * @param medicalConcernJpaRepository Repository for medical concern data access
      * @param appointmentMapper           Mapper for appointment domain objects and entities
      * @param appointmentFacadeMapper     Facade mapper for appointment entities and domain objects
      */
-    public AppointmentRepositoryImpl(AppointmentJpaRepository appointmentJpaRepository,
-                                     SlotJpaRepository slotJpaRepository,
-                                     PatientJpaRepository patientJpaRepository,
-                                     DoctorJpaRepository doctorJpaRepository,
-                                     MedicalConcernJpaRepository medicalConcernJpaRepository,
+    public AppointmentRepositoryImpl(
+            EntityManager entityManager,
+            AppointmentJpaRepository appointmentJpaRepository,
                                      AppointmentMapper appointmentMapper,
                                      AppointmentFacadeMapper appointmentFacadeMapper,
                                      PreAppointmentAnswersMapper preAppointmentAnswersMapper,
                                      PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository,
-                                     DoctorQuestionJpaRepository doctorQuestionJpaRepository
+                                     QuestionJpaRepository questionJpaRepository
 
     ) {
         this.appointmentJpaRepository = appointmentJpaRepository;
-        this.slotJpaRepository = slotJpaRepository;
-        this.patientJpaRepository = patientJpaRepository;
-        this.doctorJpaRepository = doctorJpaRepository;
-        this.medicalConcernJpaRepository = medicalConcernJpaRepository;
         this.appointmentMapper = appointmentMapper;
         this.appointmentFacadeMapper = appointmentFacadeMapper;
         this.preAppointmentAnswersMapper = preAppointmentAnswersMapper;
         this.preAppointmentAnswersJpaRepository = preAppointmentAnswersJpaRepository;
-        this.doctorQuestionJpaRepository = doctorQuestionJpaRepository;
+        this.questionJpaRepository = questionJpaRepository;
+        this.entityManager = entityManager;
     }
 
     /**
@@ -139,20 +123,19 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
      */
     @Override
     public UUID save(Appointment appointment) {
-        SlotEntity slotEntity = this.slotJpaRepository.findById(appointment.getSlot().getId()).orElseThrow(SlotNotFoundException::new);
-        PatientEntity patientEntity = this.patientJpaRepository.findById(appointment.getPatient().getId()).orElseThrow(PatientNotFoundException::new);
-        DoctorEntity doctorEntity = this.doctorJpaRepository.findById(appointment.getDoctor().getId()).orElseThrow(DoctorNotFoundException::new);
-        MedicalConcernEntity medicalConcernEntity = this.medicalConcernJpaRepository.findById(appointment.getDoctor().getId()).orElseThrow(MedicalConcernNotFoundException::new);
+        SlotEntity slotEntity = this.entityManager.getReference(SlotEntity.class, appointment.getSlot().getId());
+        PatientEntity patientEntity = this.entityManager.getReference(PatientEntity.class, appointment.getPatient().getId());
+        DoctorEntity doctorEntity = this.entityManager.getReference(DoctorEntity.class, appointment.getDoctor().getId());
+        MedicalConcernEntity medicalConcernEntity = this.entityManager.getReference(MedicalConcernEntity.class, appointment.getDoctor().getId());
 
         AppointmentEntity entity = this.appointmentMapper.toEntity(appointment, slotEntity, patientEntity, doctorEntity, medicalConcernEntity);
         AppointmentEntity entityCreated = this.appointmentJpaRepository.save(entity);
 
-
         // save answers
         List<PreAppointmentAnswers> answers = appointment.getPreAppointmentAnswers();
         List<PreAppointmentAnswersEntity> answersEntities = answers.stream().map(preAppointmentAnswers -> {
-            DoctorQuestionEntity doctorQuestionEntity = this.doctorQuestionJpaRepository.findById(preAppointmentAnswers.getQuestion().getId()).orElseThrow(QuestionNotFoundException::new);
-            return this.preAppointmentAnswersMapper.toEntity(preAppointmentAnswers.getResponse(), entity, doctorQuestionEntity);
+            QuestionEntity questionEntity = this.questionJpaRepository.findById(preAppointmentAnswers.getQuestion().getId()).orElseThrow(QuestionNotFoundException::new);
+            return this.preAppointmentAnswersMapper.toEntity(preAppointmentAnswers.getResponse(), entity, questionEntity);
         }).toList();
         this.preAppointmentAnswersJpaRepository.saveAll(answersEntities);
 
@@ -162,7 +145,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     @Override
     public void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException {
         AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
-        appointmentEntity.setStatus(appointment.getStatus().getValue());
+        appointmentEntity.setStatus(appointment.getStatus().name());
         appointmentEntity.setLockedAt(appointment.getLockedAt());
         this.appointmentJpaRepository.save(appointmentEntity);
     }
@@ -172,5 +155,27 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         AppointmentEntity entity = this.appointmentJpaRepository.findById(id).orElseThrow(AppointmentNotFound::new);
         entity.setDeletedAt(LocalDateTime.now());
         this.appointmentJpaRepository.save(entity);
+    }
+
+    @Override
+    public List<Appointment> getAllByUserAndStatusOrderByDateAsc(User user, AppointmentStatus status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByPatient_User_IdAndStatusOrderByDateAsc(user.getId(), status.name(), pageable);
+
+        return appointments.getContent().stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
+    }
+
+    @Override
+    public List<Appointment> getAllByUserAndStatusOrderByDateDesc(User user, AppointmentStatus status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByPatient_User_IdAndStatusOrderByDateDesc(user.getId(), status.name(), pageable);
+
+        return appointments.getContent().stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
+    }
+
+    @Override
+    public Optional<Appointment> getMostRecentUpcomingAppointment(User user) {
+        Optional<AppointmentEntity> appointmentEntity = this.appointmentJpaRepository.findFirstByPatient_User_IdAndStatusAndDateAfterOrderByDateAsc(user.getId(), AppointmentStatus.CONFIRMED.name(), LocalDate.now());
+        return appointmentEntity.map(this.appointmentFacadeMapper::mapAppointmentToDomain);
     }
 }

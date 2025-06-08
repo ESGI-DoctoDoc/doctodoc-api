@@ -15,7 +15,9 @@ public class MedicalConcernMapper {
                 entity.getName(),
                 entity.getDurationInMinutes(),
                 List.of(),
-                entity.getPrice()
+                entity.getPrice(),
+                entity.getDoctor().getId(),
+                entity.getCreatedAt()
         );
     }
 
@@ -25,6 +27,7 @@ public class MedicalConcernMapper {
         entity.setName(medicalConcern.getName());
         entity.setDurationInMinutes(medicalConcern.getDurationInMinutes().getValue());
         entity.setPrice(medicalConcern.getPrice());
+        entity.setCreatedAt(medicalConcern.getCreatedAt());
         return entity;
     }
 }

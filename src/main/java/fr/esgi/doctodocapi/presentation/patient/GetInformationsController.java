@@ -1,15 +1,12 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.dtos.responses.GetBasicPatientInfo;
-import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetCloseMemberResponse;
 import fr.esgi.doctodocapi.use_cases.patient.GetInformations;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
-
-import java.util.List;
 
 /**
  * REST controller providing endpoints to retrieve patient-related information.
@@ -33,16 +30,5 @@ public class GetInformationsController {
     @ResponseStatus(value = HttpStatus.OK)
     public GetBasicPatientInfo getBasicPatientInfo() {
         return this.getInformations.getBasicPatientInfo();
-    }
-
-    /**
-     * Returns a list of close members related to the patient.
-     *
-     * @return list of close member DTOs
-     */
-    @GetMapping("patients/close-members")
-    @ResponseStatus(value = HttpStatus.OK)
-    public List<GetCloseMemberResponse> getCloseMembers() {
-        return this.getInformations.getCloseMembers();
     }
 }

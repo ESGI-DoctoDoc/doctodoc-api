@@ -22,7 +22,7 @@ public interface PatientRepository {
      *
      * @param patient the Patient entity to save
      */
-    void save(Patient patient);
+    Patient save(Patient patient);
 
     /**
      * Checks if a main patient account exists for the given user ID.
@@ -48,4 +48,8 @@ public interface PatientRepository {
      * @throws PatientNotFoundException if no patient with the ID is found
      */
     Patient getById(UUID id) throws PatientNotFoundException;
+
+    Patient update(Patient patient);
+
+    void delete(UUID patient);
 }
