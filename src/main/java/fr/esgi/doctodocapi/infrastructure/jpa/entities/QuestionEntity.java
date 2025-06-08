@@ -4,13 +4,15 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;
 
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "doctor_questions")
-public class DoctorQuestionEntity {
+public class QuestionEntity {
 
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -29,6 +31,12 @@ public class DoctorQuestionEntity {
 
     @Column(name = "is_mandatory", nullable = false)
     private boolean isMandatory;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDate createdAt;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     @ManyToOne
     @JoinColumn(name = "medical_concern_id")
@@ -82,10 +90,26 @@ public class DoctorQuestionEntity {
         this.medicalConcern = medicalConcern;
     }
 
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (o == null || getClass() != o.getClass()) return false;
-        DoctorQuestionEntity that = (DoctorQuestionEntity) o;
+        QuestionEntity that = (QuestionEntity) o;
         return Objects.equals(id, that.id);
     }
 
