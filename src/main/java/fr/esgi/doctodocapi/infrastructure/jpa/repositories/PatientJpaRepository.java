@@ -13,4 +13,5 @@ public interface PatientJpaRepository extends JpaRepository<PatientEntity, UUID>
     Optional<PatientEntity> findByUser_IdAndIsMainAccount(UUID userId, boolean mainAccount);
 
     List<PatientEntity> findAllByUser_IdAndIsMainAccount(UUID userId, boolean mainAccount);
+
 }

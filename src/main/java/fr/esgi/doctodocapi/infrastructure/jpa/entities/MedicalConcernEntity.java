@@ -28,7 +28,7 @@ public class MedicalConcernEntity {
     @JoinColumn(name = "doctor_id")
     private DoctorEntity doctor;
 
-    @OneToMany(mappedBy = "medicalConcern", cascade = CascadeType.PERSIST)
+    @OneToMany(mappedBy = "medicalConcern")
     private List<QuestionEntity> questions;
 
     @ManyToMany(mappedBy = "medicalConcerns")

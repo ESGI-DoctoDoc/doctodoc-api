@@ -47,7 +47,6 @@ public class CreateMedicalConcern {
             MedicalConcern newMedicalConcern = MedicalConcern.create(
                     createMedicalConcernRequest.name(),
                     createMedicalConcernRequest.duration(),
-                    List.of(),
                     createMedicalConcernRequest.price(),
                     doctor.getId()
             );

@@ -47,13 +47,12 @@ public class MedicalConcern {
      *
      * @param name                   concern name
      * @param durationInMinutesValue duration in minutes
-     * @param questions              list of associated questions
      * @param price                  concern price
      * @param doctorId               identifier of the doctor creating the concern
      * @return a new {@code MedicalConcern} instance
      */
-    public static MedicalConcern create(String name, Integer durationInMinutesValue, List<Question> questions, Double price, UUID doctorId) {
-        return new MedicalConcern(name, durationInMinutesValue, questions, price, doctorId, LocalDate.now());
+    public static MedicalConcern create(String name, Integer durationInMinutesValue, Double price, UUID doctorId) {
+        return new MedicalConcern(name, durationInMinutesValue, List.of(), price, doctorId, LocalDate.now());
     }
 
     public UUID getId() {

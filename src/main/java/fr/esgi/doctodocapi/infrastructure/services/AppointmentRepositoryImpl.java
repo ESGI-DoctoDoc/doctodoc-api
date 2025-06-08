@@ -9,6 +9,7 @@ import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.PreAppointmentAnswersMapper;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
+import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
 import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFound;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
@@ -16,11 +17,17 @@ import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
+import fr.esgi.doctodocapi.model.user.User;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -138,7 +145,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     @Override
     public void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException {
         AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
-        appointmentEntity.setStatus(appointment.getStatus().getValue());
+        appointmentEntity.setStatus(appointment.getStatus().name());
         appointmentEntity.setLockedAt(appointment.getLockedAt());
         this.appointmentJpaRepository.save(appointmentEntity);
     }
@@ -148,5 +155,27 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         AppointmentEntity entity = this.appointmentJpaRepository.findById(id).orElseThrow(AppointmentNotFound::new);
         entity.setDeletedAt(LocalDateTime.now());
         this.appointmentJpaRepository.save(entity);
+    }
+
+    @Override
+    public List<Appointment> getAllByUserAndStatusOrderByDateAsc(User user, AppointmentStatus status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByPatient_User_IdAndStatusOrderByDateAsc(user.getId(), status.name(), pageable);
+
+        return appointments.getContent().stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
+    }
+
+    @Override
+    public List<Appointment> getAllByUserAndStatusOrderByDateDesc(User user, AppointmentStatus status, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByPatient_User_IdAndStatusOrderByDateDesc(user.getId(), status.name(), pageable);
+
+        return appointments.getContent().stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
+    }
+
+    @Override
+    public Optional<Appointment> getMostRecentUpcomingAppointment(User user) {
+        Optional<AppointmentEntity> appointmentEntity = this.appointmentJpaRepository.findFirstByPatient_User_IdAndStatusAndDateAfterOrderByDateAsc(user.getId(), AppointmentStatus.CONFIRMED.name(), LocalDate.now());
+        return appointmentEntity.map(this.appointmentFacadeMapper::mapAppointmentToDomain);
     }
 }
