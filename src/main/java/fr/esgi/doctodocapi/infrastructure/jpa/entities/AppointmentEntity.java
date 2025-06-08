@@ -1,6 +1,5 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
-import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import jakarta.persistence.*;
 import org.hibernate.annotations.SQLRestriction;
 
@@ -56,7 +55,7 @@ public class AppointmentEntity {
     private LocalDateTime deletedAt;
 
     @Column(name = "status", nullable = false)
-    private String status = AppointmentStatus.LOCKED.getValue();
+    private String status;
 
     @OneToMany(mappedBy = "appointment")
     private List<PreAppointmentAnswersEntity> appointmentQuestions;

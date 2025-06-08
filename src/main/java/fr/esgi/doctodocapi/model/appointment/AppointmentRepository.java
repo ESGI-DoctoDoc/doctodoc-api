@@ -6,8 +6,10 @@ import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
+import fr.esgi.doctodocapi.model.user.User;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface AppointmentRepository {
@@ -19,4 +21,10 @@ public interface AppointmentRepository {
     void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException;
 
     void delete(UUID id);
+
+    List<Appointment> getAllByUserAndStatusOrderByDateAsc(User user, AppointmentStatus status, int page, int size);
+
+    List<Appointment> getAllByUserAndStatusOrderByDateDesc(User user, AppointmentStatus status, int page, int size);
+
+    Optional<Appointment> getMostRecentUpcomingAppointment(User user);
 }
