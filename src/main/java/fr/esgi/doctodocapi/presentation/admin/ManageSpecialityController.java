@@ -19,7 +19,6 @@ import java.util.List;
  */
 @RequestMapping("doctors")
 @RestController
-@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class ManageSpecialityController {
     private final AddSpeciality addSpeciality;
     private final GetAllSpecialities getAllSpecialities;
@@ -47,6 +46,7 @@ public class ManageSpecialityController {
      * @return the created speciality as a {@link GetSpecialityResponse}
      */
     @PostMapping("/specialities")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
     @ResponseStatus(HttpStatus.CREATED)
     public GetSpecialityResponse addSpeciality(@Valid @RequestBody AddSpecialityRequest addSpecialityRequest) {
         return this.addSpeciality.execute(addSpecialityRequest);
