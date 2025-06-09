@@ -6,6 +6,7 @@ public record GetSearchDoctorResponse(
         UUID id,
         String firstName,
         String lastName,
-        String speciality
+        String speciality,
+        String pictureUrl
 ) {
 }
