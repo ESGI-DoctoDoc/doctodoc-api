@@ -9,8 +9,12 @@ import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -90,6 +94,15 @@ public class DoctorRepositoryImpl implements DoctorRepository {
         } else {
             return Optional.empty();
         }
+    }
+
+    @Override
+    public List<Doctor> searchDoctors(String name, String speciality, List<String> languages, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        String[] array = (languages != null) ? languages.toArray(new String[0]) : new String[0];
+
+        Page<DoctorEntity> doctors = this.doctorJpaRepository.searchDoctors(name, speciality, array, pageable);
+        return doctors.stream().map(this.doctorMapper::toDomain).toList();
     }
 
     /**
