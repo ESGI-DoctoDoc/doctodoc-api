@@ -1,0 +1,17 @@
+package fr.esgi.doctodocapi.use_cases.patient.mappers;
+
+import fr.esgi.doctodocapi.dtos.responses.GetSearchDoctorResponse;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import org.springframework.stereotype.Service;
+
+@Service
+public class SearchDoctorPresentationMapper {
+    public GetSearchDoctorResponse toDto(Doctor doctor) {
+        return new GetSearchDoctorResponse(
+                doctor.getId(),
+                doctor.getPersonalInformations().getFirstName(),
+                doctor.getPersonalInformations().getLastName(),
+                doctor.getProfessionalInformations().getSpeciality()
+        );
+    }
+}
