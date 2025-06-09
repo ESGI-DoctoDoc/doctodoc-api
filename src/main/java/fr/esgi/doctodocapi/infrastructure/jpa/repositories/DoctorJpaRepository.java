@@ -19,8 +19,8 @@ public interface DoctorJpaRepository extends JpaRepository<DoctorEntity, UUID> {
             SELECT * FROM doctors d
             WHERE
                 (
-                    LOWER(d.first_name || ' ' || d.last_name) LIKE CONCAT('%', LOWER(:name), '%')
-                    OR LOWER(d.last_name || ' ' || d.first_name) LIKE CONCAT('%', LOWER(:name), '%')
+                    :name IS NULL OR (LOWER(d.first_name || ' ' || d.last_name) LIKE CONCAT('%', LOWER(:name), '%')
+                    OR LOWER(d.last_name || ' ' || d.first_name) LIKE CONCAT('%', LOWER(:name), '%'))
                 )
                 AND (:speciality IS NULL OR LOWER(d.speciality) = LOWER(:speciality))
                 AND (

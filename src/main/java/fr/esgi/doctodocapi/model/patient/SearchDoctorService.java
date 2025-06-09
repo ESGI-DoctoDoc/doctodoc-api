@@ -16,7 +16,7 @@ public class SearchDoctorService {
 
 
     public List<Doctor> getDoctor(String name, String speciality, List<String> languages, int page, int size) {
-        String nameLower = (name == null) ? "" : name.toLowerCase();
+        String nameLower = (name == null || name.isBlank()) ? null : name.toLowerCase();
         String specialityLower = (speciality == null || speciality.isBlank()) ? null : speciality.toLowerCase();
         return this.doctorRepository.searchDoctors(
                 nameLower,

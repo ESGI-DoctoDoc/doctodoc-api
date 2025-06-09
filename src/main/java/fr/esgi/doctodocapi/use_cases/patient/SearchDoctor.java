@@ -19,9 +19,6 @@ public class SearchDoctor {
     }
 
     public List<GetSearchDoctorResponse> process(String name, String speciality, List<String> languages, int page, int size) {
-        if (name.isBlank()) {
-            return List.of();
-        }
         List<Doctor> doctors = this.searchDoctorService.getDoctor(name, speciality, languages, page, size);
         return doctors.stream().map(this.searchDoctorPresentationMapper::toDto).toList();
     }
