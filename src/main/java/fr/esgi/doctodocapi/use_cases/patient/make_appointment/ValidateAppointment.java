@@ -13,10 +13,10 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
-import fr.esgi.doctodocapi.presentation.patient.dtos.requests.save_appointment.SaveAnswersForAnAppointmentRequest;
-import fr.esgi.doctodocapi.presentation.patient.dtos.requests.save_appointment.SaveAppointmentRequest;
-import fr.esgi.doctodocapi.presentation.patient.dtos.responses.LockedAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.save_appointment.SaveAnswersForAnAppointmentRequest;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.save_appointment.SaveAppointmentRequest;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.LockedAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IValidateAppointment;
 import org.springframework.http.HttpStatus;
 

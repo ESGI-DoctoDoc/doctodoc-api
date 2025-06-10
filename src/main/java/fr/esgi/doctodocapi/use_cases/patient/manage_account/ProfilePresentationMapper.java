@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_account;
 
 import fr.esgi.doctodocapi.model.patient.Patient;
-import fr.esgi.doctodocapi.presentation.patient.dtos.responses.GetProfileResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetProfileResponse;
 import org.springframework.stereotype.Service;
 
 /**

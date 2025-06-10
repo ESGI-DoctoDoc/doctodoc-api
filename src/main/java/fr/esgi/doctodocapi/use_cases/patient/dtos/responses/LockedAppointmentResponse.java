@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.presentation.patient.dtos.responses;
+package fr.esgi.doctodocapi.use_cases.patient.dtos.responses;
 
 import java.util.UUID;
 

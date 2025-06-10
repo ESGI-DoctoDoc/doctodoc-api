@@ -1,8 +1,8 @@
 package fr.esgi.doctodocapi.presentation.patient.manage_account;
 
-import fr.esgi.doctodocapi.presentation.patient.dtos.requests.PatientOnBoardingRequest;
-import fr.esgi.doctodocapi.presentation.patient.dtos.requests.SaveDoctorRecruitmentRequest;
-import fr.esgi.doctodocapi.presentation.patient.dtos.responses.GetProfileResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.PatientOnBoardingRequest;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.SaveDoctorRecruitmentRequest;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetProfileResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_account.IOnBoardingPatient;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;

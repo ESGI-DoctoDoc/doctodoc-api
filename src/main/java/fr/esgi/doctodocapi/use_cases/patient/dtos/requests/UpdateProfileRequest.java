@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.presentation.patient.dtos.requests;
+package fr.esgi.doctodocapi.use_cases.patient.dtos.requests;
 
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;

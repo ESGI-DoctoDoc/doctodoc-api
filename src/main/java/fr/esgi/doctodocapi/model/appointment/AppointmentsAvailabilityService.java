@@ -4,7 +4,7 @@ import fr.esgi.doctodocapi.model.doctor.calendar.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.vo.hours_range.HoursRange;
-import fr.esgi.doctodocapi.presentation.patient.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

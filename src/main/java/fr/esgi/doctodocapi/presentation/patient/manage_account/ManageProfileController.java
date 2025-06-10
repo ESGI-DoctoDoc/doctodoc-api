@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.patient.manage_account;
 
-import fr.esgi.doctodocapi.presentation.patient.dtos.requests.UpdateProfileRequest;
-import fr.esgi.doctodocapi.presentation.patient.dtos.responses.GetProfileResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.UpdateProfileRequest;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetProfileResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_account.IManageProfile;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;

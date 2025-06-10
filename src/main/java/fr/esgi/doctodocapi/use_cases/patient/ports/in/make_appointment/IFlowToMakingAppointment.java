@@ -1,8 +1,8 @@
 package fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment;
 
-import fr.esgi.doctodocapi.presentation.patient.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
-import fr.esgi.doctodocapi.presentation.patient.dtos.responses.flow_to_making_appointment.GetMedicalConcernsResponse;
-import fr.esgi.doctodocapi.presentation.patient.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorQuestionsResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetMedicalConcernsResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorQuestionsResponse;
 
 import java.time.LocalDate;
 import java.util.List;

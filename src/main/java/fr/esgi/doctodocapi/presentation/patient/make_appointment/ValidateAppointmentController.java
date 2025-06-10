@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.patient.make_appointment;
 
-import fr.esgi.doctodocapi.presentation.patient.dtos.requests.save_appointment.SaveAppointmentRequest;
-import fr.esgi.doctodocapi.presentation.patient.dtos.responses.LockedAppointmentResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.save_appointment.SaveAppointmentRequest;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.LockedAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IValidateAppointment;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
