@@ -1,13 +1,11 @@
 package fr.esgi.doctodocapi.use_cases.patient.mappers;
 
+import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentAddressResponse;
 import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentDetailedResponse;
 import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentDoctorResponse;
 import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentPatientResponse;
-import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetPreAppointmentAnswersResponse;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class AppointmentDetailedMapper {
@@ -26,13 +24,19 @@ public class AppointmentDetailedMapper {
                 appointment.getDoctor().getPersonalInformations().getProfilePictureUrl()
         );
 
-        List<GetPreAppointmentAnswersResponse> answers = appointment
-                .getPreAppointmentAnswers()
-                .stream()
-                .map(preAppointmentAnswers -> new GetPreAppointmentAnswersResponse(
-                        preAppointmentAnswers.getQuestion().getQuestion(),
-                        preAppointmentAnswers.getResponse()
-                )).toList();
+        GetAppointmentAddressResponse address = new GetAppointmentAddressResponse(
+                appointment.getDoctor().getConsultationInformations().getAddress(),
+                appointment.getDoctor().getConsultationInformations().getCoordinatesGps().getClinicLatitude(),
+                appointment.getDoctor().getConsultationInformations().getCoordinatesGps().getClinicLongitude()
+        );
+
+//        List<GetPreAppointmentAnswersResponse> answers = appointment
+//                .getPreAppointmentAnswers()
+//                .stream()
+//                .map(preAppointmentAnswers -> new GetPreAppointmentAnswersResponse(
+//                        preAppointmentAnswers.getQuestion().getQuestion(),
+//                        preAppointmentAnswers.getResponse()
+//                )).toList();
 
         return new GetAppointmentDetailedResponse(
                 appointment.getId(),
@@ -44,7 +48,8 @@ public class AppointmentDetailedMapper {
                 appointment.getHoursRange().getEnd(),
                 patient,
                 doctor,
-                answers
+                address
+//                answers
         );
     }
 }

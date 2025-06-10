@@ -3,7 +3,6 @@ package fr.esgi.doctodocapi.dtos.responses.appointment_response;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
-import java.util.List;
 import java.util.UUID;
 
 public record GetAppointmentDetailedResponse(
@@ -16,6 +15,7 @@ public record GetAppointmentDetailedResponse(
         LocalTime end,
         GetAppointmentPatientResponse patient,
         GetAppointmentDoctorResponse doctor,
-        List<GetPreAppointmentAnswersResponse> responses
+        GetAppointmentAddressResponse address
+//        List<GetPreAppointmentAnswersResponse> responses
 ) {
 }
