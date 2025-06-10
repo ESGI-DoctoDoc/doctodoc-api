@@ -1,8 +1,8 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
+import fr.esgi.doctodocapi.domain.use_cases.patient.manage_close_member.*;
 import fr.esgi.doctodocapi.dtos.requests.patient.SaveCloseMemberRequest;
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetCloseMemberResponse;
-import fr.esgi.doctodocapi.use_cases.patient.manage_close_member.*;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;

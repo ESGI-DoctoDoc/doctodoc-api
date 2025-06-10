@@ -1,9 +1,9 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
-import fr.esgi.doctodocapi.model.user.User;
-import fr.esgi.doctodocapi.model.vo.email.Email;
-import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
+import fr.esgi.doctodocapi.domain.entities.user.User;
+import fr.esgi.doctodocapi.domain.entities.vo.email.Email;
+import fr.esgi.doctodocapi.domain.entities.vo.phone_number.PhoneNumber;
 import org.springframework.stereotype.Service;
 
 @Service

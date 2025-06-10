@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.presentation.doctor;
 
 import fr.esgi.doctodocapi.dtos.requests.RegisterRequest;
 import fr.esgi.doctodocapi.dtos.responses.RegisterResponse;
-import fr.esgi.doctodocapi.use_cases.user.RegisterUser;
+import fr.esgi.doctodocapi.domain.use_cases.user.manage_account.RegisterUser;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

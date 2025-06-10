@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.dtos.responses.GetSearchDoctorResponse;
-import fr.esgi.doctodocapi.use_cases.patient.SearchDoctor;
+import fr.esgi.doctodocapi.domain.use_cases.patient.search_doctor.SearchDoctor;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

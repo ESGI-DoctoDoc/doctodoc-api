@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.SpecialityEntity;
-import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
+import fr.esgi.doctodocapi.domain.entities.admin.speciality.Speciality;
 import org.springframework.stereotype.Service;
 
 @Service

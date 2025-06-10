@@ -3,11 +3,11 @@ package fr.esgi.doctodocapi.infrastructure.services;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.UserJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.UserMapper;
-import fr.esgi.doctodocapi.model.user.User;
-import fr.esgi.doctodocapi.model.user.UserNotFoundException;
-import fr.esgi.doctodocapi.model.user.UserRepository;
+import fr.esgi.doctodocapi.domain.entities.user.User;
+import fr.esgi.doctodocapi.domain.entities.user.UserNotFoundException;
+import fr.esgi.doctodocapi.domain.entities.user.UserRepository;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
@@ -16,7 +16,7 @@ import java.util.UUID;
  * This service provides methods to manage user data, including user authentication,
  * registration, and profile management operations.
  */
-@Service
+@Repository
 public class UserRepositoryImpl implements UserRepository {
     /**
      * Repository for accessing user data in the database.

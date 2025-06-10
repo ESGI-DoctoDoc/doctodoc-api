@@ -3,8 +3,8 @@ package fr.esgi.doctodocapi.infrastructure.services.admin;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.SpecialityEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.SpecialityJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.SpecialityMapper;
-import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
-import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
+import fr.esgi.doctodocapi.domain.entities.admin.speciality.Speciality;
+import fr.esgi.doctodocapi.domain.entities.admin.speciality.SpecialityRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

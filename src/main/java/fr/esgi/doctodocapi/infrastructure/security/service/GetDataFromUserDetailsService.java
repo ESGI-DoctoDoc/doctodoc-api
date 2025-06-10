@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.infrastructure.security.service;
 
-import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
+import fr.esgi.doctodocapi.domain.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;

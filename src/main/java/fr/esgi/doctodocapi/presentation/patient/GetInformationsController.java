@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.dtos.responses.GetProfileResponse;
-import fr.esgi.doctodocapi.use_cases.patient.GetInformations;
+import fr.esgi.doctodocapi.domain.use_cases.patient.manage_patient_account.GetInformations;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;

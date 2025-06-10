@@ -3,8 +3,8 @@ package fr.esgi.doctodocapi.infrastructure.services;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorRecruitmentEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DoctorRecruitmentJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.DoctorRecruitmentMapper;
-import fr.esgi.doctodocapi.model.doctor_recruitment.DoctorRecruitment;
-import fr.esgi.doctodocapi.model.doctor_recruitment.DoctorRecruitmentRepository;
+import fr.esgi.doctodocapi.domain.entities.doctor_recruitment.DoctorRecruitment;
+import fr.esgi.doctodocapi.domain.entities.doctor_recruitment.DoctorRecruitmentRepository;
 import org.springframework.stereotype.Service;
 
 /**

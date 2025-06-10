@@ -2,8 +2,8 @@ package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.QuestionEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
-import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
-import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionType;
+import fr.esgi.doctodocapi.domain.entities.doctor.consultation_informations.medical_concern.question.Question;
+import fr.esgi.doctodocapi.domain.entities.doctor.consultation_informations.medical_concern.question.QuestionType;
 import org.springframework.stereotype.Service;
 
 @Service

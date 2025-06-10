@@ -5,11 +5,11 @@ import fr.esgi.doctodocapi.infrastructure.jpa.repositories.SlotJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.MedicalConcernMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotMapper;
-import fr.esgi.doctodocapi.model.appointment.Appointment;
-import fr.esgi.doctodocapi.model.doctor.calendar.Slot;
-import fr.esgi.doctodocapi.model.doctor.calendar.SlotRepository;
-import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
-import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
+import fr.esgi.doctodocapi.domain.entities.appointment.Appointment;
+import fr.esgi.doctodocapi.domain.entities.doctor.calendar.Slot;
+import fr.esgi.doctodocapi.domain.entities.doctor.calendar.SlotRepository;
+import fr.esgi.doctodocapi.domain.entities.doctor.consultation_informations.medical_concern.MedicalConcern;
+import fr.esgi.doctodocapi.domain.entities.doctor.exceptions.SlotNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;

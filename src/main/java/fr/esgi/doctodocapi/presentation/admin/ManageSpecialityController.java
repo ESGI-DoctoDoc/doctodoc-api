@@ -2,8 +2,8 @@ package fr.esgi.doctodocapi.presentation.admin;
 
 import fr.esgi.doctodocapi.dtos.requests.admin.AddSpecialityRequest;
 import fr.esgi.doctodocapi.dtos.responses.admin.GetSpecialityResponse;
-import fr.esgi.doctodocapi.use_cases.admin.AddSpeciality;
-import fr.esgi.doctodocapi.use_cases.admin.GetAllSpecialities;
+import fr.esgi.doctodocapi.domain.use_cases.admin.manage_specialities.AddSpeciality;
+import fr.esgi.doctodocapi.domain.use_cases.admin.manage_specialities.GetAllSpecialities;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
