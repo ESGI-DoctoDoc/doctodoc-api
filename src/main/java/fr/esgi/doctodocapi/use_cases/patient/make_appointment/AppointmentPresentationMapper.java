@@ -1,9 +1,9 @@
 package fr.esgi.doctodocapi.use_cases.patient.make_appointment;
 
-import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentDoctorResponse;
-import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentResponse;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.doctor.personal_information.DoctorPersonnalInformations;
+import fr.esgi.doctodocapi.presentation.patient.dtos.responses.appointment.GetAppointmentDoctorResponse;
+import fr.esgi.doctodocapi.presentation.patient.dtos.responses.appointment.GetAppointmentResponse;
 import org.springframework.stereotype.Service;
 
 @Service

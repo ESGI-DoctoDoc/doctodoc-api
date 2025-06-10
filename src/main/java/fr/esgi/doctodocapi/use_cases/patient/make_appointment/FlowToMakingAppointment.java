@@ -8,12 +8,12 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionType;
+import fr.esgi.doctodocapi.presentation.patient.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
+import fr.esgi.doctodocapi.presentation.patient.dtos.responses.flow_to_making_appointment.GetMedicalConcernsResponse;
+import fr.esgi.doctodocapi.presentation.patient.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorListQuestionsResponse;
+import fr.esgi.doctodocapi.presentation.patient.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorQuestionsResponse;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IFlowToMakingAppointment;
-import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
-import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetMedicalConcernsResponse;
-import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorListQuestionsResponse;
-import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorQuestionsResponse;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;

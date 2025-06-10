@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment;
 
-import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentResponse;
+import fr.esgi.doctodocapi.presentation.patient.dtos.responses.appointment.GetAppointmentResponse;
 
 import java.util.List;
 

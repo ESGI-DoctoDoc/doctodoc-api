@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment;
 
-import fr.esgi.doctodocapi.dtos.requests.save_appointment_request.SaveAppointmentRequest;
-import fr.esgi.doctodocapi.dtos.responses.LockedAppointmentResponse;
+import fr.esgi.doctodocapi.presentation.patient.dtos.requests.save_appointment.SaveAppointmentRequest;
+import fr.esgi.doctodocapi.presentation.patient.dtos.responses.LockedAppointmentResponse;
 
 import java.util.UUID;
 

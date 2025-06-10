@@ -6,10 +6,10 @@ import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
+import fr.esgi.doctodocapi.presentation.patient.dtos.responses.appointment.GetAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IGetAppointments;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
-import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentResponse;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;

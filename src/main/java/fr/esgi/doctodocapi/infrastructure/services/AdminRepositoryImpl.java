@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.infrastructure.services;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.AdminJpaRepository;
 import fr.esgi.doctodocapi.model.admin.AdminRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.UUID;
 
@@ -11,7 +11,7 @@ import java.util.UUID;
  * This service provides functionality to manage administrator data,
  * allowing the application to verify administrator privileges.
  */
-@Service
+@Repository
 public class AdminRepositoryImpl implements AdminRepository {
     /**
      * Repository for accessing administrator data in the database.

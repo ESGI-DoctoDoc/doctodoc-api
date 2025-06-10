@@ -2,7 +2,6 @@ package fr.esgi.doctodocapi;
 
 import fr.esgi.doctodocapi.dtos.requests.doctor.DoctorValidationRequest;
 import fr.esgi.doctodocapi.dtos.requests.doctor.OnBoardingDoctorRequest;
-import fr.esgi.doctodocapi.use_cases.exceptions.on_boarding.DoctorAccountAlreadyExist;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
@@ -12,8 +11,9 @@ import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.model.vo.email.Email;
 import fr.esgi.doctodocapi.model.vo.password.Password;
 import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
+import fr.esgi.doctodocapi.use_cases.admin.validate_doctor_account.ValidateDoctorAccount;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.OnboardingDoctorProcess;
-import fr.esgi.doctodocapi.use_cases.admin.validate_account.ValidateDoctorAccount;
+import fr.esgi.doctodocapi.use_cases.exceptions.on_boarding.DoctorAccountAlreadyExist;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
