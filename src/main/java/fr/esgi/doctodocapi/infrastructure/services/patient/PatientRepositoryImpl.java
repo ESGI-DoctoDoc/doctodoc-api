@@ -5,10 +5,10 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.PatientEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.PatientJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.PatientMapper;
-import fr.esgi.doctodocapi.domain.entities.patient.Patient;
-import fr.esgi.doctodocapi.domain.entities.patient.PatientNotFoundException;
-import fr.esgi.doctodocapi.domain.entities.patient.PatientRepository;
-import fr.esgi.doctodocapi.domain.entities.user.UserNotFoundException;
+import fr.esgi.doctodocapi.model.patient.Patient;
+import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
+import fr.esgi.doctodocapi.model.patient.PatientRepository;
+import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 

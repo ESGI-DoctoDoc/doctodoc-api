@@ -3,7 +3,7 @@ package fr.esgi.doctodocapi.presentation.patient;
 import fr.esgi.doctodocapi.dtos.requests.patient.PatientOnBoardingRequest;
 import fr.esgi.doctodocapi.dtos.requests.patient.SaveDoctorRecruitmentRequest;
 import fr.esgi.doctodocapi.dtos.responses.GetProfileResponse;
-import fr.esgi.doctodocapi.domain.use_cases.patient.manage_patient_account.OnBoardingPatient;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_account.IOnBoardingPatient;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @PreAuthorize("hasRole('ROLE_PATIENT')")
 public class OnBoardingPatientController {
-    private final OnBoardingPatient onBoardingPatient;
+    private final IOnBoardingPatient onBoardingPatient;
 
-    public OnBoardingPatientController(OnBoardingPatient onBoardingPatient) {
+    public OnBoardingPatientController(IOnBoardingPatient onBoardingPatient) {
         this.onBoardingPatient = onBoardingPatient;
     }
 

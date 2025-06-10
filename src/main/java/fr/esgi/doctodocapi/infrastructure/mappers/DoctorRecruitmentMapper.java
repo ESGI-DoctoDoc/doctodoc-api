@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorRecruitmentEntity;
-import fr.esgi.doctodocapi.domain.entities.doctor_recruitment.DoctorRecruitment;
+import fr.esgi.doctodocapi.model.doctor_recruitment.DoctorRecruitment;
 import org.springframework.stereotype.Service;
 
 @Service

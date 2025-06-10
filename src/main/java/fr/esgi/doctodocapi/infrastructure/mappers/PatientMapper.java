@@ -3,12 +3,12 @@ package fr.esgi.doctodocapi.infrastructure.mappers;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.PatientEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
-import fr.esgi.doctodocapi.domain.entities.doctor.Doctor;
-import fr.esgi.doctodocapi.domain.entities.doctor.personal_information.Gender;
-import fr.esgi.doctodocapi.domain.entities.patient.Patient;
-import fr.esgi.doctodocapi.domain.entities.vo.birthdate.Birthdate;
-import fr.esgi.doctodocapi.domain.entities.vo.email.Email;
-import fr.esgi.doctodocapi.domain.entities.vo.phone_number.PhoneNumber;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.personal_information.Gender;
+import fr.esgi.doctodocapi.model.patient.Patient;
+import fr.esgi.doctodocapi.model.vo.birthdate.Birthdate;
+import fr.esgi.doctodocapi.model.vo.email.Email;
+import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
 import org.springframework.stereotype.Service;
 
 @Service

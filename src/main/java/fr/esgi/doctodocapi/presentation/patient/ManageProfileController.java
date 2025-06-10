@@ -2,7 +2,8 @@ package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.dtos.requests.patient.UpdateProfileRequest;
 import fr.esgi.doctodocapi.dtos.responses.GetProfileResponse;
-import fr.esgi.doctodocapi.domain.use_cases.patient.manage_patient_account.ManageProfile;
+import fr.esgi.doctodocapi.use_cases.patient.manage_account.ManageProfile;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_account.IManageProfile;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -18,9 +19,9 @@ import org.springframework.web.bind.annotation.RestController;
 @PreAuthorize("hasRole('ROLE_PATIENT')")
 @RequestMapping("/patients/profile")
 public class ManageProfileController {
-    private final ManageProfile manageProfile;
+    private final IManageProfile manageProfile;
 
-    public ManageProfileController(ManageProfile manageProfile) {
+    public ManageProfileController(IManageProfile manageProfile) {
         this.manageProfile = manageProfile;
     }
 

@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
-import fr.esgi.doctodocapi.domain.entities.doctor.consultation_informations.medical_concern.MedicalConcern;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

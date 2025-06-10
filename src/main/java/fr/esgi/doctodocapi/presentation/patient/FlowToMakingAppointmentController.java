@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
-import fr.esgi.doctodocapi.domain.use_cases.patient.ports.in.IFlowToMakingAppointment;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IFlowToMakingAppointment;
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetMedicalConcernsResponse;
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorQuestionsResponse;

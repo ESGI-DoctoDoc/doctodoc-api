@@ -8,13 +8,13 @@ import fr.esgi.doctodocapi.infrastructure.jpa.repositories.QuestionJpaRepository
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.MedicalConcernJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.QuestionMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.MedicalConcernMapper;
-import fr.esgi.doctodocapi.domain.entities.doctor.Doctor;
-import fr.esgi.doctodocapi.domain.entities.doctor.consultation_informations.medical_concern.MedicalConcern;
-import fr.esgi.doctodocapi.domain.entities.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
-import fr.esgi.doctodocapi.domain.entities.doctor.consultation_informations.medical_concern.question.Question;
-import fr.esgi.doctodocapi.domain.entities.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
-import fr.esgi.doctodocapi.domain.entities.doctor.exceptions.MedicalConcernNotFoundException;
-import fr.esgi.doctodocapi.domain.entities.user.UserNotFoundException;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
+import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
+import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

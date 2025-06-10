@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.presentation.user;
 
-import fr.esgi.doctodocapi.domain.use_cases.user.ports.in.IValidateEmail;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IValidateEmail;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 

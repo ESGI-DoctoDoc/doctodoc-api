@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.infrastructure.api_sms;
 
-import fr.esgi.doctodocapi.domain.entities.user.MessageSender;
+import fr.esgi.doctodocapi.model.user.MessageSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

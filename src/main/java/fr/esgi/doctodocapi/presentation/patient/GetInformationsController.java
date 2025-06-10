@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.dtos.responses.GetProfileResponse;
-import fr.esgi.doctodocapi.domain.use_cases.patient.manage_patient_account.GetInformations;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_account.IGetInformations;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @PreAuthorize("hasRole('ROLE_PATIENT')")
 public class GetInformationsController {
-    private final GetInformations getInformations;
+    private final IGetInformations getInformations;
 
-    public GetInformationsController(GetInformations getInformations) {
+    public GetInformationsController(IGetInformations getInformations) {
         this.getInformations = getInformations;
     }
 

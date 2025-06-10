@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.infrastructure.jwt;
 
-import fr.esgi.doctodocapi.domain.entities.user.TokenManager;
+import fr.esgi.doctodocapi.model.user.TokenManager;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.io.Decoders;

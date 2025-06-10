@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.presentation.ports.out;
 
-import fr.esgi.doctodocapi.domain.use_cases.user.ports.out.GetCurrentRequestContext;
+import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentRequestContext;
 import org.springframework.stereotype.Service;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;

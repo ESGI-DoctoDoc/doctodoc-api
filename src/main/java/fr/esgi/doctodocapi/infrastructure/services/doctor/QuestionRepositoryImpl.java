@@ -3,9 +3,9 @@ package fr.esgi.doctodocapi.infrastructure.services.doctor;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.QuestionEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.QuestionJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.QuestionMapper;
-import fr.esgi.doctodocapi.domain.entities.doctor.consultation_informations.medical_concern.question.Question;
-import fr.esgi.doctodocapi.domain.entities.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
-import fr.esgi.doctodocapi.domain.entities.doctor.consultation_informations.medical_concern.question.QuestionRepository;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionRepository;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;

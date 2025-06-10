@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IGetAppointments;
 import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentResponse;
-import fr.esgi.doctodocapi.domain.use_cases.patient.make_appointment.GetAppointments;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -12,9 +12,9 @@ import java.util.List;
 @PreAuthorize("hasRole('ROLE_PATIENT')")
 @RequestMapping("/patients/appointments")
 public class GetAppointmentsController {
-    private final GetAppointments getAppointments;
+    private final IGetAppointments getAppointments;
 
-    public GetAppointmentsController(GetAppointments getAppointments) {
+    public GetAppointmentsController(IGetAppointments getAppointments) {
         this.getAppointments = getAppointments;
     }
 

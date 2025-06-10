@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation;
 
 import fr.esgi.doctodocapi.dtos.responses.ErrorResponse;
-import fr.esgi.doctodocapi.domain.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;

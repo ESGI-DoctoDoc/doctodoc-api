@@ -2,8 +2,8 @@ package fr.esgi.doctodocapi.presentation.doctor.medical_concern.question;
 
 import fr.esgi.doctodocapi.dtos.requests.doctor.medical_concern.question.QuestionsInputRequest;
 import fr.esgi.doctodocapi.dtos.responses.doctor.question.GetQuestionResponse;
-import fr.esgi.doctodocapi.domain.use_cases.doctor.manage_medical_concern.manage_question.SynchronizeQuestions;
-import fr.esgi.doctodocapi.domain.use_cases.doctor.manage_medical_concern.manage_question.GetAllQuestions;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_medical_concern.manage_question.SynchronizeQuestions;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_medical_concern.manage_question.GetAllQuestions;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
