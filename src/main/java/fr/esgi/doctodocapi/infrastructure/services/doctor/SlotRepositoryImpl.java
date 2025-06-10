@@ -13,6 +13,9 @@ import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -103,6 +106,13 @@ public class SlotRepositoryImpl implements SlotRepository {
         return this.slotMapper.toDomain(entity, appointments, medicalConcerns);
     }
 
+
+    /**
+     * Saves a list of slots to the database.
+     *
+     * @param slots the list of domain {@link Slot} objects to persist
+     * @return the list of saved {@link Slot} objects
+     */
     @Override
     public List<Slot> saveAll(List<Slot> slots) {
         List<SlotEntity> entities = slots.stream()
@@ -111,6 +121,48 @@ public class SlotRepositoryImpl implements SlotRepository {
 
         List<SlotEntity> savedEntities = this.slotJpaRepository.saveAll(entities);
         return savedEntities.stream().map(this.slotMapper::toDomain).toList();
+    }
+
+    /**
+     * Retrieves all future slots (after the given date) for a specific doctor.
+     *
+     * @param doctorId  the ID of the doctor
+     * @param startDate the minimum date (inclusive) for slots to retrieve
+     * @return a list of future {@link Slot} objects for the doctor
+     */
+    @Override
+    public List<Slot> findAllByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate) {
+        List<SlotEntity> slotEntities = this.slotJpaRepository.findAllByDoctor_IdAndDateAfter(doctorId, startDate);
+        return slotEntities.stream()
+                .map(slotEntity -> {
+                    List<Appointment> appointments = slotEntity.getAppointments().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
+                    List<MedicalConcern> medicalConcerns = slotEntity.getMedicalConcerns().stream().map(this.medicalConcernMapper::toDomain).toList();
+                    return this.slotMapper.toDomain(slotEntity, appointments, medicalConcerns);
+                })
+                .toList();
+    }
+
+    /**
+     * Retrieves paginated slots for a specific doctor within a date range.
+     *
+     * @param doctorId  the ID of the doctor
+     * @param startDate start of the date range (inclusive)
+     * @param endDate   end of the date range (inclusive)
+     * @param page      page number (zero-based)
+     * @param size      number of elements per page
+     * @return a paginated list of {@link Slot} objects
+     */
+    @Override
+    public List<Slot> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<SlotEntity> slotEntities = this.slotJpaRepository.findAllByDoctor_IdAndDateBetween(doctorId, startDate, endDate, pageable);
+        return slotEntities.getContent().stream()
+                .map(slotEntity -> {
+                    List<Appointment> appointments = slotEntity.getAppointments().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
+                    List<MedicalConcern> medicalConcerns = slotEntity.getMedicalConcerns().stream().map(this.medicalConcernMapper::toDomain).toList();
+                    return this.slotMapper.toDomain(slotEntity, appointments, medicalConcerns);
+                })
+                .toList();
     }
 
     private SlotEntity mapSlotToEntity(Slot slot) {

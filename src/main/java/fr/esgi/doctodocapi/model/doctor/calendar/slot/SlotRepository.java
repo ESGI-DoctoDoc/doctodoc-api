@@ -31,5 +31,32 @@ public interface SlotRepository {
      */
     Slot getById(UUID id) throws SlotNotFoundException;
 
+    /**
+     * Saves a list of slots (typically batch insertion for recurrences).
+     *
+     * @param slots the slots to save
+     * @return the saved slots
+     */
     List<Slot> saveAll(List<Slot> slots);
+
+    /**
+     * Retrieves all slots for a given doctor starting from a specified date, ordered by date in ascending order.
+     *
+     * @param doctorId the UUID of the doctor
+     * @param startDate the start date from which to retrieve slots (inclusive)
+     * @return list of slots for the doctor from the start date onward
+     */
+    List<Slot> findAllByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate);
+
+    /**
+     * Retrieves paginated slots for a doctor between two dates.
+     *
+     * @param doctorId  the UUID of the doctor
+     * @param startDate the start date (inclusive)
+     * @param endDate   the end date (inclusive)
+     * @param page      the page index (0-based)
+     * @param size      the number of slots per page
+     * @return a list of slots in the requested page
+     */
+    List<Slot> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size);
 }
