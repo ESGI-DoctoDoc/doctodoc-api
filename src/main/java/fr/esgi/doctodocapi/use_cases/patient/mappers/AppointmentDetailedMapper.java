@@ -13,7 +13,8 @@ public class AppointmentDetailedMapper {
         GetAppointmentPatientResponse patient = new GetAppointmentPatientResponse(
                 appointment.getPatient().getId(),
                 appointment.getPatient().getFirstName(),
-                appointment.getPatient().getLastName()
+                appointment.getPatient().getLastName(),
+                appointment.getPatient().getEmail().getValue()
         );
 
         GetAppointmentDoctorResponse doctor = new GetAppointmentDoctorResponse(

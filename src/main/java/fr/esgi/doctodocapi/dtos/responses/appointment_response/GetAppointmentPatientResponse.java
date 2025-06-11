@@ -5,6 +5,7 @@ import java.util.UUID;
 public record GetAppointmentPatientResponse(
         UUID id,
         String firstName,
-        String lastName
+        String lastName,
+        String email
 ) {
 }
