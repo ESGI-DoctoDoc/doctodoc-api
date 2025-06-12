@@ -20,7 +20,7 @@ public interface AppointmentRepository {
 
     void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException;
 
-    void delete(UUID id);
+    void delete(Appointment appointment);
 
     List<Appointment> getAllByUserAndStatusOrderByDateAsc(User user, AppointmentStatus status, int page, int size);
 

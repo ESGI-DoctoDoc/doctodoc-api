@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.appointment;
+package fr.esgi.doctodocapi.use_cases.patient.appointment;
 
 import fr.esgi.doctodocapi.exceptions.ApiException;
 import org.springframework.http.HttpStatus;

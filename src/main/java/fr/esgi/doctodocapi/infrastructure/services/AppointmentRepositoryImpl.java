@@ -151,9 +151,16 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     }
 
     @Override
-    public void delete(UUID id) {
-        AppointmentEntity entity = this.appointmentJpaRepository.findById(id).orElseThrow(AppointmentNotFound::new);
-        entity.setDeletedAt(LocalDateTime.now());
+    public void delete(Appointment appointment) {
+        AppointmentEntity entity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
+        entity.setStatus(appointment.getStatus().name());
+        LocalDateTime now = LocalDateTime.now();
+        entity.setDeletedAt(now);
+        List<PreAppointmentAnswersEntity> answers = entity.getAppointmentQuestions();
+        answers.forEach(answer -> {
+            answer.setDeletedAt(now);
+            this.preAppointmentAnswersJpaRepository.save(answer);
+        });
         this.appointmentJpaRepository.save(entity);
     }
 
