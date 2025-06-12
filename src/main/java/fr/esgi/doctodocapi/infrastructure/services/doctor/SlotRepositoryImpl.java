@@ -82,11 +82,9 @@ public class SlotRepositoryImpl implements SlotRepository {
     public List<Slot> getSlotsByMedicalConcernAndDate(UUID medicalConcernId, LocalDate date) {
         List<SlotEntity> slotsFoundByMedicalConcern = this.slotJpaRepository.findAllByMedicalConcerns_IdAndDate(medicalConcernId, date);
 
-        return slotsFoundByMedicalConcern.stream().map(slotEntity -> {
-            List<Appointment> appointments = slotEntity.getAppointments().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
-            List<MedicalConcern> medicalConcerns = slotEntity.getMedicalConcerns().stream().map(this.medicalConcernMapper::toDomain).toList();
-            return this.slotMapper.toDomain(slotEntity, appointments, medicalConcerns);
-        }).toList();
+        return slotsFoundByMedicalConcern.stream()
+                .map(this::mapSlotEntityToDomain)
+                .toList();
     }
 
     /**
@@ -100,10 +98,7 @@ public class SlotRepositoryImpl implements SlotRepository {
     @Override
     public Slot getById(UUID id) {
         SlotEntity entity = this.slotJpaRepository.findById(id).orElseThrow(SlotNotFoundException::new);
-        List<Appointment> appointments = entity.getAppointments().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
-        List<MedicalConcern> medicalConcerns = entity.getMedicalConcerns().stream().map(this.medicalConcernMapper::toDomain).toList();
-
-        return this.slotMapper.toDomain(entity, appointments, medicalConcerns);
+        return mapSlotEntityToDomain(entity);
     }
 
 
@@ -134,11 +129,7 @@ public class SlotRepositoryImpl implements SlotRepository {
     public List<Slot> findAllByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate) {
         List<SlotEntity> slotEntities = this.slotJpaRepository.findAllByDoctor_IdAndDateAfter(doctorId, startDate);
         return slotEntities.stream()
-                .map(slotEntity -> {
-                    List<Appointment> appointments = slotEntity.getAppointments().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
-                    List<MedicalConcern> medicalConcerns = slotEntity.getMedicalConcerns().stream().map(this.medicalConcernMapper::toDomain).toList();
-                    return this.slotMapper.toDomain(slotEntity, appointments, medicalConcerns);
-                })
+                .map(this::mapSlotEntityToDomain)
                 .toList();
     }
 
@@ -157,11 +148,7 @@ public class SlotRepositoryImpl implements SlotRepository {
         Pageable pageable = PageRequest.of(page, size);
         Page<SlotEntity> slotEntities = this.slotJpaRepository.findAllByDoctor_IdAndDateBetween(doctorId, startDate, endDate, pageable);
         return slotEntities.getContent().stream()
-                .map(slotEntity -> {
-                    List<Appointment> appointments = slotEntity.getAppointments().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
-                    List<MedicalConcern> medicalConcerns = slotEntity.getMedicalConcerns().stream().map(this.medicalConcernMapper::toDomain).toList();
-                    return this.slotMapper.toDomain(slotEntity, appointments, medicalConcerns);
-                })
+                .map(this::mapSlotEntityToDomain)
                 .toList();
     }
 
@@ -181,5 +168,17 @@ public class SlotRepositoryImpl implements SlotRepository {
                 medicalConcernEntities,
                 doctorEntity
         );
+    }
+
+    private Slot mapSlotEntityToDomain(SlotEntity slotEntity) {
+        List<Appointment> appointments = slotEntity.getAppointments().stream()
+                .map(this.appointmentFacadeMapper::mapAppointmentToDomain)
+                .toList();
+
+        List<MedicalConcern> medicalConcerns = slotEntity.getMedicalConcerns().stream()
+                .map(this.medicalConcernMapper::toDomain)
+                .toList();
+
+        return this.slotMapper.toDomain(slotEntity, appointments, medicalConcerns);
     }
 }
