@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.doctor.medical_concern.question;
 
 import fr.esgi.doctodocapi.dtos.requests.doctor.medical_concern.question.QuestionsInputRequest;
-import fr.esgi.doctodocapi.dtos.responses.doctor.question.GetQuestionResponse;
+import fr.esgi.doctodocapi.dtos.responses.doctor.medical_concern.question.GetQuestionResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.medical_concern.question.SynchronizeQuestions;
 import fr.esgi.doctodocapi.use_cases.doctor.medical_concern.question.GetAllQuestions;
 import jakarta.validation.Valid;

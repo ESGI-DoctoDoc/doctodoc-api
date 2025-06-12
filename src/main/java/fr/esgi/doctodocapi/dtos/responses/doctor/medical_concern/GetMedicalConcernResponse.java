@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.dtos.responses.doctor.medical_concern;
 
-import fr.esgi.doctodocapi.dtos.responses.doctor.question.GetQuestionResponse;
+import fr.esgi.doctodocapi.dtos.responses.doctor.medical_concern.question.GetQuestionResponse;
 
 import java.time.LocalDate;
 import java.util.List;
