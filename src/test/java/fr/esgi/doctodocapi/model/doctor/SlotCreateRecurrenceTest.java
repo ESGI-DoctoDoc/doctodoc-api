@@ -26,7 +26,6 @@ class SlotCreateRecurrenceTest {
         return Slot.createRecurrence(date, LocalTime.parse(start), LocalTime.parse(end), doctorId, concerns, recurrenceId);
     }
 
-    // REGION: Slot content validation
     @Test
     void should_create_slot_with_all_expected_fields() {
         LocalDate date = LocalDate.of(2025, 7, 20);
@@ -45,7 +44,6 @@ class SlotCreateRecurrenceTest {
         );
     }
 
-    // REGION: No overlaps
     @Test
     void should_not_throw_when_hours_do_not_overlap_even_with_same_concerns() {
         Slot existing = createSlot(LocalDate.of(2025, 7, 21), "08:00", "09:00", List.of(concernA), null);
@@ -70,7 +68,6 @@ class SlotCreateRecurrenceTest {
         assertDoesNotThrow(() -> candidate.validateAgainstOverlaps(List.of(existing)));
     }
 
-    // REGION: Overlaps
     @Test
     void should_throw_when_times_overlap_and_common_concern_exists() {
         Slot existing = createSlot(LocalDate.of(2025, 7, 21), "09:00", "11:00", List.of(concernA, concernB), null);
@@ -96,7 +93,6 @@ class SlotCreateRecurrenceTest {
         assertThrows(OverlappingSlotException.class, () -> candidate.validateAgainstOverlaps(List.of(existing1, existing2)));
     }
 
-    // REGION: Edge cases
     @Test
     void should_not_throw_if_recurring_slot_has_null_recurrenceId() {
         Slot slot = createSlot(LocalDate.of(2025, 8, 1), "07:00", "08:00", List.of(concernA), null);

@@ -34,8 +34,8 @@ public class SlotMapper {
                 entity.getDate(),
                 entity.getStartHour(),
                 entity.getEndHour(),
-                Collections.emptyList(),
-                Collections.emptyList(),
+                List.of(),
+                List.of(),
                 entity.getDoctor().getId(),
                 entity.getRecurrenceId()
         );
