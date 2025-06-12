@@ -1,15 +1,21 @@
 package fr.esgi.doctodocapi.infrastructure.services.doctor;
 
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.SlotEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.MedicalConcernJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.SlotJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.MedicalConcernMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotMapper;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
-import fr.esgi.doctodocapi.model.doctor.calendar.Slot;
-import fr.esgi.doctodocapi.model.doctor.calendar.SlotRepository;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -44,6 +50,11 @@ public class SlotRepositoryImpl implements SlotRepository {
     private final MedicalConcernMapper medicalConcernMapper;
 
     /**
+     * Repository for accessing medical concern data in the database.
+     */
+    private final MedicalConcernJpaRepository medicalConcernJpaRepository;
+
+    /**
      * Constructs a SlotRepositoryImpl with the required repositories and mappers.
      *
      * @param slotJpaRepository       Repository for slot data access
@@ -51,11 +62,12 @@ public class SlotRepositoryImpl implements SlotRepository {
      * @param appointmentFacadeMapper Facade mapper for appointment entities and domain objects
      * @param medicalConcernMapper    Mapper for medical concern domain objects and entities
      */
-    public SlotRepositoryImpl(SlotJpaRepository slotJpaRepository, SlotMapper slotMapper, AppointmentFacadeMapper appointmentFacadeMapper, MedicalConcernMapper medicalConcernMapper) {
+    public SlotRepositoryImpl(SlotJpaRepository slotJpaRepository, SlotMapper slotMapper, AppointmentFacadeMapper appointmentFacadeMapper, MedicalConcernMapper medicalConcernMapper, MedicalConcernJpaRepository medicalConcernJpaRepository) {
         this.slotJpaRepository = slotJpaRepository;
         this.slotMapper = slotMapper;
         this.appointmentFacadeMapper = appointmentFacadeMapper;
         this.medicalConcernMapper = medicalConcernMapper;
+        this.medicalConcernJpaRepository = medicalConcernJpaRepository;
     }
 
     /**
@@ -70,11 +82,9 @@ public class SlotRepositoryImpl implements SlotRepository {
     public List<Slot> getSlotsByMedicalConcernAndDate(UUID medicalConcernId, LocalDate date) {
         List<SlotEntity> slotsFoundByMedicalConcern = this.slotJpaRepository.findAllByMedicalConcerns_IdAndDate(medicalConcernId, date);
 
-        return slotsFoundByMedicalConcern.stream().map(slotEntity -> {
-            List<Appointment> appointments = slotEntity.getAppointments().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
-            List<MedicalConcern> medicalConcerns = slotEntity.getMedicalConcerns().stream().map(this.medicalConcernMapper::toDomain).toList();
-            return this.slotMapper.toDomain(slotEntity, appointments, medicalConcerns);
-        }).toList();
+        return slotsFoundByMedicalConcern.stream()
+                .map(this::mapSlotEntityToDomain)
+                .toList();
     }
 
     /**
@@ -88,11 +98,87 @@ public class SlotRepositoryImpl implements SlotRepository {
     @Override
     public Slot getById(UUID id) {
         SlotEntity entity = this.slotJpaRepository.findById(id).orElseThrow(SlotNotFoundException::new);
-        List<Appointment> appointments = entity.getAppointments().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
-        List<MedicalConcern> medicalConcerns = entity.getMedicalConcerns().stream().map(this.medicalConcernMapper::toDomain).toList();
-
-        return this.slotMapper.toDomain(entity, appointments, medicalConcerns);
+        return mapSlotEntityToDomain(entity);
     }
 
 
+    /**
+     * Saves a list of slots to the database.
+     *
+     * @param slots the list of domain {@link Slot} objects to persist
+     * @return the list of saved {@link Slot} objects
+     */
+    @Override
+    public List<Slot> saveAll(List<Slot> slots) {
+        List<SlotEntity> entities = slots.stream()
+                .map(this::mapSlotToEntity)
+                .toList();
+
+        List<SlotEntity> savedEntities = this.slotJpaRepository.saveAll(entities);
+        return savedEntities.stream().map(this.slotMapper::toDomain).toList();
+    }
+
+    /**
+     * Retrieves all future slots (after the given date) for a specific doctor.
+     *
+     * @param doctorId  the ID of the doctor
+     * @param startDate the minimum date (inclusive) for slots to retrieve
+     * @return a list of future {@link Slot} objects for the doctor
+     */
+    @Override
+    public List<Slot> findAllByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate) {
+        List<SlotEntity> slotEntities = this.slotJpaRepository.findAllByDoctor_IdAndDateAfter(doctorId, startDate);
+        return slotEntities.stream()
+                .map(this::mapSlotEntityToDomain)
+                .toList();
+    }
+
+    /**
+     * Retrieves paginated slots for a specific doctor within a date range.
+     *
+     * @param doctorId  the ID of the doctor
+     * @param startDate start of the date range (inclusive)
+     * @param endDate   end of the date range (inclusive)
+     * @param page      page number (zero-based)
+     * @param size      number of elements per page
+     * @return a paginated list of {@link Slot} objects
+     */
+    @Override
+    public List<Slot> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<SlotEntity> slotEntities = this.slotJpaRepository.findAllByDoctor_IdAndDateBetween(doctorId, startDate, endDate, pageable);
+        return slotEntities.getContent().stream()
+                .map(this::mapSlotEntityToDomain)
+                .toList();
+    }
+
+    private SlotEntity mapSlotToEntity(Slot slot) {
+        DoctorEntity doctorEntity = new DoctorEntity();
+        doctorEntity.setId(slot.getDoctorId());
+
+        List<UUID> medicalConcernIds = slot.getAvailableMedicalConcerns().stream()
+                .map(MedicalConcern::getId)
+                .toList();
+
+        List<MedicalConcernEntity> medicalConcernEntities = this.medicalConcernJpaRepository.findAllById(medicalConcernIds);
+
+        return this.slotMapper.toEntity(
+                slot,
+                List.of(),
+                medicalConcernEntities,
+                doctorEntity
+        );
+    }
+
+    private Slot mapSlotEntityToDomain(SlotEntity slotEntity) {
+        List<Appointment> appointments = slotEntity.getAppointments().stream()
+                .map(this.appointmentFacadeMapper::mapAppointmentToDomain)
+                .toList();
+
+        List<MedicalConcern> medicalConcerns = slotEntity.getMedicalConcerns().stream()
+                .map(this.medicalConcernMapper::toDomain)
+                .toList();
+
+        return this.slotMapper.toDomain(slotEntity, appointments, medicalConcerns);
+    }
 }

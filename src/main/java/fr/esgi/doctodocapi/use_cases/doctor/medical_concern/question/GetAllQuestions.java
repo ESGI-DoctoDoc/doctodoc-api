@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.doctor.medical_concern.question;
 
-import fr.esgi.doctodocapi.dtos.responses.doctor.question.GetQuestionResponse;
+import fr.esgi.doctodocapi.dtos.responses.doctor.medical_concern.question.GetQuestionResponse;
 import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;

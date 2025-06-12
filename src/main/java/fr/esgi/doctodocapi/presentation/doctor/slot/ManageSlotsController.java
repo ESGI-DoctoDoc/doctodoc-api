@@ -1,0 +1,73 @@
+package fr.esgi.doctodocapi.presentation.doctor.slot;
+
+import fr.esgi.doctodocapi.dtos.requests.doctor.slot.MonthlySlotRequest;
+import fr.esgi.doctodocapi.dtos.requests.doctor.slot.WeeklySlotRequest;
+import fr.esgi.doctodocapi.dtos.responses.doctor.slot.GetSlotResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.slot.GetAllSlots;
+import fr.esgi.doctodocapi.use_cases.doctor.slot.SaveMonthlySlots;
+import fr.esgi.doctodocapi.use_cases.doctor.slot.SaveWeeklySlots;
+import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
+
+import java.time.LocalDate;
+import java.util.List;
+
+/**
+ * REST controller responsible for managing doctor's slots (weekly, monthly, and retrieval).
+ * Provides endpoints to create recurring slots and to retrieve them with pagination.
+ */
+@RestController
+@RequestMapping("doctors")
+public class ManageSlotsController {
+    private final SaveWeeklySlots saveWeeklySlots;
+    private final SaveMonthlySlots saveMonthlySlots;
+    private final GetAllSlots getAllSlots;
+
+    public ManageSlotsController(SaveWeeklySlots saveWeeklySlots, SaveMonthlySlots saveMonthlySlots, GetAllSlots getAllSlots) {
+        this.saveWeeklySlots = saveWeeklySlots;
+        this.saveMonthlySlots = saveMonthlySlots;
+        this.getAllSlots = getAllSlots;
+    }
+
+    /**
+     * Creates a set of weekly recurring slots for the current doctor.
+     *
+     * @param request The request payload containing recurrence settings and slot definitions
+     * @return A list of the created slots
+     */
+    @PostMapping("/slots/weekly")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<GetSlotResponse> createWeeklySlots(@Valid @RequestBody WeeklySlotRequest request) {
+        return saveWeeklySlots.execute(request);
+    }
+
+    /**
+     * Creates a set of monthly recurring slots for the current doctor.
+     *
+     * @param request The request payload containing recurrence settings and slot definitions
+     * @return A list of the created slots
+     */
+    @PostMapping("/slots/monthly")
+    @ResponseStatus(HttpStatus.CREATED)
+    public List<GetSlotResponse>  createMonthlySlots(@Valid @RequestBody MonthlySlotRequest request) {
+        return saveMonthlySlots.execute(request);
+    }
+
+
+    /**
+     * Retrieves all the doctor's slots starting from a specified date,
+     * with optional pagination.
+     *
+     * @param page       The page number to retrieve (default is 0)
+     * @param size       The number of items per page (default is 10)
+     * @param startDate  The minimum date (inclusive) to start listing slots
+     * @return A list of slots matching the filter criteria
+     */
+    @GetMapping("/slots")
+    @ResponseStatus(value = HttpStatus.OK)
+    public List<GetSlotResponse> getAllSlots(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
+        return this.getAllSlots.getAll(page, size, startDate);
+    }
+}

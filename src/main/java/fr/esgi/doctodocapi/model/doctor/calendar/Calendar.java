@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.model.doctor.calendar;
 
 import fr.esgi.doctodocapi.model.appointment.Appointment;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 
 import java.util.List;
 
