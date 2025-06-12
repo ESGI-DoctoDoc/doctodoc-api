@@ -49,6 +49,12 @@ public interface PatientRepository {
      */
     Patient getById(UUID id) throws PatientNotFoundException;
 
+    /**
+     * Updates the given patient entity.
+     *
+     * @param patient the Patient to update
+     * @return the updated Patient entity
+     */
     Patient update(Patient patient);
 
     void delete(UUID patient);

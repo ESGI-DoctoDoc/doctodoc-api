@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.model.doctor;
 
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -49,4 +50,6 @@ public interface DoctorRepository {
      * @return Optional containing the Doctor if found, empty otherwise
      */
     Optional<Doctor> getByUserId(UUID id);
+
+    List<Doctor> searchDoctors(String value, String speciality, List<String> lowercaseLanguages, int page, int size);
 }

@@ -2,11 +2,11 @@ package fr.esgi.doctodocapi.dtos.responses;
 
 import java.util.UUID;
 
-public record GetBasicPatientInfo(
+public record GetSearchDoctorResponse(
         UUID id,
-        String email,
         String firstName,
         String lastName,
-        String phoneNumber
+        String speciality,
+        String pictureUrl
 ) {
 }
