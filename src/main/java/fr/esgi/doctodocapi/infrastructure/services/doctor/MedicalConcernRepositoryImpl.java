@@ -81,6 +81,12 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
         return entities.stream().map(medicalConcernMapper::toDomain).toList();
     }
 
+    @Override
+    public List<MedicalConcern> findAllById(List<UUID> ids) {
+        List<MedicalConcernEntity> entities = this.medicalConcernJpaRepository.findAllById(ids);
+        return entities.stream().map(medicalConcernMapper::toDomain).toList();
+    }
+
     /**
      * Retrieves all questions associated with a specific medical concern.
      *

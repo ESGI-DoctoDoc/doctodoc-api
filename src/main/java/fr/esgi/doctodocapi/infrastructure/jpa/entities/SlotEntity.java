@@ -20,6 +20,9 @@ public class SlotEntity {
     @JoinColumn(name = "doctor_id")
     private DoctorEntity doctor;
 
+    @Column(name = "recurrence_id")
+    private UUID recurrenceId;
+
     @Column(name = "date", nullable = false)
     private LocalDate date;
 
@@ -94,6 +97,14 @@ public class SlotEntity {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public UUID getRecurrenceId() {
+        return recurrenceId;
+    }
+
+    public void setRecurrenceId(UUID recurrenceId) {
+        this.recurrenceId = recurrenceId;
     }
 }
 

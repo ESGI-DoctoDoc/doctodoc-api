@@ -5,7 +5,7 @@ import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.calendar.Slot;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import org.springframework.stereotype.Service;
