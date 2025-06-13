@@ -22,7 +22,7 @@ public class CancelAppointment {
             Appointment appointment = this.appointmentRepository.getById(id);
             appointment.cancel();
             this.appointmentRepository.delete(appointment);
-
+            // todo : send a mail to confirm
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
