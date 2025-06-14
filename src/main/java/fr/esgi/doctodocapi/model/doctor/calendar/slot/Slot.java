@@ -28,6 +28,7 @@ public class Slot {
     private UUID doctorId;
     private List<Appointment> appointments;
     private List<MedicalConcern> availableMedicalConcerns;
+    private LocalDate createdAt;
 
     // basic info
     public Slot(UUID id, LocalDate date, LocalTime startHour, LocalTime endHour) {
@@ -36,7 +37,7 @@ public class Slot {
         this.hoursRange = HoursRange.of(startHour, endHour);
     }
 
-    public Slot(UUID id, LocalDate date, LocalTime startHour, LocalTime endHour, List<Appointment> appointments, List<MedicalConcern> availableMedicalConcerns, UUID doctorId, UUID recurrenceId) {
+    public Slot(UUID id, LocalDate date, LocalTime startHour, LocalTime endHour, List<Appointment> appointments, List<MedicalConcern> availableMedicalConcerns, UUID doctorId, UUID recurrenceId, LocalDate createdAt) {
         this.id = id;
         this.date = date;
         this.hoursRange = HoursRange.of(startHour, endHour);
@@ -44,6 +45,7 @@ public class Slot {
         this.availableMedicalConcerns = availableMedicalConcerns;
         this.doctorId = doctorId;
         this.recurrenceId = recurrenceId;
+        this.createdAt = createdAt;
     }
 
 
@@ -96,7 +98,8 @@ public class Slot {
                 new ArrayList<>(),
                 medicalConcerns,
                 doctorId,
-                null
+                null,
+                LocalDate.now()
         );
     }
 
@@ -120,7 +123,8 @@ public class Slot {
                 new ArrayList<>(),
                 medicalConcerns,
                 doctorId,
-                recurrenceId
+                recurrenceId,
+                LocalDate.now()
         );
     }
 
@@ -178,6 +182,14 @@ public class Slot {
 
     public void setRecurrenceId(UUID recurrenceId) {
         this.recurrenceId = recurrenceId;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override

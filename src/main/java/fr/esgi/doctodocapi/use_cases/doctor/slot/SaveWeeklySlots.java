@@ -62,7 +62,7 @@ public class SaveWeeklySlots {
 
             LocalDate startDate = request.start();
             LocalDate endDate = request.end();
-            DateRange dateRange = new DateRange(startDate, endDate);
+            DateRange dateRange = DateRange.of(startDate, endDate);
 
             List<MedicalConcern> concerns = this.medicalConcernRepository.findAllById(request.medicalConcerns());
 
