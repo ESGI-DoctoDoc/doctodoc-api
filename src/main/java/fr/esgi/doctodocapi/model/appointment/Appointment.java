@@ -107,6 +107,14 @@ public class Appointment {
     }
 
 
+    /**
+     * Confirms the appointment by changing its status to CANCELLED.
+     */
+    public void cancel() {
+        this.status = AppointmentStatus.CANCELLED;
+    }
+
+
     public UUID getId() {
         return id;
     }
@@ -206,6 +214,5 @@ public class Appointment {
     public int hashCode() {
         return Objects.hashCode(id);
     }
-
 
 }

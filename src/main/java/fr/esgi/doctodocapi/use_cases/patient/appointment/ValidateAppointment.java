@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.appointment;
+package fr.esgi.doctodocapi.use_cases.patient.appointment;
 
 import fr.esgi.doctodocapi.dtos.requests.save_appointment_request.SaveAnswersForAnAppointmentRequest;
 import fr.esgi.doctodocapi.dtos.requests.save_appointment_request.SaveAppointmentRequest;
@@ -135,7 +135,8 @@ public class ValidateAppointment {
      */
     public void unlocked(UUID id) {
         try {
-            this.appointmentRepository.delete(id);
+            Appointment appointment = this.appointmentRepository.getById(id);
+            this.appointmentRepository.delete(appointment);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }

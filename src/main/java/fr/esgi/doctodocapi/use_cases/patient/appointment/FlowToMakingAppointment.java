@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.patient;
+package fr.esgi.doctodocapi.use_cases.patient.appointment;
 
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
 import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetMedicalConcernsResponse;
