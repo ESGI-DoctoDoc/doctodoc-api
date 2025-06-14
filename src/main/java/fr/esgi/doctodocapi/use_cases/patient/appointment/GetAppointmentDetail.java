@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.patient;
+package fr.esgi.doctodocapi.use_cases.patient.appointment;
 
 import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentDetailedResponse;
 import fr.esgi.doctodocapi.exceptions.ApiException;

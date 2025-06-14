@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -24,6 +25,9 @@ public class PreAppointmentAnswersEntity {
 
     @Column(name = "answer", nullable = false)
     private String answer;
+
+    @Column(name = "deleted_at")
+    private LocalDateTime deletedAt;
 
     public UUID getId() {
         return id;
@@ -55,6 +59,15 @@ public class PreAppointmentAnswersEntity {
 
     public void setAnswer(String answer) {
         this.answer = answer;
+    }
+
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 
     @Override

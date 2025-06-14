@@ -1,7 +1,7 @@
-package fr.esgi.doctodocapi.presentation.patient;
+package fr.esgi.doctodocapi.presentation.patient.appointment;
 
 import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentResponse;
-import fr.esgi.doctodocapi.use_cases.patient.GetAppointments;
+import fr.esgi.doctodocapi.use_cases.patient.appointment.GetAppointments;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
