@@ -80,10 +80,14 @@ public final class AbsenceValidator {
     }
 
     private static void checkRangeConflict(AbsenceRange range1, AbsenceRange range2) {
-        boolean datesOverlap = DateRange.isDatesOverlap(range1.getDateRange(), range2.getDateRange());
-        boolean hoursOverlap = HoursRange.isTimesOverlap(range1.getHoursRange(), range2.getHoursRange());
+        boolean datesOverlap =
+                DateRange.isDatesOverlap(
+                        range1.getDateRange(), range2.getDateRange())
+                        || range1.getDateRange().getStart().isEqual(range2.getDateRange().getEnd())
+                        || range2.getDateRange().getStart().isEqual(range1.getDateRange().getEnd()
+                );
 
-        if (datesOverlap && hoursOverlap) {
+        if (datesOverlap && HoursRange.isTimesOverlap(range1.getHoursRange(), range2.getHoursRange())) {
             throw new OverlappingAbsenceException();
         }
     }

@@ -77,7 +77,7 @@ public class ManageAbsenceController {
      */
     @DeleteMapping("absences/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void deleteCloseMember(@PathVariable UUID id) {
+    public void delete(@PathVariable UUID id) {
         this.deleteAbsence.execute(id);
     }
 }
