@@ -27,4 +27,20 @@ public interface AbsenceRepository {
      * @return a list of {@link Absence} entities associated with the specified doctor
      */
     List<Absence> findAllByDoctorId(UUID doctorId);
+
+    /**
+     * Deletes an absence by its ID by marking it as deleted (soft delete).
+     *
+     * @param absenceId the UUID of the absence to delete
+     */
+    void delete(UUID absenceId);
+
+    /**
+     * Retrieves an absence by its ID, excluding soft-deleted entries.
+     *
+     * @param absenceId the UUID of the absence to retrieve
+     * @return the corresponding {@link Absence}
+     * @throws AbsenceNotFoundException if no matching absence is found
+     */
+    Absence findById(UUID absenceId);
 }
