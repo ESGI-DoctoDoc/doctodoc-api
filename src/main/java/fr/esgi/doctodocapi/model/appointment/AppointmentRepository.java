@@ -16,7 +16,9 @@ public interface AppointmentRepository {
     Appointment getById(UUID id) throws AppointmentNotFound;
     List<Appointment> getAppointmentsBySlot(UUID slotId);
 
-    UUID save(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException;
+    UUID save(Appointment appointment);
+
+    void cancel(Appointment appointment);
 
     void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException;
 

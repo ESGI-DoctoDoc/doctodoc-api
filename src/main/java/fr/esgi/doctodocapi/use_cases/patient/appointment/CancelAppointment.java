@@ -21,8 +21,9 @@ public class CancelAppointment {
         try {
             Appointment appointment = this.appointmentRepository.getById(id);
             appointment.cancel();
-            this.appointmentRepository.delete(appointment);
+            this.appointmentRepository.cancel(appointment);
             // todo : send a mail to confirm
+            // todo : send a mail for the doctor
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }

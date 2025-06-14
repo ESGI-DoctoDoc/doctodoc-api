@@ -143,6 +143,13 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     }
 
     @Override
+    public void cancel(Appointment appointment) {
+        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
+        appointmentEntity.setStatus(appointment.getStatus().name());
+        this.appointmentJpaRepository.save(appointmentEntity);
+    }
+
+    @Override
     public void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException {
         AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
         appointmentEntity.setStatus(appointment.getStatus().name());
