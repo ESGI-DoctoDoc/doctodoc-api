@@ -29,4 +29,5 @@ public interface AppointmentRepository {
     List<Appointment> getAllByUserAndStatusOrderByDateDesc(User user, AppointmentStatus status, int page, int size);
 
     Optional<Appointment> getMostRecentUpcomingAppointment(User user);
+    List<Appointment> getAllByDoctor(UUID doctorId, int page, int size);
 }

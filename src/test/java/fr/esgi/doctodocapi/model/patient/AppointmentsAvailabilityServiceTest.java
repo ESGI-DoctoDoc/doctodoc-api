@@ -108,33 +108,33 @@ class AppointmentsAvailabilityServiceTest {
         Appointment confirmed = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern,
                 LocalTime.of(9, 0), LocalTime.of(9, 15),
-                LocalDateTime.now(), AppointmentStatus.CONFIRMED, List.of(), LocalDateTime.now()
+                LocalDateTime.now(), AppointmentStatus.CONFIRMED, List.of(), LocalDateTime.now(), createdAt
         );
 
         Appointment confirmed2 = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern2,
                 LocalTime.of(10, 0), LocalTime.of(10, 30),
-                LocalDateTime.now(), AppointmentStatus.CONFIRMED, List.of(), LocalDateTime.now()
+                LocalDateTime.now(), AppointmentStatus.CONFIRMED, List.of(), LocalDateTime.now(), createdAt
         );
 
         Appointment lockedNotExpired = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern,
                 LocalTime.of(9, 15), LocalTime.of(9, 30),
                 LocalDateTime.now().minusMinutes(2),
-                AppointmentStatus.LOCKED, List.of(), LocalDateTime.now().minusMinutes(2)
+                AppointmentStatus.LOCKED, List.of(), LocalDateTime.now().minusMinutes(2), createdAt
         );
 
         Appointment lockedExpired = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern,
                 LocalTime.of(9, 30), LocalTime.of(9, 45),
                 LocalDateTime.now().minusMinutes(10),
-                AppointmentStatus.LOCKED, List.of(), LocalDateTime.now().minusMinutes(10)
+                AppointmentStatus.LOCKED, List.of(), LocalDateTime.now().minusMinutes(10), createdAt
         );
 
         Appointment cancelled = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern,
                 LocalTime.of(9, 45), LocalTime.of(10, 0),
-                LocalDateTime.now(), AppointmentStatus.CANCELLED, List.of(), LocalDateTime.now()
+                LocalDateTime.now(), AppointmentStatus.CANCELLED, List.of(), LocalDateTime.now(), createdAt
         );
 
         // Expected results

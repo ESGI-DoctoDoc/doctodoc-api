@@ -192,4 +192,11 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         Optional<AppointmentEntity> appointmentEntity = this.appointmentJpaRepository.findFirstByPatient_User_IdAndStatusAndDateAfterOrderByDateAsc(user.getId(), AppointmentStatus.CONFIRMED.name(), LocalDate.now());
         return appointmentEntity.map(this.appointmentFacadeMapper::mapAppointmentToDomain);
     }
+
+    @Override
+    public List<Appointment> getAllByDoctor(UUID doctorId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByDoctor_IdAndDeletedAtIsNull(doctorId, pageable);
+        return appointments.getContent().stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
+    }
 }
