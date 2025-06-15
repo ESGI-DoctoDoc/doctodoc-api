@@ -18,16 +18,16 @@ public class AppointmentFacadeMapper {
     private final AppointmentMapper appointmentMapper;
     private final SlotMapper slotMapper;
     private final PatientMapper patientMapper;
-    private final DoctorMapper doctorMapper;
+    private final DoctorFacadeMapper doctorFacadeMapper;
     private final MedicalConcernMapper medicalConcernMapper;
     private final PreAppointmentAnswersMapper preAppointmentAnswersMapper;
     private final QuestionMapper questionMapper;
 
-    public AppointmentFacadeMapper(AppointmentMapper appointmentMapper, SlotMapper slotMapper, PatientMapper patientMapper, DoctorMapper doctorMapper, MedicalConcernMapper medicalConcernMapper, PreAppointmentAnswersMapper preAppointmentAnswersMapper, QuestionMapper questionMapper) {
+    public AppointmentFacadeMapper(AppointmentMapper appointmentMapper, SlotMapper slotMapper, PatientMapper patientMapper, DoctorFacadeMapper doctorFacadeMapper, MedicalConcernMapper medicalConcernMapper, PreAppointmentAnswersMapper preAppointmentAnswersMapper, QuestionMapper questionMapper) {
         this.appointmentMapper = appointmentMapper;
         this.slotMapper = slotMapper;
         this.patientMapper = patientMapper;
-        this.doctorMapper = doctorMapper;
+        this.doctorFacadeMapper = doctorFacadeMapper;
         this.medicalConcernMapper = medicalConcernMapper;
         this.preAppointmentAnswersMapper = preAppointmentAnswersMapper;
         this.questionMapper = questionMapper;
@@ -36,7 +36,7 @@ public class AppointmentFacadeMapper {
     public Appointment mapAppointmentToDomain(AppointmentEntity appointmentEntity) {
         Slot slot = this.slotMapper.toDomain(appointmentEntity.getSlot());
         Patient patient = this.patientMapper.toDomain(appointmentEntity.getPatient());
-        Doctor doctor = this.doctorMapper.toDomain(appointmentEntity.getDoctor());
+        Doctor doctor = this.doctorFacadeMapper.mapDoctorToDomain(appointmentEntity.getDoctor());
         MedicalConcern medicalConcern = this.medicalConcernMapper.toDomain(appointmentEntity.getMedicalConcern());
 
         List<PreAppointmentAnswersEntity> answersEntities = appointmentEntity.getAppointmentQuestions();

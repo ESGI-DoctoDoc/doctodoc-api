@@ -64,7 +64,7 @@ public class QuestionRepositoryImpl implements QuestionRepository {
     @Override
     public List<Question> getByMedicalConcernId(UUID medicalConcernId) {
         return this.questionJpaRepository
-                .findAllByMedicalConcern_IdAndDeletedAtIsNull(medicalConcernId)
+                .findAllByMedicalConcern_Id(medicalConcernId)
                 .stream()
                 .map(this.questionMapper::toDomain)
                 .toList();

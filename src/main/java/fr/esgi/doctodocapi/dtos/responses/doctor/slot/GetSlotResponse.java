@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public record GetSlotResponse(
         UUID id,
+        String date,
         String day,
         String startHour,
         String endHour,

@@ -35,9 +35,10 @@ public interface SlotRepository {
      * Saves a list of slots (typically batch insertion for recurrences).
      *
      * @param slots the slots to save
+     * @param doctorId id of the doctor
      * @return the saved slots
      */
-    List<Slot> saveAll(List<Slot> slots);
+    List<Slot> saveAll(List<Slot> slots, UUID doctorId);
 
     /**
      * Retrieves all slots for a given doctor starting from a specified date, ordered by date in ascending order.

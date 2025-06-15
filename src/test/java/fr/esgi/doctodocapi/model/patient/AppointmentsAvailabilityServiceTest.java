@@ -46,11 +46,11 @@ class AppointmentsAvailabilityServiceTest {
         // generate slot
         LocalDate defaultDate = LocalDate.of(2025, 3, 10);
         LocalTime defaultHour = LocalTime.of(9, 0, 0);
-        Slot slot1 = Slot.create(defaultDate, defaultHour, defaultHour.plusHours(3), doctorId, List.of(medicalConcern1, medicalConcern2));
+        Slot slot1 = Slot.create(defaultDate, defaultHour, defaultHour.plusHours(3), List.of(medicalConcern1, medicalConcern2));
 
         LocalDate defaultDate2 = LocalDate.of(2025, 3, 12);
         LocalTime defaultHour2 = LocalTime.of(11, 0, 0);
-        Slot slot2 = Slot.create(defaultDate2, defaultHour2, defaultHour2.plusHours(1), doctorId, List.of(medicalConcern1));
+        Slot slot2 = Slot.create(defaultDate2, defaultHour2, defaultHour2.plusHours(1), List.of(medicalConcern1));
 
 
         // response expected
@@ -102,7 +102,7 @@ class AppointmentsAvailabilityServiceTest {
         LocalTime startTime = LocalTime.of(9, 0);
         LocalTime endTime = LocalTime.of(11, 0);
 
-        Slot slot = Slot.create(date, startTime, endTime, doctorId, List.of(medicalConcern, medicalConcern2));
+        Slot slot = Slot.create(date, startTime, endTime, List.of(medicalConcern, medicalConcern2));
 
         // Appointments
         Appointment confirmed = new Appointment(

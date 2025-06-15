@@ -13,14 +13,14 @@ class DateRangeTest {
         LocalDate start = LocalDate.of(2025, 8, 1);
         LocalDate end = LocalDate.of(2025, 7, 31);
         InvalidDateRangeException ex = assertThrows(InvalidDateRangeException.class,
-                () -> new DateRange(start, end));
+                () -> DateRange.of(start, end));
         assertEquals("invalid-date-range", ex.getCode());
     }
 
     @Test
     void constructorAcceptsWhenStartEqualsEnd() {
         LocalDate date = LocalDate.of(2025, 7, 15);
-        DateRange dr = new DateRange(date, date);
+        DateRange dr = DateRange.of(date, date);
         assertEquals(date, dr.getStart());
         assertEquals(date, dr.getEnd());
     }
@@ -29,7 +29,7 @@ class DateRangeTest {
     void constructorAcceptsWhenStartBeforeEnd() {
         LocalDate start = LocalDate.of(2025, 7, 1);
         LocalDate end = LocalDate.of(2025, 7, 31);
-        DateRange dr = new DateRange(start, end);
+        DateRange dr = DateRange.of(start, end);
         assertEquals(start, dr.getStart());
         assertEquals(end, dr.getEnd());
     }

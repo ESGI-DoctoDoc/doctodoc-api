@@ -30,6 +30,18 @@ public class AppointmentMapper {
         );
     }
 
+    public Appointment toDomain(AppointmentEntity entity, List<PreAppointmentAnswers> answers) {
+        return new Appointment(
+                entity.getId(),
+                entity.getStartHour(),
+                entity.getEndHour(),
+                entity.getTakenAt(),
+                AppointmentStatus.valueOf(entity.getStatus()),
+                answers,
+                entity.getLockedAt()
+        );
+    }
+
     public AppointmentEntity toEntity(Appointment appointment, SlotEntity slotEntity, PatientEntity patientEntity, DoctorEntity doctorEntity, MedicalConcernEntity medicalConcernEntity) {
         AppointmentEntity entity = new AppointmentEntity();
         entity.setSlot(slotEntity);

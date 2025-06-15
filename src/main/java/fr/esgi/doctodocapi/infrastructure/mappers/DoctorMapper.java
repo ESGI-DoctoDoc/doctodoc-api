@@ -1,9 +1,10 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.*;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.calendar.Calendar;
+import fr.esgi.doctodocapi.model.doctor.calendar.absence.Absence;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.DoctorConsultationInformations;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.personal_information.CoordinatesGps;
@@ -25,7 +26,7 @@ public class DoctorMapper {
         this.medicalConcernMapper = medicalConcernMapper;
     }
 
-    public Doctor toDomain(DoctorEntity entity) {
+    public Doctor toDomain(DoctorEntity entity, List<Slot> slots, List<Absence> absences, List<MedicalConcern> medicalConcerns) {
 
         DoctorPersonnalInformations personnalInformations = new DoctorPersonnalInformations(
                 entity.getProfilePictureUrl(),
@@ -45,15 +46,14 @@ public class DoctorMapper {
                 entity.isAcceptPublicCoverage()
         );
 
-        List<MedicalConcern> medicalConcerns =
-                entity.getMedicalConcerns().stream().map(medicalConcernMapper::toDomain).toList();
-
         DoctorConsultationInformations consultationInformations = new DoctorConsultationInformations(
                 entity.getConsultationClinicPrice(),
                 entity.getAddress(),
                 CoordinatesGps.of(entity.getClinicLatitude(), entity.getClinicLongitude()),
                 medicalConcerns
         );
+
+        Calendar calendar = new Calendar(slots, absences);
 
         return new Doctor(
                 entity.getUser().getId(),
@@ -68,7 +68,8 @@ public class DoctorMapper {
                 personnalInformations,
                 professionalInformations,
                 consultationInformations,
-                entity.isVerified()
+                entity.isVerified(),
+                calendar
         );
     }
 

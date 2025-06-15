@@ -4,6 +4,7 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DoctorJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.UserJpaRepository;
+import fr.esgi.doctodocapi.infrastructure.mappers.DoctorFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.DoctorMapper;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
@@ -35,6 +36,13 @@ public class DoctorRepositoryImpl implements DoctorRepository {
      */
     private final DoctorMapper doctorMapper;
 
+
+    /**
+     * Mapper facade for converting between doctor domain objects and entities,
+     * incluant mapping des slots et absences.
+     */
+    private final DoctorFacadeMapper doctorFacadeMapper;
+
     /**
      * Repository for accessing user data in the database.
      */
@@ -47,9 +55,10 @@ public class DoctorRepositoryImpl implements DoctorRepository {
      * @param doctorMapper        Mapper for doctor domain objects and entities
      * @param userJpaRepository   Repository for user data access
      */
-    public DoctorRepositoryImpl(DoctorJpaRepository doctorJpaRepository, DoctorMapper doctorMapper, UserJpaRepository userJpaRepository) {
+    public DoctorRepositoryImpl(DoctorJpaRepository doctorJpaRepository, DoctorMapper doctorMapper, DoctorFacadeMapper doctorFacadeMapper, UserJpaRepository userJpaRepository) {
         this.doctorJpaRepository = doctorJpaRepository;
         this.doctorMapper = doctorMapper;
+        this.doctorFacadeMapper = doctorFacadeMapper;
         this.userJpaRepository = userJpaRepository;
     }
 
@@ -64,7 +73,7 @@ public class DoctorRepositoryImpl implements DoctorRepository {
     @Override
     public Doctor getById(UUID id) throws DoctorNotFoundException {
         DoctorEntity entity = this.doctorJpaRepository.findById(id).orElseThrow(DoctorNotFoundException::new);
-        return this.doctorMapper.toDomain(entity);
+        return this.doctorFacadeMapper.mapDoctorToDomain(entity);
     }
 
     /**
@@ -90,7 +99,7 @@ public class DoctorRepositoryImpl implements DoctorRepository {
 
         if (doctor.isPresent()) {
             DoctorEntity entity = doctor.get();
-            return Optional.of(this.doctorMapper.toDomain(entity));
+            return Optional.of(this.doctorFacadeMapper.mapDoctorToDomain(entity));
         } else {
             return Optional.empty();
         }
@@ -102,7 +111,7 @@ public class DoctorRepositoryImpl implements DoctorRepository {
         String[] array = (languages != null) ? languages.toArray(new String[0]) : new String[0];
 
         Page<DoctorEntity> doctors = this.doctorJpaRepository.searchDoctors(name, speciality, array, pageable);
-        return doctors.stream().map(this.doctorMapper::toDomain).toList();
+        return doctors.stream().map(this.doctorFacadeMapper::mapDoctorToDomain).toList();
     }
 
     /**
@@ -131,7 +140,7 @@ public class DoctorRepositoryImpl implements DoctorRepository {
     public Doctor findDoctorByUserId(UUID doctorId) {
         DoctorEntity entity = this.doctorJpaRepository.findById(doctorId)
                 .orElseThrow(DoctorNotFoundException::new);
-        return doctorMapper.toDomain(entity);
+        return doctorFacadeMapper.mapDoctorToDomain(entity);
     }
 
 }

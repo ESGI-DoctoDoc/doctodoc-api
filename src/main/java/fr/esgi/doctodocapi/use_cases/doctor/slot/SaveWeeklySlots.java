@@ -5,6 +5,8 @@ import fr.esgi.doctodocapi.dtos.responses.doctor.slot.GetSlotResponse;
 import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.RecurrentSlot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.RecurrentSlotRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
@@ -32,20 +34,23 @@ import java.util.List;
  */
 @Service
 public class SaveWeeklySlots {
+
     private final SlotRepository slotRepository;
     private final MedicalConcernRepository medicalConcernRepository;
     private final UserRepository userRepository;
     private final GetCurrentUserContext getCurrentUserContext;
     private final RecurrentSlotRepository recurrentSlotRepository;
     private final SlotResponseMapper slotResponseMapper;
+    private final DoctorRepository doctorRepository;
 
-    public SaveWeeklySlots(SlotRepository slotRepository, MedicalConcernRepository medicalConcernRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, RecurrentSlotRepository recurrentSlotRepository, SlotResponseMapper slotResponseMapper) {
+    public SaveWeeklySlots(SlotRepository slotRepository, MedicalConcernRepository medicalConcernRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, RecurrentSlotRepository recurrentSlotRepository, SlotResponseMapper slotResponseMapper, DoctorRepository doctorRepository) {
         this.slotRepository = slotRepository;
         this.medicalConcernRepository = medicalConcernRepository;
         this.userRepository = userRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.recurrentSlotRepository = recurrentSlotRepository;
         this.slotResponseMapper = slotResponseMapper;
+        this.doctorRepository = doctorRepository;
     }
 
     /**
@@ -58,40 +63,48 @@ public class SaveWeeklySlots {
     public List<GetSlotResponse> execute(WeeklySlotRequest request) {
         try {
             String username = this.getCurrentUserContext.getUsername();
-            User doctor = this.userRepository.findByEmail(username);
+            User user = this.userRepository.findByEmail(username);
+            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
             LocalDate startDate = request.start();
             LocalDate endDate = request.end();
-            DateRange dateRange = new DateRange(startDate, endDate);
+            DateRange dateRange = DateRange.of(startDate, endDate);
 
             List<MedicalConcern> concerns = this.medicalConcernRepository.findAllById(request.medicalConcerns());
+            if (concerns == null || concerns.contains(null)) {
+                throw new ApiException(HttpStatus.BAD_REQUEST, "medical-concerns.invalid", "Invalid or missing medical concerns");
+            }
 
             LocalDate current = alignToDayOfWeek(dateRange.getStart(), request.day());
 
-            List<Slot> allSlotsToCheck = new ArrayList<>(this.slotRepository.findAllByDoctorIdAndDateAfter(doctor.getId(), request.start()));
-            List<Slot> newSlots = new ArrayList<>();
+            List<Slot> existingSlots = new ArrayList<>(
+                    this.slotRepository.findAllByDoctorIdAndDateAfter(doctor.getId(), startDate)
+            );
 
             while (!current.isAfter(dateRange.getEnd())) {
-                Slot newSlot = Slot.createRecurrence(current, request.startHour(), request.endHour(), doctor.getId(), concerns, null);
+                Slot newSlot = Slot.createRecurrence(current, request.startHour(), request.endHour(), concerns, null);
+                newSlot.validateAgainstOverlaps(existingSlots);
 
-                newSlot.validateAgainstOverlaps(allSlotsToCheck);
-                newSlots.add(newSlot);
-                allSlotsToCheck.add(newSlot);
-                
+                doctor.getCalendar().addSlot(newSlot);
+                existingSlots.add(newSlot);
+
                 current = current.plusWeeks(1);
             }
 
-            if (!newSlots.isEmpty()) {
-                RecurrentSlot recurrentSlot = RecurrentSlot.createWeekly(dateRange.getStart(), dateRange.getEnd());
+            List<Slot> createdSlots = doctor.getCalendar().getSlots();
+
+            if (!createdSlots.isEmpty()) {
+                RecurrentSlot recurrentSlot = RecurrentSlot.createWeekly(startDate, endDate);
                 RecurrentSlot savedRecurrentSlot = this.recurrentSlotRepository.save(recurrentSlot);
 
-                for (Slot slot : newSlots) {
+                for (Slot slot : createdSlots) {
                     slot.setRecurrenceId(savedRecurrentSlot.getId());
                 }
 
-                List<Slot> savedSlots = this.slotRepository.saveAll(newSlots);
+                List<Slot> savedSlots = this.slotRepository.saveAll(createdSlots, doctor.getId());
                 return this.slotResponseMapper.presentAll(savedSlots);
             }
+
             return List.of();
 
         } catch (DomainException e) {
