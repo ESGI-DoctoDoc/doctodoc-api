@@ -2,23 +2,21 @@ package fr.esgi.doctodocapi.model.appointment;
 
 import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentStatusNotFound;
 
-public enum AppointmentStatus {
+public enum AppointmentDoctorStatus {
     UPCOMING("upcoming"),
-    CONFIRMED("confirmed"),
-    LOCKED("locked"),
-    CANCELLED("cancelled-excused"),
+    CANCELLED_EXCUSED("cancelled-excused"),
     CANCELLED_UNEXCUSED("cancelled-unexcused"),
     COMPLETED("completed"),
     WAITING_ROOM("waiting-room");
 
     private final String value;
 
-    AppointmentStatus(String value) {
+    AppointmentDoctorStatus(String value) {
         this.value = value;
     }
 
-    public static AppointmentStatus fromValue(String value) {
-        for (AppointmentStatus status : AppointmentStatus.values()) {
+    public static AppointmentDoctorStatus fromValue(String value) {
+        for (AppointmentDoctorStatus status : AppointmentDoctorStatus.values()) {
             if (status.value.equalsIgnoreCase(value)) {
                 return status;
             }
