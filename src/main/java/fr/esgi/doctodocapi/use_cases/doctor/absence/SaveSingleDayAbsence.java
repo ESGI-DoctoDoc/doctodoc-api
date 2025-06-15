@@ -5,6 +5,8 @@ import fr.esgi.doctodocapi.dtos.responses.doctor.absence.GetAbsenceResponse;
 import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.infrastructure.mappers.AbsenceResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.Absence;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceValidator;
@@ -25,12 +27,14 @@ public class SaveSingleDayAbsence {
     private final GetCurrentUserContext getCurrentUserContext;
     private final UserRepository userRepository;
     private final AbsenceResponseMapper absenceResponseMapper;
+    private final DoctorRepository doctorRepository;
 
-    public SaveSingleDayAbsence(AbsenceRepository absenceRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, AbsenceResponseMapper absenceResponseMapper) {
+    public SaveSingleDayAbsence(AbsenceRepository absenceRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, AbsenceResponseMapper absenceResponseMapper, DoctorRepository doctorRepository) {
         this.absenceRepository = absenceRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
         this.absenceResponseMapper = absenceResponseMapper;
+        this.doctorRepository = doctorRepository;
     }
 
     /**
@@ -43,14 +47,17 @@ public class SaveSingleDayAbsence {
     public GetAbsenceResponse execute(SaveSingleDayAbsenceRequest request) {
         try {
             String username = this.getCurrentUserContext.getUsername();
-            User doctor = this.userRepository.findByEmail(username);
+            User user = this.userRepository.findByEmail(username);
+            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            Absence absence = Absence.createSingleDate(request.description(), request.date(), doctor.getId());
+            Absence absence = Absence.createSingleDate(request.description(), request.date());
             List<Absence> existing = this.absenceRepository.findAllByDoctorId(doctor.getId());
 
             AbsenceValidator.validateNoConflictWithExisting(absence, existing);
 
-            Absence saved = this.absenceRepository.save(absence);
+            doctor.getCalendar().addAbsence(absence);
+
+            Absence saved = this.absenceRepository.save(absence, doctor.getId());
             return this.absenceResponseMapper.toResponse(saved);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());

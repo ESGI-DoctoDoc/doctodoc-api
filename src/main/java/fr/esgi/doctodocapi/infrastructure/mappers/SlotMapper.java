@@ -23,7 +23,6 @@ public class SlotMapper {
                 entity.getEndHour(),
                 appointments,
                 medicalConcerns,
-                entity.getDoctor().getId(),
                 entity.getRecurrenceId(),
                 entity.getCreatedAt()
         );
@@ -37,7 +36,6 @@ public class SlotMapper {
                 entity.getEndHour(),
                 List.of(),
                 List.of(),
-                entity.getDoctor().getId(),
                 entity.getRecurrenceId(),
                 entity.getCreatedAt()
         );

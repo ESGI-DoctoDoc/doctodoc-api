@@ -33,10 +33,6 @@ public final class AbsenceValidator {
      */
     public static void validateNoConflictWithExisting(Absence toSave, List<Absence> existingAbsences) {
         for (Absence existing : existingAbsences) {
-            if (!isSameDoctor(toSave, existing)) {
-                continue;
-            }
-
             if (isSingleDate(toSave) && isSingleDate(existing)) {
                 checkSameDateConflict(toSave.getDate(), existing.getDate());
             }
@@ -53,10 +49,6 @@ public final class AbsenceValidator {
                 checkRangeConflict(toSave.getAbsenceRange(), existing.getAbsenceRange());
             }
         }
-    }
-
-    private static boolean isSameDoctor(Absence absence1, Absence absence2) {
-        return absence1.getDoctorId().equals(absence2.getDoctorId());
     }
 
     private static boolean isSingleDate(Absence absence) {

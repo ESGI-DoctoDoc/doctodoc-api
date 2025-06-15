@@ -25,7 +25,6 @@ public class Slot {
     private LocalDate date;
     private HoursRange hoursRange;
     private UUID recurrenceId;
-    private UUID doctorId;
     private List<Appointment> appointments;
     private List<MedicalConcern> availableMedicalConcerns;
     private LocalDate createdAt;
@@ -37,13 +36,12 @@ public class Slot {
         this.hoursRange = HoursRange.of(startHour, endHour);
     }
 
-    public Slot(UUID id, LocalDate date, LocalTime startHour, LocalTime endHour, List<Appointment> appointments, List<MedicalConcern> availableMedicalConcerns, UUID doctorId, UUID recurrenceId, LocalDate createdAt) {
+    public Slot(UUID id, LocalDate date, LocalTime startHour, LocalTime endHour, List<Appointment> appointments, List<MedicalConcern> availableMedicalConcerns, UUID recurrenceId, LocalDate createdAt) {
         this.id = id;
         this.date = date;
         this.hoursRange = HoursRange.of(startHour, endHour);
         this.appointments = appointments;
         this.availableMedicalConcerns = availableMedicalConcerns;
-        this.doctorId = doctorId;
         this.recurrenceId = recurrenceId;
         this.createdAt = createdAt;
     }
@@ -85,11 +83,10 @@ public class Slot {
      * @param date             date of the slot
      * @param startHour        start hour
      * @param endHour          end hour
-     * @param doctorId         ID of the doctor
      * @param medicalConcerns  allowed medical concerns
      * @return a new {@code Slot} instance
      */
-    public static Slot create(LocalDate date, LocalTime startHour, LocalTime endHour, UUID doctorId, List<MedicalConcern> medicalConcerns) {
+    public static Slot create(LocalDate date, LocalTime startHour, LocalTime endHour, List<MedicalConcern> medicalConcerns) {
         return new Slot(
                 UUID.randomUUID(),
                 date,
@@ -97,7 +94,6 @@ public class Slot {
                 endHour,
                 new ArrayList<>(),
                 medicalConcerns,
-                doctorId,
                 null,
                 LocalDate.now()
         );
@@ -109,12 +105,11 @@ public class Slot {
      * @param date             date of the slot
      * @param startHour        start hour
      * @param endHour          end hour
-     * @param doctorId         ID of the doctor
      * @param medicalConcerns  allowed medical concerns
      * @param recurrenceId     ID of the recurrence series
      * @return a new {@code Slot} instance with a recurrence ID
      */
-    public static Slot createRecurrence(LocalDate date, LocalTime startHour, LocalTime endHour, UUID doctorId, List<MedicalConcern> medicalConcerns, UUID recurrenceId) {
+    public static Slot createRecurrence(LocalDate date, LocalTime startHour, LocalTime endHour, List<MedicalConcern> medicalConcerns, UUID recurrenceId) {
         return new Slot(
                 UUID.randomUUID(),
                 date,
@@ -122,7 +117,6 @@ public class Slot {
                 endHour,
                 new ArrayList<>(),
                 medicalConcerns,
-                doctorId,
                 recurrenceId,
                 LocalDate.now()
         );
@@ -166,14 +160,6 @@ public class Slot {
 
     public void setAppointments(List<Appointment> appointments) {
         this.appointments = appointments;
-    }
-
-    public UUID getDoctorId() {
-        return doctorId;
-    }
-
-    public void setDoctorId(UUID doctorId) {
-        this.doctorId = doctorId;
     }
 
     public UUID getRecurrenceId() {

@@ -4,6 +4,7 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.calendar.Calendar;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.DoctorConsultationInformations;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.personal_information.CoordinatesGps;
@@ -55,6 +56,8 @@ public class DoctorMapper {
                 medicalConcerns
         );
 
+        Calendar calendar = new Calendar(List.of(), List.of(), List.of());
+
         return new Doctor(
                 entity.getUser().getId(),
                 Email.of(entity.getUser().getEmail()),
@@ -68,7 +71,8 @@ public class DoctorMapper {
                 personnalInformations,
                 professionalInformations,
                 consultationInformations,
-                entity.isVerified()
+                entity.isVerified(),
+                calendar
         );
     }
 

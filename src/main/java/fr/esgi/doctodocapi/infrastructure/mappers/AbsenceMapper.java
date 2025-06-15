@@ -28,8 +28,7 @@ public class AbsenceMapper {
                 entity.getDescription(),
                 entity.getDate(),
                 absenceRange,
-                entity.getCreatedAt(),
-                entity.getDoctor().getId()
+                entity.getCreatedAt()
         );
     }
 

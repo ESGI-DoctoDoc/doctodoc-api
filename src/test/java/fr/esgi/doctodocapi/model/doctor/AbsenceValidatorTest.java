@@ -15,21 +15,18 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 class AbsenceValidatorTest {
 
-    private static final UUID DOCTOR_ID = UUID.randomUUID();
-    private static final UUID OTHER_DOCTOR_ID = UUID.randomUUID();
-
-    private Absence createSingleDateAbsence(UUID doctorId, LocalDate date) {
-        return Absence.createSingleDate("Ponctuelle", date, doctorId);
+    private Absence createSingleDateAbsence(LocalDate date) {
+        return Absence.createSingleDate("Ponctuelle", date);
     }
 
-    private Absence createRangeAbsence(UUID doctorId, LocalDate start, LocalDate end, LocalTime startHour, LocalTime endHour) {
-        return Absence.createWithRange("Plage", start, end, startHour, endHour, doctorId);
+    private Absence createRangeAbsence(LocalDate start, LocalDate end, LocalTime startHour, LocalTime endHour) {
+        return Absence.createWithRange("Plage", start, end, startHour, endHour);
     }
 
     @Test
     void shouldThrowIfTwoSingleDateAbsencesOnSameDay() {
-        var existing = createSingleDateAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 1));
-        var toSave = createSingleDateAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 1));
+        var existing = createSingleDateAbsence(LocalDate.of(2025, 7, 1));
+        var toSave = createSingleDateAbsence(LocalDate.of(2025, 7, 1));
 
         assertThrows(OverlappingAbsenceException.class, () ->
                 AbsenceValidator.validateNoConflictWithExisting(toSave, List.of(existing)));
@@ -37,9 +34,9 @@ class AbsenceValidatorTest {
 
     @Test
     void shouldThrowIfSingleDateFallsInsideRange() {
-        var existing = createRangeAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 5),
+        var existing = createRangeAbsence( LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 5),
                 LocalTime.of(8, 0), LocalTime.of(18, 0));
-        var toSave = createSingleDateAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 3));
+        var toSave = createSingleDateAbsence( LocalDate.of(2025, 7, 3));
 
         assertThrows(OverlappingAbsenceException.class, () ->
                 AbsenceValidator.validateNoConflictWithExisting(toSave, List.of(existing)));
@@ -47,8 +44,8 @@ class AbsenceValidatorTest {
 
     @Test
     void shouldThrowIfExistingSingleDateFallsInsideNewRange() {
-        var existing = createSingleDateAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 2));
-        var toSave = createRangeAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 3),
+        var existing = createSingleDateAbsence( LocalDate.of(2025, 7, 2));
+        var toSave = createRangeAbsence( LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 3),
                 LocalTime.of(8, 0), LocalTime.of(18, 0));
 
         assertThrows(OverlappingAbsenceException.class, () ->
@@ -57,9 +54,9 @@ class AbsenceValidatorTest {
 
     @Test
     void shouldThrowIfTwoRangesOverlapInDateAndTime() {
-        var existing = createRangeAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 3),
+        var existing = createRangeAbsence( LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 3),
                 LocalTime.of(8, 0), LocalTime.of(12, 0));
-        var toSave = createRangeAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 2), LocalDate.of(2025, 7, 4),
+        var toSave = createRangeAbsence( LocalDate.of(2025, 7, 2), LocalDate.of(2025, 7, 4),
                 LocalTime.of(10, 0), LocalTime.of(14, 0));
 
         assertThrows(OverlappingAbsenceException.class, () ->
@@ -67,19 +64,10 @@ class AbsenceValidatorTest {
     }
 
     @Test
-    void shouldNotThrowIfDoctorsAreDifferent() {
-        var existing = createSingleDateAbsence(OTHER_DOCTOR_ID, LocalDate.of(2025, 7, 1));
-        var toSave = createSingleDateAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 1));
-
-        assertDoesNotThrow(() ->
-                AbsenceValidator.validateNoConflictWithExisting(toSave, List.of(existing)));
-    }
-
-    @Test
     void shouldNotThrowIfDatesDoNotOverlap() {
-        var existing = createRangeAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 10), LocalDate.of(2025, 7, 12),
+        var existing = createRangeAbsence( LocalDate.of(2025, 7, 10), LocalDate.of(2025, 7, 12),
                 LocalTime.of(8, 0), LocalTime.of(18, 0));
-        var toSave = createSingleDateAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 5));
+        var toSave = createSingleDateAbsence( LocalDate.of(2025, 7, 5));
 
         assertDoesNotThrow(() ->
                 AbsenceValidator.validateNoConflictWithExisting(toSave, List.of(existing)));
@@ -87,9 +75,9 @@ class AbsenceValidatorTest {
 
     @Test
     void shouldNotThrowIfHoursDoNotOverlapEvenIfDatesDo() {
-        var existing = createRangeAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 1),
+        var existing = createRangeAbsence( LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 1),
                 LocalTime.of(8, 0), LocalTime.of(10, 0));
-        var toSave = createRangeAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 1),
+        var toSave = createRangeAbsence( LocalDate.of(2025, 7, 1), LocalDate.of(2025, 7, 1),
                 LocalTime.of(10, 0), LocalTime.of(12, 0));
 
         assertDoesNotThrow(() ->
@@ -98,11 +86,11 @@ class AbsenceValidatorTest {
 
     @Test
     void shouldThrowWhenTwoRangesOnSameDayOverlapInHours() {
-        var existing = createRangeAbsence(DOCTOR_ID,
+        var existing = createRangeAbsence(
                 LocalDate.of(2025, 7, 16), LocalDate.of(2025, 7, 16),
                 LocalTime.of(8, 0), LocalTime.of(12, 0));
 
-        var toSave = createRangeAbsence(DOCTOR_ID,
+        var toSave = createRangeAbsence(
                 LocalDate.of(2025, 7, 16), LocalDate.of(2025, 7, 16),
                 LocalTime.of(10, 0), LocalTime.of(14, 0));
 
@@ -112,9 +100,9 @@ class AbsenceValidatorTest {
 
     @Test
     void shouldThrowIfSingleDateEqualsRangeStart() {
-        var existing = createRangeAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 10), LocalDate.of(2025, 7, 12),
+        var existing = createRangeAbsence( LocalDate.of(2025, 7, 10), LocalDate.of(2025, 7, 12),
                 LocalTime.of(8, 0), LocalTime.of(18, 0));
-        var toSave = createSingleDateAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 10));
+        var toSave = createSingleDateAbsence( LocalDate.of(2025, 7, 10));
 
         assertThrows(OverlappingAbsenceException.class,
                 () -> AbsenceValidator.validateNoConflictWithExisting(toSave, List.of(existing)));
@@ -122,9 +110,9 @@ class AbsenceValidatorTest {
 
     @Test
     void shouldThrowIfSingleDateEqualsRangeEnd() {
-        var existing = createRangeAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 10), LocalDate.of(2025, 7, 12),
+        var existing = createRangeAbsence( LocalDate.of(2025, 7, 10), LocalDate.of(2025, 7, 12),
                 LocalTime.of(8, 0), LocalTime.of(18, 0));
-        var toSave = createSingleDateAbsence(DOCTOR_ID, LocalDate.of(2025, 7, 12));
+        var toSave = createSingleDateAbsence( LocalDate.of(2025, 7, 12));
 
         assertThrows(OverlappingAbsenceException.class,
                 () -> AbsenceValidator.validateNoConflictWithExisting(toSave, List.of(existing)));
@@ -132,10 +120,10 @@ class AbsenceValidatorTest {
 
     @Test
     void shouldThrowIfRangesTouchAndHoursOverlap() {
-        var existing = createRangeAbsence(DOCTOR_ID,
+        var existing = createRangeAbsence(
                 LocalDate.of(2025, 7, 14), LocalDate.of(2025, 7, 16),
                 LocalTime.of(8, 0), LocalTime.of(18, 0));
-        var toSave = createRangeAbsence(DOCTOR_ID,
+        var toSave = createRangeAbsence(
                 LocalDate.of(2025, 7, 16), LocalDate.of(2025, 7, 18),
                 LocalTime.of(8, 0), LocalTime.of(18, 0));
 
@@ -145,10 +133,10 @@ class AbsenceValidatorTest {
 
     @Test
     void shouldNotThrowIfRangesTouchButHoursDoNotOverlap() {
-        var existing = createRangeAbsence(DOCTOR_ID,
+        var existing = createRangeAbsence(
                 LocalDate.of(2025, 7, 16), LocalDate.of(2025, 7, 16),
                 LocalTime.of(8, 0), LocalTime.of(10, 0));
-        var toSave = createRangeAbsence(DOCTOR_ID,
+        var toSave = createRangeAbsence(
                 LocalDate.of(2025, 7, 16), LocalDate.of(2025, 7, 16),
                 LocalTime.of(10, 0), LocalTime.of(12, 0));
 

@@ -45,10 +45,13 @@ public class AbsenceRepositoryImpl implements AbsenceRepository {
      * @throws DoctorNotFoundException if the doctor associated with the absence does not exist
      */
     @Override
-    public Absence save(Absence absence) {
-        DoctorEntity doctorEntity = this.doctorJpaRepository.findById(absence.getDoctorId()).orElseThrow(DoctorNotFoundException::new);
+    public Absence save(Absence absence, UUID doctorId) {
+        DoctorEntity doctorEntity = this.doctorJpaRepository.findById(doctorId)
+                .orElseThrow(DoctorNotFoundException::new);
+
         AbsenceEntity absenceEntity = this.absenceMapper.toEntity(absence, doctorEntity);
         AbsenceEntity savedEntity = this.absenceJpaRepository.save(absenceEntity);
+
         return this.absenceMapper.toDomain(savedEntity);
     }
 

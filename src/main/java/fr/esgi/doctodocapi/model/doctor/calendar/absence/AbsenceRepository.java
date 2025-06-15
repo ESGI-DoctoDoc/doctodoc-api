@@ -18,7 +18,7 @@ public interface AbsenceRepository {
      * @param absence the absence entity to save
      * @return the persisted absence, possibly with a generated ID
      */
-    Absence save(Absence absence);
+    Absence save(Absence absence, UUID doctorId);
 
     /**
      * Retrieves all absences registered for a given doctor.

@@ -20,15 +20,13 @@ public class Absence {
     LocalDate date;
     AbsenceRange absenceRange;
     LocalDate createdAt;
-    UUID doctorId;
 
-    public Absence(UUID id, String description, LocalDate date, AbsenceRange absenceRange, LocalDate createdAt, UUID doctorId) {
+    public Absence(UUID id, String description, LocalDate date, AbsenceRange absenceRange, LocalDate createdAt) {
         this.id = id;
         this.description = description;
         this.date = date;
         this.absenceRange = absenceRange;
         this.createdAt = createdAt;
-        this.doctorId = doctorId;
     }
 
     /**
@@ -36,17 +34,15 @@ public class Absence {
      *
      * @param description Description of the absence
      * @param date        The day the doctor is unavailable
-     * @param doctorId    Doctor's UUID
      * @return A new Absence instance representing a single-day absence
      */
-    public static Absence createSingleDate(String description, LocalDate date, UUID doctorId) {
+    public static Absence createSingleDate(String description, LocalDate date) {
         return new Absence(
                 UUID.randomUUID(),
                 description,
                 date,
                 null,
-                LocalDate.now(),
-                doctorId
+                LocalDate.now()
         );
     }
 
@@ -58,10 +54,9 @@ public class Absence {
      * @param endDate     End date of the absence period
      * @param startHour   Start hour each day
      * @param endHour     End hour each day
-     * @param doctorId    Doctor's UUID
      * @return A new Absence instance representing a ranged absence
      */
-    public static Absence createWithRange(String description, LocalDate startDate, LocalDate endDate, LocalTime startHour, LocalTime endHour, UUID doctorId) {
+    public static Absence createWithRange(String description, LocalDate startDate, LocalDate endDate, LocalTime startHour, LocalTime endHour) {
         AbsenceRange absenceRange = AbsenceRange.of(startDate, endDate, startHour, endHour);
 
         return new Absence(
@@ -69,8 +64,7 @@ public class Absence {
                 description,
                 null,
                 absenceRange,
-                LocalDate.now(),
-                doctorId
+                LocalDate.now()
         );
     }
 
@@ -112,14 +106,6 @@ public class Absence {
 
     public void setDate(LocalDate date) {
         this.date = date;
-    }
-
-    public UUID getDoctorId() {
-        return doctorId;
-    }
-
-    public void setDoctorId(UUID doctorId) {
-        this.doctorId = doctorId;
     }
 
     @Override
