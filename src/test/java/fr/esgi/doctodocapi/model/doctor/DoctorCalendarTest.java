@@ -42,7 +42,7 @@ class DoctorCalendarTest {
                 null,
                 null,
                 false,
-                new Calendar(new ArrayList<>(), new ArrayList<>(), new ArrayList<>())
+                new Calendar(new ArrayList<>(), new ArrayList<>())
         );
     }
 
@@ -162,42 +162,6 @@ class DoctorCalendarTest {
     }
 
     @Test
-    void givenExistingSlot_whenRemoveSlot_thenSlotIsRemoved() {
-        // Given
-        Slot slot = Slot.createRecurrence(
-                LocalDate.now().plusDays(1),
-                LocalTime.of(9, 0),
-                LocalTime.of(9, 30),
-                List.of(),
-                null
-        );
-        doctor.getCalendar().addSlot(slot);
-
-        // When
-        doctor.getCalendar().removeSlot(slot);
-
-        // Then
-        assertTrue(doctor.getCalendar().getSlots().isEmpty(), "Calendar should be empty after removing slot");
-    }
-
-    @Test
-    void givenNonExistentSlot_whenRemoveSlot_thenThrowsIllegalStateException() {
-        // Given
-        Slot slot = Slot.createRecurrence(
-                LocalDate.now().plusDays(1),
-                LocalTime.of(9, 0),
-                LocalTime.of(9, 30),
-                List.of(),
-                null
-        );
-
-        // When & Then
-        assertThrows(IllegalStateException.class, () ->
-                        doctor.getCalendar().removeSlot(slot),
-                "Removing non-existent slot should throw IllegalStateException");
-    }
-
-    @Test
     void givenSlotsInRange_whenFilterSlotsByDateRange_thenReturnsMatchingSlots() {
         // Given
         Slot slot1 = Slot.createRecurrence(
@@ -240,22 +204,6 @@ class DoctorCalendarTest {
     }
 
     @Test
-    void givenNullSlot_whenAddSlot_thenThrowsIllegalArgumentException() {
-        // When & Then
-        assertThrows(IllegalArgumentException.class, () ->
-                        doctor.getCalendar().addSlot(null),
-                "Adding null slot should throw IllegalArgumentException");
-    }
-
-    @Test
-    void givenNullSlot_whenRemoveSlot_thenThrowsIllegalArgumentException() {
-        // When & Then
-        assertThrows(IllegalArgumentException.class, () ->
-                        doctor.getCalendar().removeSlot(null),
-                "Removing null slot should throw IllegalArgumentException");
-    }
-
-    @Test
     void givenNullConcerns_whenCreateSlot_thenSlotIsAdded() {
         // Given
         Slot slot = Slot.createRecurrence(
@@ -291,35 +239,6 @@ class DoctorCalendarTest {
 
         assertThrows(IllegalStateException.class, () ->
                 doctor.getCalendar().addAbsence(absence));
-    }
-
-    @Test
-    void givenNullAbsence_whenAddAbsence_thenThrowsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () ->
-                doctor.getCalendar().addAbsence(null));
-    }
-
-    @Test
-    void givenExistingAbsence_whenRemoveAbsence_thenAbsenceIsRemoved() {
-        Absence absence = Absence.createSingleDate("Congé maladie", LocalDate.now().plusDays(2));
-        doctor.getCalendar().addAbsence(absence);
-        doctor.getCalendar().removeAbsence(absence);
-
-        assertTrue(doctor.getCalendar().getAbsences().isEmpty());
-    }
-
-    @Test
-    void givenNonExistentAbsence_whenRemoveAbsence_thenThrowsIllegalStateException() {
-        Absence absence = Absence.createSingleDate("Erreur", LocalDate.now().plusDays(7));
-
-        assertThrows(IllegalStateException.class, () ->
-                doctor.getCalendar().removeAbsence(absence));
-    }
-
-    @Test
-    void givenNullAbsence_whenRemoveAbsence_thenThrowsIllegalArgumentException() {
-        assertThrows(IllegalArgumentException.class, () ->
-                doctor.getCalendar().removeAbsence(null));
     }
 
     @Test

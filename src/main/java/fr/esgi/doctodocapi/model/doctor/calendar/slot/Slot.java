@@ -46,7 +46,6 @@ public class Slot {
         this.createdAt = createdAt;
     }
 
-
     /**
      * Validates that the current slot does not overlap with other existing slots
      * for the same date and at least one common medical concern.

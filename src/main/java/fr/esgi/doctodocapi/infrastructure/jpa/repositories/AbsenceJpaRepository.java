@@ -4,10 +4,8 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.AbsenceEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 public interface AbsenceJpaRepository extends JpaRepository<AbsenceEntity, UUID> {
-    List<AbsenceEntity> findAllByDoctor_IdAndDeletedAtIsNull(UUID doctorId);
-    Optional<AbsenceEntity> findByIdAndDeletedAtIsNull(UUID id);
+    List<AbsenceEntity> findAllByDoctor_Id(UUID doctorId);
 }

@@ -9,6 +9,7 @@ import fr.esgi.doctodocapi.model.doctor.calendar.absence.Absence;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRepository;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
+import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -27,11 +28,13 @@ public class AbsenceRepositoryImpl implements AbsenceRepository {
     private final AbsenceJpaRepository  absenceJpaRepository;
     private final DoctorJpaRepository doctorJpaRepository;
     private final AbsenceMapper absenceMapper;
+    private final EntityManager entityManager;
 
-    public AbsenceRepositoryImpl(AbsenceJpaRepository absenceJpaRepository, DoctorJpaRepository doctorJpaRepository, AbsenceMapper absenceMapper) {
+    public AbsenceRepositoryImpl(AbsenceJpaRepository absenceJpaRepository, DoctorJpaRepository doctorJpaRepository, AbsenceMapper absenceMapper, EntityManager entityManager) {
         this.absenceJpaRepository = absenceJpaRepository;
         this.doctorJpaRepository = doctorJpaRepository;
         this.absenceMapper = absenceMapper;
+        this.entityManager = entityManager;
     }
 
     /**
@@ -46,9 +49,7 @@ public class AbsenceRepositoryImpl implements AbsenceRepository {
      */
     @Override
     public Absence save(Absence absence, UUID doctorId) {
-        DoctorEntity doctorEntity = this.doctorJpaRepository.findById(doctorId)
-                .orElseThrow(DoctorNotFoundException::new);
-
+        DoctorEntity doctorEntity = entityManager.getReference(DoctorEntity.class, doctorId);
         AbsenceEntity absenceEntity = this.absenceMapper.toEntity(absence, doctorEntity);
         AbsenceEntity savedEntity = this.absenceJpaRepository.save(absenceEntity);
 
@@ -65,7 +66,7 @@ public class AbsenceRepositoryImpl implements AbsenceRepository {
     @Override
     public List<Absence> findAllByDoctorId(UUID doctorId) {
         DoctorEntity doctorEntity = this.doctorJpaRepository.findById(doctorId).orElseThrow(DoctorNotFoundException::new);
-        List<AbsenceEntity> absenceEntities = this.absenceJpaRepository.findAllByDoctor_IdAndDeletedAtIsNull(doctorEntity.getId());
+        List<AbsenceEntity> absenceEntities = this.absenceJpaRepository.findAllByDoctor_Id(doctorEntity.getId());
 
         return absenceEntities.stream().map(absenceMapper::toDomain).toList();
     }
@@ -79,7 +80,7 @@ public class AbsenceRepositoryImpl implements AbsenceRepository {
 
     @Override
     public Absence findById(UUID absenceId) {
-        return this.absenceJpaRepository.findByIdAndDeletedAtIsNull(absenceId)
+        return this.absenceJpaRepository.findById(absenceId)
                 .map(absenceMapper::toDomain)
                 .orElseThrow(AbsenceNotFoundException::new);
     }

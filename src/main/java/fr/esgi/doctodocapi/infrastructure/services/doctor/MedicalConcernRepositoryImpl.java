@@ -95,7 +95,7 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
      */
     @Override
     public List<Question> getDoctorQuestions(MedicalConcern medicalConcern) {
-        List<QuestionEntity> entities = this.questionJpaRepository.findAllByMedicalConcern_IdAndDeletedAtIsNull(medicalConcern.getId());
+        List<QuestionEntity> entities = this.questionJpaRepository.findAllByMedicalConcern_Id(medicalConcern.getId());
         return entities.stream().map(questionMapper::toDomain).toList();
     }
 

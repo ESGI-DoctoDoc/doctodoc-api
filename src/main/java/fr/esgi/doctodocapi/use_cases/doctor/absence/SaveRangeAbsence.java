@@ -9,7 +9,7 @@ import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.Absence;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRepository;
-import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceValidator;
+import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceValidationService;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
@@ -29,13 +29,15 @@ public class SaveRangeAbsence {
     private final UserRepository userRepository;
     private final AbsenceResponseMapper absenceResponseMapper;
     private final DoctorRepository doctorRepository;
+    private final AbsenceValidationService absenceValidationService;
 
-    public SaveRangeAbsence(AbsenceRepository absenceRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, AbsenceResponseMapper absenceResponseMapper, DoctorRepository doctorRepository) {
+    public SaveRangeAbsence(AbsenceRepository absenceRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, AbsenceResponseMapper absenceResponseMapper, DoctorRepository doctorRepository, AbsenceValidationService absenceValidationService) {
         this.absenceRepository = absenceRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
         this.absenceResponseMapper = absenceResponseMapper;
         this.doctorRepository = doctorRepository;
+        this.absenceValidationService = absenceValidationService;
     }
 
     /**
@@ -54,7 +56,7 @@ public class SaveRangeAbsence {
             Absence absence = Absence.createWithRange(request.description(), request.start(), request.end(), request.startHour(), request.endHour());
 
             List<Absence> existing = this.absenceRepository.findAllByDoctorId(doctor.getId());
-            AbsenceValidator.validateNoConflictWithExisting(absence, existing);
+            this.absenceValidationService.validateNoConflictWithExisting(absence, existing);
 
             doctor.getCalendar().addAbsence(absence);
 

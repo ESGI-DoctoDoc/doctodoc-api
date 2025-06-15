@@ -5,9 +5,11 @@ import fr.esgi.doctodocapi.model.doctor.calendar.absence.Absence;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRange;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
+import java.util.Objects;
 
 @Service
 public class AbsenceResponseMapper {
@@ -21,11 +23,16 @@ public class AbsenceResponseMapper {
 
     public GetAbsenceResponse toResponse(Absence absence) {
         AbsenceRange range = absence.getAbsenceRange();
+        LocalDate date = null;
+
+        if (range != null && range.getDateRange() != null && Objects.equals(range.getDateRange().getStart(), range.getDateRange().getEnd())) {
+            date = range.getDateRange().getStart();
+        }
 
         return new GetAbsenceResponse(
                 absence.getId(),
                 absence.getDescription(),
-                absence.getDate(),
+                date,
                 range != null && range.getDateRange() != null ? range.getDateRange().getStart() : null,
                 range != null && range.getDateRange() != null ? range.getDateRange().getEnd() : null,
                 range != null && range.getHoursRange() != null ? formatTime(range.getHoursRange().getStart()) : null,

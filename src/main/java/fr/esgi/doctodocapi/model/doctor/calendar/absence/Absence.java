@@ -17,14 +17,12 @@ import java.util.UUID;
 public class Absence {
     UUID id;
     String description;
-    LocalDate date;
     AbsenceRange absenceRange;
     LocalDate createdAt;
 
-    public Absence(UUID id, String description, LocalDate date, AbsenceRange absenceRange, LocalDate createdAt) {
+    public Absence(UUID id, String description, AbsenceRange absenceRange, LocalDate createdAt) {
         this.id = id;
         this.description = description;
-        this.date = date;
         this.absenceRange = absenceRange;
         this.createdAt = createdAt;
     }
@@ -37,11 +35,11 @@ public class Absence {
      * @return A new Absence instance representing a single-day absence
      */
     public static Absence createSingleDate(String description, LocalDate date) {
+        AbsenceRange absenceRange = AbsenceRange.of(date, date, LocalTime.MIDNIGHT, LocalTime.of(23, 59));
         return new Absence(
                 UUID.randomUUID(),
                 description,
-                date,
-                null,
+                absenceRange,
                 LocalDate.now()
         );
     }
@@ -58,11 +56,9 @@ public class Absence {
      */
     public static Absence createWithRange(String description, LocalDate startDate, LocalDate endDate, LocalTime startHour, LocalTime endHour) {
         AbsenceRange absenceRange = AbsenceRange.of(startDate, endDate, startHour, endHour);
-
         return new Absence(
                 UUID.randomUUID(),
                 description,
-                null,
                 absenceRange,
                 LocalDate.now()
         );
@@ -98,14 +94,6 @@ public class Absence {
 
     public void setAbsenceRange(AbsenceRange absenceRange) {
         this.absenceRange = absenceRange;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 
     @Override

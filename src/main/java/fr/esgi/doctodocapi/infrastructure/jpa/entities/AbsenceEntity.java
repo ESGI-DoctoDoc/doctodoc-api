@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -8,6 +9,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "absences")
+@SQLRestriction("deleted_at IS NULL")
 public class AbsenceEntity {
 
     @Id
@@ -20,9 +22,6 @@ public class AbsenceEntity {
 
     @Column(name ="description", columnDefinition = "text")
     private String description;
-
-    @Column(name = "date")
-    private LocalDate date;
 
     @Column(name = "start_date")
     private LocalDate startDate;
@@ -64,14 +63,6 @@ public class AbsenceEntity {
 
     public void setDescription(String description) {
         this.description = description;
-    }
-
-    public LocalDate getDate() {
-        return date;
-    }
-
-    public void setDate(LocalDate date) {
-        this.date = date;
     }
 
     public LocalDate getStartDate() {
