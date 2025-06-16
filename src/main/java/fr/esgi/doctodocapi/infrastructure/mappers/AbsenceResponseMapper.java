@@ -25,7 +25,7 @@ public class AbsenceResponseMapper {
         AbsenceRange range = absence.getAbsenceRange();
         LocalDate date = null;
 
-        if (range != null && range.getDateRange() != null && Objects.equals(range.getDateRange().getStart(), range.getDateRange().getEnd())) {
+        if (range.getDateRange() != null && Objects.equals(range.getDateRange().getStart(), range.getDateRange().getEnd())) {
             date = range.getDateRange().getStart();
         }
 
@@ -33,10 +33,10 @@ public class AbsenceResponseMapper {
                 absence.getId(),
                 absence.getDescription(),
                 date,
-                range != null && range.getDateRange() != null ? range.getDateRange().getStart() : null,
-                range != null && range.getDateRange() != null ? range.getDateRange().getEnd() : null,
-                range != null && range.getHoursRange() != null ? formatTime(range.getHoursRange().getStart()) : null,
-                range != null && range.getHoursRange() != null ? formatTime(range.getHoursRange().getEnd()) : null,
+                range.getDateRange().getStart(),
+                range.getDateRange().getEnd(),
+                formatTime(range.getHoursRange().getStart()),
+                formatTime(range.getHoursRange().getEnd()),
                 absence.getCreatedAt()
         );
     }
