@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.absence_response.GetAbsenceResponse;
+import fr.esgi.doctodocapi.dtos.responses.doctor.absence.GetAbsenceResponse;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.Absence;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRange;
 import org.springframework.stereotype.Service;

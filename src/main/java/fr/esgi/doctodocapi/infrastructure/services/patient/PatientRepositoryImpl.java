@@ -10,7 +10,7 @@ import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import jakarta.persistence.EntityManager;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -22,7 +22,7 @@ import java.util.UUID;
  * This service provides methods to manage patient data, including retrieving, saving,
  * and checking existence of patient information.
  */
-@Repository
+@Service
 public class PatientRepositoryImpl implements PatientRepository {
     /**
      * Repository for accessing patient data in the database.

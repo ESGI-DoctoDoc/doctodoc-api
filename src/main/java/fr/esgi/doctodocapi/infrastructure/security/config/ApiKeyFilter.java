@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.infrastructure.security.config;
 
 
-import fr.esgi.doctodocapi.use_cases.exceptions.UnauthorizedException;
+import fr.esgi.doctodocapi.exceptions.UnauthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;

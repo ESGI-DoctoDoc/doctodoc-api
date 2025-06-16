@@ -22,7 +22,7 @@ import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -35,7 +35,7 @@ import java.util.UUID;
  * This service provides methods to manage appointments, including retrieving and saving appointment data.
  * It interacts with various JPA repositories to access and manipulate appointment-related data in the database.
  */
-@Repository
+@Service
 public class AppointmentRepositoryImpl implements AppointmentRepository {
     /**
      * Repository for accessing appointment data in the database.

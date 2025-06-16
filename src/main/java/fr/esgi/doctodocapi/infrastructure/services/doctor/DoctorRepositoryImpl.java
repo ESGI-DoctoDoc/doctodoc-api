@@ -13,7 +13,7 @@ import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.Optional;
@@ -24,7 +24,7 @@ import java.util.UUID;
  * This service provides methods to manage doctor data, including retrieving, checking existence,
  * and saving doctor information.
  */
-@Repository
+@Service
 public class DoctorRepositoryImpl implements DoctorRepository {
     /**
      * Repository for accessing doctor data in the database.

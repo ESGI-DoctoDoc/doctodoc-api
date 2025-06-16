@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.infrastructure.security.service;
 
-import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthenticationException;
-import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthentificationMessageException;
+import fr.esgi.doctodocapi.exceptions.authentication.AuthenticationException;
+import fr.esgi.doctodocapi.exceptions.authentication.AuthentificationMessageException;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.AdminJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.UserJpaRepository;

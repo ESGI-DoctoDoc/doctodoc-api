@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotResponse;
+import fr.esgi.doctodocapi.dtos.responses.doctor.slot.GetSlotResponse;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.RecurrenceType;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.RecurrentSlotRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;

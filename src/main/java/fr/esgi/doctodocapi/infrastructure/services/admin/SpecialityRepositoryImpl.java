@@ -5,7 +5,7 @@ import fr.esgi.doctodocapi.infrastructure.jpa.repositories.SpecialityJpaReposito
 import fr.esgi.doctodocapi.infrastructure.mappers.SpecialityMapper;
 import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -15,7 +15,7 @@ import java.util.List;
  * This service provides methods to persist and retrieve {@link Speciality} domain objects
  * using JPA repositories and mappers to interact with the database layer.
  */
-@Repository
+@Service
 public class SpecialityRepositoryImpl implements SpecialityRepository {
     private final SpecialityJpaRepository specialityJpaRepository;
     private final SpecialityMapper specialityMapper;

@@ -1,13 +1,13 @@
 package fr.esgi.doctodocapi.presentation.doctor;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.OnBoardingDoctorRequest;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.OnboardingProcessResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IOnboardingDoctor;
+import fr.esgi.doctodocapi.dtos.requests.doctor.DoctorValidationRequest;
+import fr.esgi.doctodocapi.dtos.requests.doctor.OnBoardingDoctorRequest;
+import fr.esgi.doctodocapi.dtos.responses.doctor.OnboardingProcessResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.OnboardingDoctorProcess;
+import fr.esgi.doctodocapi.use_cases.user.ValidateDoctorAccount;
 import jakarta.validation.Valid;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * REST controller for doctor onboarding process and account validation.
@@ -15,10 +15,12 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("doctors/onboarding")
 public class OnBoardingDoctorController {
-    private final IOnboardingDoctor onboardingDoctorProcess;
+    private final OnboardingDoctorProcess onboardingDoctorProcess;
+    private final ValidateDoctorAccount validateDoctorAccount;
 
-    public OnBoardingDoctorController(IOnboardingDoctor onboardingDoctorProcess) {
+    public OnBoardingDoctorController(OnboardingDoctorProcess onboardingDoctorProcess, ValidateDoctorAccount validateDoctorAccount) {
         this.onboardingDoctorProcess = onboardingDoctorProcess;
+        this.validateDoctorAccount = validateDoctorAccount;
     }
 
     /**
@@ -30,5 +32,17 @@ public class OnBoardingDoctorController {
     @PostMapping
     public OnboardingProcessResponse submit(@Valid @RequestBody OnBoardingDoctorRequest onBoardingDoctorRequest) {
         return this.onboardingDoctorProcess.process(onBoardingDoctorRequest);
+    }
+
+    /**
+     * Validates a doctor's account.
+     * Requires admin role.
+     *
+     * @param request the doctor validation request containing doctor ID
+     */
+    @PatchMapping("/validate-account")
+    @PreAuthorize("hasRole('ROLE_ADMIN')")
+    public void validateDoctorAccount(@Valid @RequestBody DoctorValidationRequest request) {
+        this.validateDoctorAccount.validateDoctorAccount(request);
     }
 }

@@ -5,14 +5,14 @@ import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DoctorRecruitmentJpaR
 import fr.esgi.doctodocapi.infrastructure.mappers.DoctorRecruitmentMapper;
 import fr.esgi.doctodocapi.model.doctor_recruitment.DoctorRecruitment;
 import fr.esgi.doctodocapi.model.doctor_recruitment.DoctorRecruitmentRepository;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 /**
  * Implementation of the DoctorRecruitmentRepository interface.
  * This service provides functionality to manage doctor recruitment data,
  * allowing the application to store information about doctors who are being recruited.
  */
-@Repository
+@Service
 public class DoctorRecruitmentRepositoryImpl implements DoctorRecruitmentRepository {
     /**
      * Repository for accessing doctor recruitment data in the database.

@@ -1,15 +1,15 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.DoubleAuthenticationUserResponse;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ResetPasswordRequest;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.UpdatePasswordRequest;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
-import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
-import fr.esgi.doctodocapi.use_cases.user.dtos.responses.RequestResetPasswordResponse;
-import fr.esgi.doctodocapi.use_cases.user.dtos.responses.UpdatePasswordResponse;
-import fr.esgi.doctodocapi.use_cases.user.manage_account.ResetPassword;
-import fr.esgi.doctodocapi.use_cases.user.ports.in.IAuthenticatePatient;
+import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
+import fr.esgi.doctodocapi.dtos.requests.ResetPasswordRequest;
+import fr.esgi.doctodocapi.dtos.requests.UpdatePasswordRequest;
+import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
+import fr.esgi.doctodocapi.dtos.responses.DoubleAuthenticationUserResponse;
+import fr.esgi.doctodocapi.dtos.responses.LoginResponse;
+import fr.esgi.doctodocapi.dtos.responses.RequestResetPasswordResponse;
+import fr.esgi.doctodocapi.dtos.responses.UpdatePasswordResponse;
+import fr.esgi.doctodocapi.use_cases.patient.AuthenticatePatient;
+import fr.esgi.doctodocapi.use_cases.user.ResetPassword;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -21,10 +21,10 @@ import org.springframework.web.bind.annotation.*;
 @RequestMapping("/patients")
 public class AuthPatientController {
 
-    private final IAuthenticatePatient authenticatePatient;
+    private final AuthenticatePatient authenticatePatient;
     private final ResetPassword resetPassword;
 
-    public AuthPatientController(IAuthenticatePatient authenticatePatient, ResetPassword resetPassword) {
+    public AuthPatientController(AuthenticatePatient authenticatePatient, ResetPassword resetPassword) {
         this.authenticatePatient = authenticatePatient;
         this.resetPassword = resetPassword;
     }

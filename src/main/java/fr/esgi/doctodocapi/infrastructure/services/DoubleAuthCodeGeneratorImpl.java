@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.infrastructure.services;
 
 import fr.esgi.doctodocapi.model.user.DoubleAuthCodeGenerator;
-import org.springframework.stereotype.Repository;
+import org.springframework.stereotype.Service;
 
 import java.security.SecureRandom;
 
@@ -9,7 +9,7 @@ import java.security.SecureRandom;
  * Implementation of the DoubleAuthCodeGenerator interface.
  * This service generates authentication codes for two-factor authentication.
  */
-@Repository
+@Service
 public class DoubleAuthCodeGeneratorImpl implements DoubleAuthCodeGenerator {
     /**
      * Generates a 6-digit code for two-factor authentication.

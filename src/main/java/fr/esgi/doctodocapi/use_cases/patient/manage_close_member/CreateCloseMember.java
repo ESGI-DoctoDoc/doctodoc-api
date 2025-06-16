@@ -1,16 +1,16 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_close_member;
 
+import fr.esgi.doctodocapi.dtos.requests.patient.SaveCloseMemberRequest;
+import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetCloseMemberResponse;
+import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.SaveCloseMemberRequest;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetCloseMemberResponse;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_close_member.ICreateCloseMember;
-import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 
@@ -18,7 +18,8 @@ import java.time.LocalDate;
  * Use case for creating a close member patient linked to the currently authenticated user.
  * A close member is typically a relative or dependent of the main patient.
  */
-public class CreateCloseMember implements ICreateCloseMember {
+@Service
+public class CreateCloseMember {
     private final GetCurrentUserContext getCurrentUserContext;
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;

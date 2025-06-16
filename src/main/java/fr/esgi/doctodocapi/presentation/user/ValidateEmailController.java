@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.presentation.user;
 
-import fr.esgi.doctodocapi.use_cases.user.ports.in.IValidateEmail;
+import fr.esgi.doctodocapi.use_cases.user.ValidateEmail;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,14 +14,14 @@ import java.util.UUID;
 @RequestMapping("/users")
 public class ValidateEmailController {
 
-    private final IValidateEmail validateEmail;
+    private final ValidateEmail validateEmail;
 
     /**
      * Constructor injecting the ValidateEmail use case.
      *
      * @param validateEmail the service to handle email validation
      */
-    public ValidateEmailController(IValidateEmail validateEmail) {
+    public ValidateEmailController(ValidateEmail validateEmail) {
         this.validateEmail = validateEmail;
     }
 
