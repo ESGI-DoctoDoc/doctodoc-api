@@ -23,7 +23,7 @@ class SlotRecurrenceTest {
     private final MedicalConcern concernB = new MedicalConcern(UUID.randomUUID(), "B", 30, List.of(), 15.0, doctorId, createdAt);
 
     private Slot createRecurrence(LocalDate date, String start, String end, List<MedicalConcern> concerns, UUID recurrenceId) {
-        return Slot.createRecurrence(date, LocalTime.parse(start), LocalTime.parse(end), doctorId, concerns, recurrenceId);
+        return Slot.createRecurrence(date, LocalTime.parse(start), LocalTime.parse(end), concerns, recurrenceId);
     }
 
     @Test

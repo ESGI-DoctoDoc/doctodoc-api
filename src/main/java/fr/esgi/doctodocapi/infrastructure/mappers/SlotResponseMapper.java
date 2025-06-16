@@ -6,17 +6,16 @@ import fr.esgi.doctodocapi.model.doctor.calendar.slot.RecurrentSlotRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 import java.util.UUID;
 
-/**
- * Service responsible for presenting Slot entities as GetSlotResponse DTOs.
- */
 @Service
 public class SlotResponseMapper {
     private static final DateTimeFormatter HOUR_MIN_FORMATTER = DateTimeFormatter.ofPattern("HH:mm");
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
     private final RecurrentSlotRepository recurrentSlotRepository;
 
@@ -24,12 +23,6 @@ public class SlotResponseMapper {
         this.recurrentSlotRepository = recurrentSlotRepository;
     }
 
-    /**
-     * Converts a list of Slot entities into a list of GetSlotResponse DTOs.
-     *
-     * @param slots The list of slots to present
-     * @return A list of GetSlotResponse objects
-     */
     public List<GetSlotResponse> presentAll(List<Slot> slots) {
         return slots.stream()
                 .map(this::toGetSlotResponse)
@@ -43,6 +36,7 @@ public class SlotResponseMapper {
 
         return new GetSlotResponse(
                 slot.getId(),
+                formatDate(slot.getDate()),
                 slot.getDate().getDayOfWeek().name().toLowerCase(),
                 formatTime(slot.getHoursRange().getStart()),
                 formatTime(slot.getHoursRange().getEnd()),
@@ -70,5 +64,9 @@ public class SlotResponseMapper {
 
     private String formatTime(LocalTime time) {
         return time.format(HOUR_MIN_FORMATTER);
+    }
+
+    private String formatDate(LocalDate date) {
+        return date.format(DATE_FORMATTER);
     }
 }

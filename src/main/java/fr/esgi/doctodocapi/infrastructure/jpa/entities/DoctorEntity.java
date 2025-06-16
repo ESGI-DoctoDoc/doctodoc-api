@@ -26,6 +26,12 @@ public class DoctorEntity {
     @OneToMany(mappedBy = "doctor")
     private List<MedicalConcernEntity> medicalConcerns;
 
+    @OneToMany(mappedBy = "doctor")
+    private List<SlotEntity> slots;
+
+    @OneToMany(mappedBy = "doctor")
+    private List<AbsenceEntity> absences;
+
     @Column(name = "rpps", nullable = false, unique = true)
     @Length(max = 11, min = 11)
     private String rpps;
@@ -238,6 +244,22 @@ public class DoctorEntity {
 
     public void setGender(String gender) {
         this.gender = gender;
+    }
+
+    public List<SlotEntity> getSlots() {
+        return slots;
+    }
+
+    public void setSlots(List<SlotEntity> slots) {
+        this.slots = slots;
+    }
+
+    public List<AbsenceEntity> getAbsences() {
+        return absences;
+    }
+
+    public void setAbsences(List<AbsenceEntity> absences) {
+        this.absences = absences;
     }
 
     @Override

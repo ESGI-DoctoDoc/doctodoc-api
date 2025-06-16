@@ -13,10 +13,10 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class PatientMapper {
-    private final DoctorMapper doctorMapper;
+    private final DoctorFacadeMapper doctorFacadeMapper;
 
-    public PatientMapper(DoctorMapper doctorMapper) {
-        this.doctorMapper = doctorMapper;
+    public PatientMapper(DoctorFacadeMapper doctorFacadeMapper) {
+        this.doctorFacadeMapper = doctorFacadeMapper;
     }
 
     public PatientEntity toEntity(Patient patient, UserEntity user, DoctorEntity doctor) {
@@ -41,7 +41,7 @@ public class PatientMapper {
         Doctor doctor = null;
 
         if (patientEntity.getDoctor() != null) {
-            doctor = this.doctorMapper.toDomain(patientEntity.getDoctor());
+            doctor = this.doctorFacadeMapper.mapDoctorToDomain(patientEntity.getDoctor());
         }
         return new Patient(
                 patientEntity.getUser().getId(),

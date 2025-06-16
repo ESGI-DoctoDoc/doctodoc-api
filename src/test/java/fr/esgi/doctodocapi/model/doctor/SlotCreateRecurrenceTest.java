@@ -23,7 +23,7 @@ class SlotCreateRecurrenceTest {
     private final MedicalConcern concernC = new MedicalConcern(UUID.randomUUID(), "C", 20, List.of(), 20.0, doctorId, createdAt);
 
     private Slot createSlot(LocalDate date, String start, String end, List<MedicalConcern> concerns, UUID recurrenceId) {
-        return Slot.createRecurrence(date, LocalTime.parse(start), LocalTime.parse(end), doctorId, concerns, recurrenceId);
+        return Slot.createRecurrence(date, LocalTime.parse(start), LocalTime.parse(end), concerns, recurrenceId);
     }
 
     @Test
@@ -35,7 +35,6 @@ class SlotCreateRecurrenceTest {
                 () -> assertEquals(date, slot.getDate()),
                 () -> assertEquals(LocalTime.of(8, 0), slot.getHoursRange().getStart()),
                 () -> assertEquals(LocalTime.of(10, 0), slot.getHoursRange().getEnd()),
-                () -> assertEquals(doctorId, slot.getDoctorId()),
                 () -> assertEquals(recurrenceId, slot.getRecurrenceId()),
                 () -> assertEquals(2, slot.getAvailableMedicalConcerns().size()),
                 () -> assertTrue(slot.getAvailableMedicalConcerns().containsAll(List.of(concernA, concernB))),
