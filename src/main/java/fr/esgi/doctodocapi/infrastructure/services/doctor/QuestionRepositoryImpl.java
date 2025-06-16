@@ -6,7 +6,7 @@ import fr.esgi.doctodocapi.infrastructure.mappers.QuestionMapper;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionRepository;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -17,7 +17,7 @@ import java.util.UUID;
  * This service handles operations related to question entities,
  * including saving domain questions to the database.
  */
-@Service
+@Repository
 public class QuestionRepositoryImpl implements QuestionRepository {
     private final QuestionMapper questionMapper;
     private final QuestionJpaRepository questionJpaRepository;

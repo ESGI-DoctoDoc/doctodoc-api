@@ -1,18 +1,17 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_close_member;
 
-import fr.esgi.doctodocapi.dtos.responses.flow_to_making_appointment.GetCloseMemberResponse;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
-import org.springframework.stereotype.Service;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetCloseMemberResponse;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_close_member.IGetAllCloseMembers;
+import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 
 import java.util.ArrayList;
 import java.util.List;
 
-@Service
-public class GetAllCloseMembers {
+public class GetAllCloseMembers implements IGetAllCloseMembers {
     private final GetCurrentUserContext getCurrentUserContext;
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
