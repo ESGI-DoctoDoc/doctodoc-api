@@ -109,9 +109,12 @@ public class SlotRepositoryImpl implements SlotRepository {
      * @return the list of saved {@link Slot} objects
      */
     @Override
-    public List<Slot> saveAll(List<Slot> slots) {
+    public List<Slot> saveAll(List<Slot> slots, UUID doctorId) {
+        DoctorEntity doctorEntity = new DoctorEntity();
+        doctorEntity.setId(doctorId);
+
         List<SlotEntity> entities = slots.stream()
-                .map(this::mapSlotToEntity)
+                .map(slot -> mapSlotToEntity(slot, doctorEntity))
                 .toList();
 
         List<SlotEntity> savedEntities = this.slotJpaRepository.saveAll(entities);
@@ -152,10 +155,7 @@ public class SlotRepositoryImpl implements SlotRepository {
                 .toList();
     }
 
-    private SlotEntity mapSlotToEntity(Slot slot) {
-        DoctorEntity doctorEntity = new DoctorEntity();
-        doctorEntity.setId(slot.getDoctorId());
-
+    private SlotEntity mapSlotToEntity(Slot slot, DoctorEntity doctorEntity) {
         List<UUID> medicalConcernIds = slot.getAvailableMedicalConcerns().stream()
                 .map(MedicalConcern::getId)
                 .toList();

@@ -43,6 +43,15 @@ public class Appointment {
         this.preAppointmentAnswers = answers;
     }
 
+    public Appointment(UUID id, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt) {
+        this.id = id;
+        this.hoursRange = HoursRange.of(startHour, endHour);
+        this.takenAt = takenAt;
+        this.lockedAt = lockedAt;
+        this.status = status;
+        this.preAppointmentAnswers = answers;
+    }
+
     /**
      * Initializes a new appointment, ensuring no conflicts with existing appointments in the slot.
      *

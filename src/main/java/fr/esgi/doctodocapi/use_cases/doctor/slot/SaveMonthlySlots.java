@@ -5,6 +5,8 @@ import fr.esgi.doctodocapi.dtos.responses.doctor.slot.GetSlotResponse;
 import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.RecurrentSlot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.RecurrentSlotRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
@@ -38,14 +40,16 @@ public class SaveMonthlySlots {
     private final GetCurrentUserContext getCurrentUserContext;
     private final RecurrentSlotRepository recurrentSlotRepository;
     private final SlotResponseMapper slotResponseMapper;
+    private final DoctorRepository doctorRepository;
 
-    public SaveMonthlySlots(SlotRepository slotRepository, MedicalConcernRepository medicalConcernRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, RecurrentSlotRepository recurrentSlotRepository, SlotResponseMapper slotResponseMapper) {
+    public SaveMonthlySlots(SlotRepository slotRepository, MedicalConcernRepository medicalConcernRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, RecurrentSlotRepository recurrentSlotRepository, SlotResponseMapper slotResponseMapper, DoctorRepository doctorRepository) {
         this.slotRepository = slotRepository;
         this.medicalConcernRepository = medicalConcernRepository;
         this.userRepository = userRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.recurrentSlotRepository = recurrentSlotRepository;
         this.slotResponseMapper = slotResponseMapper;
+        this.doctorRepository = doctorRepository;
     }
 
     /**
@@ -58,11 +62,12 @@ public class SaveMonthlySlots {
     public List<GetSlotResponse> execute(MonthlySlotRequest request) {
         try {
             String username = this.getCurrentUserContext.getUsername();
-            User doctor = this.userRepository.findByEmail(username);
+            User user = this.userRepository.findByEmail(username);
+            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
             LocalDate startDate = request.start();
             LocalDate endDate = request.end();
-            DateRange dateRange = new DateRange(startDate, endDate);
+            DateRange dateRange = DateRange.of(startDate, endDate);
 
             List<MedicalConcern> concerns = this.medicalConcernRepository.findAllById(request.medicalConcerns());
 
@@ -71,28 +76,35 @@ public class SaveMonthlySlots {
 
             LocalDate current = firstOccurrence(dateRange.getStart(), targetDay);
 
-            List<Slot> allExistingSlots = new ArrayList<>(this.slotRepository.findAllByDoctorIdAndDateAfter(doctor.getId(), request.start()));
-            List<Slot> newSlots = new ArrayList<>();
+
+            List<Slot> allExistingSlots = new ArrayList<>(
+                    this.slotRepository.findAllByDoctorIdAndDateAfter(doctor.getId(), startDate)
+            );
 
             while (!current.isAfter(dateRange.getEnd())) {
-                Slot newSlot = Slot.createRecurrence(current, request.startHour(), request.endHour(), doctor.getId(), concerns, null);
-
+                Slot newSlot = Slot.createRecurrence(current, request.startHour(), request.endHour(), concerns, null);
                 newSlot.validateAgainstOverlaps(allExistingSlots);
-                newSlots.add(newSlot);
+
+                doctor.getCalendar().addSlot(newSlot);
                 allExistingSlots.add(newSlot);
 
                 current = nextOccurrence(current, targetDay);
             }
 
-            if (!newSlots.isEmpty()) {
-                RecurrentSlot recurrentSlot = RecurrentSlot.createMonthly(dateRange.getStart(), dateRange.getEnd());
+            List<Slot> createdSlots = doctor.getCalendar().getSlots();
+
+            if (!createdSlots.isEmpty()) {
+                RecurrentSlot recurrentSlot = RecurrentSlot.createMonthly(startDate, endDate);
                 RecurrentSlot savedRecurrentSlot = this.recurrentSlotRepository.save(recurrentSlot);
-                for (Slot slot : newSlots) {
+
+                for (Slot slot : createdSlots) {
                     slot.setRecurrenceId(savedRecurrentSlot.getId());
                 }
-                List<Slot> savedSlots = this.slotRepository.saveAll(newSlots);
+
+                List<Slot> savedSlots = this.slotRepository.saveAll(createdSlots, doctor.getId());
                 return this.slotResponseMapper.presentAll(savedSlots);
             }
+
             return List.of();
 
         } catch (DomainException e) {
