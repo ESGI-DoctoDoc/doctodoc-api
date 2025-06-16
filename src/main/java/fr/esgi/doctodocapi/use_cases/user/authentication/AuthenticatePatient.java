@@ -1,15 +1,16 @@
 package fr.esgi.doctodocapi.use_cases.user.authentication;
 
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.DoubleAuthenticationUserResponse;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.TokenManager;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRoles;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.DoubleAuthenticationUserResponse;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
-import org.springframework.stereotype.Service;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IAuthenticatePatient;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IAuthenticateUser;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -21,11 +22,10 @@ import java.util.UUID;
  * and retrieves associated {@link Patient} details when applicable.
  * </p>
  */
-@Service
-public class AuthenticatePatient {
+public class AuthenticatePatient implements IAuthenticatePatient {
     private static final int TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES = 120;
 
-    private final AuthenticateUser authenticateUser;
+    private final IAuthenticateUser authenticateUser;
     private final PatientRepository patientRepository;
     private final TokenManager tokenManager;
 
@@ -34,9 +34,9 @@ public class AuthenticatePatient {
      *
      * @param authenticateUser  the generic user authentication use case
      * @param patientRepository the repository for accessing patient data
-     * @param tokenManager    the service responsible for generating authentication tokens
+     * @param tokenManager      the service responsible for generating authentication tokens
      */
-    public AuthenticatePatient(AuthenticateUser authenticateUser, PatientRepository patientRepository,
+    public AuthenticatePatient(IAuthenticateUser authenticateUser, PatientRepository patientRepository,
                                TokenManager tokenManager) {
         this.authenticateUser = authenticateUser;
         this.patientRepository = patientRepository;

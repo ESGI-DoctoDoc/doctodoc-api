@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.use_cases.user.dtos.requests.RegisterRequest;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.RegisterResponse;
-import fr.esgi.doctodocapi.use_cases.user.manage_account.RegisterUser;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IRegisterUser;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +13,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/patients")
 public class RegisterPatientController {
-    private final RegisterUser registerUser;
+    private final IRegisterUser registerUser;
 
-    public RegisterPatientController(RegisterUser registerUser) {
+    public RegisterPatientController(IRegisterUser registerUser) {
         this.registerUser = registerUser;
     }
 

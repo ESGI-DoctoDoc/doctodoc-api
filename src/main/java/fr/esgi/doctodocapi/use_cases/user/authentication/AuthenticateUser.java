@@ -3,13 +3,13 @@ package fr.esgi.doctodocapi.use_cases.user.authentication;
 import fr.esgi.doctodocapi.model.user.*;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthenticationException;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthentificationMessageException;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IAuthenticateUser;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.ISendAccountValidationEmail;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.AuthenticateUserInContext;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
-import org.springframework.stereotype.Service;
 
 import java.util.Objects;
 
@@ -20,8 +20,7 @@ import java.util.Objects;
  * token generation, and email verification.
  * </p>
  */
-@Service
-public class AuthenticateUser {
+public class AuthenticateUser implements IAuthenticateUser {
 
     private static final int TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES = 120;
     private static final int TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES = 2;
@@ -42,7 +41,7 @@ public class AuthenticateUser {
      * @param userRepository             user data access layer
      * @param messageSender              service to send SMS messages
      * @param doubleAuthCodeGenerator    service to generate double-authentication codes
-     * @param tokenManager             utility to generate JWT tokens
+     * @param tokenManager               utility to generate JWT tokens
      * @param sendAccountValidationEmail service to send email verification messages
      */
     public AuthenticateUser(AuthenticateUserInContext authenticateUserInContext,
@@ -132,7 +131,7 @@ public class AuthenticateUser {
     /**
      * Attempts to find a user by either email or phone number.
      *
-     * @param email the email input
+     * @param email       the email input
      * @param phoneNumber the phone number input
      * @return the user if found
      * @throws AuthenticationException if no matching user is found

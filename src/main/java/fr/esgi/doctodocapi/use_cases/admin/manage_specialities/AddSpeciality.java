@@ -1,13 +1,13 @@
 package fr.esgi.doctodocapi.use_cases.admin.manage_specialities;
 
-import fr.esgi.doctodocapi.use_cases.admin.dtos.requests.AddSpecialityRequest;
-import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.GetSpecialityResponse;
-import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
+import fr.esgi.doctodocapi.use_cases.admin.dtos.requests.AddSpecialityRequest;
+import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.GetSpecialityResponse;
+import fr.esgi.doctodocapi.use_cases.admin.ports.in.IAddSpeciality;
+import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 /**
  * Use case for adding a new medical speciality.
@@ -15,8 +15,7 @@ import org.springframework.stereotype.Service;
  * This service receives a request to create a new {@link Speciality},
  * persists it using the {@link SpecialityRepository}, and returns a DTO response.
  */
-@Service
-public class AddSpeciality {
+public class AddSpeciality implements IAddSpeciality {
     private final SpecialityRepository specialityRepository;
 
     public AddSpeciality(SpecialityRepository specialityRepository) {

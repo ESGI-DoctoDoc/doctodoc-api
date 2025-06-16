@@ -1,11 +1,11 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_medical_concern.manage_question;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_medical_concern.question_input.QuestionInput;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.medical_concern_response.question_response.GetQuestionResponse;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionType;
-import org.springframework.stereotype.Service;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_medical_concern.question_input.QuestionInput;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.medical_concern_response.question_response.GetQuestionResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_medical_concern.manage_question.ISaveQuestions;
 
 import java.util.List;
 import java.util.UUID;
@@ -16,8 +16,7 @@ import java.util.UUID;
  * If a question contains an ID, it is treated as an update; otherwise, it is considered a new creation.
  * Each question is persisted and returned as a {@link GetQuestionResponse}.
  */
-@Service
-public class SaveQuestions {
+public class SaveQuestions implements ISaveQuestions {
     private final QuestionRepository questionRepository;
 
     public SaveQuestions(QuestionRepository questionRepository) {

@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.presentation.doctor;
 
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.OnBoardingDoctorRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.OnboardingProcessResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.OnboardingDoctorProcess;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IOnboardingDoctor;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("doctors/onboarding")
 public class OnBoardingDoctorController {
-    private final OnboardingDoctorProcess onboardingDoctorProcess;
+    private final IOnboardingDoctor onboardingDoctorProcess;
 
-    public OnBoardingDoctorController(OnboardingDoctorProcess onboardingDoctorProcess) {
+    public OnBoardingDoctorController(IOnboardingDoctor onboardingDoctorProcess) {
         this.onboardingDoctorProcess = onboardingDoctorProcess;
     }
 

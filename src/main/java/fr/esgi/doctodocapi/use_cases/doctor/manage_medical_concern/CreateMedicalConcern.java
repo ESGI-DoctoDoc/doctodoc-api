@@ -1,16 +1,16 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_medical_concern;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_medical_concern.CreateMedicalConcernRequest;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.medical_concern_response.GetMedicalConcernResponse;
-import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_medical_concern.CreateMedicalConcernRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.medical_concern_response.GetMedicalConcernResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_medical_concern.ICreateMedicalConcern;
+import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -18,8 +18,7 @@ import java.util.List;
  * Use case for creating a new MedicalConcern (pour un doctor donné).
  * Si la requête contient des questions, on délègue leur création à AddQuestion.
  */
-@Service
-public class CreateMedicalConcern {
+public class CreateMedicalConcern implements ICreateMedicalConcern {
     private final MedicalConcernRepository medicalConcernRepository;
     private final UserRepository userRepository;
     private final GetCurrentUserContext getCurrentUserContext;

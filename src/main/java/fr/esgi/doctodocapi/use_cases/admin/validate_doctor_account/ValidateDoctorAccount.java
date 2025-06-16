@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.admin.validate_doctor_account;
 
+import fr.esgi.doctodocapi.use_cases.admin.ports.in.IValidateDoctorAccount;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.DoctorValidationRequest;
 import fr.esgi.doctodocapi.model.admin.Admin;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
@@ -16,8 +17,7 @@ import org.springframework.stereotype.Service;
  * It uses the doctor's user ID to find the corresponding entity and mark it as validated.
  * </p>
  */
-@Service
-public class ValidateDoctorAccount {
+public class ValidateDoctorAccount implements IValidateDoctorAccount {
 
     private final DoctorRepository doctorRepository;
 

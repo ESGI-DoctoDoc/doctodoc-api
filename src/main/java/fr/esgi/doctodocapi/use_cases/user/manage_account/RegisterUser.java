@@ -1,14 +1,15 @@
 package fr.esgi.doctodocapi.use_cases.user.manage_account;
 
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.RegisterRequest;
-import fr.esgi.doctodocapi.use_cases.user.dtos.responses.RegisterResponse;
-import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
-import fr.esgi.doctodocapi.use_cases.exceptions.UserAlreadyExistException;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
+import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.exceptions.UserAlreadyExistException;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.RegisterRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.responses.RegisterResponse;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IRegisterUser;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.ISendAccountValidationEmail;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 /**
  * Service responsible for user registration.
@@ -17,11 +18,10 @@ import org.springframework.stereotype.Service;
  * and sends an account validation email upon successful registration.
  * </p>
  */
-@Service
-public class RegisterUser {
+public class RegisterUser implements IRegisterUser {
 
     private final UserRepository userRepository;
-    private final SendAccountValidationEmail sendAccountValidationEmail;
+    private final ISendAccountValidationEmail sendAccountValidationEmail;
 
     /**
      * Constructs the registration service with required dependencies.
@@ -29,7 +29,7 @@ public class RegisterUser {
      * @param userRepository             the repository for user persistence
      * @param sendAccountValidationEmail service for sending account validation emails
      */
-    public RegisterUser(UserRepository userRepository, SendAccountValidationEmail sendAccountValidationEmail) {
+    public RegisterUser(UserRepository userRepository, ISendAccountValidationEmail sendAccountValidationEmail) {
         this.userRepository = userRepository;
         this.sendAccountValidationEmail = sendAccountValidationEmail;
     }

@@ -1,13 +1,13 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_medical_concern.manage_question;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.medical_concern_response.question_response.GetQuestionResponse;
-import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.medical_concern_response.question_response.GetQuestionResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_medical_concern.manage_question.IGetAllQuestions;
+import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 import java.util.UUID;
@@ -17,8 +17,7 @@ import java.util.UUID;
  * This service fetches the medical concern by its identifier and retrieves
  * all associated questions, which are then transformed into response DTOs.
  */
-@Service
-public class GetAllQuestions {
+public class GetAllQuestions implements IGetAllQuestions {
     private final MedicalConcernRepository repository;
 
     public GetAllQuestions(MedicalConcernRepository repository) {

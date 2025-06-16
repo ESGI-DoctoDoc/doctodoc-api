@@ -7,13 +7,9 @@ import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.patient.make_appointment.AppointmentPresentationMapper;
-import fr.esgi.doctodocapi.use_cases.patient.make_appointment.FlowToMakingAppointment;
-import fr.esgi.doctodocapi.use_cases.patient.make_appointment.GetAppointments;
-import fr.esgi.doctodocapi.use_cases.patient.make_appointment.ValidateAppointment;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IFlowToMakingAppointment;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IGetAppointments;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IValidateAppointment;
+import fr.esgi.doctodocapi.use_cases.patient.make_appointment.*;
+import fr.esgi.doctodocapi.use_cases.patient.make_appointment.AppointmentDetailedMapper;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.*;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -33,5 +29,15 @@ public class MakingAppointmentConfiguration {
     @Bean
     public IValidateAppointment validateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository) {
         return new ValidateAppointment(slotRepository, patientRepository, medicalConcernRepository, appointmentRepository, doctorRepository);
+    }
+
+    @Bean
+    public ICancelAppointment cancelAppointment(AppointmentRepository appointmentRepository) {
+        return new CancelAppointment(appointmentRepository);
+    }
+
+    @Bean
+    public IGetAppointmentDetail getAppointmentDetail(AppointmentRepository appointmentRepository, AppointmentDetailedMapper appointmentDetailedMapper) {
+        return new GetAppointmentDetail(appointmentRepository, appointmentDetailedMapper);
     }
 }

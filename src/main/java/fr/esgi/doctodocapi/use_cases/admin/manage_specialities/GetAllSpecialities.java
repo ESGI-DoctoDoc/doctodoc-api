@@ -1,12 +1,12 @@
 package fr.esgi.doctodocapi.use_cases.admin.manage_specialities;
 
-import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.GetSpecialityResponse;
-import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
+import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.GetSpecialityResponse;
+import fr.esgi.doctodocapi.use_cases.admin.ports.in.IGetAllSpecialities;
+import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -16,8 +16,7 @@ import java.util.List;
  * This service interacts with the {@link SpecialityRepository} to fetch all stored {@link Speciality} domain objects
  * and maps them to response DTOs for external usage.
  */
-@Service
-public class GetAllSpecialities {
+public class GetAllSpecialities implements IGetAllSpecialities {
     private final SpecialityRepository specialityRepository;
 
     public GetAllSpecialities(SpecialityRepository specialityRepository) {
@@ -38,7 +37,7 @@ public class GetAllSpecialities {
                     speciality.getId(),
                     speciality.getName(),
                     speciality.getCreatedAt()
-                    )).toList();
+            )).toList();
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }

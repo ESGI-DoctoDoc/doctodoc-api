@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.use_cases.doctor.manage_medical_concern.manage_quest
 
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionRepository;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_medical_concern.manage_question.IDeleteObsoleteQuestions;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -12,8 +13,7 @@ import java.util.UUID;
  * <p>
  * Questions that are not included in the incoming list of question IDs are considered obsolete and deleted.
  */
-@Service
-public class DeleteObsoleteQuestions {
+public class DeleteObsoleteQuestions implements IDeleteObsoleteQuestions {
     private final QuestionRepository questionRepository;
 
     public DeleteObsoleteQuestions(QuestionRepository questionRepository) {

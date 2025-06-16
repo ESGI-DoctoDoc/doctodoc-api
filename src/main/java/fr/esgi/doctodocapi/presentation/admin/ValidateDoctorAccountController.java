@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.admin;
 
+import fr.esgi.doctodocapi.use_cases.admin.ports.in.IValidateDoctorAccount;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.DoctorValidationRequest;
-import fr.esgi.doctodocapi.use_cases.admin.validate_doctor_account.ValidateDoctorAccount;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PatchMapping;
@@ -15,9 +15,9 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequestMapping("doctors/onboarding")
 public class ValidateDoctorAccountController {
-    private final ValidateDoctorAccount validateDoctorAccount;
+    private final IValidateDoctorAccount validateDoctorAccount;
 
-    public ValidateDoctorAccountController(ValidateDoctorAccount validateDoctorAccount) {
+    public ValidateDoctorAccountController(IValidateDoctorAccount validateDoctorAccount) {
         this.validateDoctorAccount = validateDoctorAccount;
     }
 

@@ -4,15 +4,15 @@ import fr.esgi.doctodocapi.model.user.MailSender;
 import fr.esgi.doctodocapi.model.user.TokenManager;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
+import fr.esgi.doctodocapi.model.vo.password.Password;
+import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthenticationException;
+import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthentificationMessageException;
 import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ResetPasswordRequest;
 import fr.esgi.doctodocapi.use_cases.user.dtos.requests.UpdatePasswordRequest;
-import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthentificationMessageException;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.RequestResetPasswordResponse;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.UpdatePasswordResponse;
-import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthenticationException;
-import fr.esgi.doctodocapi.model.vo.password.Password;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IResetPassword;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.stereotype.Service;
 
 /**
  * Service responsible for handling password reset use cases.
@@ -25,26 +25,23 @@ import org.springframework.stereotype.Service;
  * Errors such as user not found or invalid token will result in an AuthenticationException.
  * </p>
  */
-@Service
-public class ResetPassword {
+public class ResetPassword implements IResetPassword {
     private static final int RESET_TOKEN_EXPIRATION_MINUTES = 15;
-
+    private final UserRepository userRepository;
+    private final TokenManager tokenManager;
+    private final MailSender mailSender;
     /**
      * Domain or base URL of the front-end application. Injected from application properties (e.g., ${app.front.url}).
      */
     @Value("${app.front.url}")
     private String domain;
 
-    private final UserRepository userRepository;
-    private final TokenManager tokenManager;
-    private final MailSender mailSender;
-
     /**
      * Constructs the ResetPassword service with the required dependencies.
      *
-     * @param userRepository  repository for retrieving and updating User entities
-     * @param tokenManager  utility to generate and parse JWT or similar tokens
-     * @param mailSender      service responsible for sending emails
+     * @param userRepository repository for retrieving and updating User entities
+     * @param tokenManager   utility to generate and parse JWT or similar tokens
+     * @param mailSender     service responsible for sending emails
      */
     public ResetPassword(UserRepository userRepository, TokenManager tokenManager, MailSender mailSender) {
         this.userRepository = userRepository;

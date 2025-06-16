@@ -2,8 +2,8 @@ package fr.esgi.doctodocapi.presentation.admin;
 
 import fr.esgi.doctodocapi.use_cases.admin.dtos.requests.AddSpecialityRequest;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.GetSpecialityResponse;
-import fr.esgi.doctodocapi.use_cases.admin.manage_specialities.AddSpeciality;
-import fr.esgi.doctodocapi.use_cases.admin.manage_specialities.GetAllSpecialities;
+import fr.esgi.doctodocapi.use_cases.admin.ports.in.IAddSpeciality;
+import fr.esgi.doctodocapi.use_cases.admin.ports.in.IGetAllSpecialities;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -20,10 +20,10 @@ import java.util.List;
 @RequestMapping("doctors")
 @RestController
 public class ManageSpecialityController {
-    private final AddSpeciality addSpeciality;
-    private final GetAllSpecialities getAllSpecialities;
+    private final IAddSpeciality addSpeciality;
+    private final IGetAllSpecialities getAllSpecialities;
 
-    public ManageSpecialityController(AddSpeciality addSpeciality, GetAllSpecialities getAllSpecialities) {
+    public ManageSpecialityController(IAddSpeciality addSpeciality, IGetAllSpecialities getAllSpecialities) {
         this.addSpeciality = addSpeciality;
         this.getAllSpecialities = getAllSpecialities;
     }

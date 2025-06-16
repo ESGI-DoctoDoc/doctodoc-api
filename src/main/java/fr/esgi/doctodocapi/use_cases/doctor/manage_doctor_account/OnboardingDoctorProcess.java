@@ -1,18 +1,18 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.OnBoardingDoctorRequest;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.OnboardingProcessResponse;
-import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
-import fr.esgi.doctodocapi.use_cases.exceptions.on_boarding.DoctorAccountAlreadyExist;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserRepository;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.OnBoardingDoctorRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.OnboardingProcessResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IOnboardingDoctor;
+import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.exceptions.on_boarding.DoctorAccountAlreadyExist;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 /**
  * Service handling the onboarding process of a doctor.
@@ -21,8 +21,7 @@ import org.springframework.stereotype.Service;
  * and if not, it creates and saves a new {@link Doctor} entity based on the onboarding request.
  * </p>
  */
-@Service
-public class OnboardingDoctorProcess {
+public class OnboardingDoctorProcess implements IOnboardingDoctor {
 
     private final DoctorRepository doctorRepository;
     private final UserRepository userRepository;

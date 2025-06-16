@@ -1,8 +1,5 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_medical_concern;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.medical_concern_response.GetMedicalConcernResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.medical_concern_response.question_response.GetQuestionResponse;
-import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
@@ -10,10 +7,14 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.medical_concern_response.GetMedicalConcernResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.medical_concern_response.question_response.GetQuestionResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_medical_concern.manage_question.GetAllQuestions;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_medical_concern.IGetAllMedicalConcerns;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_medical_concern.manage_question.IGetAllQuestions;
+import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
@@ -21,15 +22,14 @@ import java.util.List;
  * Use case for retrieving all medical concerns associated with the currently authenticated doctor.
  * For each medical concern, it also fetches the list of related questions using the {@link GetAllQuestions} use case.
  */
-@Service
-public class GetAllMedicalConcerns {
+public class GetAllMedicalConcerns implements IGetAllMedicalConcerns {
     private final MedicalConcernRepository medicalConcernRepository;
     private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
     private final GetCurrentUserContext getCurrentUserContext;
-    private final GetAllQuestions getAllQuestions;
+    private final IGetAllQuestions getAllQuestions;
 
-    public GetAllMedicalConcerns(MedicalConcernRepository medicalConcernRepository, UserRepository userRepository, DoctorRepository doctorRepository, GetCurrentUserContext getCurrentUserContext, GetAllQuestions getAllQuestions) {
+    public GetAllMedicalConcerns(MedicalConcernRepository medicalConcernRepository, UserRepository userRepository, DoctorRepository doctorRepository, GetCurrentUserContext getCurrentUserContext, IGetAllQuestions getAllQuestions) {
         this.medicalConcernRepository = medicalConcernRepository;
         this.userRepository = userRepository;
         this.doctorRepository = doctorRepository;

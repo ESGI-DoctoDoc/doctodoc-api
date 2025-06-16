@@ -1,15 +1,16 @@
 package fr.esgi.doctodocapi.use_cases.user.authentication;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.DoubleAuthenticationUserResponse;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.user.TokenManager;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRoles;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.DoubleAuthenticationUserResponse;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
-import org.springframework.stereotype.Service;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IAuthenticateDoctor;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IAuthenticateUser;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -19,8 +20,7 @@ import java.util.UUID;
  * This class handles doctor login and two-factor authentication validation,
  * providing secure access to doctor-specific functionality in the application.
  */
-@Service
-public class AuthenticateDoctor {
+public class AuthenticateDoctor implements IAuthenticateDoctor {
     /**
      * The expiration time in minutes for long-term authentication tokens.
      */
@@ -29,7 +29,7 @@ public class AuthenticateDoctor {
     /**
      * Service for authenticating users, used to delegate general user authentication operations.
      */
-    private final AuthenticateUser authenticateUser;
+    private final IAuthenticateUser authenticateUser;
 
     /**
      * Service for generating authentication tokens.
@@ -45,10 +45,10 @@ public class AuthenticateDoctor {
      * Constructs an AuthenticateDoctor service with the required dependencies.
      *
      * @param authenticateUser Service for general user authentication operations
-     * @param tokenManager   Service for generating authentication tokens
+     * @param tokenManager     Service for generating authentication tokens
      * @param doctorRepository Repository for accessing doctor data
      */
-    public AuthenticateDoctor(AuthenticateUser authenticateUser, TokenManager tokenManager, DoctorRepository doctorRepository) {
+    public AuthenticateDoctor(IAuthenticateUser authenticateUser, TokenManager tokenManager, DoctorRepository doctorRepository) {
         this.authenticateUser = authenticateUser;
         this.tokenManager = tokenManager;
         this.doctorRepository = doctorRepository;

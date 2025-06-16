@@ -1,15 +1,15 @@
 package fr.esgi.doctodocapi.presentation.doctor;
 
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.DoubleAuthenticationUserResponse;
-import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
-import fr.esgi.doctodocapi.use_cases.user.dtos.responses.RequestResetPasswordResponse;
-import fr.esgi.doctodocapi.use_cases.user.dtos.responses.UpdatePasswordResponse;
 import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
 import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ResetPasswordRequest;
 import fr.esgi.doctodocapi.use_cases.user.dtos.requests.UpdatePasswordRequest;
 import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
-import fr.esgi.doctodocapi.use_cases.user.authentication.AuthenticateDoctor;
-import fr.esgi.doctodocapi.use_cases.user.manage_account.ResetPassword;
+import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
+import fr.esgi.doctodocapi.use_cases.user.dtos.responses.RequestResetPasswordResponse;
+import fr.esgi.doctodocapi.use_cases.user.dtos.responses.UpdatePasswordResponse;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IAuthenticateDoctor;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IResetPassword;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -20,10 +20,10 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/doctors")
 public class AuthDoctorController {
-    private final AuthenticateDoctor authenticateDoctor;
-    private final ResetPassword resetPassword;
+    private final IAuthenticateDoctor authenticateDoctor;
+    private final IResetPassword resetPassword;
 
-    public AuthDoctorController(AuthenticateDoctor authenticateDoctor, ResetPassword resetPassword) {
+    public AuthDoctorController(IAuthenticateDoctor authenticateDoctor, IResetPassword resetPassword) {
         this.authenticateDoctor = authenticateDoctor;
         this.resetPassword = resetPassword;
     }
