@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.use_cases.doctor.manage_medical_concern.manage_quest
 
 import fr.esgi.doctodocapi.dtos.requests.doctor.medical_concern.question.QuestionInput;
 import fr.esgi.doctodocapi.dtos.requests.doctor.medical_concern.question.QuestionsInputRequest;
-import fr.esgi.doctodocapi.dtos.responses.doctor.question.GetQuestionResponse;
+import fr.esgi.doctodocapi.dtos.responses.doctor.medical_concern.question.GetQuestionResponse;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;

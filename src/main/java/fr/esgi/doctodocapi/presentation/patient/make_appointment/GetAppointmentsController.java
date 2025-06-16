@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.presentation.patient.make_appointment;
 
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment.GetAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IGetAppointments;
+
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

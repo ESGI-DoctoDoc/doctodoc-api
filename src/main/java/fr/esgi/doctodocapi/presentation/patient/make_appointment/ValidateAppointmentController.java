@@ -3,6 +3,7 @@ package fr.esgi.doctodocapi.presentation.patient.make_appointment;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.save_appointment.SaveAppointmentRequest;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.LockedAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IValidateAppointment;
+
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -40,7 +41,7 @@ public class ValidateAppointmentController {
      *
      * @param id the UUID of the appointment to unlock
      */
-    @DeleteMapping("patients/appointments/{id}")
+    @DeleteMapping("patients/appointments/unlock/{id}")
     @ResponseStatus(value = HttpStatus.OK)
     public void unlockedAppointment(@PathVariable UUID id) {
         this.validateAppointment.unlocked(id);

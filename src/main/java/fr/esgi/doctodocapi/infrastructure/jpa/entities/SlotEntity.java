@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -9,6 +10,7 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "slots")
+@SQLRestriction("deleted_at IS NULL")
 public class SlotEntity {
 
     @Id
@@ -19,6 +21,9 @@ public class SlotEntity {
     @ManyToOne
     @JoinColumn(name = "doctor_id")
     private DoctorEntity doctor;
+
+    @Column(name = "recurrence_id")
+    private UUID recurrenceId;
 
     @Column(name = "date", nullable = false)
     private LocalDate date;
@@ -39,6 +44,12 @@ public class SlotEntity {
 
     @OneToMany(mappedBy = "slot")
     private List<AppointmentEntity> appointments;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDate createdAt;
+
+    @Column(name = "deleted_at", nullable = false)
+    private LocalDate deletedAt;
 
     public UUID getId() {
         return id;
@@ -94,6 +105,30 @@ public class SlotEntity {
 
     public void setDate(LocalDate date) {
         this.date = date;
+    }
+
+    public UUID getRecurrenceId() {
+        return recurrenceId;
+    }
+
+    public void setRecurrenceId(UUID recurrenceId) {
+        this.recurrenceId = recurrenceId;
+    }
+
+    public LocalDate getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDate deletedAt) {
+        this.deletedAt = deletedAt;
+    }
+
+    public LocalDate getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDate createdAt) {
+        this.createdAt = createdAt;
     }
 }
 

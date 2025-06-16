@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.dtos.responses.doctor.question;
+package fr.esgi.doctodocapi.dtos.responses.doctor.medical_concern.question;
 
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 

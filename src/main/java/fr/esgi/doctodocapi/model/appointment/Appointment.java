@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.model.appointment;
 
 import fr.esgi.doctodocapi.model.appointment.exceptions.CannotBookAppointmentException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.calendar.Slot;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.vo.hours_range.HoursRange;
@@ -36,6 +36,15 @@ public class Appointment {
         this.doctor = doctor;
         this.medicalConcern = medicalConcern;
         this.date = slot.getDate();
+        this.hoursRange = HoursRange.of(startHour, endHour);
+        this.takenAt = takenAt;
+        this.lockedAt = lockedAt;
+        this.status = status;
+        this.preAppointmentAnswers = answers;
+    }
+
+    public Appointment(UUID id, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt) {
+        this.id = id;
         this.hoursRange = HoursRange.of(startHour, endHour);
         this.takenAt = takenAt;
         this.lockedAt = lockedAt;
@@ -104,6 +113,14 @@ public class Appointment {
     public void confirm() {
         this.status = AppointmentStatus.CONFIRMED;
         this.lockedAt = null;
+    }
+
+
+    /**
+     * Confirms the appointment by changing its status to CANCELLED.
+     */
+    public void cancel() {
+        this.status = AppointmentStatus.CANCELLED;
     }
 
 
@@ -206,6 +223,5 @@ public class Appointment {
     public int hashCode() {
         return Objects.hashCode(id);
     }
-
 
 }

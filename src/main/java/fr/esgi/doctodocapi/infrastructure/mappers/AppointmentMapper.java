@@ -5,7 +5,7 @@ import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.calendar.Slot;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import org.springframework.stereotype.Service;
@@ -21,6 +21,18 @@ public class AppointmentMapper {
                 patient,
                 doctor,
                 medicalConcern,
+                entity.getStartHour(),
+                entity.getEndHour(),
+                entity.getTakenAt(),
+                AppointmentStatus.valueOf(entity.getStatus()),
+                answers,
+                entity.getLockedAt()
+        );
+    }
+
+    public Appointment toDomain(AppointmentEntity entity, List<PreAppointmentAnswers> answers) {
+        return new Appointment(
+                entity.getId(),
                 entity.getStartHour(),
                 entity.getEndHour(),
                 entity.getTakenAt(),

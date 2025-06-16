@@ -4,8 +4,8 @@ import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import fr.esgi.doctodocapi.model.appointment.AppointmentsAvailabilityService;
-import fr.esgi.doctodocapi.model.doctor.calendar.Slot;
-import fr.esgi.doctodocapi.model.doctor.calendar.SlotRepository;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
 import org.junit.jupiter.api.Test;
@@ -46,11 +46,11 @@ class AppointmentsAvailabilityServiceTest {
         // generate slot
         LocalDate defaultDate = LocalDate.of(2025, 3, 10);
         LocalTime defaultHour = LocalTime.of(9, 0, 0);
-        Slot slot1 = new Slot(UUID.randomUUID(), defaultDate, defaultHour, defaultHour.plusHours(3), List.of(), List.of(medicalConcern1, medicalConcern2));
+        Slot slot1 = Slot.create(defaultDate, defaultHour, defaultHour.plusHours(3), List.of(medicalConcern1, medicalConcern2));
 
         LocalDate defaultDate2 = LocalDate.of(2025, 3, 12);
         LocalTime defaultHour2 = LocalTime.of(11, 0, 0);
-        Slot slot2 = new Slot(UUID.randomUUID(), defaultDate2, defaultHour2, defaultHour2.plusHours(1), List.of(), List.of(medicalConcern1));
+        Slot slot2 = Slot.create(defaultDate2, defaultHour2, defaultHour2.plusHours(1), List.of(medicalConcern1));
 
 
         // response expected
@@ -102,7 +102,7 @@ class AppointmentsAvailabilityServiceTest {
         LocalTime startTime = LocalTime.of(9, 0);
         LocalTime endTime = LocalTime.of(11, 0);
 
-        Slot slot = new Slot(UUID.randomUUID(), date, startTime, endTime, List.of(), List.of(medicalConcern, medicalConcern2));
+        Slot slot = Slot.create(date, startTime, endTime, List.of(medicalConcern, medicalConcern2));
 
         // Appointments
         Appointment confirmed = new Appointment(

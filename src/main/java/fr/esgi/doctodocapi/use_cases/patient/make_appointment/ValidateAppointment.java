@@ -6,8 +6,8 @@ import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
-import fr.esgi.doctodocapi.model.doctor.calendar.Slot;
-import fr.esgi.doctodocapi.model.doctor.calendar.SlotRepository;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
@@ -134,7 +134,8 @@ public class ValidateAppointment implements IValidateAppointment {
      */
     public void unlocked(UUID id) {
         try {
-            this.appointmentRepository.delete(id);
+            Appointment appointment = this.appointmentRepository.getById(id);
+            this.appointmentRepository.delete(appointment);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
