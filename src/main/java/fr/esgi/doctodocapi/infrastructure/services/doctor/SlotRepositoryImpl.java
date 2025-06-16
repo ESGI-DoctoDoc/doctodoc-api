@@ -16,7 +16,7 @@ import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -27,7 +27,7 @@ import java.util.UUID;
  * This service provides methods to manage doctor appointment slots,
  * allowing the application to retrieve slot information based on various criteria.
  */
-@Service
+@Repository
 public class SlotRepositoryImpl implements SlotRepository {
     /**
      * Repository for accessing slot data in the database.

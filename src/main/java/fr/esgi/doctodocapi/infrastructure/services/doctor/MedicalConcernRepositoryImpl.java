@@ -1,13 +1,13 @@
 package fr.esgi.doctodocapi.infrastructure.services.doctor;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.QuestionEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.QuestionEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DoctorJpaRepository;
-import fr.esgi.doctodocapi.infrastructure.jpa.repositories.QuestionJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.MedicalConcernJpaRepository;
-import fr.esgi.doctodocapi.infrastructure.mappers.QuestionMapper;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.QuestionJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.MedicalConcernMapper;
+import fr.esgi.doctodocapi.infrastructure.mappers.QuestionMapper;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
@@ -15,7 +15,7 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
-import org.springframework.stereotype.Service;
+import org.springframework.stereotype.Repository;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,7 +25,7 @@ import java.util.UUID;
  * This service provides methods to manage medical concerns and related doctor questions,
  * allowing the application to retrieve information about medical conditions and their associated questionnaires.
  */
-@Service
+@Repository
 public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
     /**
      * Repository for accessing doctor question data in the database.

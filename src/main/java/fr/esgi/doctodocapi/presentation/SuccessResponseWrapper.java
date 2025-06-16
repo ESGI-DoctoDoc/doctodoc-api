@@ -1,7 +1,5 @@
 package fr.esgi.doctodocapi.presentation;
 
-import fr.esgi.doctodocapi.dtos.responses.ErrorResponse;
-import fr.esgi.doctodocapi.dtos.responses.SuccessResponse;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.MediaType;
 import org.springframework.http.converter.HttpMessageConverter;
