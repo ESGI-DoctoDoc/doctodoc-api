@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.admin;
 
-import fr.esgi.doctodocapi.dtos.requests.admin.AddSpecialityRequest;
-import fr.esgi.doctodocapi.dtos.responses.admin.GetSpecialityResponse;
+import fr.esgi.doctodocapi.use_cases.admin.dtos.requests.AddSpecialityRequest;
+import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.GetSpecialityResponse;
 import fr.esgi.doctodocapi.use_cases.admin.manage_specialities.AddSpeciality;
 import fr.esgi.doctodocapi.use_cases.admin.manage_specialities.GetAllSpecialities;
 import jakarta.validation.Valid;

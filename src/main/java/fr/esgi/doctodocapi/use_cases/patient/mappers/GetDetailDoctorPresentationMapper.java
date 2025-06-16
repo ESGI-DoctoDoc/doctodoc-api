@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.patient.mappers;
 
-import fr.esgi.doctodocapi.dtos.responses.doctor_detail_reponse.GetAddressDoctorResponse;
-import fr.esgi.doctodocapi.dtos.responses.doctor_detail_reponse.GetDoctorDetailResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.doctor_detail_reponse.GetAddressDoctorResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.doctor_detail_reponse.GetDoctorDetailResponse;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import org.springframework.stereotype.Service;
 

@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_medical_concern.manage_question;
 
-import fr.esgi.doctodocapi.dtos.requests.doctor.medical_concern.question.QuestionInput;
-import fr.esgi.doctodocapi.dtos.responses.doctor.medical_concern.question.GetQuestionResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_medical_concern.question_input.QuestionInput;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.medical_concern_response.question_response.GetQuestionResponse;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionType;

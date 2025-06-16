@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.admin.validate_doctor_account;
 
-import fr.esgi.doctodocapi.dtos.requests.doctor.DoctorValidationRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.DoctorValidationRequest;
 import fr.esgi.doctodocapi.model.admin.Admin;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;

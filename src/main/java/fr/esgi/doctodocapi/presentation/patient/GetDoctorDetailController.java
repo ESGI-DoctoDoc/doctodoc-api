@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
-import fr.esgi.doctodocapi.dtos.responses.doctor_detail_reponse.GetDoctorDetailResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.doctor_detail_reponse.GetDoctorDetailResponse;
 import fr.esgi.doctodocapi.use_cases.patient.GetDoctorDetail;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;

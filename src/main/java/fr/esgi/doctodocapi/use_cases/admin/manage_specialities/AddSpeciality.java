@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.admin.manage_specialities;
 
-import fr.esgi.doctodocapi.dtos.requests.admin.AddSpecialityRequest;
-import fr.esgi.doctodocapi.dtos.responses.admin.GetSpecialityResponse;
+import fr.esgi.doctodocapi.use_cases.admin.dtos.requests.AddSpecialityRequest;
+import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.GetSpecialityResponse;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.admin.speciality.Speciality;

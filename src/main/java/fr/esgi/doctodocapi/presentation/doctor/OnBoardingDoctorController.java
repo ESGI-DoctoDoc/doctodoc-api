@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.doctor;
 
-import fr.esgi.doctodocapi.dtos.requests.doctor.OnBoardingDoctorRequest;
-import fr.esgi.doctodocapi.dtos.responses.doctor.OnboardingProcessResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.OnBoardingDoctorRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.OnboardingProcessResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.OnboardingDoctorProcess;
 import jakarta.validation.Valid;
 import org.springframework.web.bind.annotation.PostMapping;

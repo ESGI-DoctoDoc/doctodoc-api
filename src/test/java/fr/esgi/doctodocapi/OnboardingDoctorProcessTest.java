@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi;
 
-import fr.esgi.doctodocapi.dtos.requests.doctor.DoctorValidationRequest;
-import fr.esgi.doctodocapi.dtos.requests.doctor.OnBoardingDoctorRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.DoctorValidationRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.OnBoardingDoctorRequest;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;

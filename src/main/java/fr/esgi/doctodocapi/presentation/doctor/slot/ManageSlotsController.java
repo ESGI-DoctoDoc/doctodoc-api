@@ -1,11 +1,11 @@
 package fr.esgi.doctodocapi.presentation.doctor.slot;
 
-import fr.esgi.doctodocapi.dtos.requests.doctor.slot.MonthlySlotRequest;
-import fr.esgi.doctodocapi.dtos.requests.doctor.slot.WeeklySlotRequest;
-import fr.esgi.doctodocapi.dtos.responses.doctor.slot.GetSlotResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.slot.GetAllSlots;
-import fr.esgi.doctodocapi.use_cases.doctor.slot.SaveMonthlySlots;
-import fr.esgi.doctodocapi.use_cases.doctor.slot.SaveWeeklySlots;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.MonthlySlotRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.WeeklySlotRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_slot.GetAllSlots;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_slot.SaveMonthlySlots;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_slot.SaveWeeklySlots;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;

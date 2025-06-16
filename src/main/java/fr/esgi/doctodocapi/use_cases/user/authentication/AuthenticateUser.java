@@ -3,12 +3,12 @@ package fr.esgi.doctodocapi.use_cases.user.authentication;
 import fr.esgi.doctodocapi.model.user.*;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthenticationException;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthentificationMessageException;
+import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.ISendAccountValidationEmail;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.AuthenticateUserInContext;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
-import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
-import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
-import fr.esgi.doctodocapi.dtos.responses.LoginResponse;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
 import org.springframework.stereotype.Service;
 
 import java.util.Objects;

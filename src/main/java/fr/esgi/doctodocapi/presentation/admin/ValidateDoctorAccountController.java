@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.presentation.admin;
 
-import fr.esgi.doctodocapi.dtos.requests.doctor.DoctorValidationRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.DoctorValidationRequest;
 import fr.esgi.doctodocapi.use_cases.admin.validate_doctor_account.ValidateDoctorAccount;
 import jakarta.validation.Valid;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -1,12 +1,12 @@
 package fr.esgi.doctodocapi.presentation.doctor.absence;
 
-import fr.esgi.doctodocapi.dtos.requests.doctor.absence.SaveRangeAbsenceRequest;
-import fr.esgi.doctodocapi.dtos.requests.doctor.absence.SaveSingleDayAbsenceRequest;
-import fr.esgi.doctodocapi.dtos.responses.doctor.absence.GetAbsenceResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.absence.DeleteAbsence;
-import fr.esgi.doctodocapi.use_cases.doctor.absence.GetAbsences;
-import fr.esgi.doctodocapi.use_cases.doctor.absence.SaveRangeAbsence;
-import fr.esgi.doctodocapi.use_cases.doctor.absence.SaveSingleDayAbsence;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_absence.SaveRangeAbsenceRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_absence.SaveSingleDayAbsenceRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.absence_response.GetAbsenceResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_absence.DeleteAbsence;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_absence.GetAbsences;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_absence.SaveRangeAbsence;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_absence.SaveSingleDayAbsence;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;

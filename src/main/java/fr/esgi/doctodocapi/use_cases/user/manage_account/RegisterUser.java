@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.user.manage_account;
 
-import fr.esgi.doctodocapi.dtos.requests.RegisterRequest;
-import fr.esgi.doctodocapi.dtos.responses.RegisterResponse;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.RegisterRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.responses.RegisterResponse;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.exceptions.UserAlreadyExistException;
 import fr.esgi.doctodocapi.model.DomainException;

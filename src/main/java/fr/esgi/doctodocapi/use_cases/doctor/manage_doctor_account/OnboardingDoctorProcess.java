@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account;
 
-import fr.esgi.doctodocapi.dtos.requests.doctor.OnBoardingDoctorRequest;
-import fr.esgi.doctodocapi.dtos.responses.doctor.OnboardingProcessResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.OnBoardingDoctorRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.OnboardingProcessResponse;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.exceptions.on_boarding.DoctorAccountAlreadyExist;
 import fr.esgi.doctodocapi.model.DomainException;

@@ -1,8 +1,8 @@
 package fr.esgi.doctodocapi.use_cases.patient.search_doctor;
 
-import fr.esgi.doctodocapi.dtos.responses.GetSearchDoctorResponse;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.patient.SearchDoctorService;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetSearchDoctorResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

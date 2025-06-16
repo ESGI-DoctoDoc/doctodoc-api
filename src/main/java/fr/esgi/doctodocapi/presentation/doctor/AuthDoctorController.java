@@ -1,13 +1,13 @@
 package fr.esgi.doctodocapi.presentation.doctor;
 
-import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
-import fr.esgi.doctodocapi.dtos.requests.ResetPasswordRequest;
-import fr.esgi.doctodocapi.dtos.requests.UpdatePasswordRequest;
-import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
-import fr.esgi.doctodocapi.dtos.responses.DoubleAuthenticationUserResponse;
-import fr.esgi.doctodocapi.dtos.responses.LoginResponse;
-import fr.esgi.doctodocapi.dtos.responses.RequestResetPasswordResponse;
-import fr.esgi.doctodocapi.dtos.responses.UpdatePasswordResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.DoubleAuthenticationUserResponse;
+import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
+import fr.esgi.doctodocapi.use_cases.user.dtos.responses.RequestResetPasswordResponse;
+import fr.esgi.doctodocapi.use_cases.user.dtos.responses.UpdatePasswordResponse;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ResetPasswordRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.UpdatePasswordRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
 import fr.esgi.doctodocapi.use_cases.user.authentication.AuthenticateDoctor;
 import fr.esgi.doctodocapi.use_cases.user.manage_account.ResetPassword;
 import jakarta.validation.Valid;

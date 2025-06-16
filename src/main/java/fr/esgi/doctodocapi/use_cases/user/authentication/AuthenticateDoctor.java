@@ -1,14 +1,14 @@
 package fr.esgi.doctodocapi.use_cases.user.authentication;
 
-import fr.esgi.doctodocapi.dtos.requests.LoginRequest;
-import fr.esgi.doctodocapi.dtos.requests.ValidateDoubleAuthRequest;
-import fr.esgi.doctodocapi.dtos.responses.DoubleAuthenticationUserResponse;
-import fr.esgi.doctodocapi.dtos.responses.LoginResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.DoubleAuthenticationUserResponse;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.user.TokenManager;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRoles;
+import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.Optional;
