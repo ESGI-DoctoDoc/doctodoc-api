@@ -1,10 +1,11 @@
 package fr.esgi.doctodocapi.use_cases.patient.mappers;
 
-import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentAddressResponse;
-import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentDetailedResponse;
-import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentDoctorResponse;
-import fr.esgi.doctodocapi.dtos.responses.appointment_response.GetAppointmentPatientResponse;
+
 import fr.esgi.doctodocapi.model.appointment.Appointment;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_response.GetAppointmentAddressResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_response.GetAppointmentDetailedResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_response.GetAppointmentDoctorResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_response.GetAppointmentPatientResponse;
 import org.springframework.stereotype.Service;
 
 @Service

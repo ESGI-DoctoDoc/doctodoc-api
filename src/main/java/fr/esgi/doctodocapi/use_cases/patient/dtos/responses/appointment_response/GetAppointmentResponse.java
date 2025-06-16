@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment;
+package fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_response;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 

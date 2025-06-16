@@ -2,7 +2,6 @@ package fr.esgi.doctodocapi.use_cases.doctor.slot;
 
 import fr.esgi.doctodocapi.dtos.requests.doctor.slot.MonthlySlotRequest;
 import fr.esgi.doctodocapi.dtos.responses.doctor.slot.GetSlotResponse;
-import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
@@ -17,7 +16,8 @@ import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.model.vo.date_range.DateRange;
 import fr.esgi.doctodocapi.model.vo.day_of_month.DayOfMonth;
-import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
+import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 

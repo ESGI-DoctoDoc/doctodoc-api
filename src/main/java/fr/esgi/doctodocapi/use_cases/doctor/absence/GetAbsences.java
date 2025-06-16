@@ -1,14 +1,14 @@
 package fr.esgi.doctodocapi.use_cases.doctor.absence;
 
 import fr.esgi.doctodocapi.dtos.responses.doctor.absence.GetAbsenceResponse;
-import fr.esgi.doctodocapi.exceptions.ApiException;
 import fr.esgi.doctodocapi.infrastructure.mappers.AbsenceResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.Absence;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
+import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
