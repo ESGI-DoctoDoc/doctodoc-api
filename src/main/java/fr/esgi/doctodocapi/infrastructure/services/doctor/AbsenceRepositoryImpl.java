@@ -14,7 +14,6 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.List;
-import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -71,6 +70,12 @@ public class AbsenceRepositoryImpl implements AbsenceRepository {
         return absenceEntities.stream().map(absenceMapper::toDomain).toList();
     }
 
+    /**
+     * Performs a logical (soft) deletion of an absence by marking its `deletedAt` field.
+     *
+     * @param absenceId the UUID of the absence to be deleted
+     * @throws AbsenceNotFoundException if no matching absence is found
+     */
     @Override
     public void delete(UUID absenceId) {
         AbsenceEntity absenceEntity = this.absenceJpaRepository.findById(absenceId).orElseThrow(AbsenceNotFoundException::new);
@@ -78,6 +83,13 @@ public class AbsenceRepositoryImpl implements AbsenceRepository {
         this.absenceJpaRepository.save(absenceEntity);
     }
 
+    /**
+     * Retrieves a specific {@link Absence} by its ID.
+     *
+     * @param absenceId the UUID of the absence to retrieve
+     * @return the found absence entity mapped to the domain model
+     * @throws AbsenceNotFoundException if no valid (non-deleted) absence is found
+     */
     @Override
     public Absence findById(UUID absenceId) {
         return this.absenceJpaRepository.findById(absenceId)
