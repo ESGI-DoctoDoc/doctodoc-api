@@ -29,9 +29,8 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the AppointmentRepository interface.
@@ -44,11 +43,6 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
      * Repository for accessing appointment data in the database.
      */
     private final AppointmentJpaRepository appointmentJpaRepository;
-
-    /**
-     * Repository for accessing patient data in the database.
-     */
-    private final PatientJpaRepository patientJpaRepository;
 
     /**
      * Mapper for converting between appointment domain objects and entities.
@@ -81,7 +75,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
      */
     public AppointmentRepositoryImpl(
             EntityManager entityManager,
-            AppointmentJpaRepository appointmentJpaRepository, PatientJpaRepository patientJpaRepository,
+            AppointmentJpaRepository appointmentJpaRepository,
             AppointmentMapper appointmentMapper, PatientMapper patientMapper,
             AppointmentFacadeMapper appointmentFacadeMapper,
             PreAppointmentAnswersMapper preAppointmentAnswersMapper,
@@ -90,7 +84,6 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     ) {
         this.appointmentJpaRepository = appointmentJpaRepository;
-        this.patientJpaRepository = patientJpaRepository;
         this.appointmentMapper = appointmentMapper;
         this.patientMapper = patientMapper;
         this.appointmentFacadeMapper = appointmentFacadeMapper;
@@ -211,11 +204,14 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     @Override
     public List<Patient> getDistinctPatientsByDoctorId(UUID doctorId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<PatientEntity> patientEntities = this.patientJpaRepository.findByDoctor_IdAndDeletedAtIsNull(doctorId, pageable);
+        Page<AppointmentEntity> appointmentEntities = this.appointmentJpaRepository.findAllByDoctor_Id(doctorId, pageable);
 
-        return patientEntities
-                .getContent()
-                .stream()
+        Set<PatientEntity> patientEntities = appointmentEntities.getContent().stream()
+                .map(AppointmentEntity::getPatient)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        return patientEntities.stream()
                 .map(patientMapper::toDomain)
                 .toList();
     }

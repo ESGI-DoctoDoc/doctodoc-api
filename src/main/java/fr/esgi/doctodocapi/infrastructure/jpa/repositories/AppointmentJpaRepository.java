@@ -1,7 +1,6 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.repositories;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.AppointmentEntity;
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.PatientEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -20,4 +19,6 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
 
     Optional<AppointmentEntity> findFirstByPatient_User_IdAndStatusAndDateAfterOrderByDateAsc(
             UUID userId, String status, LocalDate now);
+
+    Page<AppointmentEntity> findAllByDoctor_Id( UUID doctorId, Pageable pageable);
 }

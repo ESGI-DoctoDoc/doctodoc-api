@@ -15,6 +15,7 @@ import java.util.UUID;
 
 public interface AppointmentRepository {
     Appointment getById(UUID id) throws AppointmentNotFound;
+
     List<Appointment> getAppointmentsBySlot(UUID slotId);
 
     UUID save(Appointment appointment);
