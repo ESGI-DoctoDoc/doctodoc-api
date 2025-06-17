@@ -20,5 +20,5 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     Optional<AppointmentEntity> findFirstByPatient_User_IdAndStatusAndDateAfterOrderByDateAsc(
             UUID userId, String status, LocalDate now);
 
-    Page<AppointmentEntity> findAllByDoctor_Id( UUID doctorId, Pageable pageable);
+    Page<AppointmentEntity> findAllByDoctor_Id(UUID doctorId, Pageable pageable);
 }

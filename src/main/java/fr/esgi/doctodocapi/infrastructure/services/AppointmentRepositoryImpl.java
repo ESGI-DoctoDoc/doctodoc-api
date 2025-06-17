@@ -2,7 +2,6 @@ package fr.esgi.doctodocapi.infrastructure.services;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.*;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.AppointmentJpaRepository;
-import fr.esgi.doctodocapi.infrastructure.jpa.repositories.PatientJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.PreAppointmentAnswersJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.QuestionJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentFacadeMapper;
@@ -214,5 +213,12 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         return patientEntities.stream()
                 .map(patientMapper::toDomain)
                 .toList();
+    }
+
+    @Override
+    public List<Appointment> getAllByDoctor(UUID doctorId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByDoctor_Id(doctorId, pageable);
+        return appointments.getContent().stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
     }
 }
