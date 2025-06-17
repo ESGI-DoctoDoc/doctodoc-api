@@ -10,7 +10,6 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/doctors")
-@PreAuthorize("hasRole('ROLE_DOCTOR')")
 public class ManageDoctorAppointmentsController {
 
     private final IGetDoctorAppointments getDoctorAppointments;

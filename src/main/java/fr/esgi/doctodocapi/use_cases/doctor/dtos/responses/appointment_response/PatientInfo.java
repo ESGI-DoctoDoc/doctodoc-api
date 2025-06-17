@@ -4,9 +4,15 @@ import java.util.UUID;
 
 public record PatientInfo(
         UUID id,
-        String firstname,
-        String lastname,
+        String name,
         String email,
         String phone,
         String birthdate
-) {}
+) {
+    public PatientInfo {
+        name = name().trim();
+        email = email().trim();
+        phone = phone().trim();
+        birthdate = birthdate().trim();
+    }
+}
