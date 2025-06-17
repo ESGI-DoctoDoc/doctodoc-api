@@ -9,7 +9,7 @@ public record GetDoctorPatientResponse(
         String lastname,
         String email,
         String phone,
-        String birthDate,
+        String birthdate,
         String gender,
         LocalDate createdAt
 ) {
