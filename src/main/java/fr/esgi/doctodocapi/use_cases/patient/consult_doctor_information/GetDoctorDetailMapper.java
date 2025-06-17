@@ -1,15 +1,16 @@
 package fr.esgi.doctodocapi.use_cases.patient.consult_doctor_information;
 
+import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.doctor_detail_reponse.GetAddressDoctorResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.doctor_detail_reponse.GetDoctorDetailResponse;
-import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.doctor_detail_reponse.OpeningHoursResponse;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class GetDoctorDetailMapper {
-    public GetDoctorDetailResponse toDto(Doctor doctor) {
+    public GetDoctorDetailResponse toDto(Doctor doctor, List<OpeningHoursResponse> openingHours) {
         GetAddressDoctorResponse address = new GetAddressDoctorResponse(
                 doctor.getConsultationInformations().getAddress(),
                 doctor.getConsultationInformations().getCoordinatesGps().getClinicLatitude(),
@@ -26,7 +27,7 @@ public class GetDoctorDetailMapper {
                 doctor.getProfessionalInformations().getRpps().getValue(),
                 address,
                 doctor.getProfessionalInformations().getLanguages(),
-                List.of()
+                openingHours
         );
     }
 
