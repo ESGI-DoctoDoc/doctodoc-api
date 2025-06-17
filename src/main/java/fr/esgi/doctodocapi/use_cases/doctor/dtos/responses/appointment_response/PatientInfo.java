@@ -9,10 +9,4 @@ public record PatientInfo(
         String phone,
         String birthdate
 ) {
-    public PatientInfo {
-        name = name().trim();
-        email = email().trim();
-        phone = phone().trim();
-        birthdate = birthdate().trim();
-    }
 }

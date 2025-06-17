@@ -63,9 +63,6 @@ public class AppointmentEntity {
     @Column(name ="doctor_notes", columnDefinition = "text")
     private String doctorNotes;
 
-    @Column(name = "created_at", nullable = false)
-    private LocalDate createdAt;
-
     public UUID getId() {
         return id;
     }
@@ -176,14 +173,6 @@ public class AppointmentEntity {
 
     public void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
-    }
-
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
     }
 
     @Override

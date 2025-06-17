@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response;
 
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 public record GetDoctorAppointmentResponse(
@@ -10,6 +10,6 @@ public record GetDoctorAppointmentResponse(
         String startHour,
         String status,
         String doctorNotes,
-        LocalDate createdAt
+        String createdAt
 ) {
 }

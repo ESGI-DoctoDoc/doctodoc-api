@@ -27,23 +27,7 @@ public class AppointmentMapper {
                 AppointmentStatus.fromValue(entity.getStatus()),
                 answers,
                 entity.getLockedAt(),
-                entity.getCreatedAt()
-        );
-    }
-
-    public Appointment toDomain(AppointmentEntity entity, Slot slot, Patient patient, MedicalConcern medicalConcern, List<PreAppointmentAnswers> answers) {
-        return new Appointment(
-                entity.getId(),
-                slot,
-                patient,
-                medicalConcern,
-                entity.getStartHour(),
-                entity.getEndHour(),
-                entity.getTakenAt(),
-                AppointmentStatus.fromValue(entity.getStatus()),
-                answers,
-                entity.getDoctorNotes(),
-                entity.getCreatedAt()
+                entity.getDoctorNotes() == null ? null : entity.getDoctorNotes()
         );
     }
 
@@ -72,7 +56,6 @@ public class AppointmentMapper {
         entity.setStatus(appointment.getStatus().getValue());
         entity.setLockedAt(appointment.getLockedAt());
         entity.setDoctorNotes(appointment.getDoctorNotes());
-        entity.setCreatedAt(appointment.getCreatedAt());
         return entity;
     }
 }

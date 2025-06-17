@@ -29,9 +29,8 @@ public class Appointment {
     private AppointmentStatus status;
     private List<PreAppointmentAnswers> preAppointmentAnswers;
     private String doctorNotes;
-    private LocalDate createdAt;
 
-    public Appointment(UUID id, Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt, LocalDate createdAt) {
+    public Appointment(UUID id, Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt, String doctorNotes) {
         this.id = id;
         this.slot = slot;
         this.patient = patient;
@@ -43,22 +42,7 @@ public class Appointment {
         this.lockedAt = lockedAt;
         this.status = status;
         this.preAppointmentAnswers = answers;
-        this.createdAt = createdAt;
-    }
-
-    // doctor
-    public Appointment(UUID id, Slot slot, Patient patient, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, String doctorNotes, LocalDate createdAt) {
-        this.id = id;
-        this.slot = slot;
-        this.patient = patient;
-        this.medicalConcern = medicalConcern;
-        this.date = slot.getDate();
-        this.hoursRange = HoursRange.of(startHour, endHour);
-        this.takenAt = takenAt;
-        this.status = status;
-        this.preAppointmentAnswers = answers;
         this.doctorNotes = doctorNotes;
-        this.createdAt = createdAt;
     }
 
     public Appointment(UUID id, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt) {
@@ -98,7 +82,7 @@ public class Appointment {
                 AppointmentStatus.LOCKED,
                 answers,
                 LocalDateTime.now(),
-                LocalDate.now()
+                null
         );
     }
 
@@ -236,14 +220,6 @@ public class Appointment {
 
     public void setDoctorNotes(String doctorNotes) {
         this.doctorNotes = doctorNotes;
-    }
-
-    public LocalDate getCreatedAt() {
-        return createdAt;
-    }
-
-    public void setCreatedAt(LocalDate createdAt) {
-        this.createdAt = createdAt;
     }
 
     @Override
