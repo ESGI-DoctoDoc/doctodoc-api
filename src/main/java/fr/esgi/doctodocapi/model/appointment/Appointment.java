@@ -28,8 +28,9 @@ public class Appointment {
     private LocalDateTime lockedAt;
     private AppointmentStatus status;
     private List<PreAppointmentAnswers> preAppointmentAnswers;
+    private String doctorNotes;
 
-    public Appointment(UUID id, Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt) {
+    public Appointment(UUID id, Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt, String doctorNotes) {
         this.id = id;
         this.slot = slot;
         this.patient = patient;
@@ -41,6 +42,7 @@ public class Appointment {
         this.lockedAt = lockedAt;
         this.status = status;
         this.preAppointmentAnswers = answers;
+        this.doctorNotes = doctorNotes;
     }
 
     public Appointment(UUID id, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt) {
@@ -79,8 +81,8 @@ public class Appointment {
                 LocalDateTime.now(),
                 AppointmentStatus.LOCKED,
                 answers,
-                LocalDateTime.now()
-
+                LocalDateTime.now(),
+                null
         );
     }
 
@@ -210,6 +212,14 @@ public class Appointment {
 
     public void setPreAppointmentAnswers(List<PreAppointmentAnswers> preAppointmentAnswers) {
         this.preAppointmentAnswers = preAppointmentAnswers;
+    }
+
+    public String getDoctorNotes() {
+        return doctorNotes;
+    }
+
+    public void setDoctorNotes(String doctorNotes) {
+        this.doctorNotes = doctorNotes;
     }
 
     @Override

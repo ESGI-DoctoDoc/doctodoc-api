@@ -33,4 +33,5 @@ public interface AppointmentRepository {
     Optional<Appointment> getMostRecentUpcomingAppointment(User user);
 
     List<Patient> getDistinctPatientsByDoctorId(UUID doctorId, int page, int size);
+    List<Appointment> getAllByDoctor(UUID doctorId, int page, int size);
 }
