@@ -1,7 +1,7 @@
-package fr.esgi.doctodocapi.presentation.doctor.patient;
+package fr.esgi.doctodocapi.presentation.doctor.manage_patient;
 
-import fr.esgi.doctodocapi.dtos.responses.doctor.patient.GetDoctorPatientResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.patient.GetDoctorPatients;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.manage_patient.GetDoctorPatientResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_patient.IGetDoctorPatients;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -10,9 +10,9 @@ import java.util.List;
 @RestController
 @RequestMapping("doctors")
 public class GetPatientDetailController {
-    private final GetDoctorPatients getDoctorPatients;
+    private final IGetDoctorPatients getDoctorPatients;
 
-    public GetPatientDetailController(GetDoctorPatients getDoctorPatients) {
+    public GetPatientDetailController(IGetDoctorPatients getDoctorPatients) {
         this.getDoctorPatients = getDoctorPatients;
     }
 

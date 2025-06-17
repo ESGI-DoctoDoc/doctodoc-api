@@ -1,7 +1,6 @@
-package fr.esgi.doctodocapi.use_cases.doctor.patient;
+package fr.esgi.doctodocapi.use_cases.doctor.manage_patient;
 
-import fr.esgi.doctodocapi.dtos.responses.doctor.patient.GetDoctorPatientResponse;
-import fr.esgi.doctodocapi.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.manage_patient.GetDoctorPatientResponse;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
@@ -9,14 +8,14 @@ import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.user.ports.in.GetCurrentUserContext;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_patient.IGetDoctorPatients;
+import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
 
 import java.util.List;
 
-@Service
-public class GetDoctorPatients {
+public class GetDoctorPatients implements IGetDoctorPatients {
     private final AppointmentRepository appointmentRepository;
     private final UserRepository userRepository;
     private final GetCurrentUserContext getCurrentUserContext;

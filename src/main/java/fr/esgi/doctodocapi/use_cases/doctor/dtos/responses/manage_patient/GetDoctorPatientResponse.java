@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.dtos.responses.doctor.patient;
+package fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.manage_patient;
 
 import java.time.LocalDate;
 import java.util.UUID;
