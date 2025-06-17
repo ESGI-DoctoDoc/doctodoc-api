@@ -1,7 +1,7 @@
-package fr.esgi.doctodocapi.presentation.doctor.appointment;
+package fr.esgi.doctodocapi.presentation.doctor.manage_appointment;
 
-import fr.esgi.doctodocapi.dtos.responses.doctor.appointment.GetDoctorAppointmentResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.appointment.GetDoctorAppointments;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.IGetDoctorAppointments;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
@@ -13,9 +13,9 @@ import java.util.List;
 @PreAuthorize("hasRole('ROLE_DOCTOR')")
 public class ManageDoctorAppointmentsController {
 
-    private final GetDoctorAppointments getDoctorAppointments;
+    private final IGetDoctorAppointments getDoctorAppointments;
 
-    public ManageDoctorAppointmentsController(GetDoctorAppointments getDoctorAppointments) {
+    public ManageDoctorAppointmentsController(IGetDoctorAppointments getDoctorAppointments) {
         this.getDoctorAppointments = getDoctorAppointments;
     }
 
