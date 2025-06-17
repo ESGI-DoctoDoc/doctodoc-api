@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.model.doctor.calendar.absence;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,4 +44,6 @@ public interface AbsenceRepository {
      * @throws AbsenceNotFoundException if no matching absence is found
      */
     Absence findById(UUID absenceId);
+
+    List<Absence> findAllByDoctorIdAndDate(UUID doctorId, LocalDate date);
 }

@@ -1,5 +1,7 @@
 package fr.esgi.doctodocapi.model.appointment;
 
+import fr.esgi.doctodocapi.model.doctor.calendar.absence.Absence;
+import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
@@ -33,15 +35,18 @@ public class AppointmentsAvailabilityService {
      */
     private final SlotRepository slotRepository;
 
+    private final AbsenceRepository absenceRepository;
+
     /**
      * Constructs an AppointmentsAvailabilityService with the required repositories.
      *
      * @param appointmentRepository Repository for appointment data access
      * @param slotRepository        Repository for slot data access
      */
-    public AppointmentsAvailabilityService(AppointmentRepository appointmentRepository, SlotRepository slotRepository) {
+    public AppointmentsAvailabilityService(AppointmentRepository appointmentRepository, SlotRepository slotRepository, AbsenceRepository absenceRepository) {
         this.appointmentRepository = appointmentRepository;
         this.slotRepository = slotRepository;
+        this.absenceRepository = absenceRepository;
     }
 
     /**
@@ -50,7 +55,7 @@ public class AppointmentsAvailabilityService {
      * @param appointments The list of appointments to sort
      * @return A new sorted list of appointments
      */
-    private static List<Appointment> sortAppointmentsByStartHour(List<Appointment> appointments) {
+    private List<Appointment> sortAppointmentsByStartHour(List<Appointment> appointments) {
         return appointments.stream()
                 .sorted(Comparator.comparing(appointment -> appointment.getHoursRange().getStart()))
                 .toList();
@@ -68,16 +73,23 @@ public class AppointmentsAvailabilityService {
     public List<GetAppointmentAvailabilityResponse> getAvailableAppointment(MedicalConcern medicalConcern, LocalDate date) {
         List<GetAppointmentAvailabilityResponse> appointmentsAvailable = new ArrayList<>();
         List<Slot> slots = this.slotRepository.getSlotsByMedicalConcernAndDate(medicalConcern.getId(), date);
+        List<Absence> absences = this.absenceRepository.findAllByDoctorIdAndDate(medicalConcern.getDoctorId(), date);
 
         slots.forEach(slot -> {
             List<GetAppointmentAvailabilityResponse> defaultAppointmentsAvailable = getSlotDivision(medicalConcern, slot);
+
+            if (!absences.isEmpty()) {
+                defaultAppointmentsAvailable = filterAppointmentsByAbsences(absences, defaultAppointmentsAvailable);
+            }
+
+            // appointments
             List<Appointment> appointments = this.appointmentRepository.getAppointmentsBySlot(slot.getId());
 
             if (appointments.isEmpty()) {
                 appointmentsAvailable.addAll(defaultAppointmentsAvailable);
             } else {
 
-                List<GetAppointmentAvailabilityResponse> result = calculateAvailableAppointments(slot.getId(), defaultAppointmentsAvailable, appointments);
+                List<GetAppointmentAvailabilityResponse> result = filterAppointmentsByReservations(slot.getId(), defaultAppointmentsAvailable, appointments);
                 appointmentsAvailable.addAll(result);
             }
 
@@ -86,6 +98,29 @@ public class AppointmentsAvailabilityService {
         return appointmentsAvailable;
 
     }
+
+    List<GetAppointmentAvailabilityResponse> filterAppointmentsByAbsences(
+            List<Absence> absences,
+            List<GetAppointmentAvailabilityResponse> appointmentAvailabilityResponses
+    ) {
+        List<GetAppointmentAvailabilityResponse> appointmentsAvailable = new ArrayList<>();
+
+        for (GetAppointmentAvailabilityResponse slotFragment : appointmentAvailabilityResponses) {
+            HoursRange fragmentRange = HoursRange.of(slotFragment.start(), slotFragment.end());
+
+            boolean isOverlapping = absences.stream()
+                    .anyMatch(absence ->
+                            HoursRange.isTimesOverlap(fragmentRange, absence.getAbsenceRange().getHoursRange())
+                    );
+
+            if (!isOverlapping) {
+                appointmentsAvailable.add(slotFragment);
+            }
+        }
+
+        return appointmentsAvailable;
+    }
+
 
     /**
      * Calculates which appointment slots are available by checking for overlaps with existing appointments.
@@ -97,7 +132,7 @@ public class AppointmentsAvailabilityService {
      * @param appointments The list of existing appointments to check against
      * @return A list of appointment slots with their reservation status updated
      */
-    private List<GetAppointmentAvailabilityResponse> calculateAvailableAppointments(UUID slotId, List<GetAppointmentAvailabilityResponse> defaultAppointmentsAvailable, List<Appointment> appointments) {
+    private List<GetAppointmentAvailabilityResponse> filterAppointmentsByReservations(UUID slotId, List<GetAppointmentAvailabilityResponse> defaultAppointmentsAvailable, List<Appointment> appointments) {
         List<GetAppointmentAvailabilityResponse> appointmentsAvailable = new ArrayList<>();
         List<Appointment> sortedAppointments = sortAppointmentsByStartHour(appointments);
 
