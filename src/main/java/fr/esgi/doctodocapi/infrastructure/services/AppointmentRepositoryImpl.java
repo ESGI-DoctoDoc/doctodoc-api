@@ -6,6 +6,7 @@ import fr.esgi.doctodocapi.infrastructure.jpa.repositories.PreAppointmentAnswers
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.QuestionJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentMapper;
+import fr.esgi.doctodocapi.infrastructure.mappers.PatientMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.PreAppointmentAnswersMapper;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
@@ -16,6 +17,7 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
+import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.user.User;
 import jakarta.persistence.EntityManager;
@@ -26,9 +28,8 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
+import java.util.stream.Collectors;
 
 /**
  * Implementation of the AppointmentRepository interface.
@@ -46,6 +47,11 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
      * Mapper for converting between appointment domain objects and entities.
      */
     private final AppointmentMapper appointmentMapper;
+
+    /**
+     * Mapper for converting between patient domain objects and entities.
+     */
+    private final PatientMapper patientMapper;
 
     /**
      * Facade mapper for converting between appointment entities and domain objects.
@@ -69,15 +75,16 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     public AppointmentRepositoryImpl(
             EntityManager entityManager,
             AppointmentJpaRepository appointmentJpaRepository,
-                                     AppointmentMapper appointmentMapper,
-                                     AppointmentFacadeMapper appointmentFacadeMapper,
-                                     PreAppointmentAnswersMapper preAppointmentAnswersMapper,
-                                     PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository,
-                                     QuestionJpaRepository questionJpaRepository
+            AppointmentMapper appointmentMapper, PatientMapper patientMapper,
+            AppointmentFacadeMapper appointmentFacadeMapper,
+            PreAppointmentAnswersMapper preAppointmentAnswersMapper,
+            PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository,
+            QuestionJpaRepository questionJpaRepository
 
     ) {
         this.appointmentJpaRepository = appointmentJpaRepository;
         this.appointmentMapper = appointmentMapper;
+        this.patientMapper = patientMapper;
         this.appointmentFacadeMapper = appointmentFacadeMapper;
         this.preAppointmentAnswersMapper = preAppointmentAnswersMapper;
         this.preAppointmentAnswersJpaRepository = preAppointmentAnswersJpaRepository;
@@ -191,6 +198,21 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     public Optional<Appointment> getMostRecentUpcomingAppointment(User user) {
         Optional<AppointmentEntity> appointmentEntity = this.appointmentJpaRepository.findFirstByPatient_User_IdAndStatusAndDateAfterOrderByDateAsc(user.getId(), AppointmentStatus.CONFIRMED.name(), LocalDate.now());
         return appointmentEntity.map(this.appointmentFacadeMapper::mapAppointmentToDomain);
+    }
+
+    @Override
+    public List<Patient> getDistinctPatientsByDoctorId(UUID doctorId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointmentEntities = this.appointmentJpaRepository.findAllByDoctor_Id(doctorId, pageable);
+
+        Set<PatientEntity> patientEntities = appointmentEntities.getContent().stream()
+                .map(AppointmentEntity::getPatient)
+                .filter(Objects::nonNull)
+                .collect(Collectors.toSet());
+
+        return patientEntities.stream()
+                .map(patientMapper::toDomain)
+                .toList();
     }
 
     @Override
