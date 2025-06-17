@@ -33,25 +33,25 @@ class OpeningHoursCalculatorTest {
 
         // Lundi
         OpeningHoursResponse mondayResponse = responses.getFirst();
-        assertThat(mondayResponse.day()).isEqualTo("lundi");
+        assertThat(mondayResponse.day()).isEqualTo("Lundi");
         assertThat(mondayResponse.start()).isEqualTo(LocalTime.of(9, 0));
         assertThat(mondayResponse.end()).isEqualTo(LocalTime.of(18, 0));
 
         // Mardi
         OpeningHoursResponse tuesdayResponse = responses.get(1);
-        assertThat(tuesdayResponse.day()).isEqualTo("mardi");
+        assertThat(tuesdayResponse.day()).isEqualTo("Mardi");
         assertThat(tuesdayResponse.start()).isEqualTo(LocalTime.of(10, 0));
         assertThat(tuesdayResponse.end()).isEqualTo(LocalTime.of(16, 0));
 
         // Mercredi (aucun slot)
         OpeningHoursResponse wednesdayResponse = responses.get(2);
-        assertThat(wednesdayResponse.day()).isEqualTo("mercredi");
+        assertThat(wednesdayResponse.day()).isEqualTo("Mercredi");
         assertThat(wednesdayResponse.start()).isNull();
         assertThat(wednesdayResponse.end()).isNull();
 
         // Jeudi
         OpeningHoursResponse thursdayResponse = responses.get(3);
-        assertThat(thursdayResponse.day()).isEqualTo("jeudi");
+        assertThat(thursdayResponse.day()).isEqualTo("Jeudi");
         assertThat(thursdayResponse.start()).isEqualTo(LocalTime.of(8, 30));
         assertThat(thursdayResponse.end()).isEqualTo(LocalTime.of(11, 45));
 
