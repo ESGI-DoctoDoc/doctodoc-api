@@ -155,6 +155,15 @@ public class SlotRepositoryImpl implements SlotRepository {
                 .toList();
     }
 
+    @Override
+    public Slot findOneByMedicalConcernAndDate(UUID medicalConcernId, LocalDate date) {
+        SlotEntity entity = this.slotJpaRepository
+                .findFirstByMedicalConcerns_IdAndDate(medicalConcernId, date)
+                .orElseThrow(SlotNotFoundException::new);
+
+        return mapSlotEntityToDomain(entity);
+    }
+
     private SlotEntity mapSlotToEntity(Slot slot, DoctorEntity doctorEntity) {
         List<UUID> medicalConcernIds = slot.getAvailableMedicalConcerns().stream()
                 .map(MedicalConcern::getId)
