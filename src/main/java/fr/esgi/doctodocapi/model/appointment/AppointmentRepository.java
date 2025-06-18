@@ -34,4 +34,5 @@ public interface AppointmentRepository {
 
     List<Patient> getDistinctPatientsByDoctorId(UUID doctorId, int page, int size);
     List<Appointment> getAllByDoctor(UUID doctorId, int page, int size);
+    boolean existsPatientByDoctorAndPatientId(UUID doctorId, UUID patientId);
 }

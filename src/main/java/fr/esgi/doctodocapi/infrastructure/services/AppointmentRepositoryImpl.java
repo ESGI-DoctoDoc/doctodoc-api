@@ -133,7 +133,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         SlotEntity slotEntity = this.entityManager.getReference(SlotEntity.class, appointment.getSlot().getId());
         PatientEntity patientEntity = this.entityManager.getReference(PatientEntity.class, appointment.getPatient().getId());
         DoctorEntity doctorEntity = this.entityManager.getReference(DoctorEntity.class, appointment.getDoctor().getId());
-        MedicalConcernEntity medicalConcernEntity = this.entityManager.getReference(MedicalConcernEntity.class, appointment.getDoctor().getId());
+        MedicalConcernEntity medicalConcernEntity = this.entityManager.getReference(MedicalConcernEntity.class, appointment.getMedicalConcern().getId());
 
         AppointmentEntity entity = this.appointmentMapper.toEntity(appointment, slotEntity, patientEntity, doctorEntity, medicalConcernEntity);
         AppointmentEntity entityCreated = this.appointmentJpaRepository.save(entity);
@@ -220,5 +220,10 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         Pageable pageable = PageRequest.of(page, size);
         Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByDoctor_Id(doctorId, pageable);
         return appointments.getContent().stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
+    }
+
+    @Override
+    public boolean existsPatientByDoctorAndPatientId(UUID doctorId, UUID patientId) {
+        return this.appointmentJpaRepository.existsByDoctor_IdAndPatient_Id(doctorId, patientId);
     }
 }
