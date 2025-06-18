@@ -86,6 +86,26 @@ public class Appointment {
         );
     }
 
+    public static Appointment initFromDoctor(Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, List<PreAppointmentAnswers> answers, String doctorNotes) {
+        HoursRange appointmentHoursRange = HoursRange.of(startHour, startHour.plusMinutes(medicalConcern.getDurationInMinutes().getValue()));
+        verifyIfConflicts(slot, appointmentHoursRange);
+
+        return new Appointment(
+                UUID.randomUUID(),
+                slot,
+                patient,
+                doctor,
+                medicalConcern,
+                appointmentHoursRange.getStart(),
+                appointmentHoursRange.getEnd(),
+                LocalDateTime.now(),
+                AppointmentStatus.CONFIRMED,
+                answers,
+                null,
+                doctorNotes
+        );
+    }
+
     /**
      * Checks if the given appointment hours range conflicts with any existing appointments in the slot.
      *
