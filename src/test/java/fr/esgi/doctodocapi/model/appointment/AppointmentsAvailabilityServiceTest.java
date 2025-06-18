@@ -1,9 +1,7 @@
-package fr.esgi.doctodocapi.model.patient;
+package fr.esgi.doctodocapi.model.appointment;
 
-import fr.esgi.doctodocapi.model.appointment.Appointment;
-import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
-import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
-import fr.esgi.doctodocapi.model.appointment.AppointmentsAvailabilityService;
+import fr.esgi.doctodocapi.model.doctor.calendar.absence.Absence;
+import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
@@ -30,6 +28,9 @@ class AppointmentsAvailabilityServiceTest {
 
     @Mock
     private SlotRepository slotRepository;
+
+    @Mock
+    private AbsenceRepository absenceRepository;
 
     @InjectMocks
     private AppointmentsAvailabilityService appointmentsAvailabilityService;
@@ -164,4 +165,90 @@ class AppointmentsAvailabilityServiceTest {
         verify(this.appointmentRepository).getAppointmentsBySlot(slot.getId());
         verifyNoMoreInteractions(this.slotRepository, this.appointmentRepository);
     }
+
+
+    @Test
+    void should_filter_appointments_with_absence_overlap() {
+        UUID doctorId = UUID.randomUUID();
+        LocalDate createdAt = LocalDate.now();
+
+        MedicalConcern concern = new MedicalConcern(UUID.randomUUID(), "Consultation", 15, List.of(), 20.0, doctorId, createdAt);
+        LocalDate date = LocalDate.of(2025, 6, 15);
+        Slot slot = Slot.create(date, LocalTime.of(10, 0), LocalTime.of(11, 0), List.of(concern));
+
+        // Absence de 10:15 à 10:30
+        Absence absence = Absence.createWithRange("description", date, date, LocalTime.of(10, 15), LocalTime.of(10, 30));
+
+        when(slotRepository.getSlotsByMedicalConcernAndDate(concern.getId(), date)).thenReturn(List.of(slot));
+        when(appointmentRepository.getAppointmentsBySlot(slot.getId())).thenReturn(List.of());
+        when(absenceRepository.findAllByDoctorIdAndDate(doctorId, date)).thenReturn(List.of(absence));
+
+        List<GetAppointmentAvailabilityResponse> expected = List.of(
+                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 0), LocalTime.of(10, 15), false),
+                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 30), LocalTime.of(10, 45), false),
+                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 45), LocalTime.of(11, 0), false)
+        );
+
+        List<GetAppointmentAvailabilityResponse> result = appointmentsAvailabilityService.getAvailableAppointment(concern, date);
+
+        assertEquals(expected, result);
+    }
+
+    @Test
+    void should_return_no_appointments_with_absence_overlap_all_the_day() {
+        UUID doctorId = UUID.randomUUID();
+        LocalDate createdAt = LocalDate.now();
+
+        MedicalConcern concern = new MedicalConcern(UUID.randomUUID(), "Consultation", 15, List.of(), 20.0, doctorId, createdAt);
+        LocalDate date = LocalDate.of(2025, 6, 15);
+        Slot slot = Slot.create(date, LocalTime.of(10, 0), LocalTime.of(11, 0), List.of(concern));
+
+        // Absence de 10:15 à 10:30
+        Absence absence = Absence.createWithRange("description", date, date, LocalTime.of(0, 0), LocalTime.of(23, 59));
+
+        when(slotRepository.getSlotsByMedicalConcernAndDate(concern.getId(), date)).thenReturn(List.of(slot));
+        when(appointmentRepository.getAppointmentsBySlot(slot.getId())).thenReturn(List.of());
+        when(absenceRepository.findAllByDoctorIdAndDate(doctorId, date)).thenReturn(List.of(absence));
+
+        List<GetAppointmentAvailabilityResponse> expected = List.of();
+
+        List<GetAppointmentAvailabilityResponse> result = appointmentsAvailabilityService.getAvailableAppointment(concern, date);
+
+        assertEquals(expected, result);
+    }
+
+
+    @Test
+    void should_filter_with_absences_and_appointments_combined() {
+        UUID doctorId = UUID.randomUUID();
+        LocalDate createdAt = LocalDate.now();
+
+        MedicalConcern concern = new MedicalConcern(UUID.randomUUID(), "Consultation", 15, List.of(), 20.0, doctorId, createdAt);
+        LocalDate date = LocalDate.of(2025, 6, 20);
+        Slot slot = Slot.create(date, LocalTime.of(9, 0), LocalTime.of(10, 0), List.of(concern));
+
+        // Absence : 09:30 - 09:45
+        Absence absence = Absence.createWithRange("description", date, date, LocalTime.of(9, 30), LocalTime.of(9, 45));
+
+        // Appointment confirmé : 09:15 - 09:30
+        Appointment appointment = new Appointment(UUID.randomUUID(), slot, null, null, concern,
+                LocalTime.of(9, 15), LocalTime.of(9, 30), LocalDateTime.now(), AppointmentStatus.CONFIRMED, List.of(), LocalDateTime.now());
+
+        when(slotRepository.getSlotsByMedicalConcernAndDate(concern.getId(), date)).thenReturn(List.of(slot));
+        when(appointmentRepository.getAppointmentsBySlot(slot.getId())).thenReturn(List.of(appointment));
+        when(absenceRepository.findAllByDoctorIdAndDate(doctorId, date)).thenReturn(List.of(absence));
+
+        List<GetAppointmentAvailabilityResponse> expected = List.of(
+                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 0), LocalTime.of(9, 15), false),
+                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 15), LocalTime.of(9, 30), true),  // réservé
+                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 45), LocalTime.of(10, 0), false)
+        );
+
+        List<GetAppointmentAvailabilityResponse> result = appointmentsAvailabilityService.getAvailableAppointment(concern, date);
+
+        assertEquals(expected, result);
+    }
+
+
+
 }

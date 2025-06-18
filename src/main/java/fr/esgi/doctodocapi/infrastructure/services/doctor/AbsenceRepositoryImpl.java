@@ -96,4 +96,10 @@ public class AbsenceRepositoryImpl implements AbsenceRepository {
                 .map(absenceMapper::toDomain)
                 .orElseThrow(AbsenceNotFoundException::new);
     }
+
+    @Override
+    public List<Absence> findAllByDoctorIdAndDate(UUID doctorId, LocalDate date) {
+        List<AbsenceEntity> absenceEntities = this.absenceJpaRepository.findAllByDoctor_IdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(doctorId, date, date);
+        return absenceEntities.stream().map(absenceMapper::toDomain).toList();
+    }
 }
