@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.MedicalConcernInfo;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.PatientInfo;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import org.springframework.stereotype.Service;
@@ -26,8 +27,13 @@ public class AppointmentResponseMapper {
                         appointment.getPatient().getPhoneNumber().getValue(),
                         appointment.getPatient().getBirthdate().getValue().toString()
                 ),
+                new MedicalConcernInfo(
+                        appointment.getMedicalConcern().getId(),
+                        appointment.getMedicalConcern().getName()
+                ),
                 appointment.getDate().toString(),
                 appointment.getHoursRange().getStart().toString(),
+                appointment.getHoursRange().getEnd().toString(),
                 appointment.getStatus().getValue(),
                 appointment.getDoctorNotes(),
                 formatDate(appointment.getTakenAt())
