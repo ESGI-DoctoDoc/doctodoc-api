@@ -24,8 +24,8 @@ public class S3FileStorageService implements FileStorageService {
     }
 
     @Override
-    public void upload() {
-        System.out.println("je upload");
+    public String getPresignedUrlToUpload(String path) {
+        return this.presignedUrlService.generatePresignedUploadUrl(path);
     }
 
     @Override

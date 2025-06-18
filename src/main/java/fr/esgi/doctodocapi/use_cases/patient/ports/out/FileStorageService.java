@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.patient.ports.out;
 
 public interface FileStorageService {
-    void upload();
+    String getPresignedUrlToUpload(String path);
 
     void delete();
 
