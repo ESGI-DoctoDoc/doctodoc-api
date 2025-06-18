@@ -232,7 +232,7 @@ class AppointmentsAvailabilityServiceTest {
 
         // Appointment confirmé : 09:15 - 09:30
         Appointment appointment = new Appointment(UUID.randomUUID(), slot, null, null, concern,
-                LocalTime.of(9, 15), LocalTime.of(9, 30), LocalDateTime.now(), AppointmentStatus.CONFIRMED, List.of(), LocalDateTime.now());
+                LocalTime.of(9, 15), LocalTime.of(9, 30), LocalDateTime.now(), AppointmentStatus.CONFIRMED, List.of(), LocalDateTime.now(), null);
 
         when(slotRepository.getSlotsByMedicalConcernAndDate(concern.getId(), date)).thenReturn(List.of(slot));
         when(appointmentRepository.getAppointmentsBySlot(slot.getId())).thenReturn(List.of(appointment));
