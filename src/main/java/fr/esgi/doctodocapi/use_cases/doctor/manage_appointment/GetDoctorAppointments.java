@@ -14,6 +14,7 @@ import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class GetDoctorAppointments implements IGetDoctorAppointments {
@@ -31,13 +32,30 @@ public class GetDoctorAppointments implements IGetDoctorAppointments {
         this.appointmentResponseMapper = appointmentResponseMapper;
     }
 
-    public List<GetDoctorAppointmentResponse> execute(int page, int size) {
+    public List<GetDoctorAppointmentResponse> execute(int page, int size, LocalDate startDate) {
         try {
-            String email = this.getCurrentUserContext.getUsername();
-            User user = this.userRepository.findByEmail(email);
+            String username = this.getCurrentUserContext.getUsername();
+            User user = this.userRepository.findByEmail(username);
             Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            List<Appointment> appointments = this.appointmentRepository.getAllByDoctor(doctor.getId(), page, size);
+            List<Appointment> appointments;
+            if(startDate != null) {
+                LocalDate endDate = startDate.plusDays(6);
+                appointments = this.appointmentRepository.findAllByDoctorIdAndDateBetween(
+                        doctor.getId(),
+                        startDate,
+                        endDate,
+                        page,
+                        size
+                );
+            } else {
+                appointments = this.appointmentRepository.findAllByDoctorIdAndDateAfterNow(
+                        doctor.getId(),
+                        LocalDate.now(),
+                        page,
+                        size
+                );
+            }
             return appointments.stream()
                     .map(appointmentResponseMapper::toResponse)
                     .toList();

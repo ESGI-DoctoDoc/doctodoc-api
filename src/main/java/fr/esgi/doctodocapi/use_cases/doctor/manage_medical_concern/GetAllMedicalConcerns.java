@@ -48,7 +48,6 @@ public class GetAllMedicalConcerns implements IGetAllMedicalConcerns {
     public List<GetMedicalConcernResponse> execute() {
         try {
             String username = this.getCurrentUserContext.getUsername();
-
             User user = this.userRepository.findByEmail(username);
             Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 

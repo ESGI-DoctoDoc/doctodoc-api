@@ -10,6 +10,9 @@ import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceNotFoundExceptio
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRepository;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -101,5 +104,27 @@ public class AbsenceRepositoryImpl implements AbsenceRepository {
     public List<Absence> findAllByDoctorIdAndDate(UUID doctorId, LocalDate date) {
         List<AbsenceEntity> absenceEntities = this.absenceJpaRepository.findAllByDoctor_IdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(doctorId, date, date);
         return absenceEntities.stream().map(absenceMapper::toDomain).toList();
+    }
+
+    @Override
+    public List<Absence> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<AbsenceEntity> pageResult = this.absenceJpaRepository.findAllByDoctor_IdAndStartDateLessThanEqualAndEndDateGreaterThanEqual(
+                doctorId,
+                endDate,
+                startDate,
+                pageable
+        );
+
+        return pageResult.getContent().stream().map(absenceMapper::toDomain).toList();
+    }
+
+    @Override
+    public List<Absence> findAllByDoctorIdAndStartDateAfterNow(UUID doctorId, LocalDate date, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AbsenceEntity> pageResult = this.absenceJpaRepository.findAllByDoctor_IdAndStartDateGreaterThanEqual(doctorId, date, pageable);
+
+        return pageResult.getContent().stream().map(absenceMapper::toDomain).toList();
     }
 }

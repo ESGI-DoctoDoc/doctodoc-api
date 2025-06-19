@@ -67,7 +67,7 @@ public class ManageSlotsController {
      */
     @GetMapping("/slots")
     @ResponseStatus(value = HttpStatus.OK)
-    public List<GetSlotResponse> getAllSlots(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size, @RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
+    public List<GetSlotResponse> getAllSlots(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "2") int size, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
         return this.getAllSlots.getAll(page, size, startDate);
     }
 }
