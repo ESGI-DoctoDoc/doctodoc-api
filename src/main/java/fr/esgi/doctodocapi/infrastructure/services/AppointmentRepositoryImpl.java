@@ -216,14 +216,27 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     }
 
     @Override
-    public List<Appointment> getAllByDoctor(UUID doctorId, int page, int size) {
+    public List<Appointment> findAllByDoctorIdAndDateAfterNow(UUID doctorId, LocalDate date, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByDoctor_Id(doctorId, pageable);
-        return appointments.getContent().stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByDoctor_IdAndDateGreaterThanEqual(doctorId, date, pageable);
+
+        return appointments.getContent().stream()
+                .map(appointmentFacadeMapper::mapAppointmentToDomain)
+                .toList();
     }
 
     @Override
     public boolean existsPatientByDoctorAndPatientId(UUID doctorId, UUID patientId) {
         return this.appointmentJpaRepository.existsByDoctor_IdAndPatient_Id(doctorId, patientId);
+    }
+
+    @Override
+    public List<Appointment> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByDoctor_IdAndDateBetween(doctorId, startDate, endDate, pageable);
+
+        return appointments.getContent().stream()
+                .map(appointmentFacadeMapper::mapAppointmentToDomain)
+                .toList();
     }
 }

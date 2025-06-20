@@ -6,9 +6,11 @@ import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.care_tracking_trace.CareTrackingTrace;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.patient.Patient;
+import org.springframework.stereotype.Service;
 
 import java.util.List;
 
+@Service
 public class CareTrackingFacadeMapper {
     private final CareTrackingMapper careTrackingMapper;
     private final DoctorFacadeMapper doctorFacadeMapper;

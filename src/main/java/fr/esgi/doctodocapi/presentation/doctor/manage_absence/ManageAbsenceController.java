@@ -8,9 +8,11 @@ import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.IGetAbsences
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.ISaveRangeAbsence;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.ISaveSingleDayAbsence;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,8 +45,8 @@ public class ManageAbsenceController {
      */
     @GetMapping("absences")
     @ResponseStatus(HttpStatus.OK)
-    public List<GetAbsenceResponse> getAll() {
-        return this.getAbsences.execute();
+    public List<GetAbsenceResponse> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
+        return this.getAbsences.execute(page, size, startDate);
     }
 
     /**

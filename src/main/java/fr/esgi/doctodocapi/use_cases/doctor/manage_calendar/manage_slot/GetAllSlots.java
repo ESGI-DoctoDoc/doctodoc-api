@@ -2,6 +2,8 @@ package fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot;
 
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.user.User;
@@ -25,12 +27,14 @@ public class GetAllSlots implements IGetAllSlots {
     private final UserRepository userRepository;
     private final GetCurrentUserContext getCurrentUserContext;
     private final SlotResponseMapper slotResponseMapper;
+    private final DoctorRepository doctorRepository;
 
-    public GetAllSlots(SlotRepository slotRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, SlotResponseMapper slotResponseMapper) {
+    public GetAllSlots(SlotRepository slotRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, SlotResponseMapper slotResponseMapper, DoctorRepository doctorRepository) {
         this.slotRepository = slotRepository;
         this.userRepository = userRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.slotResponseMapper = slotResponseMapper;
+        this.doctorRepository = doctorRepository;
     }
 
     /**
@@ -46,11 +50,17 @@ public class GetAllSlots implements IGetAllSlots {
     public List<GetSlotResponse> getAll(int page, int size, LocalDate startDate) {
         try {
             String username = this.getCurrentUserContext.getUsername();
-            User doctor = this.userRepository.findByEmail(username);
+            User user = this.userRepository.findByEmail(username);
+            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            LocalDate endDate = startDate.plusDays(6);
+            List<Slot> slots;
+            if (startDate != null) {
+                LocalDate endDate = startDate.plusDays(6);
+                slots = this.slotRepository.findAllByDoctorIdAndDateBetween(doctor.getId(), startDate, endDate, page, size);
+            } else {
+                slots = this.slotRepository.findAllByDoctorIdAndDateAfterNow(doctor.getId(), LocalDate.now(), page, size);
+            }
 
-            List<Slot> slots = this.slotRepository.findAllByDoctorIdAndDateBetween(doctor.getId(), startDate, endDate, page, size);
             return this.slotResponseMapper.presentAll(slots);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());

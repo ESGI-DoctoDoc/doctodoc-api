@@ -11,17 +11,17 @@ import java.util.Objects;
 import java.util.UUID;
 
 public class CareTracking {
-    UUID id;
-    String caseName;
-    String description;
-    Doctor creator;
-    Patient patient;
-    List<String> documents;
-    List<UUID> doctors;
-    List<Appointment> appointments;
-    List<CareTrackingTrace> careTrackingTraces;
-    LocalDate createdAt;
-    LocalDate closedAt;
+    private UUID id;
+    private String caseName;
+    private String description;
+    private Doctor creator;
+    private Patient patient;
+    private List<String> documents;
+    private List<UUID> doctors;
+    private List<Appointment> appointments;
+    private List<CareTrackingTrace> careTrackingTraces;
+    private LocalDate createdAt;
+    private LocalDate closedAt;
 
     public CareTracking(UUID id, String caseName, String description, Doctor creator, Patient patient, List<String> documents, List<UUID> doctors, List<Appointment> appointments, List<CareTrackingTrace> careTrackingTraces, LocalDate createdAt, LocalDate closedAt) {
         this.id = id;

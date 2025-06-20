@@ -26,8 +26,8 @@ public class ManageAbsenceConfiguration {
     }
 
     @Bean
-    public IGetAbsences getAbsences(AbsenceRepository absenceRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, AbsenceResponseMapper absenceResponseMapper) {
-        return new GetAbsences(getCurrentUserContext, absenceRepository, userRepository, absenceResponseMapper);
+    public IGetAbsences getAbsences(AbsenceRepository absenceRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, AbsenceResponseMapper absenceResponseMapper, DoctorRepository doctorRepository) {
+        return new GetAbsences(getCurrentUserContext, absenceRepository, userRepository, absenceResponseMapper, doctorRepository);
     }
 
     @Bean

@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.annotations.SQLRestriction;
 import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDate;
@@ -10,7 +11,7 @@ import java.util.Objects;
 import java.util.UUID;
 
 @Entity
-@Table(name = "care_trackings")
+@Table(name = "cares_tracking")
 public class CareTrackingEntity {
 
     @Id
@@ -36,10 +37,10 @@ public class CareTrackingEntity {
     @JdbcTypeCode(SqlTypes.ARRAY)
     private List<UUID> doctors;
 
-    @OneToMany(mappedBy = "care_tracking")
+    @OneToMany(mappedBy = "careTracking")
     private List<AppointmentEntity> appointments;
 
-    @OneToMany(mappedBy = "care_tracking")
+    @OneToMany(mappedBy = "careTracking")
     private List<CareTrackingTraceEntity> careTrackingTraces;
 
     @Column(name = "documents", columnDefinition = "text[]", nullable = false)

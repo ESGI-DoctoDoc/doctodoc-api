@@ -33,7 +33,6 @@ public class CareTrackingMapper {
     public CareTrackingEntity toEntity(CareTracking domain, DoctorEntity creatorEntity, PatientEntity patientEntity) {
         CareTrackingEntity entity = new CareTrackingEntity();
 
-        entity.setId(domain.getId());
         entity.setCaseName(domain.getCaseName());
         entity.setDescription(domain.getDescription());
         entity.setCreator(creatorEntity);
