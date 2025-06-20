@@ -21,5 +21,10 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
             UUID userId, String status, LocalDate now);
 
     Page<AppointmentEntity> findAllByDoctor_Id(UUID doctorId, Pageable pageable);
+
     boolean existsByDoctor_IdAndPatient_Id(UUID doctorId, UUID patientId);
+
+    Page<AppointmentEntity> findAllByDoctor_IdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, Pageable pageable);
+
+    Page<AppointmentEntity> findAllByDoctor_IdAndDateGreaterThanEqual(UUID doctorId, LocalDate date, Pageable pageable);
 }

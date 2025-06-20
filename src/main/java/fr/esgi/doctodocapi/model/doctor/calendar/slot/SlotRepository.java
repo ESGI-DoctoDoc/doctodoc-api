@@ -60,5 +60,8 @@ public interface SlotRepository {
      * @return a list of slots in the requested page
      */
     List<Slot> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size);
+
     Slot findOneByMedicalConcernAndDate(UUID medicalConcernId, LocalDate date);
+
+    List<Slot> findAllByDoctorIdAndDateAfterNow(UUID doctorId, LocalDate date, int page, int size);
 }

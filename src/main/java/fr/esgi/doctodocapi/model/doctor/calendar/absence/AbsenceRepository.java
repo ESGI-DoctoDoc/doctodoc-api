@@ -46,4 +46,8 @@ public interface AbsenceRepository {
     Absence findById(UUID absenceId);
 
     List<Absence> findAllByDoctorIdAndDate(UUID doctorId, LocalDate date);
+
+    List<Absence> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size);
+
+    List<Absence> findAllByDoctorIdAndStartDateAfterNow(UUID doctorId, LocalDate date, int page, int size);
 }
