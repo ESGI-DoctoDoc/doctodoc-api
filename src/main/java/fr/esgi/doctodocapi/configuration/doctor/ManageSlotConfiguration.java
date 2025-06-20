@@ -30,7 +30,7 @@ public class ManageSlotConfiguration {
     }
 
     @Bean
-    public IGetAllSlots getAllSlots(SlotRepository slotRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, SlotResponseMapper slotResponseMapper) {
-        return new GetAllSlots(slotRepository, userRepository, getCurrentUserContext, slotResponseMapper);
+    public IGetAllSlots getAllSlots(SlotRepository slotRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, SlotResponseMapper slotResponseMapper, DoctorRepository doctorRepository) {
+        return new GetAllSlots(slotRepository, userRepository, getCurrentUserContext, slotResponseMapper, doctorRepository);
     }
 }

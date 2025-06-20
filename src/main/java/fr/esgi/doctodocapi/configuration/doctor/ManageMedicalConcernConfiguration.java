@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ManageMedicalConcernConfiguration {
     @Bean
-    public ICreateMedicalConcern createMedicalConcern(MedicalConcernRepository medicalConcernRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext) {
-        return new CreateMedicalConcern(medicalConcernRepository, userRepository, getCurrentUserContext);
+    public ICreateMedicalConcern createMedicalConcern(MedicalConcernRepository medicalConcernRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorRepository doctorRepository) {
+        return new CreateMedicalConcern(medicalConcernRepository, userRepository, getCurrentUserContext, doctorRepository);
     }
 
     @Bean
