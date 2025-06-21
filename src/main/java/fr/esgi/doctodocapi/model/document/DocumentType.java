@@ -1,10 +1,11 @@
 package fr.esgi.doctodocapi.model.document;
 
 public enum DocumentType {
-    PRESCRIPTION("ordonnance"),
-    ANALYSE_RESULT("résultat d'analyse"),
-    IMAGERY("imagerie"),
-    VACCINE("vaccin");
+    MEDICAL_REPORT("Rapport médical"),
+    PRESCRIPTION("Ordonnance"),
+    MEDICAL_CERTIFICATE("Certificat médical"),
+    ANALYSES_RESULT("Résultats d'analyses"),
+    OTHER("Autre");
 
     private final String value;
 

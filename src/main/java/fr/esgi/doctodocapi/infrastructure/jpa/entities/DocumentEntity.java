@@ -1,12 +1,15 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.SQLRestriction;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "documents")
+@SQLRestriction("deleted_at IS NULL")
 public class DocumentEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -25,6 +28,9 @@ public class DocumentEntity {
     @ManyToOne
     @JoinColumn(name = "medical_record_id")
     private MedicalRecordEntity medicalRecord;
+
+    @Column(name = "deleted_at", nullable = false)
+    private LocalDateTime deletedAt;
 
     public UUID getId() {
         return id;
@@ -60,6 +66,14 @@ public class DocumentEntity {
 
     public void setMedicalRecord(MedicalRecordEntity medicalRecord) {
         this.medicalRecord = medicalRecord;
+    }
+
+    public LocalDateTime getDeletedAt() {
+        return deletedAt;
+    }
+
+    public void setDeletedAt(LocalDateTime deletedAt) {
+        this.deletedAt = deletedAt;
     }
 
     @Override

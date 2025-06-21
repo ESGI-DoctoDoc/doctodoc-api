@@ -4,10 +4,8 @@ import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.DocumentResponseMapper;
-import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.GetAllDocuments;
-import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.GetDocument;
-import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.UploadDocument;
+import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.*;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IDeleteDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetAllDocuments;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IUploadDocument;
@@ -34,5 +32,8 @@ public class ManageMedicalRecordConfiguration {
         return new GetDocument(documentRepository, fileStorageService);
     }
 
-
+    @Bean
+    public IDeleteDocument deleteDocument(FileStorageService fileStorageService, DocumentRepository documentRepository) {
+        return new DeleteDocument(documentRepository, fileStorageService);
+    }
 }

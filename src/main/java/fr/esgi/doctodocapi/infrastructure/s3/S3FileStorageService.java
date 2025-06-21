@@ -5,6 +5,7 @@ import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import software.amazon.awssdk.services.s3.S3Client;
+import software.amazon.awssdk.services.s3.model.DeleteObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectRequest;
 import software.amazon.awssdk.services.s3.model.HeadObjectResponse;
 import software.amazon.awssdk.services.s3.model.S3Exception;
@@ -29,8 +30,13 @@ public class S3FileStorageService implements FileStorageService {
     }
 
     @Override
-    public void delete() {
-        System.out.println("delete");
+    public void delete(String path) {
+        DeleteObjectRequest deleteRequest = DeleteObjectRequest.builder()
+                .bucket(bucket)
+                .key(path)
+                .build();
+
+        s3Client.deleteObject(deleteRequest);
     }
 
     @Override

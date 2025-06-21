@@ -4,28 +4,27 @@ import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentResponse;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetDocument;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IDeleteDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
-public class GetDocument implements IGetDocument {
+public class DeleteDocument implements IDeleteDocument {
     private final DocumentRepository documentRepository;
     private final FileStorageService fileStorageService;
 
-    public GetDocument(DocumentRepository documentRepository, FileStorageService fileStorageService) {
+    public DeleteDocument(DocumentRepository documentRepository, FileStorageService fileStorageService) {
         this.documentRepository = documentRepository;
         this.fileStorageService = fileStorageService;
     }
 
-    public GetDocumentResponse process(UUID id) {
+    public void process(UUID id) {
         try {
             Document document = this.documentRepository.getById(id);
-            String url = this.fileStorageService.getFile(document.getPath());
 
-            return new GetDocumentResponse(id, document.getName(), url);
+            this.documentRepository.delete(document.getId());
+            this.fileStorageService.delete(document.getPath());
 
         } catch (DocumentNotFoundException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());
