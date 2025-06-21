@@ -14,7 +14,9 @@ import java.time.Duration;
 
 @Service
 public class PresignedUrlService {
-    private static final int EXPIRATION_URL_IN_HOUR = 1;
+    private static final int EXPIRATION_URL_GET_IN_HOUR = 1;
+    private static final int EXPIRATION_UPLOAD_URL_IN_MINUTES = 10;
+
     private final S3Presigner presigner;
     @Value("${aws.s3.bucket}")
     private String bucket;
@@ -27,12 +29,11 @@ public class PresignedUrlService {
         PutObjectRequest putObjectRequest = PutObjectRequest.builder()
                 .bucket(bucket)
                 .key(key)
-                .contentType("image/jpeg")
                 .build();
 
         PutObjectPresignRequest presignRequest = PutObjectPresignRequest.builder()
                 .putObjectRequest(putObjectRequest)
-                .signatureDuration(Duration.ofMinutes(5))
+                .signatureDuration(Duration.ofMinutes(EXPIRATION_UPLOAD_URL_IN_MINUTES))
                 .build();
 
         PresignedPutObjectRequest presignedPutObjectRequest = presigner.presignPutObject(presignRequest);
@@ -49,7 +50,7 @@ public class PresignedUrlService {
 
         GetObjectPresignRequest presignRequest = GetObjectPresignRequest.builder()
                 .getObjectRequest(getObjectRequest)
-                .signatureDuration(Duration.ofHours(EXPIRATION_URL_IN_HOUR))
+                .signatureDuration(Duration.ofHours(EXPIRATION_URL_GET_IN_HOUR))
                 .build();
 
         PresignedGetObjectRequest presignedGetObjectRequest = presigner.presignGetObject(presignRequest);
