@@ -63,6 +63,10 @@ public class AppointmentEntity {
     @Column(name ="doctor_notes", columnDefinition = "text")
     private String doctorNotes;
 
+    @ManyToOne
+    @JoinColumn(name = "care_tracking_id")
+    private CareTrackingEntity careTracking;
+
     public UUID getId() {
         return id;
     }
@@ -173,6 +177,14 @@ public class AppointmentEntity {
 
     public void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public CareTrackingEntity getCareTracking() {
+        return careTracking;
+    }
+
+    public void setCareTracking(CareTrackingEntity careTracking) {
+        this.careTracking = careTracking;
     }
 
     @Override
