@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.configuration.care_tracking;
 
+import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingResponseMapper;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
@@ -21,7 +22,7 @@ public class DoctorManagingCareTrackingConfiguration {
     }
 
     @Bean
-    public IGetCareTrackings getCareTrackings(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext) {
-        return new GetCareTrackings(careTrackingRepository, doctorRepository, userRepository, getCurrentUserContext);
+    public IGetCareTrackings getCareTrackings(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, CareTrackingResponseMapper careTrackingResponseMapper) {
+        return new GetCareTrackings(careTrackingRepository, doctorRepository, userRepository, getCurrentUserContext, careTrackingResponseMapper);
     }
 }

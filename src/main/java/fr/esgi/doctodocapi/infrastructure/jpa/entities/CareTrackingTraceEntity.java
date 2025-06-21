@@ -1,16 +1,13 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.SQLRestriction;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
 @Entity
 @Table(name = "care_tracking_traces")
-@SQLRestriction("deleted_at IS NULL")
 public class CareTrackingTraceEntity {
 
     @Id
@@ -23,14 +20,11 @@ public class CareTrackingTraceEntity {
     private CareTrackingEntity careTracking;
 
     @ManyToOne
-    @JoinColumn(name = "doctor_id", nullable = false)
+    @JoinColumn(name = "consulted_by", nullable = false)
     private DoctorEntity consultedBy;
 
     @Column(name = "consulted_at")
     private LocalDateTime consultedAt;
-
-    @Column(name = "deleted_at")
-    private LocalDate deletedAt;
 
     public UUID getId() {
         return id;
@@ -62,14 +56,6 @@ public class CareTrackingTraceEntity {
 
     public void setConsultedAt(LocalDateTime consultedAt) {
         this.consultedAt = consultedAt;
-    }
-
-    public LocalDate getDeletedAt() {
-        return deletedAt;
-    }
-
-    public void setDeletedAt(LocalDate deletedAt) {
-        this.deletedAt = deletedAt;
     }
 
     @Override

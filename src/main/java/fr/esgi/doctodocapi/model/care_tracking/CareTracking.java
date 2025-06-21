@@ -6,6 +6,8 @@ import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.patient.Patient;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Collections;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -20,10 +22,10 @@ public class CareTracking {
     private List<UUID> doctors;
     private List<Appointment> appointments;
     private List<CareTrackingTrace> careTrackingTraces;
-    private LocalDate createdAt;
-    private LocalDate closedAt;
+    private LocalDateTime createdAt;
+    private LocalDateTime closedAt;
 
-    public CareTracking(UUID id, String caseName, String description, Doctor creator, Patient patient, List<String> documents, List<UUID> doctors, List<Appointment> appointments, List<CareTrackingTrace> careTrackingTraces, LocalDate createdAt, LocalDate closedAt) {
+    public CareTracking(UUID id, String caseName, String description, Doctor creator, Patient patient, List<String> documents, List<UUID> doctors, List<Appointment> appointments, List<CareTrackingTrace> careTrackingTraces, LocalDateTime createdAt, LocalDateTime closedAt) {
         this.id = id;
         this.caseName = caseName;
         this.description = description;
@@ -48,29 +50,37 @@ public class CareTracking {
                 List.of(),
                 List.of(),
                 List.of(),
-                LocalDate.now(),
+                LocalDateTime.now(),
                 null
         );
     }
 
     public void addDocument(String document) {
-        this.documents.add(document);
+        if (documents.contains(document)) {
+            throw new IllegalStateException("document already exists in the care tracking: " + document);
+        }
+        documents.add(document);
     }
 
     public void addDoctor(UUID doctorId) {
-        this.doctors.add(doctorId);
+        if (doctors.contains(doctorId)) {
+            throw new IllegalStateException("doctor already exists in the care tracking: " + doctorId);
+        }
+        doctors.add(doctorId);
     }
 
     public void addAppointment(Appointment appointment) {
-        this.appointments.add(appointment);
+        if (appointments.contains(appointment)) {
+            throw new IllegalStateException("appointment already exists in the care tracking: " + appointment);
+        }
+        appointments.add(appointment);
     }
 
     public void addTrace(CareTrackingTrace trace) {
-        this.careTrackingTraces.add(trace);
-    }
-
-    public void closeTracking(LocalDate closedAt) {
-        this.closedAt = closedAt;
+        if (careTrackingTraces.contains(trace)) {
+            throw new IllegalStateException("trace already exists in the care tracking: " + trace);
+        }
+        careTrackingTraces.add(trace);
     }
 
     public UUID getId() {
@@ -114,7 +124,7 @@ public class CareTracking {
     }
 
     public List<String> getDocuments() {
-        return documents;
+        return Collections.unmodifiableList(documents);
     }
 
     public void setDocuments(List<String> documents) {
@@ -122,7 +132,7 @@ public class CareTracking {
     }
 
     public List<UUID> getDoctors() {
-        return doctors;
+        return Collections.unmodifiableList(doctors);
     }
 
     public void setDoctors(List<UUID> doctors) {
@@ -130,7 +140,7 @@ public class CareTracking {
     }
 
     public List<Appointment> getAppointments() {
-        return appointments;
+        return Collections.unmodifiableList(appointments);
     }
 
     public void setAppointments(List<Appointment> appointments) {
@@ -138,26 +148,26 @@ public class CareTracking {
     }
 
     public List<CareTrackingTrace> getCareTrackingTraces() {
-        return careTrackingTraces;
+        return Collections.unmodifiableList(careTrackingTraces);
     }
 
     public void setCareTrackingTraces(List<CareTrackingTrace> careTrackingTraces) {
         this.careTrackingTraces = careTrackingTraces;
     }
 
-    public LocalDate getCreatedAt() {
+    public LocalDateTime getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDate createdAt) {
+    public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
     }
 
-    public LocalDate getClosedAt() {
+    public LocalDateTime getClosedAt() {
         return closedAt;
     }
 
-    public void setClosedAt(LocalDate closedAt) {
+    public void setClosedAt(LocalDateTime closedAt) {
         this.closedAt = closedAt;
     }
 

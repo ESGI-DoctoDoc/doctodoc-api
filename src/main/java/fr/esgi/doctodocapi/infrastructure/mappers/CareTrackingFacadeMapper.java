@@ -15,12 +15,14 @@ public class CareTrackingFacadeMapper {
     private final CareTrackingMapper careTrackingMapper;
     private final DoctorFacadeMapper doctorFacadeMapper;
     private final PatientMapper patientMapper;
+    private final CareTrackingTraceMapper careTrackingTraceMapper;
     private final AppointmentFacadeMapper appointmentFacadeMapper;
 
-    public CareTrackingFacadeMapper(CareTrackingMapper careTrackingMapper, DoctorFacadeMapper doctorFacadeMapper, PatientMapper patientMapper, AppointmentFacadeMapper appointmentFacadeMapper) {
+    public CareTrackingFacadeMapper(CareTrackingMapper careTrackingMapper, DoctorFacadeMapper doctorFacadeMapper, PatientMapper patientMapper, CareTrackingTraceMapper careTrackingTraceMapper, AppointmentFacadeMapper appointmentFacadeMapper) {
         this.careTrackingMapper = careTrackingMapper;
         this.doctorFacadeMapper = doctorFacadeMapper;
         this.patientMapper = patientMapper;
+        this.careTrackingTraceMapper = careTrackingTraceMapper;
         this.appointmentFacadeMapper = appointmentFacadeMapper;
     }
 
@@ -33,7 +35,10 @@ public class CareTrackingFacadeMapper {
                 .map(appointmentFacadeMapper::mapAppointmentToDomain)
                 .toList();
 
-        List<CareTrackingTrace> traces = List.of();
+        List<CareTrackingTrace> traces = entity.getCareTrackingTraces()
+                .stream()
+                .map(traceEntity -> careTrackingTraceMapper.toDomain(traceEntity, doctorFacadeMapper.mapDoctorToDomain(traceEntity.getConsultedBy())))
+                .toList();
 
         return this.careTrackingMapper.toDomain(entity, doctor, patient, appointments, traces);
     }

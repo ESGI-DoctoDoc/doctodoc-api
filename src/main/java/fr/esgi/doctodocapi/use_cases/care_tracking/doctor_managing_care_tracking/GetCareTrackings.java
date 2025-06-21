@@ -1,6 +1,8 @@
 package fr.esgi.doctodocapi.use_cases.care_tracking.doctor_managing_care_tracking;
 
+import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
@@ -20,12 +22,14 @@ public class GetCareTrackings implements IGetCareTrackings {
     private final DoctorRepository doctorRepository;
     private final UserRepository userRepository;
     private final GetCurrentUserContext getCurrentUserContext;
+    private final CareTrackingResponseMapper careTrackingResponseMapper;
 
-    public GetCareTrackings(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext) {
+    public GetCareTrackings(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, CareTrackingResponseMapper careTrackingResponseMapper) {
         this.careTrackingRepository = careTrackingRepository;
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
         this.getCurrentUserContext = getCurrentUserContext;
+        this.careTrackingResponseMapper = careTrackingResponseMapper;
     }
 
     public List<GetCareTrackingsResponse> execute(int page, int size) {
@@ -34,22 +38,9 @@ public class GetCareTrackings implements IGetCareTrackings {
             User user = this.userRepository.findByEmail(username);
             Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            return this.careTrackingRepository.findAll(doctor.getId(), page, size)
-                    .stream()
-                    .map(careTracking -> new GetCareTrackingsResponse(
-                            careTracking.getId(),
-                            careTracking.getCaseName(),
-                            careTracking.getCreatedAt().toString(),
-                            new CareTrackingPatientInfo(
-                                    careTracking.getPatient().getId(),
-                                    careTracking.getPatient().getFirstName(),
-                                    careTracking.getPatient().getLastName(),
-                                    careTracking.getPatient().getEmail().getValue(),
-                                    careTracking.getPatient().getPhoneNumber().getValue()
-                            )
-                    ))
-                    .toList();
+            List<CareTracking> careTrackings = this.careTrackingRepository.findAll(doctor.getId(), page, size);
 
+            return this.careTrackingResponseMapper.toResponseList(careTrackings);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
