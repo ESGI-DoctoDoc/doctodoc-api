@@ -9,20 +9,19 @@ import org.springframework.stereotype.Service;
 
 @Service
 public class CareTrackingTraceMapper {
-    public CareTrackingTrace toDomain(CareTrackingTraceEntity entity, Doctor doctor) {
+    public CareTrackingTrace toDomain(CareTrackingTraceEntity entity) {
         return new CareTrackingTrace(
                 entity.getId(),
-                doctor.getId(),
+                entity.getConsultedBy().getId(),
                 entity.getConsultedAt()
         );
     }
 
-    public CareTrackingTraceEntity toEntity(CareTrackingTrace domain, CareTrackingEntity careTrackingEntity, DoctorEntity doctor) {
+    public CareTrackingTraceEntity toEntity(CareTrackingTrace domain, CareTrackingEntity careTrackingEntity) {
         CareTrackingTraceEntity entity = new CareTrackingTraceEntity();
 
         entity.setId(domain.getId());
         entity.setCareTracking(careTrackingEntity);
-        entity.setConsultedBy(doctor);
         entity.setConsultedAt(domain.getConsultedAt());
 
         return entity;

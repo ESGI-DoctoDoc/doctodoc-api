@@ -143,4 +143,11 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
 
         return this.medicalConcernMapper.toDomain(savedEntity);
     }
+
+    @Override
+    public MedicalConcern getMedicalConcernById(UUID id, Doctor doctor) {
+        MedicalConcernEntity entity = this.medicalConcernJpaRepository.findByIdAndDoctor_Id(id, doctor.getId())
+                .orElseThrow(MedicalConcernNotFoundException::new);
+        return this.medicalConcernMapper.toDomain(entity);
+    }
 }

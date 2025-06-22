@@ -134,8 +134,9 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         PatientEntity patientEntity = this.entityManager.getReference(PatientEntity.class, appointment.getPatient().getId());
         DoctorEntity doctorEntity = this.entityManager.getReference(DoctorEntity.class, appointment.getDoctor().getId());
         MedicalConcernEntity medicalConcernEntity = this.entityManager.getReference(MedicalConcernEntity.class, appointment.getMedicalConcern().getId());
+        CareTrackingEntity careTrackingEntity = appointment.getCareTrackingId() != null ? this.entityManager.getReference(CareTrackingEntity.class, appointment.getCareTrackingId()) : null;
 
-        AppointmentEntity entity = this.appointmentMapper.toEntity(appointment, slotEntity, patientEntity, doctorEntity, medicalConcernEntity);
+        AppointmentEntity entity = this.appointmentMapper.toEntity(appointment, slotEntity, patientEntity, doctorEntity, medicalConcernEntity, careTrackingEntity);
         AppointmentEntity entityCreated = this.appointmentJpaRepository.save(entity);
 
         // save answers

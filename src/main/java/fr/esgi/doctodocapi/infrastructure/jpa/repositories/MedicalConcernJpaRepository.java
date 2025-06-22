@@ -4,8 +4,10 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 public interface MedicalConcernJpaRepository extends JpaRepository<MedicalConcernEntity, UUID> {
     List<MedicalConcernEntity> findAllByDoctor_Id(UUID id);
+    Optional<MedicalConcernEntity> findByIdAndDoctor_Id(UUID id, UUID doctorId);
 }

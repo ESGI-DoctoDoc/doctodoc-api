@@ -27,7 +27,8 @@ public class AppointmentMapper {
                 AppointmentStatus.fromValue(entity.getStatus()),
                 answers,
                 entity.getLockedAt(),
-                entity.getDoctorNotes() == null ? null : entity.getDoctorNotes()
+                entity.getDoctorNotes() == null ? null : entity.getDoctorNotes(),
+                entity.getCareTracking() == null ? null : entity.getCareTracking().getId()
         );
     }
 
@@ -43,7 +44,7 @@ public class AppointmentMapper {
         );
     }
 
-    public AppointmentEntity toEntity(Appointment appointment, SlotEntity slotEntity, PatientEntity patientEntity, DoctorEntity doctorEntity, MedicalConcernEntity medicalConcernEntity) {
+    public AppointmentEntity toEntity(Appointment appointment, SlotEntity slotEntity, PatientEntity patientEntity, DoctorEntity doctorEntity, MedicalConcernEntity medicalConcernEntity, CareTrackingEntity careTrackingEntity) {
         AppointmentEntity entity = new AppointmentEntity();
         entity.setSlot(slotEntity);
         entity.setPatient(patientEntity);
@@ -56,6 +57,7 @@ public class AppointmentMapper {
         entity.setStatus(appointment.getStatus().getValue());
         entity.setLockedAt(appointment.getLockedAt());
         entity.setDoctorNotes(appointment.getDoctorNotes());
+        entity.setCareTracking(appointment.getCareTrackingId() != null ? careTrackingEntity : null);
         return entity;
     }
 }

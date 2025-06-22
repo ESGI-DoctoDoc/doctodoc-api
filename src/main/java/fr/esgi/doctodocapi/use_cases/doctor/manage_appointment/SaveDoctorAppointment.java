@@ -12,7 +12,6 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
-import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
@@ -56,18 +55,21 @@ public class SaveDoctorAppointment implements ISaveDoctorAppointment {
             Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
             Patient patient = retrieveAndValidatePatient(request.patientId(), doctor);
-            MedicalConcern medicalConcern = retrieveAndValidateMedicalConcern(request.medicalConcernId(), doctor);
+            MedicalConcern medicalConcern = this.medicalConcernRepository.getMedicalConcernById(request.medicalConcernId(), doctor);
 
             List<PreAppointmentAnswers> answers = extractPreAppointmentAnswers(request.answers(), medicalConcern);
             Slot slot = this.slotRepository.findOneByMedicalConcernAndDate(medicalConcern.getId(), request.start());
 
-            Appointment appointment = Appointment.initFromDoctor(slot, patient, doctor, medicalConcern, request.startHour(), answers, request.notes());
+            Appointment appointment = Appointment.initFromDoctor(slot, patient, doctor, medicalConcern, request.startHour(), answers, request.notes(), null);
 
             UUID savedAppointmentId = this.appointmentRepository.save(appointment);
 
             return new SaveDoctorAppointmentResponse(savedAppointmentId);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -76,14 +78,6 @@ public class SaveDoctorAppointment implements ISaveDoctorAppointment {
             throw new PatientNotFoundException();
         }
         return this.patientRepository.getById(patientId);
-    }
-
-    private MedicalConcern retrieveAndValidateMedicalConcern(UUID medicalConcernId, Doctor doctor) {
-        List<MedicalConcern> medicalConcerns = this.medicalConcernRepository.getMedicalConcerns(doctor);
-        return medicalConcerns.stream()
-                .filter(concern -> concern.getId().equals(medicalConcernId))
-                .findFirst()
-                .orElseThrow(MedicalConcernNotFoundException::new);
     }
 
     private List<PreAppointmentAnswers> extractPreAppointmentAnswers(List<SaveDoctorAnswersForAnAppointmentRequest> responses, MedicalConcern medicalConcern) {

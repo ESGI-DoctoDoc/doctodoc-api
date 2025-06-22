@@ -9,9 +9,9 @@ import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.requests.SaveCareTrackingRequest;
-import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.responses.InitializeCareTrackingResponse;
-import fr.esgi.doctodocapi.use_cases.care_tracking.ports.in.IInitializeCareTracking;
+import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.requests.doctor_managing_care_tracking.SaveCareTrackingRequest;
+import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.responses.doctor_managing_care_tracking.InitializeCareTrackingResponse;
+import fr.esgi.doctodocapi.use_cases.care_tracking.ports.in.doctor_managing_care_tracking.IInitializeCareTracking;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
@@ -44,7 +44,7 @@ public class InitializeCareTracking implements IInitializeCareTracking {
             CareTracking careTracking = CareTracking.initialize(
                         request.name(),
                         request.description(),
-                        doctor,
+                        doctor.getId(),
                         patient
             );
 

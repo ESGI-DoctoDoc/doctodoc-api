@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
-import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.responses.CareTrackingPatientInfo;
-import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.responses.GetCareTrackingsResponse;
+import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.responses.doctor_managing_care_tracking.CareTrackingPatientInfo;
+import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.responses.doctor_managing_care_tracking.GetCareTrackingsResponse;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import org.springframework.stereotype.Service;
 
