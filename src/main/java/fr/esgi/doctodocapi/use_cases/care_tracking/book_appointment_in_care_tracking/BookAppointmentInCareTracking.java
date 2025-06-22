@@ -7,6 +7,7 @@ import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingNotFoundException;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.care_tracking.ClosedCareTrackingException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
@@ -64,7 +65,7 @@ public class BookAppointmentInCareTracking implements IBookAppointmentInCareTrac
             CareTracking careTracking = retrieveAndValidateCareTracking(request.careTrackingId());
             Patient patient = retrieveAndValidatePatient(request.patientId(), doctor);
 
-            MedicalConcern medicalConcern = retrieveAndValidateMedicalConcern(request.medicalConcernId(), doctor);
+            MedicalConcern medicalConcern = this.medicalConcernRepository.getMedicalConcernById(request.medicalConcernId(), doctor);
             Slot slot = this.slotRepository.findOneByMedicalConcernAndDate(medicalConcern.getId(), request.start());
 
             List<PreAppointmentAnswers> answers = extractPreAppointmentAnswers(request.answers(), medicalConcern);
@@ -76,9 +77,6 @@ public class BookAppointmentInCareTracking implements IBookAppointmentInCareTrac
             return new BookedAppointmentResponse(savedAppointment);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -86,7 +84,7 @@ public class BookAppointmentInCareTracking implements IBookAppointmentInCareTrac
         CareTracking careTracking = this.careTrackingRepository.getById(careTrackingId);
 
         if (careTracking.getClosedAt() != null) {
-            throw new CareTrackingNotFoundException();
+            throw new ClosedCareTrackingException();
         }
 
         return careTracking;
@@ -97,14 +95,6 @@ public class BookAppointmentInCareTracking implements IBookAppointmentInCareTrac
             throw new PatientNotFoundException();
         }
         return this.patientRepository.getById(patientId);
-    }
-
-    private MedicalConcern retrieveAndValidateMedicalConcern(UUID medicalConcernId, Doctor doctor) {
-        List<MedicalConcern> medicalConcerns = this.medicalConcernRepository.getMedicalConcerns(doctor);
-        return medicalConcerns.stream()
-                .filter(concern -> concern.getId().equals(medicalConcernId))
-                .findFirst()
-                .orElseThrow(MedicalConcernNotFoundException::new);
     }
 
     private List<PreAppointmentAnswers> extractPreAppointmentAnswers(List<PreAppointmentAnswerRequest> responses, MedicalConcern medicalConcern) {

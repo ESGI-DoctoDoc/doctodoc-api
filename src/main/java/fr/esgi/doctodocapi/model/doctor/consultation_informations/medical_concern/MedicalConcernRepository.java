@@ -64,4 +64,6 @@ public interface MedicalConcernRepository {
      * @return the saved or updated {@link MedicalConcern}
      */
     MedicalConcern save(MedicalConcern medicalConcern);
+
+    MedicalConcern getMedicalConcernById(UUID id, Doctor doctor);
 }
