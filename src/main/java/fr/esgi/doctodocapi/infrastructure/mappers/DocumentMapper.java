@@ -25,6 +25,7 @@ public class DocumentMapper {
 
     public DocumentEntity toEntity(Document document, MedicalRecordEntity medicalRecordEntity) {
         DocumentEntity entity = new DocumentEntity();
+        entity.setId(document.getId());
         entity.setName(document.getName());
         entity.setType(document.getType().name());
         entity.setPath(document.getPath());

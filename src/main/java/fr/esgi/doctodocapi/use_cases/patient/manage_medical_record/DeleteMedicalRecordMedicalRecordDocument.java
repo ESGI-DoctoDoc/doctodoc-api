@@ -22,7 +22,6 @@ public class DeleteMedicalRecordMedicalRecordDocument implements IDeleteMedicalR
     public void process(UUID id) {
         try {
             Document document = this.documentRepository.getById(id);
-            document.delete();
 
             this.documentRepository.delete(document);
             this.fileStorageService.delete(document.getPath());

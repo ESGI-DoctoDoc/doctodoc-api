@@ -29,7 +29,6 @@ public class Document {
     }
 
     public static Document init(String name, String url, DocumentType type) {
-        // todo add trace
         return new Document(
                 UUID.randomUUID(),
                 name,
@@ -41,8 +40,23 @@ public class Document {
         );
     }
 
-    public void delete() {
+    public static Document copyOf(Document document) {
+        return new Document(
+                document.getId(),
+                document.getName(),
+                document.getPath(),
+                document.getType(),
+                document.getUploadedAt(),
+                document.traces,
+                document.permissions
+        );
+    }
+
+
+    public void update(String name, DocumentType type) {
         // todo add trace
+        this.setName(name);
+        this.setType(type);
     }
 
     // manage permission
@@ -130,5 +144,18 @@ public class Document {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
+    }
+
+    @Override
+    public String toString() {
+        return "Document{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                ", path='" + path + '\'' +
+                ", type=" + type +
+                ", uploadedAt=" + uploadedAt +
+                ", traces=" + traces +
+                ", permissions=" + permissions +
+                '}';
     }
 }

@@ -12,7 +12,7 @@ import java.util.UUID;
 @SQLRestriction("deleted_at IS NULL")
 public class DocumentEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.UUID)
+//    @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "document_id")
     private UUID id;
 
