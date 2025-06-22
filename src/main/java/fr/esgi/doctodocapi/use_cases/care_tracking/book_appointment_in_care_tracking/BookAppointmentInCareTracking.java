@@ -62,8 +62,8 @@ public class BookAppointmentInCareTracking implements IBookAppointmentInCareTrac
             User user = this.userRepository.findByEmail(username);
             Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            CareTracking careTracking = retrieveAndValidateCareTracking(request.careTrackingId());
             Patient patient = retrieveAndValidatePatient(request.patientId(), doctor);
+            CareTracking careTracking = retrieveAndValidateCareTracking(request.careTrackingId(), patient);
 
             MedicalConcern medicalConcern = this.medicalConcernRepository.getMedicalConcernById(request.medicalConcernId(), doctor);
             Slot slot = this.slotRepository.findOneByMedicalConcernAndDate(medicalConcern.getId(), request.start());
@@ -80,21 +80,21 @@ public class BookAppointmentInCareTracking implements IBookAppointmentInCareTrac
         }
     }
 
-    private CareTracking retrieveAndValidateCareTracking(UUID careTrackingId) {
-        CareTracking careTracking = this.careTrackingRepository.getById(careTrackingId);
+    private Patient retrieveAndValidatePatient(UUID patientId, Doctor doctor) {
+        if (!this.appointmentRepository.existsPatientByDoctorAndPatientId(doctor.getId(), patientId)) {
+            throw new PatientNotFoundException();
+        }
+        return this.patientRepository.getById(patientId);
+    }
+
+    private CareTracking retrieveAndValidateCareTracking(UUID careTrackingId, Patient patient) {
+        CareTracking careTracking = this.careTrackingRepository.getByIdAndPatientId(careTrackingId, patient);
 
         if (careTracking.getClosedAt() != null) {
             throw new ClosedCareTrackingException();
         }
 
         return careTracking;
-    }
-
-    private Patient retrieveAndValidatePatient(UUID patientId, Doctor doctor) {
-        if (!this.appointmentRepository.existsPatientByDoctorAndPatientId(doctor.getId(), patientId)) {
-            throw new PatientNotFoundException();
-        }
-        return this.patientRepository.getById(patientId);
     }
 
     private List<PreAppointmentAnswers> extractPreAppointmentAnswers(List<PreAppointmentAnswerRequest> responses, MedicalConcern medicalConcern) {

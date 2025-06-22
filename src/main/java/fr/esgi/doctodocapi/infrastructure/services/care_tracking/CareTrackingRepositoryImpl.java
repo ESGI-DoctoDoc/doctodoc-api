@@ -10,6 +10,7 @@ import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingMapper;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingNotFoundException;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.patient.Patient;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -64,5 +65,11 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
     public CareTracking getById(UUID id) throws CareTrackingNotFoundException {
         CareTrackingEntity careTrackingEntity = this.careTrackingJpaRepository.findById(id).orElseThrow(CareTrackingNotFoundException::new);
         return careTrackingFacadeMapper.mapCareTrackingToDomain(careTrackingEntity);
+    }
+
+    @Override
+    public CareTracking getByIdAndPatientId(UUID careTrackingId, Patient patient) throws CareTrackingNotFoundException {
+        CareTrackingEntity entity = this.careTrackingJpaRepository.findByIdAndPatient_Id(careTrackingId, patient.getId()).orElseThrow(CareTrackingNotFoundException::new);
+        return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);
     }
 }
