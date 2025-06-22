@@ -2,9 +2,9 @@ package fr.esgi.doctodocapi.presentation.patient.manage_medical_record;
 
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentDetailResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentResponse;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetAllDocuments;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetDocumentDetail;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetAllMedicalRecordDocuments;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetDocumentMedicalRecordContent;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetMedicalRecordDocumentDetail;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -16,11 +16,11 @@ import java.util.UUID;
 @RestController
 @RequestMapping("/patients/medical-record")
 public class GetDocumentController {
-    private final IGetAllDocuments getAllDocuments;
+    private final IGetAllMedicalRecordDocuments getAllDocuments;
     private final IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent;
-    private final IGetDocumentDetail getDocumentDetail;
+    private final IGetMedicalRecordDocumentDetail getDocumentDetail;
 
-    public GetDocumentController(IGetAllDocuments getAllDocuments, IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent, IGetDocumentDetail getDocumentDetail) {
+    public GetDocumentController(IGetAllMedicalRecordDocuments getAllDocuments, IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent, IGetMedicalRecordDocumentDetail getDocumentDetail) {
         this.getAllDocuments = getAllDocuments;
         this.getDocumentMedicalRecordContent = getDocumentMedicalRecordContent;
         this.getDocumentDetail = getDocumentDetail;

@@ -4,6 +4,6 @@ import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentResponse;
 
 import java.util.List;
 
-public interface IGetAllDocuments {
+public interface IGetAllMedicalRecordDocuments {
     List<GetDocumentResponse> process();
 }

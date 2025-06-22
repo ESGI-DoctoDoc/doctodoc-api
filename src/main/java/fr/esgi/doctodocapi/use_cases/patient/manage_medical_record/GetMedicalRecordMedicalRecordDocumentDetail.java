@@ -4,28 +4,29 @@ import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IDeleteDocument;
-import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentDetailResponse;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetMedicalRecordDocumentDetail;
 import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
-public class DeleteDocument implements IDeleteDocument {
+public class GetMedicalRecordMedicalRecordDocumentDetail implements IGetMedicalRecordDocumentDetail {
     private final DocumentRepository documentRepository;
-    private final FileStorageService fileStorageService;
 
-    public DeleteDocument(DocumentRepository documentRepository, FileStorageService fileStorageService) {
+    public GetMedicalRecordMedicalRecordDocumentDetail(DocumentRepository documentRepository) {
         this.documentRepository = documentRepository;
-        this.fileStorageService = fileStorageService;
     }
 
-    public void process(UUID id) {
+    public GetDocumentDetailResponse process(UUID id) {
         try {
             Document document = this.documentRepository.getById(id);
-            document.delete();
-
-            this.documentRepository.delete(document);
-            this.fileStorageService.delete(document.getPath());
+            return new GetDocumentDetailResponse(
+                    id,
+                    document.getType().getValue(),
+                    document.getName(),
+                    document.getPath(),
+                    document.getUploadedAt()
+            );
 
         } catch (DocumentNotFoundException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());

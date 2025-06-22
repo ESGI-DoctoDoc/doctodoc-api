@@ -15,13 +15,13 @@ import org.springframework.context.annotation.Configuration;
 public class ManageMedicalRecordConfiguration {
 
     @Bean
-    public IGetAllDocuments getAllDocuments(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, MedicalRecordRepository medicalRecordRepository, DocumentResponseMapper documentResponseMapper) {
-        return new GetAllDocuments(medicalRecordRepository, getCurrentUserContext, userRepository, patientRepository, documentResponseMapper);
+    public IGetAllMedicalRecordDocuments getAllMedicalRecordDocuments(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, MedicalRecordRepository medicalRecordRepository, DocumentResponseMapper documentResponseMapper) {
+        return new GetAllMedicalRecordMedicalRecordDocuments(medicalRecordRepository, getCurrentUserContext, userRepository, patientRepository, documentResponseMapper);
     }
 
     @Bean
-    public IUploadDocument uploadDocument(FileStorageService fileStorageService, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, MedicalRecordRepository medicalRecordRepository) {
-        return new UploadDocument(fileStorageService, getCurrentUserContext, userRepository, patientRepository, medicalRecordRepository);
+    public IUploadMedicalRecordDocument uploadMedicalRecordDocument(FileStorageService fileStorageService, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, MedicalRecordRepository medicalRecordRepository) {
+        return new UploadMedicalRecordMedicalRecordDocument(fileStorageService, getCurrentUserContext, userRepository, patientRepository, medicalRecordRepository);
     }
 
     @Bean
@@ -30,12 +30,12 @@ public class ManageMedicalRecordConfiguration {
     }
 
     @Bean
-    public IGetDocumentDetail getDocumentDetail(DocumentRepository documentRepository) {
-        return new GetDocumentDetail(documentRepository);
+    public IGetMedicalRecordDocumentDetail getMedicalRecordDocumentDetail(DocumentRepository documentRepository) {
+        return new GetMedicalRecordMedicalRecordDocumentDetail(documentRepository);
     }
 
     @Bean
-    public IDeleteDocument deleteDocument(FileStorageService fileStorageService, DocumentRepository documentRepository) {
-        return new DeleteDocument(documentRepository, fileStorageService);
+    public IDeleteMedicalRecordDocument deleteMedicalRecordDocument(FileStorageService fileStorageService, DocumentRepository documentRepository) {
+        return new DeleteMedicalRecordMedicalRecordDocument(documentRepository, fileStorageService);
     }
 }

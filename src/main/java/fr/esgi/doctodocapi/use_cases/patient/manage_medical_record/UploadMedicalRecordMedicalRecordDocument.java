@@ -14,7 +14,7 @@ import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.SaveDocumentRequest;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetUrlUploadResponse;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IUploadDocument;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IUploadMedicalRecordDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
@@ -26,14 +26,14 @@ import java.util.UUID;
 import static fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.MedicalRecordFolders.FOLDER_MEDICAL_FILE;
 import static fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.MedicalRecordFolders.FOLDER_ROOT;
 
-public class UploadDocument implements IUploadDocument {
+public class UploadMedicalRecordMedicalRecordDocument implements IUploadMedicalRecordDocument {
     private final FileStorageService uploadFile;
     private final GetCurrentUserContext getCurrentUserContext;
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
     private final MedicalRecordRepository medicalRecordRepository;
 
-    public UploadDocument(FileStorageService uploadFile, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, MedicalRecordRepository medicalRecordRepository) {
+    public UploadMedicalRecordMedicalRecordDocument(FileStorageService uploadFile, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, MedicalRecordRepository medicalRecordRepository) {
         this.uploadFile = uploadFile;
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;

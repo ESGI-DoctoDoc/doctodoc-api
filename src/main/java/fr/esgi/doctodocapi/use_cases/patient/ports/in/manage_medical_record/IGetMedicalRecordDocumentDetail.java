@@ -4,6 +4,6 @@ import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentDetailRes
 
 import java.util.UUID;
 
-public interface IGetDocumentDetail {
+public interface IGetMedicalRecordDocumentDetail {
     GetDocumentDetailResponse process(UUID id);
 }

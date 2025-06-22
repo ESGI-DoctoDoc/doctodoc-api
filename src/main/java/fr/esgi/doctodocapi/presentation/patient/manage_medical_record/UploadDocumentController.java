@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.presentation.patient.manage_medical_record;
 
 import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.SaveDocumentRequest;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetUrlUploadResponse;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IUploadDocument;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IUploadMedicalRecordDocument;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -10,9 +10,9 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequestMapping("/patients/medical-record")
 public class UploadDocumentController {
-    private final IUploadDocument uploadDocument;
+    private final IUploadMedicalRecordDocument uploadDocument;
 
-    public UploadDocumentController(IUploadDocument uploadDocument) {
+    public UploadDocumentController(IUploadMedicalRecordDocument uploadDocument) {
         this.uploadDocument = uploadDocument;
     }
 
