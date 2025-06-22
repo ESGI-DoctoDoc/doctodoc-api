@@ -16,7 +16,7 @@ public class ManageMedicalRecordConfiguration {
 
     @Bean
     public IGetAllMedicalRecordDocuments getAllMedicalRecordDocuments(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, MedicalRecordRepository medicalRecordRepository, DocumentResponseMapper documentResponseMapper) {
-        return new GetAllMedicalRecordMedicalRecordDocuments(medicalRecordRepository, getCurrentUserContext, userRepository, patientRepository, documentResponseMapper);
+        return new GetAllMedicalRecordDocuments(medicalRecordRepository, getCurrentUserContext, userRepository, patientRepository, documentResponseMapper);
     }
 
     @Bean

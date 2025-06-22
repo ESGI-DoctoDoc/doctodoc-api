@@ -11,6 +11,9 @@ import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordNotFoundException;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -35,6 +38,13 @@ public class MedicalRecordRepositoryImpl implements MedicalRecordRepository {
         MedicalRecordEntity medicalRecord = this.medicalRecordJpaRepository.findByPatientId(patientId).orElseThrow(MedicalRecordNotFoundException::new);
         List<Document> documents = medicalRecord.getDocuments().stream().map(documentMapper::toDomain).toList();
         return this.medicalRecordMapper.toDomain(medicalRecord, documents);
+    }
+
+    @Override
+    public List<Document> getDocumentsByPatientId(UUID patientId, int page, int size) throws MedicalConcernNotFoundException {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<DocumentEntity> documents = this.documentJpaRepository.getAllByMedicalRecord_PatientIdOrderByUploadedAtDesc(patientId, pageable);
+        return documents.getContent().stream().map(documentMapper::toDomain).toList();
     }
 
     @Override

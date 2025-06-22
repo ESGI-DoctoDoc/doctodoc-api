@@ -8,7 +8,17 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public record MedicalRecord(UUID id, UUID patientId, List<Document> documents) {
+public final class MedicalRecord {
+    private final UUID id;
+    private final UUID patientId;
+    private final List<Document> documents;
+
+    public MedicalRecord(UUID id, UUID patientId) {
+        this.id = id;
+        this.patientId = patientId;
+        this.documents = null;
+    }
+
     public MedicalRecord(UUID id, UUID patientId, List<Document> documents) {
         this.id = id;
         this.patientId = patientId;
@@ -56,7 +66,6 @@ public record MedicalRecord(UUID id, UUID patientId, List<Document> documents) {
         this.documents.remove(document);
     }
 
-    @Override
     public List<Document> documents() {
         return List.copyOf(documents);
     }
@@ -81,4 +90,13 @@ public record MedicalRecord(UUID id, UUID patientId, List<Document> documents) {
                 ", documents=" + documents +
                 '}';
     }
+
+    public UUID id() {
+        return id;
+    }
+
+    public UUID patientId() {
+        return patientId;
+    }
+
 }

@@ -1,10 +1,10 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_medical_record;
 
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
+import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
@@ -18,14 +18,14 @@ import org.springframework.http.HttpStatus;
 import java.util.List;
 import java.util.Optional;
 
-public class GetAllMedicalRecordMedicalRecordDocuments implements IGetAllMedicalRecordDocuments {
+public class GetAllMedicalRecordDocuments implements IGetAllMedicalRecordDocuments {
     private final MedicalRecordRepository medicalRecordRepository;
     private final GetCurrentUserContext getCurrentUserContext;
     private final UserRepository userRepository;
     private final PatientRepository patientRepository;
     private final DocumentResponseMapper documentResponseMapper;
 
-    public GetAllMedicalRecordMedicalRecordDocuments(MedicalRecordRepository medicalRecordRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, DocumentResponseMapper documentResponseMapper) {
+    public GetAllMedicalRecordDocuments(MedicalRecordRepository medicalRecordRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, DocumentResponseMapper documentResponseMapper) {
         this.medicalRecordRepository = medicalRecordRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
@@ -33,7 +33,7 @@ public class GetAllMedicalRecordMedicalRecordDocuments implements IGetAllMedical
         this.documentResponseMapper = documentResponseMapper;
     }
 
-    public final List<GetDocumentResponse> process() {
+    public final List<GetDocumentResponse> process(int page, int size) {
         String username = this.getCurrentUserContext.getUsername();
 
         try {
@@ -42,8 +42,8 @@ public class GetAllMedicalRecordMedicalRecordDocuments implements IGetAllMedical
             Optional<Patient> patient = this.patientRepository.getByUserId(user.getId());
             if (patient.isEmpty()) throw new PatientNotFoundException();
 
-            MedicalRecord medicalRecord = this.medicalRecordRepository.getByPatientId(patient.get().getId());
-            return medicalRecord.documents().stream().map(this.documentResponseMapper::toDto).toList();
+            List<Document> documents = this.medicalRecordRepository.getDocumentsByPatientId(patient.get().getId(), page, size);
+            return documents.stream().map(this.documentResponseMapper::toDto).toList();
 
         } catch (UserNotFoundException | PatientNotFoundException | MedicalConcernNotFoundException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());
