@@ -8,10 +8,10 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/patients/medical-record")
-public class DeleteDocumentController {
+public class DeleteMedicalRecordDocumentController {
     private final IDeleteMedicalRecordDocument deleteDocument;
 
-    public DeleteDocumentController(IDeleteMedicalRecordDocument deleteDocument) {
+    public DeleteMedicalRecordDocumentController(IDeleteMedicalRecordDocument deleteDocument) {
         this.deleteDocument = deleteDocument;
     }
 

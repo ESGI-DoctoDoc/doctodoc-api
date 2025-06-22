@@ -15,12 +15,12 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/patients/medical-record")
-public class GetDocumentController {
+public class GetMedicalRecordDocumentController {
     private final IGetAllMedicalRecordDocuments getAllDocuments;
     private final IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent;
     private final IGetMedicalRecordDocumentDetail getDocumentDetail;
 
-    public GetDocumentController(IGetAllMedicalRecordDocuments getAllDocuments, IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent, IGetMedicalRecordDocumentDetail getDocumentDetail) {
+    public GetMedicalRecordDocumentController(IGetAllMedicalRecordDocuments getAllDocuments, IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent, IGetMedicalRecordDocumentDetail getDocumentDetail) {
         this.getAllDocuments = getAllDocuments;
         this.getDocumentMedicalRecordContent = getDocumentMedicalRecordContent;
         this.getDocumentDetail = getDocumentDetail;

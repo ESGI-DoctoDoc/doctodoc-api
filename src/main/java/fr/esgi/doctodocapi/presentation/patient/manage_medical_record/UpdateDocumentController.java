@@ -9,10 +9,10 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/patients/medical-record")
-public class UploadDocumentController {
+public class UpdateDocumentController {
     private final IUploadMedicalRecordDocument uploadDocument;
 
-    public UploadDocumentController(IUploadMedicalRecordDocument uploadDocument) {
+    public UpdateDocumentController(IUploadMedicalRecordDocument uploadDocument) {
         this.uploadDocument = uploadDocument;
     }
 
