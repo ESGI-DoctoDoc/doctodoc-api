@@ -11,7 +11,7 @@ import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetAllMedicalRecordDocuments;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;

@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.patient.dtos.responses;
+package fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document;
 
 import java.time.LocalDateTime;
 import java.util.UUID;
@@ -8,7 +8,7 @@ public record GetDocumentDetailResponse(
         String type,
         String name,
         String url,
-        LocalDateTime uploadedAt
-//        LocalDateTime uploadedBy,
+        LocalDateTime uploadedAt,
+        GetUploadedByUser uploadedByUser
 ) {
 }

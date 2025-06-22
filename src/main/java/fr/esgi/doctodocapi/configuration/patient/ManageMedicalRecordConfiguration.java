@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.configuration.patient;
 
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
@@ -21,17 +22,17 @@ public class ManageMedicalRecordConfiguration {
 
     @Bean
     public IUploadMedicalRecordDocument uploadMedicalRecordDocument(FileStorageService fileStorageService, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, MedicalRecordRepository medicalRecordRepository, DocumentRepository documentRepository) {
-        return new UploadMedicalRecordMedicalRecordDocument(fileStorageService, getCurrentUserContext, userRepository, patientRepository, medicalRecordRepository, documentRepository);
+        return new UploadMedicalRecordDocument(fileStorageService, getCurrentUserContext, userRepository, patientRepository, medicalRecordRepository, documentRepository);
     }
 
     @Bean
     public IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent(FileStorageService fileStorageService, DocumentRepository documentRepository) {
-        return new GetDocumentMedicalRecordContentMedicalRecordContent(documentRepository, fileStorageService);
+        return new GetDocumentMedicalRecordContent(documentRepository, fileStorageService);
     }
 
     @Bean
-    public IGetMedicalRecordDocumentDetail getMedicalRecordDocumentDetail(DocumentRepository documentRepository) {
-        return new GetMedicalRecordMedicalRecordDocumentDetail(documentRepository);
+    public IGetMedicalRecordDocumentDetail getMedicalRecordDocumentDetail(DocumentRepository documentRepository, PatientRepository patientRepository, DoctorRepository doctorRepository) {
+        return new GetMedicalRecordDocumentDetail(documentRepository, patientRepository, doctorRepository);
     }
 
     @Bean
@@ -41,6 +42,6 @@ public class ManageMedicalRecordConfiguration {
 
     @Bean
     public IDeleteMedicalRecordDocument deleteMedicalRecordDocument(FileStorageService fileStorageService, DocumentRepository documentRepository) {
-        return new DeleteMedicalRecordMedicalRecordDocument(documentRepository, fileStorageService);
+        return new DeleteMedicalRecordDocument(documentRepository, fileStorageService);
     }
 }

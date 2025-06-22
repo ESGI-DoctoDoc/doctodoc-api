@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.presentation.patient.manage_medical_record;
 
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentDetailResponse;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentDetailResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetAllMedicalRecordDocuments;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetDocumentMedicalRecordContent;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetMedicalRecordDocumentDetail;

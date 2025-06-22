@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_medical_record;
 
 import fr.esgi.doctodocapi.model.document.Document;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentResponse;
 import org.springframework.stereotype.Service;
 
 @Service

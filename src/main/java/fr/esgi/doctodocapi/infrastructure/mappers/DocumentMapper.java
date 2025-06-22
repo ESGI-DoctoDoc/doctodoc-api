@@ -17,6 +17,7 @@ public class DocumentMapper {
                 entity.getName(),
                 entity.getPath(),
                 DocumentType.valueOf(entity.getType()),
+                entity.getUploadedBy(),
                 entity.getUploadedAt(),
                 List.of(),
                 List.of()
@@ -30,6 +31,7 @@ public class DocumentMapper {
         entity.setType(document.getType().name());
         entity.setPath(document.getPath());
         entity.setMedicalRecord(medicalRecordEntity);
+        entity.setUploadedBy(document.getUploadedBy());
         entity.setUploadedAt(document.getUploadedAt());
         return entity;
     }

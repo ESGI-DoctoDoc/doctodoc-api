@@ -14,26 +14,29 @@ public class Document {
     private String name;
     private String path;
     private DocumentType type;
+    private UUID uploadedBy;
     private LocalDateTime uploadedAt;
     private List<DocumentTrace> traces;
     private List<Permission> permissions;
 
-    public Document(UUID id, String name, String path, DocumentType type, LocalDateTime uploadedAt, List<DocumentTrace> traces, List<Permission> permissions) {
+    public Document(UUID id, String name, String path, DocumentType type, UUID uploadedBy, LocalDateTime uploadedAt, List<DocumentTrace> traces, List<Permission> permissions) {
         this.id = id;
         this.name = name;
         this.path = path;
         this.type = type;
+        this.uploadedBy = uploadedBy;
         this.uploadedAt = uploadedAt;
         this.traces = traces;
         this.permissions = permissions;
     }
 
-    public static Document init(String name, String url, DocumentType type) {
+    public static Document init(String name, String url, DocumentType type, UUID uploadedBy) {
         return new Document(
                 UUID.randomUUID(),
                 name,
                 url,
                 type,
+                uploadedBy,
                 LocalDateTime.now(),
                 List.of(),
                 List.of()
@@ -46,6 +49,7 @@ public class Document {
                 document.getName(),
                 document.getPath(),
                 document.getType(),
+                document.getUploadedBy(),
                 document.getUploadedAt(),
                 document.traces,
                 document.permissions
@@ -132,6 +136,14 @@ public class Document {
 
     public void setUploadedAt(LocalDateTime uploadedAt) {
         this.uploadedAt = uploadedAt;
+    }
+
+    public UUID getUploadedBy() {
+        return uploadedBy;
+    }
+
+    public void setUploadedBy(UUID uploadedBy) {
+        this.uploadedBy = uploadedBy;
     }
 
     @Override

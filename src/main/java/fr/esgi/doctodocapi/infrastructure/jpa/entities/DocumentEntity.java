@@ -24,6 +24,9 @@ public class DocumentEntity {
     @Column(name = "type", nullable = false)
     private String type;
 
+    @Column(name = "uploaded_by", nullable = false)
+    private UUID uploadedBy;
+
     @ManyToOne
     @JoinColumn(name = "medical_record_id")
     private MedicalRecordEntity medicalRecord;
@@ -84,6 +87,14 @@ public class DocumentEntity {
 
     public void setUploadedAt(LocalDateTime uploadedAt) {
         this.uploadedAt = uploadedAt;
+    }
+
+    public UUID getUploadedBy() {
+        return uploadedBy;
+    }
+
+    public void setUploadedBy(UUID uploadedBy) {
+        this.uploadedBy = uploadedBy;
     }
 
     @Override

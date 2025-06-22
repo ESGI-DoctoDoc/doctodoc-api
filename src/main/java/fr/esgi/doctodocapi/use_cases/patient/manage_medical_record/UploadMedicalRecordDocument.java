@@ -16,7 +16,7 @@ import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.SaveDocumentRequest;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.CreateMedicalRecordDocumentResponse;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetUrlUploadResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetUrlUploadResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IUploadMedicalRecordDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
@@ -28,7 +28,7 @@ import java.util.UUID;
 import static fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.MedicalRecordFolders.FOLDER_MEDICAL_FILE;
 import static fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.MedicalRecordFolders.FOLDER_ROOT;
 
-public class UploadMedicalRecordMedicalRecordDocument implements IUploadMedicalRecordDocument {
+public class UploadMedicalRecordDocument implements IUploadMedicalRecordDocument {
     private final FileStorageService uploadFile;
     private final GetCurrentUserContext getCurrentUserContext;
     private final UserRepository userRepository;
@@ -36,7 +36,7 @@ public class UploadMedicalRecordMedicalRecordDocument implements IUploadMedicalR
     private final MedicalRecordRepository medicalRecordRepository;
     private final DocumentRepository documentRepository;
 
-    public UploadMedicalRecordMedicalRecordDocument(FileStorageService uploadFile, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, MedicalRecordRepository medicalRecordRepository, DocumentRepository documentRepository) {
+    public UploadMedicalRecordDocument(FileStorageService uploadFile, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, MedicalRecordRepository medicalRecordRepository, DocumentRepository documentRepository) {
         this.uploadFile = uploadFile;
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
@@ -61,7 +61,7 @@ public class UploadMedicalRecordMedicalRecordDocument implements IUploadMedicalR
             DocumentType type = DocumentType.fromValue(saveDocumentRequest.type());
             String prefixPath = FOLDER_ROOT + patientId + FOLDER_MEDICAL_FILE;
 
-            Document document = Document.init(saveDocumentRequest.filename(), prefixPath, type);
+            Document document = Document.init(saveDocumentRequest.filename(), prefixPath, type, user.getId());
             document.setPath(prefixPath + document.getId());
 
             medicalRecord.addDocument(document);
