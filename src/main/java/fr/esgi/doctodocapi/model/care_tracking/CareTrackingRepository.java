@@ -7,4 +7,5 @@ import java.util.UUID;
 public interface CareTrackingRepository {
     UUID save(CareTracking careTracking);
     List<CareTracking> findAll(UUID doctorId, int page, int size);
+    CareTracking getById(UUID id) throws CareTrackingNotFoundException;
 }

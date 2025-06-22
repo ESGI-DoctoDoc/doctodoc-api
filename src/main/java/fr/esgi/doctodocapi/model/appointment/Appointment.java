@@ -29,8 +29,9 @@ public class Appointment {
     private AppointmentStatus status;
     private List<PreAppointmentAnswers> preAppointmentAnswers;
     private String doctorNotes;
+    private UUID careTrackingId;
 
-    public Appointment(UUID id, Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt, String doctorNotes) {
+    public Appointment(UUID id, Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt, String doctorNotes, UUID careTrackingId) {
         this.id = id;
         this.slot = slot;
         this.patient = patient;
@@ -43,6 +44,7 @@ public class Appointment {
         this.status = status;
         this.preAppointmentAnswers = answers;
         this.doctorNotes = doctorNotes;
+        this.careTrackingId = careTrackingId;
     }
 
     public Appointment(UUID id, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt) {
@@ -82,11 +84,12 @@ public class Appointment {
                 AppointmentStatus.LOCKED,
                 answers,
                 LocalDateTime.now(),
+                null,
                 null
         );
     }
 
-    public static Appointment initFromDoctor(Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, List<PreAppointmentAnswers> answers, String doctorNotes) {
+    public static Appointment initFromDoctor(Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, List<PreAppointmentAnswers> answers, String doctorNotes, UUID careTrackingId) {
         HoursRange appointmentHoursRange = HoursRange.of(startHour, startHour.plusMinutes(medicalConcern.getDurationInMinutes().getValue()));
         verifyIfConflicts(slot, appointmentHoursRange);
 
@@ -102,7 +105,8 @@ public class Appointment {
                 AppointmentStatus.CONFIRMED,
                 answers,
                 null,
-                doctorNotes
+                doctorNotes,
+                careTrackingId
         );
     }
 
@@ -240,6 +244,14 @@ public class Appointment {
 
     public void setDoctorNotes(String doctorNotes) {
         this.doctorNotes = doctorNotes;
+    }
+
+    public UUID getCareTrackingId() {
+        return careTrackingId;
+    }
+
+    public void setCareTrackingId(UUID careTrackingId) {
+        this.careTrackingId = careTrackingId;
     }
 
     @Override

@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.care_tracking.dtos.requests;
+package fr.esgi.doctodocapi.use_cases.care_tracking.dtos.requests.doctor_managing_care_tracking;
 
 import jakarta.validation.constraints.*;
 

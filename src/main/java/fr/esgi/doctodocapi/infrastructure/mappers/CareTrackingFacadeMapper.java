@@ -9,37 +9,29 @@ import fr.esgi.doctodocapi.model.patient.Patient;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.ArrayList;
+import java.util.stream.Collectors;
 
 @Service
 public class CareTrackingFacadeMapper {
     private final CareTrackingMapper careTrackingMapper;
-    private final DoctorFacadeMapper doctorFacadeMapper;
     private final PatientMapper patientMapper;
     private final CareTrackingTraceMapper careTrackingTraceMapper;
-    private final AppointmentFacadeMapper appointmentFacadeMapper;
 
-    public CareTrackingFacadeMapper(CareTrackingMapper careTrackingMapper, DoctorFacadeMapper doctorFacadeMapper, PatientMapper patientMapper, CareTrackingTraceMapper careTrackingTraceMapper, AppointmentFacadeMapper appointmentFacadeMapper) {
+    public CareTrackingFacadeMapper(CareTrackingMapper careTrackingMapper, PatientMapper patientMapper, CareTrackingTraceMapper careTrackingTraceMapper) {
         this.careTrackingMapper = careTrackingMapper;
-        this.doctorFacadeMapper = doctorFacadeMapper;
         this.patientMapper = patientMapper;
         this.careTrackingTraceMapper = careTrackingTraceMapper;
-        this.appointmentFacadeMapper = appointmentFacadeMapper;
     }
 
     public CareTracking mapCareTrackingToDomain(CareTrackingEntity entity) {
-        Doctor doctor = this.doctorFacadeMapper.mapDoctorToDomain(entity.getCreator());
         Patient patient = this.patientMapper.toDomain(entity.getPatient());
-
-        List<Appointment> appointments = entity.getAppointments()
-                .stream()
-                .map(appointmentFacadeMapper::mapAppointmentToDomain)
-                .toList();
 
         List<CareTrackingTrace> traces = entity.getCareTrackingTraces()
                 .stream()
-                .map(traceEntity -> careTrackingTraceMapper.toDomain(traceEntity, doctorFacadeMapper.mapDoctorToDomain(traceEntity.getConsultedBy())))
-                .toList();
+                .map(careTrackingTraceMapper::toDomain)
+                .collect(Collectors.toCollection(ArrayList::new));
 
-        return this.careTrackingMapper.toDomain(entity, doctor, patient, appointments, traces);
+        return this.careTrackingMapper.toDomain(entity, patient, traces);
     }
 }

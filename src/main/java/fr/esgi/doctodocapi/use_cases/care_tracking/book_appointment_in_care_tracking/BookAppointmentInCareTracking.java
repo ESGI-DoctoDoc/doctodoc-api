@@ -1,9 +1,12 @@
-package fr.esgi.doctodocapi.use_cases.doctor.manage_appointment;
+package fr.esgi.doctodocapi.use_cases.care_tracking.book_appointment_in_care_tracking;
 
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
+import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.care_tracking.CareTrackingNotFoundException;
+import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
@@ -18,10 +21,10 @@ import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_appointment.SaveDoctorAnswersForAnAppointmentRequest;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_appointment.SaveDoctorAppointmentRequest;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.SaveDoctorAppointmentResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.ISaveDoctorAppointment;
+import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.requests.book_appointment_in_care_tracking.BookAppointmentRequest;
+import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.requests.book_appointment_in_care_tracking.PreAppointmentAnswerRequest;
+import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.responses.book_appointment_in_care_tracking.BookedAppointmentResponse;
+import fr.esgi.doctodocapi.use_cases.care_tracking.ports.in.book_appointment_in_care_tracking.IBookAppointmentInCareTracking;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
@@ -30,45 +33,63 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
-public class SaveDoctorAppointment implements ISaveDoctorAppointment {
-    private final DoctorRepository doctorRepository;
+public class BookAppointmentInCareTracking implements IBookAppointmentInCareTracking {
+    private final CareTrackingRepository careTrackingRepository;
     private final AppointmentRepository appointmentRepository;
+    private final SlotRepository slotRepository;
     private final MedicalConcernRepository medicalConcernRepository;
     private final PatientRepository patientRepository;
-    private final GetCurrentUserContext currentUserContext;
+    private final GetCurrentUserContext getCurrentUserContext;
     private final UserRepository userRepository;
-    private final SlotRepository slotRepository;
+    private final DoctorRepository doctorRepository;
 
-    public SaveDoctorAppointment(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, MedicalConcernRepository medicalConcernRepository, PatientRepository patientRepository, GetCurrentUserContext currentUserContext, UserRepository userRepository, SlotRepository slotRepository) {
-        this.doctorRepository = doctorRepository;
+    public BookAppointmentInCareTracking(CareTrackingRepository careTrackingRepository, AppointmentRepository appointmentRepository, SlotRepository slotRepository, MedicalConcernRepository medicalConcernRepository, PatientRepository patientRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository) {
+        this.careTrackingRepository = careTrackingRepository;
         this.appointmentRepository = appointmentRepository;
+        this.slotRepository = slotRepository;
         this.medicalConcernRepository = medicalConcernRepository;
         this.patientRepository = patientRepository;
-        this.currentUserContext = currentUserContext;
+        this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
-        this.slotRepository = slotRepository;
+        this.doctorRepository = doctorRepository;
     }
 
-    public SaveDoctorAppointmentResponse execute(SaveDoctorAppointmentRequest request) {
+
+    public BookedAppointmentResponse execute(BookAppointmentRequest request) {
         try {
-            String username = this.currentUserContext.getUsername();
+            String username = this.getCurrentUserContext.getUsername();
             User user = this.userRepository.findByEmail(username);
             Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
+            CareTracking careTracking = retrieveAndValidateCareTracking(request.careTrackingId());
             Patient patient = retrieveAndValidatePatient(request.patientId(), doctor);
-            MedicalConcern medicalConcern = retrieveAndValidateMedicalConcern(request.medicalConcernId(), doctor);
 
-            List<PreAppointmentAnswers> answers = extractPreAppointmentAnswers(request.answers(), medicalConcern);
+            MedicalConcern medicalConcern = retrieveAndValidateMedicalConcern(request.medicalConcernId(), doctor);
             Slot slot = this.slotRepository.findOneByMedicalConcernAndDate(medicalConcern.getId(), request.start());
 
-            Appointment appointment = Appointment.initFromDoctor(slot, patient, doctor, medicalConcern, request.startHour(), answers, request.notes(), null);
+            List<PreAppointmentAnswers> answers = extractPreAppointmentAnswers(request.answers(), medicalConcern);
 
-            UUID savedAppointmentId = this.appointmentRepository.save(appointment);
+            Appointment appointment = Appointment.initFromDoctor(slot, patient, doctor, medicalConcern, request.startHour(), answers, request.notes(), careTracking.getId());
+            careTracking.addAppointment(appointment.getId());
 
-            return new SaveDoctorAppointmentResponse(savedAppointmentId);
+            UUID savedAppointment = this.appointmentRepository.save(appointment);
+            return new BookedAppointmentResponse(savedAppointment);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        } catch (Exception e) {
+            e.printStackTrace();
+            throw new RuntimeException(e.getMessage());
         }
+    }
+
+    private CareTracking retrieveAndValidateCareTracking(UUID careTrackingId) {
+        CareTracking careTracking = this.careTrackingRepository.getById(careTrackingId);
+
+        if (careTracking.getClosedAt() != null) {
+            throw new CareTrackingNotFoundException();
+        }
+
+        return careTracking;
     }
 
     private Patient retrieveAndValidatePatient(UUID patientId, Doctor doctor) {
@@ -86,24 +107,20 @@ public class SaveDoctorAppointment implements ISaveDoctorAppointment {
                 .orElseThrow(MedicalConcernNotFoundException::new);
     }
 
-    private List<PreAppointmentAnswers> extractPreAppointmentAnswers(List<SaveDoctorAnswersForAnAppointmentRequest> responses, MedicalConcern medicalConcern) {
+    private List<PreAppointmentAnswers> extractPreAppointmentAnswers(List<PreAppointmentAnswerRequest> responses, MedicalConcern medicalConcern) {
         List<PreAppointmentAnswers> answers = new ArrayList<>();
-
-        List<UUID> validQuestionIds = this.medicalConcernRepository.getDoctorQuestions(medicalConcern)
+        List<UUID> validQuestionIds = medicalConcernRepository.getDoctorQuestions(medicalConcern)
                 .stream()
                 .map(Question::getId)
                 .toList();
 
-        for (SaveDoctorAnswersForAnAppointmentRequest response : responses) {
+        for (PreAppointmentAnswerRequest response : responses) {
             Question question = this.medicalConcernRepository.getQuestionById(response.questionId());
-
             if (question == null || !validQuestionIds.contains(question.getId())) {
                 throw new QuestionNotFoundException();
             }
-
             answers.add(PreAppointmentAnswers.of(question, response.answer()));
         }
-
         return answers;
     }
 }

@@ -1,55 +1,51 @@
 package fr.esgi.doctodocapi.model.care_tracking;
 
-import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.care_tracking.care_tracking_trace.CareTrackingTrace;
-import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.patient.Patient;
 
-import java.time.LocalDate;
 import java.time.LocalDateTime;
-import java.util.Collections;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.util.*;
 
 public class CareTracking {
     private UUID id;
     private String caseName;
     private String description;
-    private Doctor creator;
+    private UUID creatorId;
     private Patient patient;
     private List<String> documents;
     private List<UUID> doctors;
-    private List<Appointment> appointments;
+    private List<UUID> appointmentsId;
     private List<CareTrackingTrace> careTrackingTraces;
     private LocalDateTime createdAt;
     private LocalDateTime closedAt;
 
-    public CareTracking(UUID id, String caseName, String description, Doctor creator, Patient patient, List<String> documents, List<UUID> doctors, List<Appointment> appointments, List<CareTrackingTrace> careTrackingTraces, LocalDateTime createdAt, LocalDateTime closedAt) {
+    public CareTracking(UUID id, String caseName, String description, UUID creatorId, Patient patient,
+                        List<String> documents, List<UUID> doctors, List<UUID> appointmentsId,
+                        List<CareTrackingTrace> careTrackingTraces, LocalDateTime createdAt, LocalDateTime closedAt) {
         this.id = id;
         this.caseName = caseName;
         this.description = description;
-        this.creator = creator;
+        this.creatorId = creatorId;
         this.patient = patient;
-        this.documents = documents;
-        this.doctors = doctors;
-        this.appointments = appointments;
-        this.careTrackingTraces = careTrackingTraces;
+        this.documents = new ArrayList<>(documents);
+        this.doctors = new ArrayList<>(doctors);
+        this.appointmentsId = new ArrayList<>(appointmentsId);
+        this.careTrackingTraces = new ArrayList<>(careTrackingTraces);
         this.createdAt = createdAt;
         this.closedAt = closedAt;
     }
 
-    public static CareTracking initialize(String caseName, String description, Doctor creator, Patient patient) {
+    public static CareTracking initialize(String caseName, String description, UUID creatorId, Patient patient) {
         return new CareTracking(
                 UUID.randomUUID(),
                 caseName,
                 description,
-                creator,
+                creatorId,
                 patient,
-                List.of(),
-                List.of(),
-                List.of(),
-                List.of(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
+                new ArrayList<>(),
                 LocalDateTime.now(),
                 null
         );
@@ -57,28 +53,28 @@ public class CareTracking {
 
     public void addDocument(String document) {
         if (documents.contains(document)) {
-            throw new IllegalStateException("document already exists in the care tracking: " + document);
+            throw new DocumentAlreadyExistInCareTrackingException();
         }
         documents.add(document);
     }
 
     public void addDoctor(UUID doctorId) {
         if (doctors.contains(doctorId)) {
-            throw new IllegalStateException("doctor already exists in the care tracking: " + doctorId);
+            throw new DoctorAlreadyExistInCareTrackingException();
         }
         doctors.add(doctorId);
     }
 
-    public void addAppointment(Appointment appointment) {
-        if (appointments.contains(appointment)) {
-            throw new IllegalStateException("appointment already exists in the care tracking: " + appointment);
+    public void addAppointment(UUID appointmentId) {
+        if (appointmentsId.contains(appointmentId)) {
+            throw new AppointmentAlreadyExistInCareTrackingException();
         }
-        appointments.add(appointment);
+        appointmentsId.add(appointmentId);
     }
 
     public void addTrace(CareTrackingTrace trace) {
         if (careTrackingTraces.contains(trace)) {
-            throw new IllegalStateException("trace already exists in the care tracking: " + trace);
+            throw new TraceAlreadyExistInCareTrackingException();
         }
         careTrackingTraces.add(trace);
     }
@@ -107,12 +103,12 @@ public class CareTracking {
         this.description = description;
     }
 
-    public Doctor getCreator() {
-        return creator;
+    public UUID getCreatorId() {
+        return creatorId;
     }
 
-    public void setCreator(Doctor creator) {
-        this.creator = creator;
+    public void setCreatorId(UUID creatorId) {
+        this.creatorId = creatorId;
     }
 
     public Patient getPatient() {
@@ -139,12 +135,12 @@ public class CareTracking {
         this.doctors = doctors;
     }
 
-    public List<Appointment> getAppointments() {
-        return Collections.unmodifiableList(appointments);
+    public List<UUID> getAppointmentsId() {
+        return Collections.unmodifiableList(appointmentsId);
     }
 
-    public void setAppointments(List<Appointment> appointments) {
-        this.appointments = appointments;
+    public void setAppointmentsId(List<UUID> appointmentsId) {
+        this.appointmentsId = appointmentsId;
     }
 
     public List<CareTrackingTrace> getCareTrackingTraces() {
