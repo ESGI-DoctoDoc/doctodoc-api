@@ -1,10 +1,10 @@
 package fr.esgi.doctodocapi.presentation.care_tracking;
 
-import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.requests.SaveCareTrackingRequest;
-import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.responses.GetCareTrackingsResponse;
-import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.responses.InitializeCareTrackingResponse;
-import fr.esgi.doctodocapi.use_cases.care_tracking.ports.in.IGetCareTrackings;
-import fr.esgi.doctodocapi.use_cases.care_tracking.ports.in.IInitializeCareTracking;
+import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.requests.doctor_managing_care_tracking.SaveCareTrackingRequest;
+import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.responses.doctor_managing_care_tracking.GetCareTrackingsResponse;
+import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.responses.doctor_managing_care_tracking.InitializeCareTrackingResponse;
+import fr.esgi.doctodocapi.use_cases.care_tracking.ports.in.doctor_managing_care_tracking.IGetCareTrackings;
+import fr.esgi.doctodocapi.use_cases.care_tracking.ports.in.doctor_managing_care_tracking.IInitializeCareTracking;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
