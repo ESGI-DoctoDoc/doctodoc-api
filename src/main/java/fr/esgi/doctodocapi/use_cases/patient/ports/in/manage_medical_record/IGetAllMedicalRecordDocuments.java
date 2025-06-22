@@ -5,5 +5,5 @@ import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentResponse;
 import java.util.List;
 
 public interface IGetAllMedicalRecordDocuments {
-    List<GetDocumentResponse> process(int page, int size);
+    List<GetDocumentResponse> process(String type, int page, int size);
 }

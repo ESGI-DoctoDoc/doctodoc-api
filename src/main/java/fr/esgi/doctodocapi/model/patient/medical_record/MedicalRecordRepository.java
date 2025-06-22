@@ -11,4 +11,6 @@ public interface MedicalRecordRepository {
     void save(MedicalRecord medicalRecord);
 
     List<Document> getDocumentsByPatientId(UUID patientId, int page, int size) throws MedicalConcernNotFoundException;
+
+    List<Document> getDocumentsByTypeAndPatientId(String type, UUID patientId, int page, int size) throws MedicalConcernNotFoundException;
 }

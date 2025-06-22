@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.use_cases.patient.manage_medical_record;
 
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.document.DocumentType;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
@@ -33,7 +34,7 @@ public class GetAllMedicalRecordDocuments implements IGetAllMedicalRecordDocumen
         this.documentResponseMapper = documentResponseMapper;
     }
 
-    public final List<GetDocumentResponse> process(int page, int size) {
+    public final List<GetDocumentResponse> process(String type, int page, int size) {
         String username = this.getCurrentUserContext.getUsername();
 
         try {
@@ -42,7 +43,14 @@ public class GetAllMedicalRecordDocuments implements IGetAllMedicalRecordDocumen
             Optional<Patient> patient = this.patientRepository.getByUserId(user.getId());
             if (patient.isEmpty()) throw new PatientNotFoundException();
 
-            List<Document> documents = this.medicalRecordRepository.getDocumentsByPatientId(patient.get().getId(), page, size);
+            List<Document> documents;
+
+            if (type != null) {
+                DocumentType documentType = DocumentType.fromValue(type);
+                documents = this.medicalRecordRepository.getDocumentsByTypeAndPatientId(documentType.name(), patient.get().getId(), page, size);
+            } else {
+                documents = this.medicalRecordRepository.getDocumentsByPatientId(patient.get().getId(), page, size);
+            }
             return documents.stream().map(this.documentResponseMapper::toDto).toList();
 
         } catch (UserNotFoundException | PatientNotFoundException | MedicalConcernNotFoundException e) {

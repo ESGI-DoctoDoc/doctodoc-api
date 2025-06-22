@@ -24,8 +24,8 @@ public class GetMedicalRecordDocumentController {
     }
 
     @GetMapping("/documents")
-    public List<GetDocumentResponse> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
-        return this.getAllDocuments.process(page, size);
+    public List<GetDocumentResponse> getAll(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) String type) {
+        return this.getAllDocuments.process(type, page, size);
     }
 
     @GetMapping("/documents/{id}")
