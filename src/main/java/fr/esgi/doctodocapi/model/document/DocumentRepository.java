@@ -5,5 +5,5 @@ import java.util.UUID;
 public interface DocumentRepository {
     Document getById(UUID id) throws DocumentNotFoundException;
 
-    void delete(UUID id);
+    void delete(Document document);
 }

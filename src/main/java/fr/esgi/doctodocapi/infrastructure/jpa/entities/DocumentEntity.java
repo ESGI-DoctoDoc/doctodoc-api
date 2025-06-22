@@ -29,7 +29,10 @@ public class DocumentEntity {
     @JoinColumn(name = "medical_record_id")
     private MedicalRecordEntity medicalRecord;
 
-    @Column(name = "deleted_at", nullable = false)
+    @Column(name = "uploaded_at", nullable = false)
+    private LocalDateTime uploadedAt;
+
+    @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
     public UUID getId() {
@@ -74,6 +77,14 @@ public class DocumentEntity {
 
     public void setDeletedAt(LocalDateTime deletedAt) {
         this.deletedAt = deletedAt;
+    }
+
+    public LocalDateTime getUploadedAt() {
+        return uploadedAt;
+    }
+
+    public void setUploadedAt(LocalDateTime uploadedAt) {
+        this.uploadedAt = uploadedAt;
     }
 
     @Override

@@ -5,10 +5,7 @@ import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.*;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IDeleteDocument;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetAllDocuments;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetDocument;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IUploadDocument;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.*;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
@@ -28,8 +25,13 @@ public class ManageMedicalRecordConfiguration {
     }
 
     @Bean
-    public IGetDocument getDocument(FileStorageService fileStorageService, DocumentRepository documentRepository) {
-        return new GetDocument(documentRepository, fileStorageService);
+    public IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent(FileStorageService fileStorageService, DocumentRepository documentRepository) {
+        return new GetDocumentMedicalRecordContentMedicalRecordContent(documentRepository, fileStorageService);
+    }
+
+    @Bean
+    public IGetDocumentDetail getDocumentDetail(DocumentRepository documentRepository) {
+        return new GetDocumentDetail(documentRepository);
     }
 
     @Bean

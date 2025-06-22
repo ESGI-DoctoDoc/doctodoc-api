@@ -1,8 +1,10 @@
 package fr.esgi.doctodocapi.presentation.patient.manage_medical_record;
 
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentDetailResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetDocumentResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetAllDocuments;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetDocument;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetDocumentDetail;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetDocumentMedicalRecordContent;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,11 +17,13 @@ import java.util.UUID;
 @RequestMapping("/patients/medical-record")
 public class GetDocumentController {
     private final IGetAllDocuments getAllDocuments;
-    private final IGetDocument getDocument;
+    private final IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent;
+    private final IGetDocumentDetail getDocumentDetail;
 
-    public GetDocumentController(IGetAllDocuments getAllDocuments, IGetDocument getDocument) {
+    public GetDocumentController(IGetAllDocuments getAllDocuments, IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent, IGetDocumentDetail getDocumentDetail) {
         this.getAllDocuments = getAllDocuments;
-        this.getDocument = getDocument;
+        this.getDocumentMedicalRecordContent = getDocumentMedicalRecordContent;
+        this.getDocumentDetail = getDocumentDetail;
     }
 
     @GetMapping("/documents")
@@ -29,6 +33,11 @@ public class GetDocumentController {
 
     @GetMapping("/documents/{id}")
     public GetDocumentResponse get(@PathVariable UUID id) {
-        return this.getDocument.process(id);
+        return this.getDocumentMedicalRecordContent.process(id);
+    }
+
+    @GetMapping("/documents/detail/{id}")
+    public GetDocumentDetailResponse getDetail(@PathVariable UUID id) {
+        return this.getDocumentDetail.process(id);
     }
 }

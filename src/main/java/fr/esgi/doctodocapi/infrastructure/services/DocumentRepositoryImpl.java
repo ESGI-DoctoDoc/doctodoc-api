@@ -28,8 +28,8 @@ public class DocumentRepositoryImpl implements DocumentRepository {
     }
 
     @Override
-    public void delete(UUID id) {
-        DocumentEntity documentToDelete = this.documentJpaRepository.findById(id).orElseThrow(DocumentNotFoundException::new);
+    public void delete(Document document) {
+        DocumentEntity documentToDelete = this.documentJpaRepository.findById(document.getId()).orElseThrow(DocumentNotFoundException::new);
         documentToDelete.setDeletedAt(LocalDateTime.now());
         this.documentJpaRepository.save(documentToDelete);
         // todo delete traces

@@ -4,6 +4,7 @@ import fr.esgi.doctodocapi.model.document.permission.Permission;
 import fr.esgi.doctodocapi.model.document.permission.PermissionType;
 import fr.esgi.doctodocapi.model.document.trace.DocumentTrace;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -13,14 +14,16 @@ public class Document {
     private String name;
     private String path;
     private DocumentType type;
+    private LocalDateTime uploadedAt;
     private List<DocumentTrace> traces;
     private List<Permission> permissions;
 
-    public Document(UUID id, String name, String path, DocumentType type, List<DocumentTrace> traces, List<Permission> permissions) {
+    public Document(UUID id, String name, String path, DocumentType type, LocalDateTime uploadedAt, List<DocumentTrace> traces, List<Permission> permissions) {
         this.id = id;
         this.name = name;
         this.path = path;
         this.type = type;
+        this.uploadedAt = uploadedAt;
         this.traces = traces;
         this.permissions = permissions;
     }
@@ -32,6 +35,7 @@ public class Document {
                 name,
                 url,
                 type,
+                LocalDateTime.now(),
                 List.of(),
                 List.of()
         );
@@ -106,6 +110,14 @@ public class Document {
 
     public void setType(DocumentType type) {
         this.type = type;
+    }
+
+    public LocalDateTime getUploadedAt() {
+        return uploadedAt;
+    }
+
+    public void setUploadedAt(LocalDateTime uploadedAt) {
+        this.uploadedAt = uploadedAt;
     }
 
     @Override
