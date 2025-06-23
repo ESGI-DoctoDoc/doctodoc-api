@@ -7,6 +7,8 @@ import fr.esgi.doctodocapi.model.doctor_recruitment.DoctorRecruitment;
 import fr.esgi.doctodocapi.model.doctor_recruitment.DoctorRecruitmentRepository;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
+import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
+import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
@@ -35,6 +37,7 @@ public class OnBoardingPatient implements IOnBoardingPatient {
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
     private final DoctorRecruitmentRepository doctorRecruitmentRepository;
+    private final MedicalRecordRepository medicalRecordRepository;
     private final ProfilePresentationMapper profilePresentationMapper;
 
     /**
@@ -46,12 +49,13 @@ public class OnBoardingPatient implements IOnBoardingPatient {
      * @param doctorRepository            repository for accessing doctor entities
      * @param doctorRecruitmentRepository repository for storing doctor recruitment suggestions
      */
-    public OnBoardingPatient(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, DoctorRecruitmentRepository doctorRecruitmentRepository, ProfilePresentationMapper profilePresentationMapper) {
+    public OnBoardingPatient(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, DoctorRecruitmentRepository doctorRecruitmentRepository, MedicalRecordRepository medicalRecordRepository, ProfilePresentationMapper profilePresentationMapper) {
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
         this.doctorRecruitmentRepository = doctorRecruitmentRepository;
+        this.medicalRecordRepository = medicalRecordRepository;
         this.profilePresentationMapper = profilePresentationMapper;
     }
 
@@ -81,8 +85,12 @@ public class OnBoardingPatient implements IOnBoardingPatient {
             }
 
             Patient patient = Patient.createFromOnBoarding(user, firstName, lastName, birthdate, doctor, gender);
-            this.patientRepository.save(patient);
-            return this.profilePresentationMapper.toDto(patient);
+            Patient patientSaved = this.patientRepository.save(patient);
+
+            MedicalRecord medicalRecord = MedicalRecord.init(patientSaved.getId());
+            this.medicalRecordRepository.save(medicalRecord);
+
+            return this.profilePresentationMapper.toDto(patientSaved);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
