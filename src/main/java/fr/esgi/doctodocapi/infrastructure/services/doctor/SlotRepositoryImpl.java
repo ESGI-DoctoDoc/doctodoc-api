@@ -164,6 +164,16 @@ public class SlotRepositoryImpl implements SlotRepository {
         return mapSlotEntityToDomain(entity);
     }
 
+    @Override
+    public List<Slot> findAllByDoctorIdAndDateAfterNow(UUID doctorId, LocalDate date, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<SlotEntity> slotEntities = this.slotJpaRepository.findAllByDoctor_IdAndDateGreaterThanEqual(doctorId, date, pageable);
+
+        return slotEntities.getContent().stream()
+                .map(this::mapSlotEntityToDomain)
+                .toList();
+    }
+
     private SlotEntity mapSlotToEntity(Slot slot, DoctorEntity doctorEntity) {
         List<UUID> medicalConcernIds = slot.getAvailableMedicalConcerns().stream()
                 .map(MedicalConcern::getId)

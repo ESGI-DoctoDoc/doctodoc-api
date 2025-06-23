@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.presentation.doctor;
+package fr.esgi.doctodocapi.presentation.doctor.manage_doctor_account;
 
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.OnBoardingDoctorRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.OnboardingProcessResponse;

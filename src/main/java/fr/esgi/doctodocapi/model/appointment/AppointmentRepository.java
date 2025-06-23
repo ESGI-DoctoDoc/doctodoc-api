@@ -9,6 +9,7 @@ import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.user.User;
 
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -33,6 +34,10 @@ public interface AppointmentRepository {
     Optional<Appointment> getMostRecentUpcomingAppointment(User user);
 
     List<Patient> getDistinctPatientsByDoctorId(UUID doctorId, int page, int size);
-    List<Appointment> getAllByDoctor(UUID doctorId, int page, int size);
+
+    List<Appointment> findAllByDoctorIdAndDateAfterNow(UUID doctorId, LocalDate date, int page, int size);
+
     boolean existsPatientByDoctorAndPatientId(UUID doctorId, UUID patientId);
+
+    List<Appointment> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size);
 }

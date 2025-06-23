@@ -1,6 +1,8 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_medical_concern;
 
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.user.User;
@@ -22,11 +24,13 @@ public class CreateMedicalConcern implements ICreateMedicalConcern {
     private final MedicalConcernRepository medicalConcernRepository;
     private final UserRepository userRepository;
     private final GetCurrentUserContext getCurrentUserContext;
+    private final DoctorRepository doctorRepository;
 
-    public CreateMedicalConcern(MedicalConcernRepository medicalConcernRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext) {
+    public CreateMedicalConcern(MedicalConcernRepository medicalConcernRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorRepository doctorRepository) {
         this.medicalConcernRepository = medicalConcernRepository;
         this.userRepository = userRepository;
         this.getCurrentUserContext = getCurrentUserContext;
+        this.doctorRepository = doctorRepository;
     }
 
     /**
@@ -40,8 +44,8 @@ public class CreateMedicalConcern implements ICreateMedicalConcern {
     public GetMedicalConcernResponse execute(CreateMedicalConcernRequest createMedicalConcernRequest) {
         try {
             String username = this.getCurrentUserContext.getUsername();
-
-            User doctor = this.userRepository.findByEmail(username);
+            User user = this.userRepository.findByEmail(username);
+            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
             MedicalConcern newMedicalConcern = MedicalConcern.create(
                     createMedicalConcernRequest.name(),
