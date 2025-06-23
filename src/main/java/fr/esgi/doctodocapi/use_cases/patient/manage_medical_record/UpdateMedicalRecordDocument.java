@@ -40,11 +40,13 @@ public class UpdateMedicalRecordDocument implements IUpdateMedicalRecordDocument
 
     public GetDocumentResponse process(UUID id, SaveDocumentRequest saveDocumentRequest) {
         try {
+            User user = this.getUser();
+
             Document document = this.documentRepository.getById(id);
 
             Document newDocument = Document.copyOf(document);
             newDocument.setId(document.getId());
-            newDocument.update(saveDocumentRequest.filename(), DocumentType.fromValue(saveDocumentRequest.type()));
+            newDocument.update(saveDocumentRequest.filename(), DocumentType.fromValue(saveDocumentRequest.type()), user.getId());
 
             MedicalRecord medicalRecord = getMedicalRecord();
             medicalRecord.updateDocument(document, newDocument);
@@ -57,10 +59,13 @@ public class UpdateMedicalRecordDocument implements IUpdateMedicalRecordDocument
 
     }
 
-    private UUID getPatientId() {
+    private User getUser() {
         String username = this.getCurrentUserContext.getUsername();
+        return this.userRepository.findByEmail(username);
+    }
 
-        User user = this.userRepository.findByEmail(username);
+    private UUID getPatientId() {
+        User user = getUser();
         Optional<Patient> patient = this.patientRepository.getByUserId(user.getId());
         if (patient.isEmpty()) throw new PatientNotFoundException();
         return patient.get().getId();

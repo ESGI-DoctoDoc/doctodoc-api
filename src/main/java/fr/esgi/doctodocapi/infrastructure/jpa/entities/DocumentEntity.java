@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -30,6 +31,9 @@ public class DocumentEntity {
     @ManyToOne
     @JoinColumn(name = "medical_record_id")
     private MedicalRecordEntity medicalRecord;
+
+    @OneToMany(mappedBy = "document", cascade = CascadeType.PERSIST)
+    private List<DocumentTracesEntity> traces;
 
     @Column(name = "uploaded_at", nullable = false)
     private LocalDateTime uploadedAt;
@@ -95,6 +99,14 @@ public class DocumentEntity {
 
     public void setUploadedBy(UUID uploadedBy) {
         this.uploadedBy = uploadedBy;
+    }
+
+    public List<DocumentTracesEntity> getTraces() {
+        return traces;
+    }
+
+    public void setTraces(List<DocumentTracesEntity> traces) {
+        this.traces = traces;
     }
 
     @Override

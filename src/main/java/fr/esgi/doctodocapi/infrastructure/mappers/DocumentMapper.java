@@ -4,6 +4,7 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.DocumentEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalRecordEntity;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentType;
+import fr.esgi.doctodocapi.model.document.trace.DocumentTrace;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,7 +12,7 @@ import java.util.List;
 @Service
 public class DocumentMapper {
 
-    public Document toDomain(DocumentEntity entity) {
+    public Document toDomain(DocumentEntity entity, List<DocumentTrace> traces) {
         return new Document(
                 entity.getId(),
                 entity.getName(),
@@ -19,7 +20,7 @@ public class DocumentMapper {
                 DocumentType.valueOf(entity.getType()),
                 entity.getUploadedBy(),
                 entity.getUploadedAt(),
-                List.of(),
+                traces,
                 List.of()
         );
     }

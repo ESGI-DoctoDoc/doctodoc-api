@@ -2,9 +2,12 @@ package fr.esgi.doctodocapi.model.document;
 
 import fr.esgi.doctodocapi.model.document.permission.Permission;
 import fr.esgi.doctodocapi.model.document.permission.PermissionType;
+import fr.esgi.doctodocapi.model.document.trace.DocumentDeletionTrace;
 import fr.esgi.doctodocapi.model.document.trace.DocumentTrace;
+import fr.esgi.doctodocapi.model.document.trace.DocumentUpdateTrace;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
@@ -26,8 +29,8 @@ public class Document {
         this.type = type;
         this.uploadedBy = uploadedBy;
         this.uploadedAt = uploadedAt;
-        this.traces = traces;
-        this.permissions = permissions;
+        this.traces = new ArrayList<>(traces);
+        this.permissions = new ArrayList<>(permissions);
     }
 
     public static Document init(String name, String url, DocumentType type, UUID uploadedBy) {
@@ -56,11 +59,14 @@ public class Document {
         );
     }
 
+    public void delete(UUID userId) {
+        this.traces.add(new DocumentDeletionTrace(userId));
+    }
 
-    public void update(String name, DocumentType type) {
-        // todo add trace
+    public void update(String name, DocumentType type, UUID userId) {
         this.setName(name);
         this.setType(type);
+        this.traces.add(new DocumentUpdateTrace(userId));
     }
 
     // manage permission
