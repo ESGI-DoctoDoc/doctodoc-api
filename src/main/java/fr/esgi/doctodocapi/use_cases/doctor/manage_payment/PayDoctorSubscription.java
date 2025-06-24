@@ -1,13 +1,12 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_payment;
 
-import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
-import fr.esgi.doctodocapi.infrastructure.services.StripeService;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.invoice.DoctorInvoice;
 import fr.esgi.doctodocapi.model.doctor.payment.invoice.DoctorInvoiceRepository;
+import fr.esgi.doctodocapi.model.doctor.payment.invoice.InvoiceState;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscription;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
 import fr.esgi.doctodocapi.model.user.User;
@@ -15,6 +14,7 @@ import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.SubscribeRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.SubscribeResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.IPayDoctorSubscription;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.out.PaymentProcess;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.exceptions.SubscriptionAlreadyActiveException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
@@ -26,19 +26,19 @@ import java.util.Optional;
 
 public class PayDoctorSubscription implements IPayDoctorSubscription {
     private final DoctorRepository doctorRepository;
-    private final StripeService stripeService;
     private final UserRepository userRepository;
     private final GetCurrentUserContext getCurrentUserContext;
     private final DoctorSubscriptionRepository doctorSubscriptionRepository;
     private final DoctorInvoiceRepository doctorInvoiceRepository;
+    private final PaymentProcess paymentProcess;
 
-    public PayDoctorSubscription(DoctorRepository doctorRepository, StripeService stripeService, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorSubscriptionRepository doctorSubscriptionRepository, DoctorInvoiceRepository doctorInvoiceRepository) {
+    public PayDoctorSubscription(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorSubscriptionRepository doctorSubscriptionRepository, DoctorInvoiceRepository doctorInvoiceRepository, PaymentProcess paymentProcess) {
         this.doctorRepository = doctorRepository;
-        this.stripeService = stripeService;
         this.userRepository = userRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.doctorSubscriptionRepository = doctorSubscriptionRepository;
         this.doctorInvoiceRepository = doctorInvoiceRepository;
+        this.paymentProcess = paymentProcess;
     }
 
     public SubscribeResponse execute(SubscribeRequest request) {
@@ -47,28 +47,14 @@ public class PayDoctorSubscription implements IPayDoctorSubscription {
             User user = this.userRepository.findByEmail(username);
             Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            Optional<DoctorSubscription> activeSubscription = this.doctorSubscriptionRepository.findActiveSubscriptionByDoctorId(doctor.getId());
-            if (activeSubscription.isPresent()) {
+            Optional<DoctorSubscription> paidSubscription = this.doctorSubscriptionRepository.findActivePaidSubscriptionByDoctorId(doctor.getId());
+            if (paidSubscription.isPresent()) {
                 throw new SubscriptionAlreadyActiveException();
             }
 
-            String customerId = this.stripeService.upsertCustomer(doctor);
-            doctor.setStripeCustomerId(customerId);
-            this.doctorRepository.save(doctor);
+            Optional<DoctorSubscription> latestSubscription = this.doctorSubscriptionRepository.findLatestSubscriptionByDoctorId(doctor.getId());
+            return latestSubscription.map(doctorSubscription -> handleExistingSubscription(doctorSubscription, doctor, request)).orElseGet(() -> createNewSubscription(doctor, request));
 
-            String successUrl = request.successUrl();
-            String cancelUrl = request.cancelUrl();
-            Session session = this.stripeService.createCheckoutSession(customerId, successUrl, cancelUrl);
-
-            DoctorSubscription subscription = DoctorSubscription.create(doctor.getId(), LocalDateTime.now());
-            DoctorSubscription savedSubscription = this.doctorSubscriptionRepository.save(subscription);
-
-            DoctorInvoice invoice = DoctorInvoice.create(savedSubscription.getId(), session.getId());
-            this.doctorInvoiceRepository.save(invoice);
-
-            return new SubscribeResponse(session.getUrl());
-        } catch (StripeException e) {
-            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "payment_error", "Failed to process payment: " + e.getMessage());
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
@@ -79,18 +65,51 @@ public class PayDoctorSubscription implements IPayDoctorSubscription {
             DoctorInvoice invoice = this.doctorInvoiceRepository.findBySessionId(sessionId);
             invoice.markAsPaid();
 
-            BigDecimal amount = this.stripeService.getAmountPaid(sessionId);
+            BigDecimal amount = this.paymentProcess.getAmountPaid(sessionId);
             invoice.setAmount(amount);
 
             this.doctorInvoiceRepository.update(invoice);
 
-            String subscriptionId = Session.retrieve(sessionId).getSubscription();
-            this.stripeService.updateSubscriptionToCancelIt(subscriptionId);
+            String subscriptionId = this.paymentProcess.getSubscriptionIdFromSession(sessionId);
+            this.paymentProcess.updateSubscriptionToCancelIt(subscriptionId);
 
-        } catch (StripeException e) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, "stripe_error", "Failed to confirm payment: " + e.getMessage());
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
+    }
+
+    private SubscribeResponse createNewSubscription(Doctor doctor, SubscribeRequest request) {
+        String customerId = this.paymentProcess.upsertCustomer(doctor);
+        doctor.setCustomerId(customerId);
+        this.doctorRepository.save(doctor);
+
+        Session session = this.paymentProcess.createCheckoutSession(customerId, request.successUrl(), request.cancelUrl());
+
+        DoctorSubscription subscription = DoctorSubscription.create(doctor.getId(), LocalDateTime.now());
+        DoctorSubscription savedSubscription = this.doctorSubscriptionRepository.save(subscription);
+
+        DoctorInvoice invoice = DoctorInvoice.create(savedSubscription.getId(), session.getId());
+        this.doctorInvoiceRepository.save(invoice);
+
+        return new SubscribeResponse(session.getUrl());
+    }
+
+    private SubscribeResponse handleExistingSubscription(DoctorSubscription subscription, Doctor doctor, SubscribeRequest request) {
+        DoctorInvoice invoice = this.doctorInvoiceRepository.findBySubscriptionId(subscription.getId());
+
+        if (invoice.getState().equals(InvoiceState.UNPAID)) {
+            String customerId = this.paymentProcess.upsertCustomer(doctor);
+            doctor.setCustomerId(customerId);
+            this.doctorRepository.save(doctor);
+
+            Session session = this.paymentProcess.createCheckoutSession(customerId, request.successUrl(), request.cancelUrl());
+
+            invoice.setSessionId(session.getId());
+            this.doctorInvoiceRepository.update(invoice);
+
+            return new SubscribeResponse(session.getUrl());
+        } else {
+            throw new SubscriptionAlreadyActiveException();
         }
     }
 }

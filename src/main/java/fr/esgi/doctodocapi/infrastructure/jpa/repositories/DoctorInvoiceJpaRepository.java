@@ -7,4 +7,5 @@ import java.util.UUID;
 
 public interface DoctorInvoiceJpaRepository extends JpaRepository<DoctorInvoiceEntity, UUID> {
     DoctorInvoiceEntity findBySessionId(String sessionId);
+    DoctorInvoiceEntity findBySubscription_Id(UUID subscriptionId);
 }

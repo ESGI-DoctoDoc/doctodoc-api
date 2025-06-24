@@ -86,8 +86,8 @@ public class DoctorEntity {
     @JdbcTypeCode(SqlTypes.ARRAY)
     private List<String> doctorDocuments;
 
-    @Column(name = "stripe_customer_id")
-    private String stripeCustomerId;
+    @Column(name = "customer_id")
+    private String customerId;
 
     public UUID getId() {
         return id;
@@ -265,12 +265,12 @@ public class DoctorEntity {
         this.absences = absences;
     }
 
-    public String getStripeCustomerId() {
-        return stripeCustomerId;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public void setStripeCustomerId(String stripeCustomerId) {
-        this.stripeCustomerId = stripeCustomerId;
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
     @Override

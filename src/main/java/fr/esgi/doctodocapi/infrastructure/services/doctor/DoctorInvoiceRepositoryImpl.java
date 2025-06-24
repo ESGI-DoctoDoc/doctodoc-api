@@ -10,6 +10,8 @@ import fr.esgi.doctodocapi.model.doctor.payment.invoice.InvoiceNotFoundException
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
+import java.util.UUID;
+
 @Repository
 public class DoctorInvoiceRepositoryImpl implements DoctorInvoiceRepository {
     private final DoctorInvoiceJpaRepository doctorInvoiceJpaRepository;
@@ -47,4 +49,12 @@ public class DoctorInvoiceRepositoryImpl implements DoctorInvoiceRepository {
 
         this.doctorInvoiceJpaRepository.save(existingEntity);
     }
+
+    @Override
+    public DoctorInvoice findBySubscriptionId(UUID subscriptionId) {
+        DoctorInvoiceEntity entity = this.doctorInvoiceJpaRepository.findBySubscription_Id(subscriptionId);
+        return this.doctorInvoiceMapper.toDomain(entity);
+    }
+
+
 }

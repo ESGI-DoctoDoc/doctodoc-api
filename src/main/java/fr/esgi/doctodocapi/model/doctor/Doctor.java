@@ -33,7 +33,7 @@ public class Doctor extends User {
     private DoctorConsultationInformations consultationInformations;
     private Calendar calendar;
     private boolean isVerified;
-    private String stripeCustomerId;
+    private String customerId;
 
 
     /**
@@ -46,14 +46,14 @@ public class Doctor extends User {
      * @param consultationInformations consultation-related information
      * @param isVerified               verification status of the doctor
      */
-    private Doctor(User user, UUID id, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified, String stripeCustomerId) {
+    private Doctor(User user, UUID id, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified, String customerId) {
         super(user.getId(), user.getEmail(), user.getPassword(), user.getPhoneNumber(), user.isEmailVerified(), user.isDoubleAuthActive(), user.getDoubleAuthCode(), user.getCreatedAt());
         this.id = id;
         this.personalInformations = personalInformations;
         this.professionalInformations = professionalInformations;
         this.consultationInformations = consultationInformations;
         this.isVerified = isVerified;
-        this.stripeCustomerId = stripeCustomerId;
+        this.customerId = customerId;
     }
 
 
@@ -84,7 +84,7 @@ public class Doctor extends User {
      * @param isVerified               doctor verification status
      * @param calendar                 the doctor's calendar
      */
-    public Doctor(UUID userId, Email email, Password password, PhoneNumber phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified, Calendar calendar, String stripeCustomerId) {
+    public Doctor(UUID userId, Email email, Password password, PhoneNumber phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified, Calendar calendar, String customerId) {
         super(userId, email, password, phoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
         this.id = id;
         this.personalInformations = personalInformations;
@@ -92,7 +92,7 @@ public class Doctor extends User {
         this.consultationInformations = consultationInformations;
         this.isVerified = isVerified;
         this.calendar = calendar;
-        this.stripeCustomerId = stripeCustomerId;
+        this.customerId = customerId;
     }
 
     /**
@@ -192,12 +192,12 @@ public class Doctor extends User {
         this.consultationInformations = consultationInformations;
     }
 
-    public String getStripeCustomerId() {
-        return stripeCustomerId;
+    public String getCustomerId() {
+        return customerId;
     }
 
-    public void setStripeCustomerId(String stripeCustomerId) {
-        this.stripeCustomerId = stripeCustomerId;
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
     public boolean isVerified() {
