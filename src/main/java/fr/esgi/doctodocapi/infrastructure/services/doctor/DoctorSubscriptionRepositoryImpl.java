@@ -34,10 +34,18 @@ public class DoctorSubscriptionRepositoryImpl implements DoctorSubscriptionRepos
     }
 
     @Override
-    public Optional<DoctorSubscription> findActiveSubscriptionByDoctorId(UUID doctorId) {
+    public Optional<DoctorSubscription> findActivePaidSubscriptionByDoctorId(UUID doctorId) {
         DoctorEntity doctorEntity = this.entityManager.getReference(DoctorEntity.class, doctorId);
         return this.subscriptionJpaRepository
-                .findFirstByDoctorAndEndDateAfterOrderByEndDateDesc(doctorEntity, LocalDateTime.now())
+                .findFirstPaidSubscriptionByDoctor(doctorEntity, LocalDateTime.now())
+                .map(this.doctorSubscriptionMapper::toDomain);
+    }
+
+    @Override
+    public Optional<DoctorSubscription> findLatestSubscriptionByDoctorId(UUID doctorId) {
+        DoctorEntity doctorEntity = this.entityManager.getReference(DoctorEntity.class, doctorId);
+        return this.subscriptionJpaRepository
+                .findLatestSubscriptionByDoctor(doctorEntity)
                 .map(this.doctorSubscriptionMapper::toDomain);
     }
 }
