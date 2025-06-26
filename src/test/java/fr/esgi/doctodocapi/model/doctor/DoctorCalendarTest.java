@@ -42,7 +42,8 @@ class DoctorCalendarTest {
                 null,
                 null,
                 false,
-                new Calendar(new ArrayList<>(), new ArrayList<>())
+                new Calendar(new ArrayList<>(), new ArrayList<>()),
+                null
         );
     }
 
