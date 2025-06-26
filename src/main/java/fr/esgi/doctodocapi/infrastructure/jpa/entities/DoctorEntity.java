@@ -86,6 +86,9 @@ public class DoctorEntity {
     @JdbcTypeCode(SqlTypes.ARRAY)
     private List<String> doctorDocuments;
 
+    @Column(name = "customer_id")
+    private String customerId;
+
     public UUID getId() {
         return id;
     }
@@ -260,6 +263,14 @@ public class DoctorEntity {
 
     public void setAbsences(List<AbsenceEntity> absences) {
         this.absences = absences;
+    }
+
+    public String getCustomerId() {
+        return customerId;
+    }
+
+    public void setCustomerId(String customerId) {
+        this.customerId = customerId;
     }
 
     @Override
