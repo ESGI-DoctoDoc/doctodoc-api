@@ -1,5 +1,8 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_appointment;
 
+import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentDetailsResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentResponse;
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
@@ -16,6 +19,7 @@ import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 public class GetDoctorAppointments implements IGetDoctorAppointments {
     private final AppointmentRepository appointmentRepository;
@@ -23,13 +27,15 @@ public class GetDoctorAppointments implements IGetDoctorAppointments {
     private final DoctorRepository doctorRepository;
     private final GetCurrentUserContext getCurrentUserContext;
     private final AppointmentResponseMapper appointmentResponseMapper;
+    private final CareTrackingRepository careTrackingRepository;
 
-    public GetDoctorAppointments(AppointmentRepository appointmentRepository, UserRepository userRepository, DoctorRepository doctorRepository, GetCurrentUserContext getCurrentUserContext, AppointmentResponseMapper appointmentResponseMapper) {
+    public GetDoctorAppointments(AppointmentRepository appointmentRepository, UserRepository userRepository, DoctorRepository doctorRepository, GetCurrentUserContext getCurrentUserContext, AppointmentResponseMapper appointmentResponseMapper, CareTrackingRepository careTrackingRepository) {
         this.appointmentRepository = appointmentRepository;
         this.userRepository = userRepository;
         this.doctorRepository = doctorRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.appointmentResponseMapper = appointmentResponseMapper;
+        this.careTrackingRepository = careTrackingRepository;
     }
 
     public List<GetDoctorAppointmentResponse> execute(int page, int size, LocalDate startDate) {
@@ -59,6 +65,20 @@ public class GetDoctorAppointments implements IGetDoctorAppointments {
             return appointments.stream()
                     .map(appointmentResponseMapper::toResponse)
                     .toList();
+        } catch (DomainException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
+    }
+
+    public GetDoctorAppointmentDetailsResponse getById(UUID id) {
+        try {
+            Appointment appointment = this.appointmentRepository.getById(id);
+
+            CareTracking careTracking = appointment.getCareTrackingId() != null
+                    ? this.careTrackingRepository.getById(appointment.getCareTrackingId())
+                    : null;
+            return this.appointmentResponseMapper.toDetailsResponse(appointment, careTracking);
+
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
