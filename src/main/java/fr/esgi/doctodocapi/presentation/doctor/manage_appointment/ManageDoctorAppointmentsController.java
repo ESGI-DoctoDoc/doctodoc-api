@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.presentation.doctor.manage_appointment;
 
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_appointment.SaveDoctorAppointmentRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentAvailabilityResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentDetailsResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.SaveDoctorAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.*;
@@ -52,5 +53,11 @@ public class ManageDoctorAppointmentsController {
     @ResponseStatus(value = HttpStatus.NO_CONTENT)
     public void cancelAppointment(@PathVariable UUID id) {
         this.cancelDoctorAppointment.cancel(id);
+    }
+
+    @GetMapping("appointments/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public GetDoctorAppointmentDetailsResponse getAppointmentById(@PathVariable UUID id) {
+        return this.getDoctorAppointments.getById(id);
     }
 }
