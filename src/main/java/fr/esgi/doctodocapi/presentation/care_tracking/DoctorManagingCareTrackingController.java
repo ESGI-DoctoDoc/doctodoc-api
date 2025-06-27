@@ -7,12 +7,14 @@ import fr.esgi.doctodocapi.use_cases.care_tracking.ports.in.doctor_managing_care
 import fr.esgi.doctodocapi.use_cases.care_tracking.ports.in.doctor_managing_care_tracking.IInitializeCareTracking;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
 @RestController
 @RequestMapping("doctors")
+@PreAuthorize("hasRole('ROLE_DOCTOR')")
 public class DoctorManagingCareTrackingController {
     private final IInitializeCareTracking initializeCareTracking;
     private final IGetCareTrackings getCareTracking;

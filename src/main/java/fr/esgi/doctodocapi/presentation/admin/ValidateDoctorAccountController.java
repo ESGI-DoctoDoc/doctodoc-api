@@ -14,6 +14,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("doctors/onboarding")
+@PreAuthorize("hasRole('ROLE_ADMIN')")
 public class ValidateDoctorAccountController {
     private final IValidateDoctorAccount validateDoctorAccount;
 
@@ -28,7 +29,6 @@ public class ValidateDoctorAccountController {
      * @param request the doctor validation request containing doctor ID
      */
     @PatchMapping("/validate-account")
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public void validateDoctorAccount(@Valid @RequestBody DoctorValidationRequest request) {
         this.validateDoctorAccount.validateDoctorAccount(request);
     }
