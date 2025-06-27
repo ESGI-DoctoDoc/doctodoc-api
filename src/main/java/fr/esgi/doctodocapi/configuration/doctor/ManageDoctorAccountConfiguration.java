@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.configuration.doctor;
 
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
+import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.GetDoctorInformation;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.OnboardingDoctorProcess;
@@ -19,7 +20,7 @@ public class ManageDoctorAccountConfiguration {
     }
 
     @Bean
-    public IGetDoctorInformation getDoctorInformation(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext) {
-        return new GetDoctorInformation(userRepository, doctorRepository, getCurrentUserContext);
+    public IGetDoctorInformation getDoctorInformation(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorSubscriptionRepository doctorSubscriptionRepository) {
+        return new GetDoctorInformation(userRepository, doctorRepository, getCurrentUserContext, doctorSubscriptionRepository);
     }
 }

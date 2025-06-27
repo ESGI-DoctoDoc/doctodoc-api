@@ -78,7 +78,7 @@ public class AuthenticateDoctor implements IAuthenticateDoctor {
     public DoubleAuthenticationUserResponse validateDoubleAuthCode(ValidateDoubleAuthRequest validateDoubleAuthRequest) {
         User user = this.authenticateUser.validateDoubleAuth(validateDoubleAuthRequest);
 
-        String token = this.tokenManager.generate(user.getEmail().getValue(), UserRoles.PATIENT.name(),
+        String token = this.tokenManager.generate(user.getEmail().getValue(), UserRoles.DOCTOR.name(),
                 TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES);
 
         Optional<Doctor> optionalDoctor = this.doctorRepository.getByUserId(user.getId());
