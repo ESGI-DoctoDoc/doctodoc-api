@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ManagePatientCareTrackingConfiguration {
     @Bean
-    public IGetPatientCareTrackings patientCareTrackings(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext) {
-        return new GetPatientCareTrackings(careTrackingRepository, getPatientFromContext);
+    public IGetPatientCareTrackings patientCareTrackings(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, AppointmentRepository appointmentRepository) {
+        return new GetPatientCareTrackings(careTrackingRepository, getPatientFromContext, appointmentRepository);
     }
 
     @Bean

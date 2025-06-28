@@ -39,9 +39,24 @@ public class GetPatientCareTrackingDetailedMapper {
     }
 
     private List<GetAppointmentOfCareTrackingResponse> getAppointmentsResponse(List<Appointment> appointments) {
-        return appointments
-                .stream()
-                .map(appointment -> new GetAppointmentOfCareTrackingResponse(appointment.getId())).toList();
+        return appointments.stream().map(appointment ->
+        {
+            Doctor doctor = appointment.getDoctor();
+            GetDoctorOfCareTrackingResponse doctorResponse = new GetDoctorOfCareTrackingResponse(
+                    doctor.getId(),
+                    doctor.getPersonalInformations().getFirstName(),
+                    doctor.getPersonalInformations().getLastName(),
+                    doctor.getProfessionalInformations().getSpeciality(),
+                    doctor.getPersonalInformations().getProfilePictureUrl()
+            );
+
+            return new GetAppointmentOfCareTrackingResponse(
+                    appointment.getId(),
+                    doctorResponse,
+                    appointment.getDate()
+            );
+
+        }).toList();
     }
 
     private List<GetDoctorOfCareTrackingResponse> getGetDoctorOfCareTrackingResponses(List<Doctor> doctors) {
