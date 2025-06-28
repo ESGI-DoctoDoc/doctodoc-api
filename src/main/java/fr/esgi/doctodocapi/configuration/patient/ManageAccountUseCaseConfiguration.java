@@ -6,7 +6,6 @@ import fr.esgi.doctodocapi.use_cases.user.manage_account.SendAccountValidationEm
 import fr.esgi.doctodocapi.use_cases.user.manage_account.ValidateEmail;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.ISendAccountValidationEmail;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.IValidateEmail;
-import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentRequestContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -18,7 +17,7 @@ public class ManageAccountUseCaseConfiguration {
     }
 
     @Bean
-    public ISendAccountValidationEmail sendAccountValidationEmail(GetCurrentRequestContext getCurrentRequestContext, MailSender mailSender) {
-        return new SendAccountValidationEmail(getCurrentRequestContext, mailSender);
+    public ISendAccountValidationEmail sendAccountValidationEmail(MailSender mailSender) {
+        return new SendAccountValidationEmail(mailSender);
     }
 }

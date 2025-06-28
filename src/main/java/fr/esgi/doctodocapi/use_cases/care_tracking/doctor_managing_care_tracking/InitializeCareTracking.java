@@ -1,11 +1,13 @@
 package fr.esgi.doctodocapi.use_cases.care_tracking.doctor_managing_care_tracking;
 
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.patient.Patient;
+import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
@@ -24,13 +26,16 @@ public class InitializeCareTracking implements IInitializeCareTracking {
     private final UserRepository userRepository;
     private final GetCurrentUserContext getCurrentUserContext;
     private final PatientRepository patientRepository;
+    private final AppointmentRepository appointmentRepository;
 
-    public InitializeCareTracking(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, PatientRepository patientRepository) {
+
+    public InitializeCareTracking(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, PatientRepository patientRepository, AppointmentRepository appointmentRepository) {
         this.careTrackingRepository = careTrackingRepository;
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.patientRepository = patientRepository;
+        this.appointmentRepository = appointmentRepository;
     }
 
     public InitializeCareTrackingResponse execute(SaveCareTrackingRequest request) {
@@ -39,7 +44,7 @@ public class InitializeCareTracking implements IInitializeCareTracking {
             User user = this.userRepository.findByEmail(username);
             Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            Patient patient = this.patientRepository.getById(request.patientId());
+            Patient patient = retrieveAndValidatePatient(request.patientId(), doctor);
 
             CareTracking careTracking = CareTracking.initialize(
                         request.name(),
@@ -54,5 +59,12 @@ public class InitializeCareTracking implements IInitializeCareTracking {
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
+    }
+
+    private Patient retrieveAndValidatePatient(UUID patientId, Doctor doctor) {
+        if (!this.appointmentRepository.existsPatientByDoctorAndPatientId(doctor.getId(), patientId)) {
+            throw new PatientNotFoundException();
+        }
+        return this.patientRepository.getById(patientId);
     }
 }

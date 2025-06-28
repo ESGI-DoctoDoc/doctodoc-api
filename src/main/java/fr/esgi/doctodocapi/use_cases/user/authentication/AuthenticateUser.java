@@ -90,7 +90,7 @@ public class AuthenticateUser implements IAuthenticateUser {
             return new LoginResponse(token);
         }
 
-        this.verifyEmail(userFoundByIdentifier);
+        this.verifyEmail(userFoundByIdentifier, loginRequest.verificationUrl());
         this.sendMessageWithDoubleAuthCode(userFoundByIdentifier);
 
         String token = this.tokenManager.generate(
@@ -165,11 +165,12 @@ public class AuthenticateUser implements IAuthenticateUser {
      * @param userFoundByIdentifier the user to verify
      * @throws AuthenticationException if the email is not verified
      */
-    private void verifyEmail(User userFoundByIdentifier) {
+    private void verifyEmail(User userFoundByIdentifier, String verificationUrl) {
         if (!userFoundByIdentifier.isEmailVerified()) {
             this.sendAccountValidationEmail.send(
                     userFoundByIdentifier.getEmail().getValue(),
-                    userFoundByIdentifier.getId()
+                    userFoundByIdentifier.getId(),
+                    verificationUrl
             );
             throw new AuthenticationException(AuthentificationMessageException.ACCOUNT_NOT_ACTIVATED);
         }
