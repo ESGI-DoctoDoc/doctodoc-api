@@ -23,6 +23,9 @@ public class DoctorSubscriptionEntity {
     @Column(name = "end_date")
     private LocalDateTime endDate;
 
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
+
     public UUID getId() {
         return id;
     }
@@ -53,6 +56,14 @@ public class DoctorSubscriptionEntity {
 
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override

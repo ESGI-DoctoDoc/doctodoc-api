@@ -1,5 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.user.authentication;
 
+import fr.esgi.doctodocapi.model.admin.AdminRepository;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.user.*;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthenticationException;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthentificationMessageException;
@@ -12,7 +14,6 @@ import fr.esgi.doctodocapi.use_cases.user.ports.out.AuthenticateUserInContext;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 
 import java.util.Objects;
-
 /**
  * Service responsible for authenticating users into the system.
  * <p>
@@ -22,8 +23,7 @@ import java.util.Objects;
  */
 public class AuthenticateUser implements IAuthenticateUser {
 
-    private static final int TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES = 120;
-    private static final int TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES = 2;
+    private static final int TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES = 10;
 
     private final AuthenticateUserInContext authenticateUserInContext;
     private final GetCurrentUserContext getCurrentUserContext;
@@ -32,6 +32,7 @@ public class AuthenticateUser implements IAuthenticateUser {
     private final DoubleAuthCodeGenerator doubleAuthCodeGenerator;
     private final TokenManager tokenManager;
     private final ISendAccountValidationEmail sendAccountValidationEmail;
+    private final AdminRepository adminRepository;
 
     /**
      * Constructs the service with its required dependencies.
@@ -50,7 +51,7 @@ public class AuthenticateUser implements IAuthenticateUser {
                             MessageSender messageSender,
                             DoubleAuthCodeGenerator doubleAuthCodeGenerator,
                             TokenManager tokenManager,
-                            ISendAccountValidationEmail sendAccountValidationEmail) {
+                            ISendAccountValidationEmail sendAccountValidationEmail, AdminRepository adminRepository) {
         this.authenticateUserInContext = authenticateUserInContext;
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
@@ -58,6 +59,7 @@ public class AuthenticateUser implements IAuthenticateUser {
         this.doubleAuthCodeGenerator = doubleAuthCodeGenerator;
         this.tokenManager = tokenManager;
         this.sendAccountValidationEmail = sendAccountValidationEmail;
+        this.adminRepository = adminRepository;
     }
 
     /**
@@ -68,7 +70,6 @@ public class AuthenticateUser implements IAuthenticateUser {
      * </p>
      *
      * @param loginRequest the login form containing the user identifier and password
-     * @param role         the user's role (used for token payload)
      * @return a {@link LoginResponse} containing a JWT token
      * @throws AuthenticationException if credentials are invalid or account is not verified
      */
@@ -78,16 +79,11 @@ public class AuthenticateUser implements IAuthenticateUser {
 
         this.authenticateUserInContext.persistAuthentication(identifier, password);
 
-        String userRole = this.getCurrentUserContext.getRole();
         User userFoundByIdentifier = this.getUserByEmailOrPhoneNumber(identifier, identifier);
 
-        if (userRole.equals(UserRoles.ADMIN.name())) {
-            String token = this.tokenManager.generate(
-                    userFoundByIdentifier.getEmail().getValue(),
-                    UserRoles.ADMIN.name(),
-                    TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES
-            );
-            return new LoginResponse(token);
+        String actualRole = role;
+        if (this.adminRepository.existsByUserId(userFoundByIdentifier.getId())) {
+            actualRole = UserRoles.ADMIN.name();
         }
 
         this.verifyEmail(userFoundByIdentifier);
@@ -95,7 +91,7 @@ public class AuthenticateUser implements IAuthenticateUser {
 
         String token = this.tokenManager.generate(
                 userFoundByIdentifier.getEmail().getValue(),
-                role,
+                actualRole,
                 TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES
         );
 

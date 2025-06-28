@@ -42,4 +42,10 @@ public interface AppointmentRepository {
     boolean existsPatientByDoctorAndPatientId(UUID doctorId, UUID patientId);
 
     List<Appointment> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size);
+
+    List<Appointment> findAllWithPaginationForAdmin(int page, int size);
+
+    int countAppointmentsByDoctorId(UUID doctorId);
+
+    int countDistinctPatientsByDoctorId(UUID doctorId);
 }

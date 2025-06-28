@@ -2,27 +2,26 @@ package fr.esgi.doctodocapi.infrastructure.services;
 
 import com.stripe.Stripe;
 import com.stripe.exception.StripeException;
-import com.stripe.model.Customer;
-import com.stripe.model.StripeCollection;
-import com.stripe.model.Subscription;
+import com.stripe.model.*;
 import com.stripe.model.checkout.Session;
 import com.stripe.param.CustomerCreateParams;
 import com.stripe.param.SubscriptionUpdateParams;
 import com.stripe.param.checkout.SessionCreateParams;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.payment.PaymentProcessFailedException;
+import fr.esgi.doctodocapi.model.doctor.payment.invoice.InvoiceNotFoundException;
+import fr.esgi.doctodocapi.use_cases.admin.ports.out.InvoiceFetcher;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.PaymentProcess;
 import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
-import com.stripe.model.LineItem;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
 
 
 @Service
-public class StripeService implements PaymentProcess {
+public class StripeService implements PaymentProcess, InvoiceFetcher {
 
     @Value("${stripe.api.key}")
     private String apiKey;
@@ -100,6 +99,24 @@ public class StripeService implements PaymentProcess {
             return BigDecimal
                     .valueOf(amountTotalInCents)
                     .divide(BigDecimal.valueOf(100), 2, RoundingMode.HALF_UP);
+        } catch (StripeException e) {
+            throw new PaymentProcessFailedException();
+        }
+    }
+
+    public String getInvoiceUrl(String sessionId) {
+        try {
+            Session session = Session.retrieve(sessionId);
+
+            String invoiceId = session.getInvoice();
+
+            if (invoiceId == null) {
+                throw new InvoiceNotFoundException();
+            }
+
+            Invoice invoice = Invoice.retrieve(invoiceId);
+
+            return invoice.getHostedInvoiceUrl();
         } catch (StripeException e) {
             throw new PaymentProcessFailedException();
         }
