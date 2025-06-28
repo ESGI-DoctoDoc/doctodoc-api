@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_medical_record;
 
-import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
+import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentType;
 import fr.esgi.doctodocapi.model.patient.Patient;
@@ -8,7 +8,6 @@ import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
 import fr.esgi.doctodocapi.model.user.User;
-import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentResponse;
@@ -53,7 +52,7 @@ public class GetAllMedicalRecordDocuments implements IGetAllMedicalRecordDocumen
             }
             return documents.stream().map(this.documentResponseMapper::toDto).toList();
 
-        } catch (UserNotFoundException | PatientNotFoundException | MedicalConcernNotFoundException e) {
+        } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());
         }
     }

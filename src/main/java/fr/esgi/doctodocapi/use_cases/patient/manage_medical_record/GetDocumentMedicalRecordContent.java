@@ -1,8 +1,8 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_medical_record;
 
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
+import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.document.Document;
-import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
@@ -34,9 +34,9 @@ public class GetDocumentMedicalRecordContent implements IGetDocumentMedicalRecor
             Document document = medicalRecord.getById(id);
             String url = this.fileStorageService.getFile(document.getPath());
 
-            return new GetDocumentResponse(id, document.getName(), url);
+            return new GetDocumentResponse(id, document.getName(), document.getType().getValue(), url);
 
-        } catch (DocumentNotFoundException e) {
+        } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());
         }
     }
