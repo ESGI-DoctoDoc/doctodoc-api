@@ -105,6 +105,14 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         return appointmentFacadeMapper.mapAppointmentToDomain(appointmentEntity);
     }
 
+
+    @Override
+    public Appointment getByIdAndPatientId(UUID id, UUID patientId) throws AppointmentNotFound {
+        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findByIdAndPatient_Id(id, patientId).orElseThrow(AppointmentNotFound::new);
+        return appointmentFacadeMapper.mapAppointmentToDomain(appointmentEntity);
+    }
+
+
     /**
      * Retrieves all appointments associated with a specific slot.
      *

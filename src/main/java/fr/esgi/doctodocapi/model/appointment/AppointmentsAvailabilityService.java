@@ -95,11 +95,22 @@ public class AppointmentsAvailabilityService {
 
         });
 
-        return appointmentsAvailable;
-
+        return this.filterAppointmentsAfterNow(appointmentsAvailable);
     }
 
-    List<GetAppointmentAvailabilityResponse> filterAppointmentsByAbsences(
+    public List<GetAppointmentAvailabilityResponse> filterAppointmentsAfterNow(List<GetAppointmentAvailabilityResponse> appointmentsAvailable) {
+        LocalDateTime nowPlus15 = LocalDateTime.now().plusMinutes(15);
+
+        return appointmentsAvailable.stream()
+                .filter(app -> {
+                    LocalDateTime slotDateTime = LocalDateTime.of(app.date(), app.start());
+                    return slotDateTime.isAfter(nowPlus15);
+                })
+                .toList();
+    }
+
+
+    private List<GetAppointmentAvailabilityResponse> filterAppointmentsByAbsences(
             List<Absence> absences,
             List<GetAppointmentAvailabilityResponse> appointmentAvailabilityResponses
     ) {
