@@ -27,4 +27,6 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     Page<AppointmentEntity> findAllByDoctor_IdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, Pageable pageable);
 
     Page<AppointmentEntity> findAllByDoctor_IdAndDateGreaterThanEqual(UUID doctorId, LocalDate date, Pageable pageable);
+
+    Optional<AppointmentEntity> findByIdAndPatient_Id(UUID id, UUID patientId);
 }
