@@ -40,7 +40,7 @@ public class UpdateMedicalRecordDocument implements IUpdateMedicalRecordDocument
             medicalRecord.updateDocument(document, newDocument);
 
             this.medicalRecordRepository.save(medicalRecord);
-            return new GetDocumentResponse(newDocument.getId(), newDocument.getName(), newDocument.getPath());
+            return new GetDocumentResponse(newDocument.getId(), newDocument.getName(), document.getType().getValue(), newDocument.getPath());
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());
         }

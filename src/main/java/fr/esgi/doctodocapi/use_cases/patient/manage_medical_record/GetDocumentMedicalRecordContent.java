@@ -34,7 +34,7 @@ public class GetDocumentMedicalRecordContent implements IGetDocumentMedicalRecor
             Document document = medicalRecord.getById(id);
             String url = this.fileStorageService.getFile(document.getPath());
 
-            return new GetDocumentResponse(id, document.getName(), url);
+            return new GetDocumentResponse(id, document.getName(), document.getType().getValue(), url);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());
