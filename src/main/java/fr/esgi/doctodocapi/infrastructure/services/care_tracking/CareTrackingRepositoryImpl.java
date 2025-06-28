@@ -33,6 +33,8 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
         this.careTrackingFacadeMapper = careTrackingFacadeMapper;
     }
 
+    // doctor
+
     @Override
     public UUID save(CareTracking careTracking) {
         DoctorEntity doctor = this.entityManager.getReference(DoctorEntity.class, careTracking.getCreatorId());
@@ -71,5 +73,18 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
     public CareTracking getByIdAndPatientId(UUID careTrackingId, Patient patient) throws CareTrackingNotFoundException {
         CareTrackingEntity entity = this.careTrackingJpaRepository.findByIdAndPatient_Id(careTrackingId, patient.getId()).orElseThrow(CareTrackingNotFoundException::new);
         return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);
+    }
+
+
+    // patient
+
+    @Override
+    public List<CareTracking> findAllByPatientId(UUID patientId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return this.careTrackingJpaRepository.findAllByPatient_IdOrderByCreatedAtDesc(patientId, pageable)
+                .stream()
+                .map(careTrackingFacadeMapper::mapCareTrackingToDomain)
+                .toList();
     }
 }

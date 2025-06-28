@@ -7,6 +7,6 @@ import org.springframework.stereotype.Service;
 @Service
 public class DocumentResponseMapper {
     public GetDocumentResponse toDto(Document document) {
-        return new GetDocumentResponse(document.getId(), document.getName(), document.getPath());
+        return new GetDocumentResponse(document.getId(), document.getName(), document.getType().getValue(), document.getPath());
     }
 }
