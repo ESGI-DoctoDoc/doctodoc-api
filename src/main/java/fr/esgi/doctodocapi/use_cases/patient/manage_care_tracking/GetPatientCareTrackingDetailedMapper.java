@@ -53,7 +53,8 @@ public class GetPatientCareTrackingDetailedMapper {
             return new GetAppointmentOfCareTrackingResponse(
                     appointment.getId(),
                     doctorResponse,
-                    appointment.getDate()
+                    appointment.getDate(),
+                    appointment.getHoursRange().getStart()
             );
 
         }).toList();

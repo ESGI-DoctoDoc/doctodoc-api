@@ -39,7 +39,12 @@ public class GetPatientCareTrackings implements IGetPatientCareTrackings {
 
             return caresTracking.stream().map(careTracking ->
             {
-                List<Appointment> appointments = careTracking.getAppointmentsId().stream().map(appointmentRepository::getById).sorted(Comparator.comparing(Appointment::getDate).reversed()).toList();
+                List<Appointment> appointments = careTracking.getAppointmentsId()
+                        .stream()
+                        .map(appointmentRepository::getById)
+                        .sorted(Comparator.comparing(Appointment::getDate).reversed())
+                        .toList();
+
                 List<GetAppointmentOfCareTrackingResponse> appointmentsResponse = appointments.stream().map(appointment ->
                         {
                             Doctor doctor = appointment.getDoctor();
@@ -54,7 +59,8 @@ public class GetPatientCareTrackings implements IGetPatientCareTrackings {
                             return new GetAppointmentOfCareTrackingResponse(
                                     appointment.getId(),
                                     doctorResponse,
-                                    appointment.getDate()
+                                    appointment.getDate(),
+                                    appointment.getHoursRange().getStart()
                             );
 
                         }
