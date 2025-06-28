@@ -55,6 +55,4 @@ public class DoctorInvoiceRepositoryImpl implements DoctorInvoiceRepository {
         DoctorInvoiceEntity entity = this.doctorInvoiceJpaRepository.findBySubscription_Id(subscriptionId);
         return this.doctorInvoiceMapper.toDomain(entity);
     }
-
-
 }

@@ -240,4 +240,23 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
                 .map(appointmentFacadeMapper::mapAppointmentToDomain)
                 .toList();
     }
+
+    @Override
+    public List<Appointment> findAllWithPaginationForAdmin(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAll(pageable);
+        return appointments.getContent().stream()
+                .map(appointmentFacadeMapper::mapAppointmentToDomain)
+                .toList();
+    }
+
+    @Override
+    public int countAppointmentsByDoctorId(UUID doctorId) {
+        return this.appointmentJpaRepository.countByDoctor_Id(doctorId);
+    }
+
+    @Override
+    public int countDistinctPatientsByDoctorId(UUID doctorId) {
+        return this.appointmentJpaRepository.countDistinctPatient_IdByDoctor_Id(doctorId);
+    }
 }

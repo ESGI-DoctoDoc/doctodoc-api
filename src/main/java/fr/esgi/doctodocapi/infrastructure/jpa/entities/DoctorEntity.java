@@ -89,6 +89,9 @@ public class DoctorEntity {
     @Column(name = "customer_id")
     private String customerId;
 
+    @Column(name = "is_refused", nullable = false)
+    private boolean isRefused;
+
     public UUID getId() {
         return id;
     }
@@ -271,6 +274,14 @@ public class DoctorEntity {
 
     public void setCustomerId(String customerId) {
         this.customerId = customerId;
+    }
+
+    public boolean isRefused() {
+        return isRefused;
+    }
+
+    public void setRefused(boolean refused) {
+        isRefused = refused;
     }
 
     @Override

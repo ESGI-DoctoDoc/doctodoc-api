@@ -2,10 +2,12 @@ package fr.esgi.doctodocapi.presentation.doctor.manage_appointment;
 
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_appointment.SaveDoctorAppointmentRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentAvailabilityResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentDetailsResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.SaveDoctorAppointmentResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.*;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.ICancelDoctorAppointment;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.IGetAppointmentsAvailabilityForDoctor;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.IGetDoctorAppointments;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.ISaveDoctorAppointment;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -57,7 +59,7 @@ public class ManageDoctorAppointmentsController {
 
     @GetMapping("appointments/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public GetDoctorAppointmentDetailsResponse getAppointmentById(@PathVariable UUID id) {
+    public GetDoctorAppointmentResponse getAppointmentById(@PathVariable UUID id) {
         return this.getDoctorAppointments.getById(id);
     }
 }

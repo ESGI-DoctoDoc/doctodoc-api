@@ -21,4 +21,6 @@ public interface SpecialityRepository {
      * @return a list of all stored {@link Speciality} instances
      */
     List<Speciality> findAll();
+
+    Speciality findByName(String name) throws SpecialityNotFoundException;
 }
