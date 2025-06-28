@@ -143,4 +143,12 @@ public class DoctorRepositoryImpl implements DoctorRepository {
         return doctorFacadeMapper.mapDoctorToDomain(entity);
     }
 
+    @Override
+    public List<Doctor> findAllForAdmin(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<DoctorEntity> pageResult = doctorJpaRepository.findAll(pageable);
+        return pageResult.getContent().stream()
+                .map(doctorFacadeMapper::mapDoctorToDomain)
+                .toList();
+    }
 }

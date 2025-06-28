@@ -35,15 +35,6 @@ public class Admin extends User {
         super(id, email, password, phoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
     }
 
-    /**
-     * Validates the given doctor account by setting its verified status to true.
-     *
-     * @param doctor the doctor whose account will be validated
-     */
-    public static void validateDoctorAccount(Doctor doctor) {
-        doctor.setVerified(true);
-    }
-
     @Override
     public UUID getId() {
         return id;

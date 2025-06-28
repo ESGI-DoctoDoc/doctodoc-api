@@ -9,12 +9,14 @@ public class DoctorSubscription {
     private UUID doctorId;
     private LocalDateTime startDate;
     private LocalDateTime endDate;
+    private LocalDateTime createdAt;
 
-    public DoctorSubscription(UUID id, UUID doctorId, LocalDateTime startDate, LocalDateTime endDate) {
+    public DoctorSubscription(UUID id, UUID doctorId, LocalDateTime startDate, LocalDateTime endDate, LocalDateTime createdAt) {
         this.id = id;
         this.doctorId = doctorId;
         this.startDate = startDate;
         this.endDate = endDate;
+        this.createdAt = createdAt;
     }
 
     public static DoctorSubscription create(UUID doctorId, LocalDateTime startDate) {
@@ -22,7 +24,8 @@ public class DoctorSubscription {
                 UUID.randomUUID(),
                 doctorId,
                 startDate,
-                startDate.plusYears(1)
+                startDate.plusYears(1),
+                LocalDateTime.now()
         );
     }
 
@@ -56,6 +59,14 @@ public class DoctorSubscription {
 
     public void setEndDate(LocalDateTime endDate) {
         this.endDate = endDate;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 
     @Override

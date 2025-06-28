@@ -6,6 +6,6 @@ import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthReques
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
 
 public interface IAuthenticateUser {
-    LoginResponse loginUser(LoginRequest loginRequest, String role);
+    LoginResponse loginUser(LoginRequest loginRequest);
     User validateDoubleAuth(ValidateDoubleAuthRequest validateDoubleAuthRequest);
 }

@@ -1,6 +1,5 @@
 package fr.esgi.doctodocapi;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.DoctorValidationRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.OnBoardingDoctorRequest;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
@@ -11,7 +10,7 @@ import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.model.vo.email.Email;
 import fr.esgi.doctodocapi.model.vo.password.Password;
 import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
-import fr.esgi.doctodocapi.use_cases.admin.validate_doctor_account.ValidateDoctorAccount;
+import fr.esgi.doctodocapi.use_cases.admin.validate_doctor_account.ManageValidationDoctorAccount;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.OnboardingDoctorProcess;
 import fr.esgi.doctodocapi.use_cases.exceptions.on_boarding.DoctorAccountAlreadyExist;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
@@ -44,7 +43,7 @@ class OnboardingDoctorProcessTest {
     private OnboardingDoctorProcess onboarding;
 
     @InjectMocks
-    private ValidateDoctorAccount validateDoctorAccount;
+    private ManageValidationDoctorAccount manageValidationDoctorAccount;
 
     private final UUID userId = UUID.randomUUID();
     private User mockUser;
@@ -159,9 +158,7 @@ class OnboardingDoctorProcessTest {
         UUID unknownDoctorId = UUID.randomUUID();
         when(doctorRepository.findDoctorByUserId(unknownDoctorId)).thenReturn(null);
 
-        DoctorValidationRequest request = new DoctorValidationRequest(unknownDoctorId);
-
-        assertThatThrownBy(() -> validateDoctorAccount.validateDoctorAccount(request))
+        assertThatThrownBy(() -> manageValidationDoctorAccount.validateDoctorAccount(unknownDoctorId))
                 .isInstanceOf(DoctorNotFoundException.class);
     }
 

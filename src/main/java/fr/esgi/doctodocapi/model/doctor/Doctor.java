@@ -33,6 +33,7 @@ public class Doctor extends User {
     private DoctorConsultationInformations consultationInformations;
     private Calendar calendar;
     private boolean isVerified;
+    private boolean isRefused;
     private String customerId;
 
 
@@ -46,7 +47,7 @@ public class Doctor extends User {
      * @param consultationInformations consultation-related information
      * @param isVerified               verification status of the doctor
      */
-    private Doctor(User user, UUID id, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified, String customerId) {
+    private Doctor(User user, UUID id, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified, String customerId, boolean isRefused) {
         super(user.getId(), user.getEmail(), user.getPassword(), user.getPhoneNumber(), user.isEmailVerified(), user.isDoubleAuthActive(), user.getDoubleAuthCode(), user.getCreatedAt());
         this.id = id;
         this.personalInformations = personalInformations;
@@ -54,16 +55,18 @@ public class Doctor extends User {
         this.consultationInformations = consultationInformations;
         this.isVerified = isVerified;
         this.customerId = customerId;
+        this.isRefused = isRefused;
     }
 
 
-    public Doctor(UUID userId, Email email, Password password, PhoneNumber phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified) {
+    public Doctor(UUID userId, Email email, Password password, PhoneNumber phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified, boolean isRefused) {
         super(userId, email, password, phoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
         this.id = id;
         this.personalInformations = personalInformations;
         this.professionalInformations = professionalInformations;
         this.consultationInformations = consultationInformations;
         this.isVerified = isVerified;
+        this.isRefused = isRefused;
     }
 
     /**
@@ -84,7 +87,7 @@ public class Doctor extends User {
      * @param isVerified               doctor verification status
      * @param calendar                 the doctor's calendar
      */
-    public Doctor(UUID userId, Email email, Password password, PhoneNumber phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified, Calendar calendar, String customerId) {
+    public Doctor(UUID userId, Email email, Password password, PhoneNumber phoneNumber, boolean isEmailVerified, boolean isDoubleAuthActive, String doubleAuthCode, LocalDateTime createdAt, UUID id, DoctorPersonnalInformations personalInformations, DoctorProfessionalInformations professionalInformations, DoctorConsultationInformations consultationInformations, boolean isVerified, Calendar calendar, String customerId, boolean isRefused) {
         super(userId, email, password, phoneNumber, isEmailVerified, isDoubleAuthActive, doubleAuthCode, createdAt);
         this.id = id;
         this.personalInformations = personalInformations;
@@ -93,6 +96,17 @@ public class Doctor extends User {
         this.isVerified = isVerified;
         this.calendar = calendar;
         this.customerId = customerId;
+        this.isRefused = isRefused;
+    }
+
+    public void validate() {
+        this.isVerified = true;
+        this.isRefused = false;
+    }
+
+    public void refuse() {
+        this.isRefused = true;
+        this.isVerified = false;
     }
 
     /**
@@ -154,7 +168,8 @@ public class Doctor extends User {
                 professionalInformations,
                 consultationInformations,
                 false,
-                null
+                null,
+                false
         );
     }
 
@@ -218,6 +233,14 @@ public class Doctor extends User {
 
     public void setCalendar(Calendar calendar) {
         this.calendar = calendar;
+    }
+
+    public boolean isRefused() {
+        return isRefused;
+    }
+
+    public void setRefused(boolean refused) {
+        isRefused = refused;
     }
 
     @Override

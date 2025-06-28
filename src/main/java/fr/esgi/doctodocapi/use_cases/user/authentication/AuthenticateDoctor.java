@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.user.authentication;
 
+import fr.esgi.doctodocapi.model.admin.AdminRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.user.TokenManager;
@@ -11,6 +12,7 @@ import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthReques
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.IAuthenticateDoctor;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.IAuthenticateUser;
+import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 
 import java.util.Optional;
 import java.util.UUID;
@@ -41,6 +43,8 @@ public class AuthenticateDoctor implements IAuthenticateDoctor {
      */
     private final DoctorRepository doctorRepository;
 
+    private final AdminRepository adminRepository;
+
     /**
      * Constructs an AuthenticateDoctor service with the required dependencies.
      *
@@ -48,10 +52,11 @@ public class AuthenticateDoctor implements IAuthenticateDoctor {
      * @param tokenManager     Service for generating authentication tokens
      * @param doctorRepository Repository for accessing doctor data
      */
-    public AuthenticateDoctor(IAuthenticateUser authenticateUser, TokenManager tokenManager, DoctorRepository doctorRepository) {
+    public AuthenticateDoctor(IAuthenticateUser authenticateUser, TokenManager tokenManager, DoctorRepository doctorRepository, AdminRepository adminRepository) {
         this.authenticateUser = authenticateUser;
         this.tokenManager = tokenManager;
         this.doctorRepository = doctorRepository;
+        this.adminRepository = adminRepository;
     }
 
     /**
@@ -63,7 +68,7 @@ public class AuthenticateDoctor implements IAuthenticateDoctor {
      * @return A response containing authentication information, including a token for double authentication
      */
     public LoginResponse login(LoginRequest loginRequest) {
-        return this.authenticateUser.loginUser(loginRequest, UserRoles.DOCTOR.name());
+        return this.authenticateUser.loginUser(loginRequest);
     }
 
     /**
@@ -78,35 +83,56 @@ public class AuthenticateDoctor implements IAuthenticateDoctor {
     public DoubleAuthenticationUserResponse validateDoubleAuthCode(ValidateDoubleAuthRequest validateDoubleAuthRequest) {
         User user = this.authenticateUser.validateDoubleAuth(validateDoubleAuthRequest);
 
-        String token = this.tokenManager.generate(user.getEmail().getValue(), UserRoles.DOCTOR.name(),
-                TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES);
-
-        Optional<Doctor> optionalDoctor = this.doctorRepository.getByUserId(user.getId());
-        UUID id = null;
-        String email = null;
-        String firstName = null;
-        String lastName = null;
-        String phoneNumber = null;
-        boolean hasOnBoardingDone = false;
-
-        if (optionalDoctor.isPresent()) {
-            Doctor doctor = optionalDoctor.get();
-            id = doctor.getId();
-            email = doctor.getEmail().getValue();
-            firstName = doctor.getPersonalInformations().getFirstName();
-            lastName = doctor.getPersonalInformations().getLastName();
-            phoneNumber = doctor.getPhoneNumber().getValue();
-            hasOnBoardingDone = true;
+        String role;
+        if (adminRepository.existsByUserId(user.getId())) {
+            role = UserRoles.ADMIN.name();
+        } else {
+            role = UserRoles.DOCTOR.name();
         }
 
+        String token = this.tokenManager.generate(user.getEmail().getValue(), role, TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES);
+
+        // DOCTOR
+        if (role.equals(UserRoles.DOCTOR.name())) {
+            Optional<Doctor> optionalDoctor = this.doctorRepository.getByUserId(user.getId());
+
+            UUID id = null;
+            String email = null;
+            String firstName = null;
+            String lastName = null;
+            String phoneNumber = null;
+            boolean hasOnBoardingDone = false;
+
+            if (optionalDoctor.isPresent()) {
+                Doctor doctor = optionalDoctor.get();
+                id = doctor.getId();
+                email = doctor.getEmail().getValue();
+                firstName = doctor.getPersonalInformations().getFirstName();
+                lastName = doctor.getPersonalInformations().getLastName();
+                phoneNumber = doctor.getPhoneNumber().getValue();
+                hasOnBoardingDone = true;
+            }
+
+            return new DoubleAuthenticationUserResponse(
+                    id,
+                    token,
+                    hasOnBoardingDone,
+                    email,
+                    firstName,
+                    lastName,
+                    phoneNumber
+            );
+        }
+
+        // ADMIN
         return new DoubleAuthenticationUserResponse(
-                id,
+                user.getId(),
                 token,
-                hasOnBoardingDone,
-                email,
-                firstName,
-                lastName,
-                phoneNumber
+                true,
+                user.getEmail().getValue(),
+                null,
+                null,
+                user.getPhoneNumber().getValue()
         );
     }
 }

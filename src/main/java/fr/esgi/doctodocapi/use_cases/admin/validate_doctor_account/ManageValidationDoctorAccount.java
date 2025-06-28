@@ -1,14 +1,14 @@
 package fr.esgi.doctodocapi.use_cases.admin.validate_doctor_account;
 
-import fr.esgi.doctodocapi.use_cases.admin.ports.in.IValidateDoctorAccount;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.DoctorValidationRequest;
-import fr.esgi.doctodocapi.model.admin.Admin;
+import fr.esgi.doctodocapi.use_cases.admin.ports.in.IManageValidationDoctorAccount;
+import fr.esgi.doctodocapi.use_cases.admin.ports.out.ManageDoctorValidationAccount;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
-import org.springframework.stereotype.Service;
+
+import java.util.UUID;
 
 /**
  * Service responsible for validating doctor accounts.
@@ -17,17 +17,19 @@ import org.springframework.stereotype.Service;
  * It uses the doctor's user ID to find the corresponding entity and mark it as validated.
  * </p>
  */
-public class ValidateDoctorAccount implements IValidateDoctorAccount {
+public class ManageValidationDoctorAccount implements IManageValidationDoctorAccount {
 
     private final DoctorRepository doctorRepository;
+    private final ManageDoctorValidationAccount manageDoctorValidationAccount;
 
     /**
      * Constructs the service with the required repository.
      *
      * @param doctorRepository the repository to access doctor data
      */
-    public ValidateDoctorAccount(DoctorRepository doctorRepository) {
+    public ManageValidationDoctorAccount(DoctorRepository doctorRepository, ManageDoctorValidationAccount manageDoctorValidationAccount) {
         this.doctorRepository = doctorRepository;
+        this.manageDoctorValidationAccount = manageDoctorValidationAccount;
     }
 
     /**
@@ -38,18 +40,31 @@ public class ValidateDoctorAccount implements IValidateDoctorAccount {
      * If any domain exception occurs during validation, an {@link ApiException} is thrown.
      * </p>
      *
-     * @param request the doctor validation request containing the doctor's user ID
+     * @param doctorId the doctor validation request containing the doctor's user ID
      */
-    public void validateDoctorAccount(DoctorValidationRequest request) {
-        Doctor doctor = this.doctorRepository.findDoctorByUserId(request.doctorId());
+    public void validateDoctorAccount(UUID doctorId) {
+        Doctor doctor = this.doctorRepository.findDoctorByUserId(doctorId);
 
         if (doctor == null) {
             throw new DoctorNotFoundException();
         }
 
         try {
-            Admin.validateDoctorAccount(doctor);
-            this.doctorRepository.save(doctor);
+            this.manageDoctorValidationAccount.validateDoctorAccount(doctor.getId());
+        } catch (DoctorNotFoundException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
+    }
+
+    public void refuseDoctorAccount(UUID doctorId) {
+        Doctor doctor = this.doctorRepository.findDoctorByUserId(doctorId);
+
+        if (doctor == null) {
+            throw new DoctorNotFoundException();
+        }
+
+        try {
+            this.manageDoctorValidationAccount.refuseDoctorAccount(doctor.getId());
         } catch (DoctorNotFoundException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
