@@ -6,6 +6,7 @@ import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscription;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.CounterInfo;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.SpecialityInfo;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.SubscriptionInfo;
+import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.get_doctors.AddressInfo;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.get_doctors.GetDoctorByIdResponse;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.get_doctors.GetDoctorForAdminResponse;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,17 @@ public class DoctorResponseMapper {
                 doctor.getEmail().getValue(),
                 doctor.getPhoneNumber().getValue(),
                 doctor.getPersonalInformations().getBirthDate().getValue().toString(),
-                doctor.getProfessionalInformations().getRpps().toString(),
+                doctor.getProfessionalInformations().getRpps().getValue(),
                 doctor.isVerified(),
                 doctor.getCreatedAt().toString(),
                 new SpecialityInfo(
                         speciality.getId(),
                         speciality.getName()
+                ),
+                new AddressInfo(
+                        doctor.getConsultationInformations().getAddress(),
+                        doctor.getConsultationInformations().getCoordinatesGps().getClinicLatitude(),
+                        doctor.getConsultationInformations().getCoordinatesGps().getClinicLatitude()
                 )
         );
     }
@@ -40,7 +46,7 @@ public class DoctorResponseMapper {
                 doctor.getEmail().getValue(),
                 doctor.getPhoneNumber().getValue(),
                 doctor.getPersonalInformations().getBirthDate().getValue().toString(),
-                doctor.getProfessionalInformations().getRpps().toString(),
+                doctor.getProfessionalInformations().getRpps().getValue(),
                 doctor.isVerified(),
                 doctor.isEmailVerified(),
                 doctor.getCreatedAt().toString(),

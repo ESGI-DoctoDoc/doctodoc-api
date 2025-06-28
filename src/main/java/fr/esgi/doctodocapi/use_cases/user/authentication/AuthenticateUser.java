@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.user.authentication;
 
+import fr.esgi.doctodocapi.model.admin.AdminRepository;
 import fr.esgi.doctodocapi.model.user.*;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthenticationException;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthentificationMessageException;
@@ -85,7 +86,7 @@ public class AuthenticateUser implements IAuthenticateUser {
             String token = this.tokenManager.generate(
                     userFoundByIdentifier.getEmail().getValue(),
                     UserRoles.ADMIN.name(),
-                    TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES
+                    TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES
             );
             return new LoginResponse(token);
         }

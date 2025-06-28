@@ -29,9 +29,9 @@ public class GetDoctorSubscriptionController {
         return this.getDoctorSubscriptionsForAdmin.execute(page, size);
     }
 
-    @GetMapping("subscriptions/{id}/invoices")
+    @GetMapping("subscriptions/{subscriptionId}/invoice")
     @ResponseStatus(HttpStatus.OK)
-    public GetInvoiceUrlResponse getInvoiceUrl(@PathVariable UUID id) {
-        return this.fetchInvoiceForSubscription.execute(id);
+    public GetInvoiceUrlResponse getInvoiceUrl(@PathVariable UUID subscriptionId) {
+        return this.fetchInvoiceForSubscription.execute(subscriptionId);
     }
 }

@@ -14,6 +14,7 @@ public record GetDoctorForAdminResponse(
         String rpps,
         boolean isVerified,
         String createdAt,
-        SpecialityInfo speciality
+        SpecialityInfo speciality,
+        AddressInfo address
 ) {
 }
