@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.infrastructure.security.config;
 
 
 import fr.esgi.doctodocapi.infrastructure.jwt.JwtService;
+import fr.esgi.doctodocapi.use_cases.exceptions.UnauthorizedException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.ServletException;
 import jakarta.servlet.http.HttpServletRequest;
@@ -39,26 +40,32 @@ public class JwtFilter extends OncePerRequestFilter {
 
     @Override
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain) throws ServletException, IOException {
-        String token = extractTokenFromRequest(request);
+        try {
+            String token = extractTokenFromRequest(request);
 
-        if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
-            String username = this.jwtService.extractUserName(token);
-            String role = this.jwtService.extractRole(token);
-            GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_" + role);
+            if (token != null && SecurityContextHolder.getContext().getAuthentication() == null) {
+                String username = this.jwtService.extractUserName(token);
+                String role = this.jwtService.extractRole(token);
+                GrantedAuthority grantedAuthority = new SimpleGrantedAuthority("ROLE_" + role);
 
-            User userDetails = new User(username, "", List.of(grantedAuthority));
+                User userDetails = new User(username, "", List.of(grantedAuthority));
 
-            if (this.jwtService.validateToken(token, userDetails)) {
-                UsernamePasswordAuthenticationToken authToken =
-                        new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
-                authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+                if (this.jwtService.validateToken(token, userDetails)) {
+                    UsernamePasswordAuthenticationToken authToken =
+                            new UsernamePasswordAuthenticationToken(userDetails, null, userDetails.getAuthorities());
+                    authToken.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
 
-                SecurityContextHolder.getContext().setAuthentication(authToken);
+                    SecurityContextHolder.getContext().setAuthentication(authToken);
+                }
             }
+
+
+            filterChain.doFilter(request, response);
+
+        } catch (Exception e) {
+            throw new UnauthorizedException();
         }
 
-
-        filterChain.doFilter(request, response);
     }
 
     private String extractTokenFromRequest(HttpServletRequest request) {
