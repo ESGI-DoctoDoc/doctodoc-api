@@ -27,7 +27,7 @@ public class GetDoctorsForAdmin implements IGetDoctorsForAdmin {
 
     public List<GetDoctorForAdminResponse> execute(int page, int size) {
         try {
-            List<Doctor> doctors = this.doctorRepository.findAllForAdmin( page, size);
+            List<Doctor> doctors = this.doctorRepository.findAllForAdmin(page, size);
             return doctors.stream()
                     .map(doctor -> {
                         String specialityName = doctor.getProfessionalInformations().getSpeciality();
@@ -37,7 +37,7 @@ public class GetDoctorsForAdmin implements IGetDoctorsForAdmin {
                     .toList();
 
         } catch (DomainException e) {
-            throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCode(), e.getMessage());
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
     }
 }

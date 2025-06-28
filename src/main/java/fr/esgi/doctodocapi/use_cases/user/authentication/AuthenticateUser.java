@@ -1,6 +1,5 @@
 package fr.esgi.doctodocapi.use_cases.user.authentication;
 
-import fr.esgi.doctodocapi.model.admin.AdminRepository;
 import fr.esgi.doctodocapi.model.user.*;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthenticationException;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthentificationMessageException;
@@ -23,8 +22,7 @@ import java.util.Objects;
  */
 public class AuthenticateUser implements IAuthenticateUser {
 
-    private static final int TOKEN_LONG_TERM_EXPIRATION_IN_MINUTES = 120;
-    private static final int TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES = 2;
+    private static final int TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES = 10;
 
     private final AuthenticateUserInContext authenticateUserInContext;
     private final GetCurrentUserContext getCurrentUserContext;

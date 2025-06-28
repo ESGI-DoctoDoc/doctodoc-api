@@ -236,7 +236,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     public boolean existsPatientByDoctorAndPatientId(UUID doctorId, UUID patientId) {
-        return this.appointmentJpaRepository.existsByDoctor_IdAndPatient_Id(doctorId, patientId);
+        return !this.appointmentJpaRepository.existsByDoctor_IdAndPatient_Id(doctorId, patientId);
     }
 
     @Override
