@@ -12,9 +12,7 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.time.*;
 import java.util.List;
 import java.util.UUID;
 
@@ -30,6 +28,9 @@ class AppointmentsAvailabilityServiceTest {
     private SlotRepository slotRepository;
 
     @Mock
+    private Clock clock;
+
+    @Mock
     private AbsenceRepository absenceRepository;
 
     @InjectMocks
@@ -37,8 +38,14 @@ class AppointmentsAvailabilityServiceTest {
 
     @Test
     void should_return_slot_divisions_if_no_appointments() {
+        // configure clock
+        LocalDateTime fixedNow = LocalDateTime.of(2025, 3, 10, 8, 45);
+        Instant fixedInstant = fixedNow.atZone(ZoneId.systemDefault()).toInstant();
+        when(clock.instant()).thenReturn(fixedInstant);
+        when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+
         UUID doctorId = UUID.randomUUID();
-        LocalDate createdAt = LocalDate.now();
+        LocalDate createdAt = fixedNow.minusDays(10).toLocalDate();
 
         // generate medical concerns
         MedicalConcern medicalConcern1 = new MedicalConcern(UUID.randomUUID(), "A", 15, List.of(), 10.0, doctorId, createdAt);
@@ -53,11 +60,9 @@ class AppointmentsAvailabilityServiceTest {
         LocalTime defaultHour2 = LocalTime.of(11, 0, 0);
         Slot slot2 = Slot.create(defaultDate2, defaultHour2, defaultHour2.plusHours(1), List.of(medicalConcern1));
 
-
         // response expected
         List<GetAppointmentAvailabilityResponse> expected = List.of(
                 // slot 1
-                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 0), LocalTime.of(9, 15), false),
                 new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 15), LocalTime.of(9, 30), false),
                 new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 30), LocalTime.of(9, 45), false),
                 new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 45), LocalTime.of(10, 0), false),
@@ -92,8 +97,14 @@ class AppointmentsAvailabilityServiceTest {
 
     @Test
     void should_divide_slot_and_filter_with_all_statuses() {
+        // configure clock
+        LocalDateTime fixedNow = LocalDateTime.of(2025, 3, 10, 8, 45);
+        Instant fixedInstant = fixedNow.atZone(ZoneId.systemDefault()).toInstant();
+        when(clock.instant()).thenReturn(fixedInstant);
+        when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+
         UUID doctorId = UUID.randomUUID();
-        LocalDate createdAt = LocalDate.now();
+        LocalDate createdAt = fixedNow.minusDays(10).toLocalDate();
 
         // Given
         MedicalConcern medicalConcern = new MedicalConcern(UUID.randomUUID(), "A", 15, List.of(), 10.0, doctorId, createdAt);
@@ -109,33 +120,33 @@ class AppointmentsAvailabilityServiceTest {
         Appointment confirmed = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern,
                 LocalTime.of(9, 0), LocalTime.of(9, 15),
-                LocalDateTime.now(), AppointmentStatus.CONFIRMED, List.of(), LocalDateTime.now(), null, null
+                fixedNow.minusDays(1), AppointmentStatus.CONFIRMED, List.of(), null, null, null
         );
 
         Appointment confirmed2 = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern2,
                 LocalTime.of(10, 0), LocalTime.of(10, 30),
-                LocalDateTime.now(), AppointmentStatus.CONFIRMED, List.of(), LocalDateTime.now(), null, null
+                fixedNow.minusDays(2), AppointmentStatus.CONFIRMED, List.of(), null, null, null
         );
 
         Appointment lockedNotExpired = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern,
                 LocalTime.of(9, 15), LocalTime.of(9, 30),
-                LocalDateTime.now().minusMinutes(2),
+                fixedNow.minusMinutes(2),
                 AppointmentStatus.LOCKED, List.of(), LocalDateTime.now().minusMinutes(2), null, null
         );
 
         Appointment lockedExpired = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern,
                 LocalTime.of(9, 30), LocalTime.of(9, 45),
-                LocalDateTime.now().minusMinutes(10),
+                fixedNow.minusMinutes(10),
                 AppointmentStatus.LOCKED, List.of(), LocalDateTime.now().minusMinutes(10), null, null
         );
 
         Appointment cancelled = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern,
                 LocalTime.of(9, 45), LocalTime.of(10, 0),
-                LocalDateTime.now(), AppointmentStatus.CANCELLED, List.of(), LocalDateTime.now(), null, null
+                fixedNow, AppointmentStatus.CANCELLED, List.of(), null, null, null
         );
 
         // Expected results
@@ -169,11 +180,17 @@ class AppointmentsAvailabilityServiceTest {
 
     @Test
     void should_filter_appointments_with_absence_overlap() {
+        // configure clock
+        LocalDateTime fixedNow = LocalDateTime.of(2025, 6, 15, 9, 30);
+        Instant fixedInstant = fixedNow.atZone(ZoneId.systemDefault()).toInstant();
+        when(clock.instant()).thenReturn(fixedInstant);
+        when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+
         UUID doctorId = UUID.randomUUID();
-        LocalDate createdAt = LocalDate.now();
+        LocalDate createdAt = fixedNow.minusDays(10).toLocalDate();
 
         MedicalConcern concern = new MedicalConcern(UUID.randomUUID(), "Consultation", 15, List.of(), 20.0, doctorId, createdAt);
-        LocalDate date = LocalDate.of(2025, 6, 15);
+        LocalDate date = fixedNow.toLocalDate();
         Slot slot = Slot.create(date, LocalTime.of(10, 0), LocalTime.of(11, 0), List.of(concern));
 
         // Absence de 10:15 à 10:30
@@ -196,11 +213,17 @@ class AppointmentsAvailabilityServiceTest {
 
     @Test
     void should_return_no_appointments_with_absence_overlap_all_the_day() {
+        // configure clock
+        LocalDateTime fixedNow = LocalDateTime.of(2025, 6, 15, 9, 30);
+        Instant fixedInstant = fixedNow.atZone(ZoneId.systemDefault()).toInstant();
+        when(clock.instant()).thenReturn(fixedInstant);
+        when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+
         UUID doctorId = UUID.randomUUID();
-        LocalDate createdAt = LocalDate.now();
+        LocalDate createdAt = fixedNow.minusDays(10).toLocalDate();
 
         MedicalConcern concern = new MedicalConcern(UUID.randomUUID(), "Consultation", 15, List.of(), 20.0, doctorId, createdAt);
-        LocalDate date = LocalDate.of(2025, 6, 15);
+        LocalDate date = fixedNow.toLocalDate();
         Slot slot = Slot.create(date, LocalTime.of(10, 0), LocalTime.of(11, 0), List.of(concern));
 
         // Absence de 10:15 à 10:30
@@ -220,11 +243,17 @@ class AppointmentsAvailabilityServiceTest {
 
     @Test
     void should_filter_with_absences_and_appointments_combined() {
+        // configure clock
+        LocalDateTime fixedNow = LocalDateTime.of(2025, 6, 15, 8, 30);
+        Instant fixedInstant = fixedNow.atZone(ZoneId.systemDefault()).toInstant();
+        when(clock.instant()).thenReturn(fixedInstant);
+        when(clock.getZone()).thenReturn(ZoneId.systemDefault());
+
         UUID doctorId = UUID.randomUUID();
-        LocalDate createdAt = LocalDate.now();
+        LocalDate createdAt = fixedNow.minusDays(10).toLocalDate();
 
         MedicalConcern concern = new MedicalConcern(UUID.randomUUID(), "Consultation", 15, List.of(), 20.0, doctorId, createdAt);
-        LocalDate date = LocalDate.of(2025, 6, 20);
+        LocalDate date = fixedNow.toLocalDate();
         Slot slot = Slot.create(date, LocalTime.of(9, 0), LocalTime.of(10, 0), List.of(concern));
 
         // Absence : 09:30 - 09:45

@@ -9,6 +9,7 @@ import fr.esgi.doctodocapi.model.vo.hours_range.HoursRange;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
 import org.springframework.stereotype.Service;
 
+import java.time.Clock;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.time.LocalTime;
@@ -37,16 +38,20 @@ public class AppointmentsAvailabilityService {
 
     private final AbsenceRepository absenceRepository;
 
+    private final Clock clock;
+
+
     /**
      * Constructs an AppointmentsAvailabilityService with the required repositories.
      *
      * @param appointmentRepository Repository for appointment data access
      * @param slotRepository        Repository for slot data access
      */
-    public AppointmentsAvailabilityService(AppointmentRepository appointmentRepository, SlotRepository slotRepository, AbsenceRepository absenceRepository) {
+    public AppointmentsAvailabilityService(AppointmentRepository appointmentRepository, SlotRepository slotRepository, AbsenceRepository absenceRepository, Clock clock) {
         this.appointmentRepository = appointmentRepository;
         this.slotRepository = slotRepository;
         this.absenceRepository = absenceRepository;
+        this.clock = clock;
     }
 
     /**
@@ -95,11 +100,22 @@ public class AppointmentsAvailabilityService {
 
         });
 
-        return appointmentsAvailable;
-
+        return this.filterAppointmentsAfterNow(appointmentsAvailable);
     }
 
-    List<GetAppointmentAvailabilityResponse> filterAppointmentsByAbsences(
+    public List<GetAppointmentAvailabilityResponse> filterAppointmentsAfterNow(List<GetAppointmentAvailabilityResponse> appointmentsAvailable) {
+        LocalDateTime nowPlus15 = LocalDateTime.now(clock).plusMinutes(15);
+
+        return appointmentsAvailable.stream()
+                .filter(app -> {
+                    LocalDateTime slotDateTime = LocalDateTime.of(app.date(), app.start());
+                    return slotDateTime.isAfter(nowPlus15);
+                })
+                .toList();
+    }
+
+
+    private List<GetAppointmentAvailabilityResponse> filterAppointmentsByAbsences(
             List<Absence> absences,
             List<GetAppointmentAvailabilityResponse> appointmentAvailabilityResponses
     ) {

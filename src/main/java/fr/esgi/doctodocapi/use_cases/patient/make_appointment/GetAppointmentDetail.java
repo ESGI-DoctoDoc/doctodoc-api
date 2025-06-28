@@ -1,8 +1,10 @@
 package fr.esgi.doctodocapi.use_cases.patient.make_appointment;
 
+import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
+import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_response.GetAppointmentDetailedResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IGetAppointmentDetail;
@@ -13,15 +15,19 @@ import java.util.UUID;
 public class GetAppointmentDetail implements IGetAppointmentDetail {
     private final AppointmentRepository appointmentRepository;
     private final AppointmentDetailedMapper appointmentDetailedMapper;
+    private final GetPatientFromContext getPatientFromContext;
 
-    public GetAppointmentDetail(AppointmentRepository appointmentRepository, AppointmentDetailedMapper appointmentDetailedMapper) {
+    public GetAppointmentDetail(AppointmentRepository appointmentRepository, AppointmentDetailedMapper appointmentDetailedMapper, GetPatientFromContext getPatientFromContext) {
         this.appointmentRepository = appointmentRepository;
         this.appointmentDetailedMapper = appointmentDetailedMapper;
+        this.getPatientFromContext = getPatientFromContext;
     }
 
     public GetAppointmentDetailedResponse get(UUID id) {
         try {
-            Appointment appointment = this.appointmentRepository.getById(id);
+            Patient patient = this.getPatientFromContext.get();
+            Appointment appointment = this.appointmentRepository.getByIdAndPatientId(id, patient.getId());
+
             return this.appointmentDetailedMapper.toDto(appointment);
 
         } catch (DomainException e) {
