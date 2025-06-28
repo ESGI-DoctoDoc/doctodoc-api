@@ -5,10 +5,12 @@ import fr.esgi.doctodocapi.use_cases.care_tracking.dtos.responses.book_appointme
 import fr.esgi.doctodocapi.use_cases.care_tracking.ports.in.book_appointment_in_care_tracking.IBookAppointmentInCareTracking;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("doctors")
+@PreAuthorize("hasRole('ROLE_DOCTOR')")
 public class ManageAppointmentInCareTrackingController {
     private final IBookAppointmentInCareTracking bookAppointment;
 

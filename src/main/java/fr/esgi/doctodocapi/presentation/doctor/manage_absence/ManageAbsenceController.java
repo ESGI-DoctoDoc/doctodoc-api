@@ -10,6 +10,7 @@ import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.ISaveSingleD
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
@@ -24,6 +25,7 @@ import java.util.UUID;
  */
 @RestController
 @RequestMapping("doctors")
+@PreAuthorize("hasRole('ROLE_DOCTOR')")
 public class ManageAbsenceController {
     private final IDeleteAbsence deleteAbsence;
     private final IGetAbsences getAbsences;

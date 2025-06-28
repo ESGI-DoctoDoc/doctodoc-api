@@ -6,6 +6,7 @@ import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_medical_concern.ICre
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_medical_concern.IGetAllMedicalConcerns;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -16,6 +17,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping("doctors")
+@PreAuthorize("hasRole('ROLE_DOCTOR')")
 public class ManageMedicalConcernController {
     private final ICreateMedicalConcern createMedicalConcern;
     private final IGetAllMedicalConcerns getAllMedicalConcern;
