@@ -67,11 +67,10 @@ public class AuthenticateUser implements IAuthenticateUser {
      * </p>
      *
      * @param loginRequest the login form containing the user identifier and password
-     * @param role         the user's role (used for token payload)
      * @return a {@link LoginResponse} containing a JWT token
      * @throws AuthenticationException if credentials are invalid or account is not verified
      */
-    public LoginResponse loginUser(LoginRequest loginRequest, String role) {
+    public LoginResponse loginUser(LoginRequest loginRequest) {
         String identifier = loginRequest.identifier().trim();
         String password = loginRequest.password();
 
@@ -80,21 +79,12 @@ public class AuthenticateUser implements IAuthenticateUser {
         String userRole = this.getCurrentUserContext.getRole();
         User userFoundByIdentifier = this.getUserByEmailOrPhoneNumber(identifier, identifier);
 
-        if (userRole.equals(UserRoles.ADMIN.name())) {
-            String token = this.tokenManager.generate(
-                    userFoundByIdentifier.getEmail().getValue(),
-                    UserRoles.ADMIN.name(),
-                    TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES
-            );
-            return new LoginResponse(token);
-        }
-
         this.verifyEmail(userFoundByIdentifier);
         this.sendMessageWithDoubleAuthCode(userFoundByIdentifier);
 
         String token = this.tokenManager.generate(
                 userFoundByIdentifier.getEmail().getValue(),
-                role,
+                userRole,
                 TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES
         );
 

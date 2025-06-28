@@ -12,6 +12,7 @@ import fr.esgi.doctodocapi.model.doctor.payment.PaymentProcessFailedException;
 import fr.esgi.doctodocapi.model.doctor.payment.invoice.InvoiceNotFoundException;
 import fr.esgi.doctodocapi.use_cases.admin.ports.out.InvoiceFetcher;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.PaymentProcess;
+import jakarta.annotation.PostConstruct;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
@@ -25,7 +26,8 @@ public class StripeService implements PaymentProcess, InvoiceFetcher {
     @Value("${stripe.api.key}")
     private String apiKey;
 
-    public StripeService() {
+    @PostConstruct
+    public void init() {
         Stripe.apiKey = apiKey;
     }
 

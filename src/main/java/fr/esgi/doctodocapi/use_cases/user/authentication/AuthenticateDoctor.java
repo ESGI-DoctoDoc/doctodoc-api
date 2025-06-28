@@ -68,7 +68,7 @@ public class AuthenticateDoctor implements IAuthenticateDoctor {
      * @return A response containing authentication information, including a token for double authentication
      */
     public LoginResponse login(LoginRequest loginRequest) {
-        return this.authenticateUser.loginUser(loginRequest, UserRoles.DOCTOR.name());
+        return this.authenticateUser.loginUser(loginRequest);
     }
 
     /**
