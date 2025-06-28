@@ -1,13 +1,12 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_medical_record;
 
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
+import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.document.Document;
-import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
-import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IDeleteMedicalRecordDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
@@ -40,8 +39,8 @@ public class DeleteMedicalRecordDocument implements IDeleteMedicalRecordDocument
             this.documentRepository.delete(document);
             this.fileStorageService.delete(document.getPath());
 
-        } catch (DocumentNotFoundException | UserNotFoundException e) {
-            throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());
+        } catch (DomainException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
     }
 }

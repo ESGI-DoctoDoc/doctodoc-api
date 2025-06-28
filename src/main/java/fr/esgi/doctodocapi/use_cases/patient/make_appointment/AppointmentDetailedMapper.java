@@ -2,10 +2,10 @@ package fr.esgi.doctodocapi.use_cases.patient.make_appointment;
 
 
 import fr.esgi.doctodocapi.model.appointment.Appointment;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_response.GetAppointmentAddressResponse;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_response.GetAppointmentDetailedResponse;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_response.GetAppointmentDoctorResponse;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_response.GetAppointmentPatientResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_responses.GetAppointmentAddressResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_responses.GetAppointmentDetailedResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_responses.GetAppointmentDoctorResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_responses.GetAppointmentPatientResponse;
 import org.springframework.stereotype.Service;
 
 @Service
