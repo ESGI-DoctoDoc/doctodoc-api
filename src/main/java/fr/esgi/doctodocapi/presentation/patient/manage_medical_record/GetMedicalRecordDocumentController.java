@@ -5,6 +5,7 @@ import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocument
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetAllMedicalRecordDocuments;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetDocumentMedicalRecordContent;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetMedicalRecordDocumentDetail;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -12,6 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping("/patients/medical-record")
+@PreAuthorize("hasRole('ROLE_PATIENT')")
 public class GetMedicalRecordDocumentController {
     private final IGetAllMedicalRecordDocuments getAllDocuments;
     private final IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent;
