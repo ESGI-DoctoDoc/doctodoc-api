@@ -1,5 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.user.authentication;
 
+import fr.esgi.doctodocapi.model.admin.AdminRepository;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.user.*;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthenticationException;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthentificationMessageException;
@@ -12,7 +14,6 @@ import fr.esgi.doctodocapi.use_cases.user.ports.out.AuthenticateUserInContext;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 
 import java.util.Objects;
-
 /**
  * Service responsible for authenticating users into the system.
  * <p>
@@ -31,6 +32,7 @@ public class AuthenticateUser implements IAuthenticateUser {
     private final DoubleAuthCodeGenerator doubleAuthCodeGenerator;
     private final TokenManager tokenManager;
     private final ISendAccountValidationEmail sendAccountValidationEmail;
+    private final AdminRepository adminRepository;
 
     /**
      * Constructs the service with its required dependencies.
@@ -49,7 +51,7 @@ public class AuthenticateUser implements IAuthenticateUser {
                             MessageSender messageSender,
                             DoubleAuthCodeGenerator doubleAuthCodeGenerator,
                             TokenManager tokenManager,
-                            ISendAccountValidationEmail sendAccountValidationEmail) {
+                            ISendAccountValidationEmail sendAccountValidationEmail, AdminRepository adminRepository) {
         this.authenticateUserInContext = authenticateUserInContext;
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
@@ -57,6 +59,7 @@ public class AuthenticateUser implements IAuthenticateUser {
         this.doubleAuthCodeGenerator = doubleAuthCodeGenerator;
         this.tokenManager = tokenManager;
         this.sendAccountValidationEmail = sendAccountValidationEmail;
+        this.adminRepository = adminRepository;
     }
 
     /**
@@ -70,21 +73,25 @@ public class AuthenticateUser implements IAuthenticateUser {
      * @return a {@link LoginResponse} containing a JWT token
      * @throws AuthenticationException if credentials are invalid or account is not verified
      */
-    public LoginResponse loginUser(LoginRequest loginRequest) {
+    public LoginResponse loginUser(LoginRequest loginRequest, String role) {
         String identifier = loginRequest.identifier().trim();
         String password = loginRequest.password();
 
         this.authenticateUserInContext.persistAuthentication(identifier, password);
 
-        String userRole = this.getCurrentUserContext.getRole();
         User userFoundByIdentifier = this.getUserByEmailOrPhoneNumber(identifier, identifier);
+
+        String actualRole = role;
+        if (this.adminRepository.existsByUserId(userFoundByIdentifier.getId())) {
+            actualRole = UserRoles.ADMIN.name();
+        }
 
         this.verifyEmail(userFoundByIdentifier);
         this.sendMessageWithDoubleAuthCode(userFoundByIdentifier);
 
         String token = this.tokenManager.generate(
                 userFoundByIdentifier.getEmail().getValue(),
-                userRole,
+                actualRole,
                 TOKEN_SHORT_TERM_EXPIRATION_IN_MINUTES
         );
 

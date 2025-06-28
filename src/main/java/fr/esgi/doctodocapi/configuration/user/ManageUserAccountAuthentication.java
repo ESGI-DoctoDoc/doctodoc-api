@@ -29,8 +29,8 @@ public class ManageUserAccountAuthentication {
     }
 
     @Bean
-    public IAuthenticateUser authenticateUser(AuthenticateUserInContext authenticateUserInContext, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, MessageSender messageSender, DoubleAuthCodeGenerator doubleAuthCodeGenerator, TokenManager tokenManager, ISendAccountValidationEmail sendAccountValidationEmail) {
-        return new AuthenticateUser(authenticateUserInContext, getCurrentUserContext, userRepository, messageSender, doubleAuthCodeGenerator, tokenManager, sendAccountValidationEmail);
+    public IAuthenticateUser authenticateUser(AuthenticateUserInContext authenticateUserInContext, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, MessageSender messageSender, DoubleAuthCodeGenerator doubleAuthCodeGenerator, TokenManager tokenManager, ISendAccountValidationEmail sendAccountValidationEmail, AdminRepository adminRepository) {
+        return new AuthenticateUser(authenticateUserInContext, getCurrentUserContext, userRepository, messageSender, doubleAuthCodeGenerator, tokenManager, sendAccountValidationEmail, adminRepository);
     }
 
     @Bean

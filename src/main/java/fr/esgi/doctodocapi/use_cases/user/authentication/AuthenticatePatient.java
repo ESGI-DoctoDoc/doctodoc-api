@@ -51,7 +51,7 @@ public class AuthenticatePatient implements IAuthenticatePatient {
      * @return a {@link LoginResponse} with information related to the authentication attempt
      */
     public LoginResponse login(LoginRequest loginRequest) {
-        return this.authenticateUser.loginUser(loginRequest);
+        return this.authenticateUser.loginUser(loginRequest, UserRoles.PATIENT.name());
     }
 
     /**
