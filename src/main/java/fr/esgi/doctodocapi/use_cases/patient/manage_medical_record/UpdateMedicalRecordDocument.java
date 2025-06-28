@@ -1,54 +1,43 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_medical_record;
 
+import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
-import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.document.DocumentType;
 import fr.esgi.doctodocapi.model.patient.Patient;
-import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
-import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordNotFoundException;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
-import fr.esgi.doctodocapi.model.user.User;
-import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.SaveDocumentRequest;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IUpdateMedicalRecordDocument;
-import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.IGetPatientFromContext;
 import org.springframework.http.HttpStatus;
 
-import java.util.Optional;
 import java.util.UUID;
 
 public class UpdateMedicalRecordDocument implements IUpdateMedicalRecordDocument {
-    private final UserRepository userRepository;
-    private final PatientRepository patientRepository;
-    private final GetCurrentUserContext getCurrentUserContext;
+    private final IGetPatientFromContext getPatientFromContext;
     private final MedicalRecordRepository medicalRecordRepository;
-    private final DocumentRepository documentRepository;
 
 
-    public UpdateMedicalRecordDocument(UserRepository userRepository, PatientRepository patientRepository, GetCurrentUserContext getCurrentUserContext, MedicalRecordRepository medicalRecordRepository, DocumentRepository documentRepository) {
-        this.userRepository = userRepository;
-        this.patientRepository = patientRepository;
-        this.getCurrentUserContext = getCurrentUserContext;
+    public UpdateMedicalRecordDocument(GetPatientFromContext getPatientFromContext, MedicalRecordRepository medicalRecordRepository) {
+        this.getPatientFromContext = getPatientFromContext;
         this.medicalRecordRepository = medicalRecordRepository;
-        this.documentRepository = documentRepository;
     }
 
     public GetDocumentResponse process(UUID id, SaveDocumentRequest saveDocumentRequest) {
         try {
-            User user = this.getUser();
+            Patient patient = this.getPatientFromContext.get();
+            MedicalRecord medicalRecord = this.medicalRecordRepository.getByPatientId(patient.getId());
 
-            Document document = this.documentRepository.getById(id);
+            Document document = medicalRecord.getById(id);
 
             Document newDocument = Document.copyOf(document);
             newDocument.setId(document.getId());
-            newDocument.update(saveDocumentRequest.filename(), DocumentType.fromValue(saveDocumentRequest.type()), user.getId());
+            newDocument.update(saveDocumentRequest.filename(), DocumentType.fromValue(saveDocumentRequest.type()), patient.getUserId());
 
-            MedicalRecord medicalRecord = getMedicalRecord();
             medicalRecord.updateDocument(document, newDocument);
 
             this.medicalRecordRepository.save(medicalRecord);
@@ -58,24 +47,4 @@ public class UpdateMedicalRecordDocument implements IUpdateMedicalRecordDocument
         }
 
     }
-
-    private User getUser() {
-        String username = this.getCurrentUserContext.getUsername();
-        return this.userRepository.findByEmail(username);
-    }
-
-    private UUID getPatientId() {
-        User user = getUser();
-        Optional<Patient> patient = this.patientRepository.getByUserId(user.getId());
-        if (patient.isEmpty()) throw new PatientNotFoundException();
-        return patient.get().getId();
-    }
-
-    private MedicalRecord getMedicalRecord() {
-        UUID patientId = getPatientId();
-
-        return this.medicalRecordRepository.getByPatientId(patientId);
-    }
-
-
 }

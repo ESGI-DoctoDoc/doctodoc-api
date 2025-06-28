@@ -4,6 +4,7 @@ import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.OnBoardingDoctorReques
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.OnboardingProcessResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IOnboardingDoctor;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +15,7 @@ import org.springframework.web.bind.annotation.RestController;
  */
 @RestController
 @RequestMapping("doctors/onboarding")
+@PreAuthorize("hasRole('ROLE_DOCTOR')")
 public class OnBoardingDoctorController {
     private final IOnboardingDoctor onboardingDoctorProcess;
 

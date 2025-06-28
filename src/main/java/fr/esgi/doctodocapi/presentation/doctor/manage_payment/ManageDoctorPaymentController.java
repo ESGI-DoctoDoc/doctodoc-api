@@ -4,10 +4,12 @@ import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.SubscribeRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.SubscribeResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.IPayDoctorSubscription;
 import jakarta.validation.Valid;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("doctors")
+@PreAuthorize("hasRole('ROLE_DOCTOR')")
 public class ManageDoctorPaymentController {
     private final IPayDoctorSubscription payDoctorSubscription;
 

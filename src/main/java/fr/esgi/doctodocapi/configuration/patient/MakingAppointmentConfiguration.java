@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.configuration.patient;
 
+import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.AppointmentsAvailabilityService;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
@@ -8,7 +9,6 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.patient.make_appointment.*;
-import fr.esgi.doctodocapi.use_cases.patient.make_appointment.AppointmentDetailedMapper;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.*;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
@@ -27,17 +27,17 @@ public class MakingAppointmentConfiguration {
     }
 
     @Bean
-    public IValidateAppointment validateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository) {
-        return new ValidateAppointment(slotRepository, patientRepository, medicalConcernRepository, appointmentRepository, doctorRepository);
+    public IValidateAppointment validateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, GetPatientFromContext getPatientFromContext) {
+        return new ValidateAppointment(slotRepository, patientRepository, medicalConcernRepository, appointmentRepository, doctorRepository, getPatientFromContext);
     }
 
     @Bean
-    public ICancelAppointment cancelAppointment(AppointmentRepository appointmentRepository) {
-        return new CancelAppointment(appointmentRepository);
+    public ICancelAppointment cancelAppointment(AppointmentRepository appointmentRepository, GetPatientFromContext getPatientFromContext) {
+        return new CancelAppointment(appointmentRepository, getPatientFromContext);
     }
 
     @Bean
-    public IGetAppointmentDetail getAppointmentDetail(AppointmentRepository appointmentRepository, AppointmentDetailedMapper appointmentDetailedMapper) {
-        return new GetAppointmentDetail(appointmentRepository, appointmentDetailedMapper);
+    public IGetAppointmentDetail getAppointmentDetail(AppointmentRepository appointmentRepository, AppointmentDetailedMapper appointmentDetailedMapper, GetPatientFromContext getPatientFromContext) {
+        return new GetAppointmentDetail(appointmentRepository, appointmentDetailedMapper, getPatientFromContext);
     }
 }
