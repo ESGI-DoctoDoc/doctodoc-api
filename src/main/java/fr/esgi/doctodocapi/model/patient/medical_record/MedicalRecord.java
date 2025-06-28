@@ -8,17 +8,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.UUID;
 
-public final class MedicalRecord {
-    private final UUID id;
-    private final UUID patientId;
-    private final List<Document> documents;
-
-    public MedicalRecord(UUID id, UUID patientId) {
-        this.id = id;
-        this.patientId = patientId;
-        this.documents = null;
-    }
-
+public record MedicalRecord(UUID id, UUID patientId, List<Document> documents) {
     public MedicalRecord(UUID id, UUID patientId, List<Document> documents) {
         this.id = id;
         this.patientId = patientId;
@@ -34,6 +24,14 @@ public final class MedicalRecord {
     }
 
     // manage document
+    public Document getById(UUID id) {
+        return this.documents
+                .stream()
+                .filter(document -> document.getId().equals(id))
+                .findFirst()
+                .orElseThrow(DocumentNotFoundInMedicalRecordException::new);
+    }
+
     public void addDocument(Document document) {
         verifyIfFilenameAlreadyExist(document.getName());
         this.documents.add(document);
@@ -62,10 +60,7 @@ public final class MedicalRecord {
     }
 
 
-    public void deleteDocument(Document document) {
-        this.documents.remove(document);
-    }
-
+    @Override
     public List<Document> documents() {
         return List.copyOf(documents);
     }
@@ -80,23 +75,6 @@ public final class MedicalRecord {
     @Override
     public int hashCode() {
         return Objects.hashCode(id);
-    }
-
-    @Override
-    public String toString() {
-        return "MedicalRecord{" +
-                "id=" + id +
-                ", patientId=" + patientId +
-                ", documents=" + documents +
-                '}';
-    }
-
-    public UUID id() {
-        return id;
-    }
-
-    public UUID patientId() {
-        return patientId;
     }
 
 }

@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.configuration.patient;
 
+import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
@@ -26,22 +27,22 @@ public class ManageMedicalRecordConfiguration {
     }
 
     @Bean
-    public IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent(FileStorageService fileStorageService, DocumentRepository documentRepository) {
-        return new GetDocumentMedicalRecordContent(documentRepository, fileStorageService);
+    public IGetDocumentMedicalRecordContent getDocumentMedicalRecordContent(FileStorageService fileStorageService, MedicalRecordRepository medicalRecordRepository, GetPatientFromContext getPatientFromContext) {
+        return new GetDocumentMedicalRecordContent(medicalRecordRepository, fileStorageService, getPatientFromContext);
     }
 
     @Bean
-    public IGetMedicalRecordDocumentDetail getMedicalRecordDocumentDetail(DocumentRepository documentRepository, PatientRepository patientRepository, DoctorRepository doctorRepository) {
-        return new GetMedicalRecordDocumentDetail(documentRepository, patientRepository, doctorRepository);
+    public IGetMedicalRecordDocumentDetail getMedicalRecordDocumentDetail(MedicalRecordRepository medicalRecordRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, GetPatientFromContext getPatientFromContext) {
+        return new GetMedicalRecordDocumentDetail(medicalRecordRepository, patientRepository, doctorRepository, getPatientFromContext);
     }
 
     @Bean
-    public IUpdateMedicalRecordDocument updateMedicalRecordDocument(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, MedicalRecordRepository medicalRecordRepository, DocumentRepository documentRepository) {
-        return new UpdateMedicalRecordDocument(userRepository, patientRepository, getCurrentUserContext, medicalRecordRepository, documentRepository);
+    public IUpdateMedicalRecordDocument updateMedicalRecordDocument(GetPatientFromContext getPatientFromContext, MedicalRecordRepository medicalRecordRepository) {
+        return new UpdateMedicalRecordDocument(getPatientFromContext, medicalRecordRepository);
     }
 
     @Bean
-    public IDeleteMedicalRecordDocument deleteMedicalRecordDocument(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, FileStorageService fileStorageService, DocumentRepository documentRepository) {
-        return new DeleteMedicalRecordDocument(documentRepository, fileStorageService, getCurrentUserContext, userRepository);
+    public IDeleteMedicalRecordDocument deleteMedicalRecordDocument(MedicalRecordRepository medicalRecordRepository, DocumentRepository documentRepository, FileStorageService fileStorageService, GetPatientFromContext getPatientFromContext) {
+        return new DeleteMedicalRecordDocument(medicalRecordRepository, documentRepository, fileStorageService, getPatientFromContext);
     }
 }

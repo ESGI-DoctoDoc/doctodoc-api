@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.patient.make_appointment;
 
+import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
@@ -55,6 +56,8 @@ public class ValidateAppointment implements IValidateAppointment {
      */
     private final DoctorRepository doctorRepository;
 
+    private final GetPatientFromContext getPatientFromContext;
+
     /**
      * Constructs a ValidateAppointment service with the required repositories.
      *
@@ -63,13 +66,15 @@ public class ValidateAppointment implements IValidateAppointment {
      * @param medicalConcernRepository Repository for accessing medical concern data
      * @param appointmentRepository    Repository for accessing appointment data
      * @param doctorRepository         Repository for accessing doctor data
+     * @param getPatientFromContext    get patient from context
      */
-    public ValidateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository) {
+    public ValidateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, GetPatientFromContext getPatientFromContext) {
         this.slotRepository = slotRepository;
         this.patientRepository = patientRepository;
         this.medicalConcernRepository = medicalConcernRepository;
         this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
+        this.getPatientFromContext = getPatientFromContext;
     }
 
     /**
@@ -105,6 +110,46 @@ public class ValidateAppointment implements IValidateAppointment {
         }
     }
 
+
+    /**
+     * Unlocks (cancels) a previously locked appointment.
+     * This method deletes the appointment with the specified ID from the repository.
+     *
+     * @param id The unique identifier of the appointment to unlock
+     * @throws ApiException If the appointment cannot be deleted or does not exist
+     */
+    public void unlocked(UUID id) {
+        try {
+            Patient patient = this.getPatientFromContext.get();
+            Appointment appointment = this.appointmentRepository.getByIdAndPatientId(id, patient.getId());
+            this.appointmentRepository.delete(appointment);
+        } catch (DomainException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
+    }
+
+    /**
+     * Confirms a previously locked appointment.
+     * This method retrieves the appointment with the specified ID, changes its status to confirmed,
+     * and updates it in the repository.
+     * Note: There is a TODO to implement email notification to the patient and user.
+     *
+     * @param id The unique identifier of the appointment to confirm
+     * @throws ApiException If the appointment cannot be confirmed or does not exist
+     */
+    public void confirm(UUID id) {
+        try {
+            Patient patient = this.getPatientFromContext.get();
+            Appointment appointment = this.appointmentRepository.getByIdAndPatientId(id, patient.getId());
+            appointment.confirm();
+            this.appointmentRepository.confirm(appointment);
+            // todo send an email to inform the patient and if it's not main account, send to user
+        } catch (DomainException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
+    }
+
+
     /**
      * Extracts pre-appointment answers from the appointment request.
      * This method processes the responses provided in the appointment request,
@@ -123,42 +168,6 @@ public class ValidateAppointment implements IValidateAppointment {
         });
 
         return answers;
-    }
-
-    /**
-     * Unlocks (cancels) a previously locked appointment.
-     * This method deletes the appointment with the specified ID from the repository.
-     *
-     * @param id The unique identifier of the appointment to unlock
-     * @throws ApiException If the appointment cannot be deleted or does not exist
-     */
-    public void unlocked(UUID id) {
-        try {
-            Appointment appointment = this.appointmentRepository.getById(id);
-            this.appointmentRepository.delete(appointment);
-        } catch (DomainException e) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
-        }
-    }
-
-    /**
-     * Confirms a previously locked appointment.
-     * This method retrieves the appointment with the specified ID, changes its status to confirmed,
-     * and updates it in the repository.
-     * Note: There is a TODO to implement email notification to the patient and user.
-     *
-     * @param id The unique identifier of the appointment to confirm
-     * @throws ApiException If the appointment cannot be confirmed or does not exist
-     */
-    public void confirm(UUID id) {
-        try {
-            Appointment appointment = this.appointmentRepository.getById(id);
-            appointment.confirm();
-            this.appointmentRepository.confirm(appointment);
-            // todo send an email to inform the patient and if it's not main account, send to user
-        } catch (DomainException e) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
-        }
     }
 
 }
