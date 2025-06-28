@@ -52,7 +52,8 @@ public class DoctorInvoiceRepositoryImpl implements DoctorInvoiceRepository {
 
     @Override
     public DoctorInvoice findBySubscriptionId(UUID subscriptionId) {
-        DoctorInvoiceEntity entity = this.doctorInvoiceJpaRepository.findBySubscription_Id(subscriptionId);
-        return this.doctorInvoiceMapper.toDomain(entity);
+        return this.doctorInvoiceJpaRepository.findBySubscription_Id(subscriptionId)
+                .map(this.doctorInvoiceMapper::toDomain)
+                .orElseThrow(InvoiceNotFoundException::new);
     }
 }
