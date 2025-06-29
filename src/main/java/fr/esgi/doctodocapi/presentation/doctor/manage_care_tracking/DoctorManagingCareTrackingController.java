@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.presentation.doctor.care_tracking;
+package fr.esgi.doctodocapi.presentation.doctor.manage_care_tracking;
 
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.doctor_managing_care_tracking.SaveCareTrackingRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.doctor_managing_care_tracking.GetCareTrackingsResponse;

@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.doctor.care_tracking.book_appointment_in_care_tracking;
+package fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.book_appointment_in_care_tracking;
 
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;

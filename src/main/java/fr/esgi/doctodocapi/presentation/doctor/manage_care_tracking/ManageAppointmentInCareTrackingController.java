@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.presentation.doctor.care_tracking;
+package fr.esgi.doctodocapi.presentation.doctor.manage_care_tracking;
 
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.book_appointment_in_care_tracking.BookAppointmentRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.book_appointment_in_care_tracking.BookedAppointmentResponse;
