@@ -45,4 +45,9 @@ public class ManageMedicalRecordConfiguration {
     public IDeleteMedicalRecordDocument deleteMedicalRecordDocument(MedicalRecordRepository medicalRecordRepository, DocumentRepository documentRepository, FileStorageService fileStorageService, GetPatientFromContext getPatientFromContext) {
         return new DeleteMedicalRecordDocument(medicalRecordRepository, documentRepository, fileStorageService, getPatientFromContext);
     }
+
+    @Bean
+    public IGetMedicalRecordDocumentTraces getMedicalRecordDocumentTraces(PatientRepository patientRepository, DoctorRepository doctorRepository, MedicalRecordRepository medicalRecordRepository, GetPatientFromContext getPatientFromContext) {
+        return new GetMedicalRecordDocumentTraces(patientRepository, doctorRepository, medicalRecordRepository, getPatientFromContext);
+    }
 }
