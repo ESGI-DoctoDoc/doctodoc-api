@@ -55,4 +55,9 @@ public class ManagePatientCareTrackingConfiguration {
     public IUpdatePatientCareTrackingDocument updatePatientCareTrackingDocument(IGetPatientFromContext getPatientFromContext, CareTrackingRepository careTrackingRepository) {
         return new UpdatePatientCareTrackingDocument(getPatientFromContext, careTrackingRepository);
     }
+
+    @Bean
+    public IGetPatientCareTrackingDocumentTraces getPatientCareTrackingDocumentTraces(PatientRepository patientRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext) {
+        return new GetPatientCareTrackingDocumentTraces(patientRepository, doctorRepository, careTrackingRepository, getPatientFromContext);
+    }
 }
