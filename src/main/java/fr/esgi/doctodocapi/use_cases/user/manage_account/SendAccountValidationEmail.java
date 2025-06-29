@@ -17,19 +17,14 @@ import java.util.UUID;
  */
 public class SendAccountValidationEmail implements ISendAccountValidationEmail {
 
-    private static final Logger logger = LoggerFactory.getLogger(SendAccountValidationEmail.class);
-
-    private final GetCurrentRequestContext getCurrentRequestContext;
     private final MailSender mailSender;
 
     /**
      * Constructs the email sender service with required dependencies.
      *
-     * @param getCurrentRequestContext service to obtain the current domain or request origin
      * @param mailSender               abstraction for sending email messages
      */
-    public SendAccountValidationEmail(GetCurrentRequestContext getCurrentRequestContext, MailSender mailSender) {
-        this.getCurrentRequestContext = getCurrentRequestContext;
+    public SendAccountValidationEmail(MailSender mailSender) {
         this.mailSender = mailSender;
     }
 
@@ -43,21 +38,15 @@ public class SendAccountValidationEmail implements ISendAccountValidationEmail {
      * @param email  the recipient's email address
      * @param userId the UUID of the user, used in the validation link
      */
-    public void send(String email, UUID userId) {
-        String currentDomainName = this.getCurrentRequestContext.getCurrentDomain();
+    public void send(String email, UUID userId, String verificationUrl) {
+        String url = verificationUrl + "?userId=" + userId;
+        String subject = "Activer votre compte sur Doctodoc";
+        String body = String.format("""
+            Merci de cliquer sur le lien pour valider votre compte Doctodoc
+            %s
+            Ce mail est valide 30 minutes.
+            L'équipe de Doctodoc""", url);
 
-        if (!currentDomainName.isEmpty()) {
-            String subject = "Activer votre compte sur Doctodoc";
-            String url = currentDomainName + "/api/v1/users/validate-email?userId=" + userId;
-            String body = String.format("""
-                    Merci de cliquer sur le lien pour valider votre compte Doctodoc
-                    %s
-                    Ce mail est valide 30 minutes.
-                    L'équipe de Doctodoc""", url);
-
-            this.mailSender.sendMail(email, subject, body);
-        } else {
-            logger.error("Failed to create URL for account activation email");
-        }
+        this.mailSender.sendMail(email, subject, body);
     }
 }

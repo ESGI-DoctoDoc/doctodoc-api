@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.configuration.patient;
 
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
-import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking.GetPatientCareTrackingDetailed;
 import fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking.GetPatientCareTrackingDetailedMapper;

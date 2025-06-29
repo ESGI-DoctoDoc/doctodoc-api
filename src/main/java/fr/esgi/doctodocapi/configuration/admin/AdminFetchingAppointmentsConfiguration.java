@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.configuration.admin;
 
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentResponseMapper;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
-import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.use_cases.admin.get_appointment.GetAppointmentDetailsForAdmin;
 import fr.esgi.doctodocapi.use_cases.admin.get_appointment.GetAppointmentsForAdmin;
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_appointment.IGetAppointmentDetailsForAdmin;

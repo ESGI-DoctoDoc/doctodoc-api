@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking;
 
 import fr.esgi.doctodocapi.model.appointment.Appointment;
-import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetAppointmentOfCareTrackingResponse;

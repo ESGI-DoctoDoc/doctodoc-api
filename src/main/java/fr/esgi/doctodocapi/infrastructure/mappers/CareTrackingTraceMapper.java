@@ -2,9 +2,7 @@ package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.CareTrackingEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.CareTrackingTraceEntity;
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
-import fr.esgi.doctodocapi.model.care_tracking.care_tracking_trace.CareTrackingTrace;
-import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.care_tracking_trace.CareTrackingTrace;
 import org.springframework.stereotype.Service;
 
 @Service
