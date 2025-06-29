@@ -236,7 +236,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     public boolean existsPatientByDoctorAndPatientId(UUID doctorId, UUID patientId) {
-        return this.appointmentJpaRepository.existsByDoctor_IdAndPatient_Id(doctorId, patientId);
+        return !this.appointmentJpaRepository.existsByDoctor_IdAndPatient_Id(doctorId, patientId);
     }
 
     @Override
@@ -247,5 +247,24 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         return appointments.getContent().stream()
                 .map(appointmentFacadeMapper::mapAppointmentToDomain)
                 .toList();
+    }
+
+    @Override
+    public List<Appointment> findAllWithPaginationForAdmin(int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAll(pageable);
+        return appointments.getContent().stream()
+                .map(appointmentFacadeMapper::mapAppointmentToDomain)
+                .toList();
+    }
+
+    @Override
+    public int countAppointmentsByDoctorId(UUID doctorId) {
+        return this.appointmentJpaRepository.countByDoctor_Id(doctorId);
+    }
+
+    @Override
+    public int countDistinctPatientsByDoctorId(UUID doctorId) {
+        return this.appointmentJpaRepository.countDistinctPatient_IdByDoctor_Id(doctorId);
     }
 }

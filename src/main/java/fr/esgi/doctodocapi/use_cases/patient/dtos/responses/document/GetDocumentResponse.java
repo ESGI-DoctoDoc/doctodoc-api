@@ -5,6 +5,7 @@ import java.util.UUID;
 public record GetDocumentResponse(
         UUID id,
         String name,
+        String type,
         String url
 ) {
 }

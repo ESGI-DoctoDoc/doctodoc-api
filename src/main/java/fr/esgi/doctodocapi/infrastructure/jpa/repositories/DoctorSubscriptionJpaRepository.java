@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -30,4 +31,5 @@ public interface DoctorSubscriptionJpaRepository extends JpaRepository<DoctorSub
     LIMIT 1
 """)
     Optional<DoctorSubscriptionEntity> findLatestSubscriptionByDoctor(DoctorEntity doctor);
+    List<DoctorSubscriptionEntity> findAllByDoctor(DoctorEntity doctor);
 }

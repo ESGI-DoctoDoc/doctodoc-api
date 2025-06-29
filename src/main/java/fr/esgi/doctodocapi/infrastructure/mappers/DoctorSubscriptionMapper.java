@@ -13,7 +13,8 @@ public class DoctorSubscriptionMapper {
                 entity.getId(),
                 entity.getDoctor().getId(),
                 entity.getStartDate(),
-                entity.getEndDate()
+                entity.getEndDate(),
+                entity.getCreatedAt()
         );
     }
 
@@ -23,6 +24,7 @@ public class DoctorSubscriptionMapper {
         entity.setDoctor(doctor);
         entity.setStartDate(domain.getStartDate());
         entity.setEndDate(domain.getEndDate());
+        entity.setCreatedAt(domain.getCreatedAt());
         return entity;
     }
 }

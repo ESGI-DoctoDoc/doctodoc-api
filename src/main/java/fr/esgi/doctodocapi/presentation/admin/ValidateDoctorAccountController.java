@@ -1,24 +1,21 @@
 package fr.esgi.doctodocapi.presentation.admin;
 
-import fr.esgi.doctodocapi.use_cases.admin.ports.in.IValidateDoctorAccount;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.DoctorValidationRequest;
-import jakarta.validation.Valid;
+import fr.esgi.doctodocapi.use_cases.admin.ports.in.IManageValidationDoctorAccount;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.PatchMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.UUID;
 
 /**
  * REST controller for doctor onboarding process and account validation.
  */
 @RestController
-@RequestMapping("doctors/onboarding")
+@RequestMapping("admin")
 @PreAuthorize("hasRole('ROLE_ADMIN')")
 public class ValidateDoctorAccountController {
-    private final IValidateDoctorAccount validateDoctorAccount;
+    private final IManageValidationDoctorAccount validateDoctorAccount;
 
-    public ValidateDoctorAccountController(IValidateDoctorAccount validateDoctorAccount) {
+    public ValidateDoctorAccountController(IManageValidationDoctorAccount validateDoctorAccount) {
         this.validateDoctorAccount = validateDoctorAccount;
     }
 
@@ -26,10 +23,15 @@ public class ValidateDoctorAccountController {
      * Validates a doctor's account.
      * Requires admin role.
      *
-     * @param request the doctor validation request containing doctor ID
+     * @param id the doctor validation request containing doctor ID
      */
-    @PatchMapping("/validate-account")
-    public void validateDoctorAccount(@Valid @RequestBody DoctorValidationRequest request) {
-        this.validateDoctorAccount.validateDoctorAccount(request);
+    @PatchMapping("doctors/{id}/validate")
+    public void validateDoctorAccount(@PathVariable UUID id) {
+        this.validateDoctorAccount.validateDoctorAccount(id);
+    }
+
+    @PatchMapping("doctors/{id}/refuse")
+    public void refuseDoctorAccount(@PathVariable UUID id) {
+        this.validateDoctorAccount.refuseDoctorAccount(id);
     }
 }

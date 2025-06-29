@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.configuration.user;
 
+import fr.esgi.doctodocapi.model.admin.AdminRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.*;
@@ -23,13 +24,13 @@ public class ManageUserAccountAuthentication {
     }
 
     @Bean
-    public IAuthenticateDoctor authenticateDoctor(IAuthenticateUser authenticateUser, TokenManager tokenManager, DoctorRepository doctorRepository) {
-        return new AuthenticateDoctor(authenticateUser, tokenManager, doctorRepository);
+    public IAuthenticateDoctor authenticateDoctor(IAuthenticateUser authenticateUser, TokenManager tokenManager, DoctorRepository doctorRepository, AdminRepository adminRepository) {
+        return new AuthenticateDoctor(authenticateUser, tokenManager, doctorRepository, adminRepository);
     }
 
     @Bean
-    public IAuthenticateUser authenticateUser(AuthenticateUserInContext authenticateUserInContext, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, MessageSender messageSender, DoubleAuthCodeGenerator doubleAuthCodeGenerator, TokenManager tokenManager, ISendAccountValidationEmail sendAccountValidationEmail) {
-        return new AuthenticateUser(authenticateUserInContext, getCurrentUserContext, userRepository, messageSender, doubleAuthCodeGenerator, tokenManager, sendAccountValidationEmail);
+    public IAuthenticateUser authenticateUser(AuthenticateUserInContext authenticateUserInContext, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, MessageSender messageSender, DoubleAuthCodeGenerator doubleAuthCodeGenerator, TokenManager tokenManager, ISendAccountValidationEmail sendAccountValidationEmail, AdminRepository adminRepository) {
+        return new AuthenticateUser(authenticateUserInContext, getCurrentUserContext, userRepository, messageSender, doubleAuthCodeGenerator, tokenManager, sendAccountValidationEmail, adminRepository);
     }
 
     @Bean
