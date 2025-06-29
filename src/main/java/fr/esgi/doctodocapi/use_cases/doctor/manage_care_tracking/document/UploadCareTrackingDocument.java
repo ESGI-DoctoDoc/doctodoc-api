@@ -1,7 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document;
 
 import fr.esgi.doctodocapi.model.DomainException;
-import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
@@ -11,8 +10,6 @@ import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.document.DocumentType;
-import fr.esgi.doctodocapi.model.patient.Patient;
-import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.document.GetDocumentForCareTrackingResponse;
@@ -81,9 +78,6 @@ public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
         }
     }
 
@@ -99,13 +93,7 @@ public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
 
 
     private CareTracking retrieveAndValidateCareTracking(UUID careTrackingId, Doctor doctor) {
-        CareTracking careTracking = this.careTrackingRepository.getById(careTrackingId);
-
-        careTracking = this.careTrackingRepository.getByIdAndPatientIdAndDoctorId(
-                careTrackingId,
-                careTracking.getPatient(),
-                doctor
-        );
+        CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctorId(careTrackingId, doctor);
 
         if (careTracking.getClosedAt() != null) {
             throw new ClosedCareTrackingException();

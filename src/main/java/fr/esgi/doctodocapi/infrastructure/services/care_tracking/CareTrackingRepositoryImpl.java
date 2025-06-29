@@ -121,6 +121,12 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
     }
 
     @Override
+    public CareTracking getByIdAndDoctorId(UUID careTrackingId, Doctor doctor) throws CareTrackingNotFoundException {
+        CareTrackingEntity entity = this.careTrackingJpaRepository.findByIdAndDoctorAccess(careTrackingId, doctor.getId()).orElseThrow(CareTrackingNotFoundException::new);
+        return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);
+    }
+
+    @Override
     public CareTracking getByIdAndPatientIdAndDoctorId(UUID careTrackingId, Patient patient, Doctor doctor) throws CareTrackingNotFoundException {
         CareTrackingEntity entity = this.careTrackingJpaRepository.findByIdAndPatient_IdAndCreator_Id(careTrackingId, patient.getId(), doctor.getId()).orElseThrow(CareTrackingNotFoundException::new);
         return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);

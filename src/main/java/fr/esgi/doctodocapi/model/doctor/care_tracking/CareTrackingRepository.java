@@ -13,6 +13,7 @@ public interface CareTrackingRepository {
     List<CareTracking> findAll(UUID doctorId, int page, int size);
     CareTracking getById(UUID id) throws CareTrackingNotFoundException;
     CareTracking getByIdAndPatientId(UUID careTrackingId, Patient patient) throws CareTrackingNotFoundException;
+    CareTracking getByIdAndDoctorId(UUID careTrackingId, Doctor doctor) throws CareTrackingNotFoundException;
     CareTracking getByIdAndPatientIdAndDoctorId(UUID careTrackingId, Patient patient, Doctor doctor) throws CareTrackingNotFoundException;
 
     // Patient

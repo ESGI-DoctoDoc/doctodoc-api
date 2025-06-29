@@ -7,7 +7,6 @@ import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.ClosedCareTrackingException;
 import fr.esgi.doctodocapi.model.document.Document;
-import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.document.GetDocumentForCareTrackingResponse;
@@ -41,10 +40,7 @@ public class GetCareTrackingDocumentContent implements IGetCareTrackingDocumentC
             User user = this.userRepository.findByEmail(username);
             Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            CareTracking careTracking = this.careTrackingRepository.getById(careTrackingId);
-            Patient patient = careTracking.getPatient();
-
-            careTracking = retrieveAndValidateCareTracking(careTrackingId, patient, doctor);
+            CareTracking careTracking = retrieveAndValidateCareTracking(careTrackingId, doctor);
 
             Document document = careTracking.getById(documentId);
 
@@ -61,8 +57,8 @@ public class GetCareTrackingDocumentContent implements IGetCareTrackingDocumentC
         }
     }
 
-    private CareTracking retrieveAndValidateCareTracking(UUID careTrackingId, Patient patient, Doctor doctor) {
-        CareTracking careTracking = this.careTrackingRepository.getByIdAndPatientIdAndDoctorId(careTrackingId, patient, doctor);
+    private CareTracking retrieveAndValidateCareTracking(UUID careTrackingId, Doctor doctor) {
+        CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctorId(careTrackingId, doctor);
 
         if (careTracking.getClosedAt() != null) {
             throw new ClosedCareTrackingException();
