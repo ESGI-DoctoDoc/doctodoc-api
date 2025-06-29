@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.use_cases.admin.dtos.responses;
 
-import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 
 import java.util.UUID;
 

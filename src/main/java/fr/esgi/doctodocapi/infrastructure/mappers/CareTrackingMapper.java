@@ -2,17 +2,13 @@ package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.AppointmentEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.CareTrackingEntity;
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.PatientEntity;
-import fr.esgi.doctodocapi.model.appointment.Appointment;
-import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
-import fr.esgi.doctodocapi.model.care_tracking.care_tracking_trace.CareTrackingTrace;
-import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.care_tracking_trace.CareTrackingTrace;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
 public class CareTrackingMapper {
