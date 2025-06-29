@@ -115,26 +115,19 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
     }
 
     @Override
-    public CareTracking getByIdAndPatientId(UUID careTrackingId, Patient patient) throws CareTrackingNotFoundException {
+    public CareTracking getByIdAndPatient(UUID careTrackingId, Patient patient) throws CareTrackingNotFoundException {
         CareTrackingEntity entity = this.careTrackingJpaRepository.findByIdAndPatient_Id(careTrackingId, patient.getId()).orElseThrow(CareTrackingNotFoundException::new);
         return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);
     }
 
     @Override
-    public CareTracking getByIdAndDoctorId(UUID careTrackingId, Doctor doctor) throws CareTrackingNotFoundException {
+    public CareTracking getByIdAndDoctor(UUID careTrackingId, Doctor doctor) throws CareTrackingNotFoundException {
         CareTrackingEntity entity = this.careTrackingJpaRepository.findByIdAndDoctorAccess(careTrackingId, doctor.getId()).orElseThrow(CareTrackingNotFoundException::new);
-        return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);
-    }
-
-    @Override
-    public CareTracking getByIdAndPatientIdAndDoctorId(UUID careTrackingId, Patient patient, Doctor doctor) throws CareTrackingNotFoundException {
-        CareTrackingEntity entity = this.careTrackingJpaRepository.findByIdAndPatient_IdAndCreator_Id(careTrackingId, patient.getId(), doctor.getId()).orElseThrow(CareTrackingNotFoundException::new);
         return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);
     }
 
 
     // patient
-
     @Override
     public List<CareTracking> findAllByPatientId(UUID patientId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);

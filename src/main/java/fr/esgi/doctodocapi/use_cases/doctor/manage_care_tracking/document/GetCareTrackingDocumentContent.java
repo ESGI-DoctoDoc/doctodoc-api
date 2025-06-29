@@ -58,7 +58,7 @@ public class GetCareTrackingDocumentContent implements IGetCareTrackingDocumentC
     }
 
     private CareTracking retrieveAndValidateCareTracking(UUID careTrackingId, Doctor doctor) {
-        CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctorId(careTrackingId, doctor);
+        CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctor(careTrackingId, doctor);
 
         if (careTracking.getClosedAt() != null) {
             throw new ClosedCareTrackingException();

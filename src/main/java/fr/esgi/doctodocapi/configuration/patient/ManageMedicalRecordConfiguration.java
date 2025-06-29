@@ -22,8 +22,8 @@ public class ManageMedicalRecordConfiguration {
     }
 
     @Bean
-    public IUploadMedicalRecordDocument uploadMedicalRecordDocument(FileStorageService fileStorageService, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, MedicalRecordRepository medicalRecordRepository, DocumentRepository documentRepository) {
-        return new UploadMedicalRecordDocument(fileStorageService, getCurrentUserContext, userRepository, patientRepository, medicalRecordRepository, documentRepository);
+    public IUploadMedicalRecordDocument uploadMedicalRecordDocument(FileStorageService fileStorageService, GetPatientFromContext getPatientFromContext, MedicalRecordRepository medicalRecordRepository, DocumentRepository documentRepository) {
+        return new UploadMedicalRecordDocument(fileStorageService, getPatientFromContext, medicalRecordRepository, documentRepository);
     }
 
     @Bean

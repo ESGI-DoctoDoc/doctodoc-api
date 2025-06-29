@@ -61,6 +61,7 @@ public class CareTracking {
     }
 
     public void addDocument(Document document) {
+        verifyIfNotClosed();
         if (documents.stream().anyMatch(d -> d.getName().equalsIgnoreCase(document.getName()))) {
             throw new DocumentAlreadyExistInCareTrackingException();
         }
@@ -68,6 +69,7 @@ public class CareTracking {
     }
 
     public void addDoctor(UUID doctorId) {
+        verifyIfNotClosed();
         if (doctors.contains(doctorId)) {
             throw new DoctorAlreadyExistInCareTrackingException();
         }
@@ -75,6 +77,7 @@ public class CareTracking {
     }
 
     public void addAppointment(UUID appointmentId) {
+        verifyIfNotClosed();
         if (appointmentsId.contains(appointmentId)) {
             throw new AppointmentAlreadyExistInCareTrackingException();
         }
@@ -86,6 +89,12 @@ public class CareTracking {
             throw new TraceAlreadyExistInCareTrackingException();
         }
         careTrackingTraces.add(trace);
+    }
+
+    void verifyIfNotClosed() {
+        if (this.closedAt != null) {
+            throw new ClosedCareTrackingException();
+        }
     }
 
     public UUID getId() {

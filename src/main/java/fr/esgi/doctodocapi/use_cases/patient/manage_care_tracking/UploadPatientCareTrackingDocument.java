@@ -1,54 +1,52 @@
-package fr.esgi.doctodocapi.use_cases.patient.manage_medical_record;
+package fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking;
 
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.document.DocumentType;
 import fr.esgi.doctodocapi.model.patient.Patient;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
-import fr.esgi.doctodocapi.use_cases.MedicalRecordFolders;
+import fr.esgi.doctodocapi.use_cases.CareTrackingFolders;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.SaveDocumentRequest;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.CreateMedicalRecordDocumentResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetUrlUploadResponse;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IUploadMedicalRecordDocument;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IUploadPatientCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
-public class UploadMedicalRecordDocument implements IUploadMedicalRecordDocument {
-    private final FileStorageService fileStorageService;
-    private final GetPatientFromContext getPatientFromContext;
-    private final MedicalRecordRepository medicalRecordRepository;
-    private final DocumentRepository documentRepository;
 
-    public UploadMedicalRecordDocument(FileStorageService fileStorageService, GetPatientFromContext getPatientFromContext, MedicalRecordRepository medicalRecordRepository, DocumentRepository documentRepository) {
-        this.fileStorageService = fileStorageService;
+public class UploadPatientCareTrackingDocument implements IUploadPatientCareTrackingDocument {
+    private final GetPatientFromContext getPatientFromContext;
+    private final CareTrackingRepository careTrackingRepository;
+    private final DocumentRepository documentRepository;
+    private final FileStorageService fileStorageService;
+
+    public UploadPatientCareTrackingDocument(GetPatientFromContext getPatientFromContext, CareTrackingRepository careTrackingRepository, DocumentRepository documentRepository, FileStorageService fileStorageService) {
         this.getPatientFromContext = getPatientFromContext;
-        this.medicalRecordRepository = medicalRecordRepository;
+        this.careTrackingRepository = careTrackingRepository;
         this.documentRepository = documentRepository;
+        this.fileStorageService = fileStorageService;
     }
 
-    public CreateMedicalRecordDocumentResponse createDocument(SaveDocumentRequest saveDocumentRequest) {
+    public CreateMedicalRecordDocumentResponse createDocument(UUID id, SaveDocumentRequest saveDocumentRequest) {
         try {
-
             Patient patient = this.getPatientFromContext.get();
-
-            MedicalRecord medicalRecord = this.medicalRecordRepository.getByPatientId(patient.getId());
+            CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(id, patient);
 
             DocumentType type = DocumentType.fromValue(saveDocumentRequest.type());
-            String prefixPath = MedicalRecordFolders.FOLDER_ROOT + patient.getId() + MedicalRecordFolders.FOLDER_MEDICAL_FILE;
+            String prefixPath = CareTrackingFolders.FOLDER_ROOT + patient.getId() + CareTrackingFolders.FOLDER_CARE_TRACKING_FILE;
 
             Document document = Document.init(saveDocumentRequest.filename(), prefixPath, type, patient.getUserId());
             document.setPath(prefixPath + document.getId());
 
-            medicalRecord.addDocument(document);
-
-            this.medicalRecordRepository.save(medicalRecord);
+            careTracking.addDocument(document);
+            this.careTrackingRepository.save(careTracking);
 
             return new CreateMedicalRecordDocumentResponse(document.getId());
 

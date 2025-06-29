@@ -38,7 +38,7 @@ public class GetPatientCareTrackingDetailed implements IGetPatientCareTrackingDe
     public GetPatientCareTrackingDetailedResponse process(UUID id) {
         try {
             Patient patient = this.getPatientFromContext.get();
-            CareTracking careTracking = this.careTrackingRepository.getByIdAndPatientId(id, patient);
+            CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(id, patient);
             List<Doctor> doctors = getDoctors(careTracking);
             List<Appointment> appointments = careTracking.getAppointmentsId().stream().map(appointmentRepository::getById).toList();
             List<Document> documents = careTracking.getDocuments();
