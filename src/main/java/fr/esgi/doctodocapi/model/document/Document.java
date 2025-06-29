@@ -2,10 +2,10 @@ package fr.esgi.doctodocapi.model.document;
 
 import fr.esgi.doctodocapi.model.document.permission.Permission;
 import fr.esgi.doctodocapi.model.document.permission.PermissionType;
+import fr.esgi.doctodocapi.model.document.trace.DocumentCreationTrace;
 import fr.esgi.doctodocapi.model.document.trace.DocumentDeletionTrace;
 import fr.esgi.doctodocapi.model.document.trace.DocumentTrace;
 import fr.esgi.doctodocapi.model.document.trace.DocumentUpdateTrace;
-import fr.esgi.doctodocapi.model.document.trace.DocumentUploadTrace;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -35,7 +35,7 @@ public class Document {
     }
 
     public static Document init(String name, String url, DocumentType type, UUID uploadedBy) {
-        DocumentTrace documentUploadTrace = new DocumentUploadTrace(uploadedBy);
+        DocumentTrace documentUploadTrace = new DocumentCreationTrace(uploadedBy);
         return new Document(
                 UUID.randomUUID(),
                 name,
