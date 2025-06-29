@@ -21,9 +21,9 @@ public class UploadPatientCareTrackingDocumentController {
         this.uploadDocument = uploadDocument;
     }
 
-    @GetMapping("/upload-url/{id}")
-    public GetUrlUploadResponse uploadUrl(@PathVariable UUID id) {
-        return this.uploadDocument.getPresignedUrlToUpload(id);
+    @GetMapping("{careTrackingId}/upload-url/{id}")
+    public GetUrlUploadResponse uploadUrl(@PathVariable UUID careTrackingId, @PathVariable UUID id) {
+        return this.uploadDocument.getPresignedUrlToUpload(careTrackingId, id);
     }
 
     @PostMapping("{id}/documents")

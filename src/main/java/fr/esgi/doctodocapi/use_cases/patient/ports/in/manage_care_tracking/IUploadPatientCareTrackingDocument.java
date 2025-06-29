@@ -9,5 +9,5 @@ import java.util.UUID;
 public interface IUploadPatientCareTrackingDocument {
     CreateMedicalRecordDocumentResponse createDocument(UUID id, SaveDocumentRequest saveDocumentRequest);
 
-    GetUrlUploadResponse getPresignedUrlToUpload(UUID id);
+    GetUrlUploadResponse getPresignedUrlToUpload(UUID careTrackingId, UUID id);
 }

@@ -1,57 +1,54 @@
-package fr.esgi.doctodocapi.use_cases.patient.manage_medical_record;
+package fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking;
 
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.document.Document;
-import fr.esgi.doctodocapi.model.document.trace.DocumentTrace;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentDetailResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentUser;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetMedicalRecordDocumentTracesResponse;
-import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetMedicalRecordDocumentTraces;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IGetPatientCareTrackingDocumentDetail;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.IGetPatientFromContext;
 import org.springframework.http.HttpStatus;
 
-import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public class GetMedicalRecordDocumentTraces implements IGetMedicalRecordDocumentTraces {
+public class GetPatientCareTrackingDocumentDetail implements IGetPatientCareTrackingDocumentDetail {
+    private final CareTrackingRepository careTrackingRepository;
     private final PatientRepository patientRepository;
     private final DoctorRepository doctorRepository;
-    private final MedicalRecordRepository medicalRecordRepository;
-    private final GetPatientFromContext getPatientFromContext;
+    private final IGetPatientFromContext getPatientFromContext;
 
-    public GetMedicalRecordDocumentTraces(PatientRepository patientRepository, DoctorRepository doctorRepository, MedicalRecordRepository medicalRecordRepository, GetPatientFromContext getPatientFromContext) {
+    public GetPatientCareTrackingDocumentDetail(CareTrackingRepository careTrackingRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, GetPatientFromContext getPatientFromContext) {
+        this.careTrackingRepository = careTrackingRepository;
         this.patientRepository = patientRepository;
         this.doctorRepository = doctorRepository;
-        this.medicalRecordRepository = medicalRecordRepository;
         this.getPatientFromContext = getPatientFromContext;
     }
 
-    public List<GetMedicalRecordDocumentTracesResponse> getAll(UUID documentId) {
+    public GetDocumentDetailResponse process(UUID careTrackingId, UUID id) {
         try {
             Patient patient = this.getPatientFromContext.get();
-            MedicalRecord medicalRecord = this.medicalRecordRepository.getByPatientId(patient.getId());
-            Document document = medicalRecord.getById(documentId);
 
-            List<DocumentTrace> traces = document.getTraces();
+            CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(careTrackingId, patient);
+            Document document = careTracking.getById(id);
 
-            return traces.stream().map(trace -> {
-                GetDocumentUser user = this.getGetUploadedByUser(trace.userId());
+            GetDocumentUser user = getGetUploadedByUser(document.getUploadedBy());
 
-                return new GetMedicalRecordDocumentTracesResponse(
-                        trace.type().getValue(),
-                        trace.description(),
-                        user,
-                        trace.date()
-                );
-            }).toList();
-
+            return new GetDocumentDetailResponse(
+                    id,
+                    document.getType().getValue(),
+                    document.getName(),
+                    document.getPath(),
+                    document.getUploadedAt(),
+                    user
+            );
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());

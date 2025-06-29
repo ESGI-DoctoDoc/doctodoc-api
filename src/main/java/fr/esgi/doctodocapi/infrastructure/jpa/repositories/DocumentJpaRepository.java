@@ -10,5 +10,9 @@ import java.util.UUID;
 public interface DocumentJpaRepository extends JpaRepository<DocumentEntity, UUID> {
     Page<DocumentEntity> getAllByMedicalRecord_PatientIdOrderByUploadedAtDesc(UUID medicalRecordPatientId, Pageable pageable);
 
-    Page<DocumentEntity> getAllByMedicalRecord_PatientIdAndTypeContainsIgnoreCaseOrderByUploadedAtDesc(UUID medicalRecordPatientId, String type, Pageable pageable);
+    Page<DocumentEntity> getAllByMedicalRecord_PatientIdAndTypeOrderByUploadedAtDesc(UUID medicalRecordPatientId, String type, Pageable pageable);
+
+    Page<DocumentEntity> getAllByCareTracking_IdAndTypeOrderByUploadedAtDesc(UUID careTrackingId, String type, Pageable pageable);
+
+    Page<DocumentEntity> getAllByCareTracking_IdOrderByUploadedAtDesc(UUID id, Pageable pageable);
 }

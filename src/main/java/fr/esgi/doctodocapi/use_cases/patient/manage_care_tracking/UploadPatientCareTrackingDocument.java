@@ -6,7 +6,6 @@ import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
-import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.document.DocumentType;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.CareTrackingFolders;
@@ -24,13 +23,11 @@ import java.util.UUID;
 public class UploadPatientCareTrackingDocument implements IUploadPatientCareTrackingDocument {
     private final GetPatientFromContext getPatientFromContext;
     private final CareTrackingRepository careTrackingRepository;
-    private final DocumentRepository documentRepository;
     private final FileStorageService fileStorageService;
 
-    public UploadPatientCareTrackingDocument(GetPatientFromContext getPatientFromContext, CareTrackingRepository careTrackingRepository, DocumentRepository documentRepository, FileStorageService fileStorageService) {
+    public UploadPatientCareTrackingDocument(GetPatientFromContext getPatientFromContext, CareTrackingRepository careTrackingRepository, FileStorageService fileStorageService) {
         this.getPatientFromContext = getPatientFromContext;
         this.careTrackingRepository = careTrackingRepository;
-        this.documentRepository = documentRepository;
         this.fileStorageService = fileStorageService;
     }
 
@@ -43,7 +40,7 @@ public class UploadPatientCareTrackingDocument implements IUploadPatientCareTrac
             String prefixPath = CareTrackingFolders.FOLDER_ROOT + patient.getId() + CareTrackingFolders.FOLDER_CARE_TRACKING_FILE;
 
             Document document = Document.init(saveDocumentRequest.filename(), prefixPath, type, patient.getUserId());
-            document.setPath(prefixPath + document.getId());
+            document.setPath(prefixPath + careTracking.getId() + "/" + document.getId());
 
             careTracking.addDocument(document);
             this.careTrackingRepository.save(careTracking);
@@ -55,9 +52,11 @@ public class UploadPatientCareTrackingDocument implements IUploadPatientCareTrac
         }
     }
 
-    public GetUrlUploadResponse getPresignedUrlToUpload(UUID id) {
+    public GetUrlUploadResponse getPresignedUrlToUpload(UUID careTrackingId, UUID id) {
         try {
-            Document document = this.documentRepository.getById(id);
+            Patient patient = this.getPatientFromContext.get();
+            CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(careTrackingId, patient);
+            Document document = careTracking.getById(id);
             String url = this.fileStorageService.getPresignedUrlToUpload(document.getPath());
             return new GetUrlUploadResponse(url);
         } catch (DocumentNotFoundException e) {

@@ -4,7 +4,6 @@ import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
-import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.document.DocumentType;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
@@ -24,13 +23,11 @@ public class UploadMedicalRecordDocument implements IUploadMedicalRecordDocument
     private final FileStorageService fileStorageService;
     private final GetPatientFromContext getPatientFromContext;
     private final MedicalRecordRepository medicalRecordRepository;
-    private final DocumentRepository documentRepository;
 
-    public UploadMedicalRecordDocument(FileStorageService fileStorageService, GetPatientFromContext getPatientFromContext, MedicalRecordRepository medicalRecordRepository, DocumentRepository documentRepository) {
+    public UploadMedicalRecordDocument(FileStorageService fileStorageService, GetPatientFromContext getPatientFromContext, MedicalRecordRepository medicalRecordRepository) {
         this.fileStorageService = fileStorageService;
         this.getPatientFromContext = getPatientFromContext;
         this.medicalRecordRepository = medicalRecordRepository;
-        this.documentRepository = documentRepository;
     }
 
     public CreateMedicalRecordDocumentResponse createDocument(SaveDocumentRequest saveDocumentRequest) {
@@ -59,7 +56,9 @@ public class UploadMedicalRecordDocument implements IUploadMedicalRecordDocument
 
     public GetUrlUploadResponse getPresignedUrlToUpload(UUID id) {
         try {
-            Document document = this.documentRepository.getById(id);
+            Patient patient = this.getPatientFromContext.get();
+            MedicalRecord medicalRecord = this.medicalRecordRepository.getByPatientId(patient.getId());
+            Document document = medicalRecord.getById(id);
             String url = this.fileStorageService.getPresignedUrlToUpload(document.getPath());
             return new GetUrlUploadResponse(url);
         } catch (DocumentNotFoundException e) {
