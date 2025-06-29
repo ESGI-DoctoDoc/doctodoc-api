@@ -3,7 +3,6 @@ package fr.esgi.doctodocapi.model.doctor.care_tracking;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.care_tracking_trace.CareTrackingTrace;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.patient.Patient;
-import fr.esgi.doctodocapi.model.patient.medical_record.DocumentNotFoundInMedicalRecordException;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -62,7 +61,7 @@ public class CareTracking {
     }
 
     public void addDocument(Document document) {
-        if (documents.contains(document)) {
+        if (documents.stream().anyMatch(d -> d.getName().equalsIgnoreCase(document.getName()))) {
             throw new DocumentAlreadyExistInCareTrackingException();
         }
         documents.add(document);
@@ -131,7 +130,7 @@ public class CareTracking {
 
     public List<Document> getDocuments() {
         // todo doctor needs permission too
-        return documents;
+        return Collections.unmodifiableList(documents);
     }
 
     public void setDocuments(List<Document> documents) {
