@@ -5,6 +5,7 @@ import fr.esgi.doctodocapi.model.document.permission.PermissionType;
 import fr.esgi.doctodocapi.model.document.trace.DocumentDeletionTrace;
 import fr.esgi.doctodocapi.model.document.trace.DocumentTrace;
 import fr.esgi.doctodocapi.model.document.trace.DocumentUpdateTrace;
+import fr.esgi.doctodocapi.model.document.trace.DocumentUploadTrace;
 
 import java.time.LocalDateTime;
 import java.util.ArrayList;
@@ -34,6 +35,7 @@ public class Document {
     }
 
     public static Document init(String name, String url, DocumentType type, UUID uploadedBy) {
+        DocumentTrace documentUploadTrace = new DocumentUploadTrace(uploadedBy);
         return new Document(
                 UUID.randomUUID(),
                 name,
@@ -41,7 +43,7 @@ public class Document {
                 type,
                 uploadedBy,
                 LocalDateTime.now(),
-                List.of(),
+                List.of(documentUploadTrace),
                 List.of()
         );
     }

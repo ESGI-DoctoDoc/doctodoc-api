@@ -1,7 +1,7 @@
 package fr.esgi.doctodocapi.model.document.trace;
 
 public enum DocumentTraceType {
-    ADD("Ajout"),
+    CREATION("Création"),
     DELETION("Suppression"),
     UPDATE("Modification"),
     ADD_PERMISSION("Ajout de permission"),
