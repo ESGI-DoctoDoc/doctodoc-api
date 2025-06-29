@@ -5,12 +5,10 @@ import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
-import fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking.GetPatientCareTrackingDetailed;
-import fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking.GetPatientCareTrackingDetailedMapper;
-import fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking.GetPatientCareTrackings;
-import fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking.UploadPatientCareTrackingDocument;
+import fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking.*;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IGetPatientCareTrackingDetailed;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IGetPatientCareTrackings;
+import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IGetPatientDocumentCareTrackingContent;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IUploadPatientCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import org.springframework.context.annotation.Bean;
@@ -31,5 +29,10 @@ public class ManagePatientCareTrackingConfiguration {
     @Bean
     public IUploadPatientCareTrackingDocument uploadPatientCareTrackingDocument(GetPatientFromContext getPatientFromContext, CareTrackingRepository careTrackingRepository, DocumentRepository documentRepository, FileStorageService fileStorageService) {
         return new UploadPatientCareTrackingDocument(getPatientFromContext, careTrackingRepository, documentRepository, fileStorageService);
+    }
+
+    @Bean
+    public IGetPatientDocumentCareTrackingContent getPatientDocumentCareTrackingContent(CareTrackingRepository careTrackingRepository, FileStorageService fileStorageService, GetPatientFromContext getPatientFromContext) {
+        return new GetPatientDocumentCareTrackingContent(careTrackingRepository, fileStorageService, getPatientFromContext);
     }
 }
