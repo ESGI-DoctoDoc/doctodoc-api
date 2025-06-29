@@ -4,10 +4,12 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.SpecialityEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.SpecialityJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.SpecialityMapper;
 import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
+import fr.esgi.doctodocapi.model.admin.speciality.SpecialityNotFoundException;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
+import java.util.Optional;
 
 /**
  * Implementation of the {@link SpecialityRepository} interface.
@@ -49,5 +51,11 @@ public class SpecialityRepositoryImpl implements SpecialityRepository {
     public List<Speciality> findAll() {
         List<SpecialityEntity> entities = this.specialityJpaRepository.findAll();
         return entities.stream().map(specialityMapper::toDomain).toList();
+    }
+
+    @Override
+    public Speciality findByName(String name) {
+        return this.specialityJpaRepository.findByName(name)
+                .map(specialityMapper::toDomain).orElseThrow(SpecialityNotFoundException::new);
     }
 }

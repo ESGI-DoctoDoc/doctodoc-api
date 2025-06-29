@@ -70,7 +70,8 @@ public class DoctorMapper {
                 consultationInformations,
                 entity.isVerified(),
                 calendar,
-                entity.getCustomerId()
+                entity.getCustomerId(),
+                entity.isRefused()
         );
     }
 
@@ -112,6 +113,7 @@ public class DoctorMapper {
         entity.setAcceptPublicCoverage(professionalInformations.isAcceptPublicCoverage());
         entity.setDoctorDocuments(professionalInformations.getDoctorDocuments());
         entity.setCustomerId(doctor.getCustomerId());
+        entity.setRefused(doctor.isRefused());
 
         return entity;
     }

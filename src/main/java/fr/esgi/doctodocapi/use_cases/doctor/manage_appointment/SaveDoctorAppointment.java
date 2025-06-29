@@ -67,9 +67,6 @@ public class SaveDoctorAppointment implements ISaveDoctorAppointment {
             return new SaveDoctorAppointmentResponse(savedAppointmentId);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
-        } catch (Exception e) {
-            e.printStackTrace();
-            throw new RuntimeException(e.getMessage());
         }
     }
 

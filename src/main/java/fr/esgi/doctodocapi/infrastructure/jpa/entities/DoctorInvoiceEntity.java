@@ -12,8 +12,8 @@ public class DoctorInvoiceEntity {
     @Column(name = "invoice_id")
     private UUID id;
 
-    @ManyToOne
-    @JoinColumn(name = "subscription_id", nullable = false)
+    @OneToOne
+    @JoinColumn(name = "subscription_id", nullable = false, unique = true)
     private DoctorSubscriptionEntity subscription;
 
     @Column(name = "state", nullable = false)

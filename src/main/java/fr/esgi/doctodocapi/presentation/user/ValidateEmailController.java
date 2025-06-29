@@ -1,5 +1,7 @@
 package fr.esgi.doctodocapi.presentation.user;
 
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateEmailRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.responses.ValidateEmailResponse;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.IValidateEmail;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -28,11 +30,11 @@ public class ValidateEmailController {
     /**
      * Endpoint to validate the email of a user identified by userId.
      *
-     * @param userId UUID of the user whose email is to be validated
+     * @param request with the UUID of the user whose email is to be validated
      */
-    @GetMapping("validate-email")
+    @PostMapping("validate-email")
     @ResponseStatus(value = HttpStatus.OK)
-    public void validateEmail(@RequestParam UUID userId) {
-        this.validateEmail.validate(userId);
+    public ValidateEmailResponse validateEmail(@RequestBody ValidateEmailRequest request) {
+        return this.validateEmail.validate(request);
     }
 }
