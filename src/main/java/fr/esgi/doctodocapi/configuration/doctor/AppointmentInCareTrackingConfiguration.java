@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.configuration.care_tracking;
+package fr.esgi.doctodocapi.configuration.doctor;
 
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
@@ -7,7 +7,7 @@ import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.doctor.care_tracking.book_appointment_in_care_tracking.BookAppointmentInCareTracking;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.book_appointment_in_care_tracking.BookAppointmentInCareTracking;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.book_appointment_in_care_tracking.IBookAppointmentInCareTracking;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;

@@ -1,21 +1,25 @@
 package fr.esgi.doctodocapi.infrastructure.services.care_tracking;
 
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.AppointmentEntity;
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.CareTrackingEntity;
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.PatientEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.*;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.CareTrackingJpaRepository;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DocumentJpaRepository;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DocumentTracesJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingMapper;
+import fr.esgi.doctodocapi.infrastructure.mappers.DocumentMapper;
+import fr.esgi.doctodocapi.infrastructure.mappers.document_trace_mapper.DocumentTraceFacadeMapper;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -25,12 +29,20 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
     private final CareTrackingMapper careTrackingMapper;
     private final EntityManager entityManager;
     private final CareTrackingFacadeMapper careTrackingFacadeMapper;
+    private final DocumentMapper documentMapper;
+    private final DocumentJpaRepository documentJpaRepository;
+    private final DocumentTraceFacadeMapper documentTraceFacadeMapper;
+    private final DocumentTracesJpaRepository documentTracesJpaRepository;
 
-    public CareTrackingRepositoryImpl(CareTrackingJpaRepository careTrackingJpaRepository, CareTrackingMapper careTrackingMapper, EntityManager entityManager, CareTrackingFacadeMapper careTrackingFacadeMapper) {
+    public CareTrackingRepositoryImpl(CareTrackingJpaRepository careTrackingJpaRepository, CareTrackingMapper careTrackingMapper, EntityManager entityManager, CareTrackingFacadeMapper careTrackingFacadeMapper, DocumentMapper documentMapper, DocumentJpaRepository documentJpaRepository, DocumentTraceFacadeMapper documentTraceFacadeMapper, DocumentTracesJpaRepository documentTracesJpaRepository) {
         this.careTrackingJpaRepository = careTrackingJpaRepository;
         this.careTrackingMapper = careTrackingMapper;
         this.entityManager = entityManager;
         this.careTrackingFacadeMapper = careTrackingFacadeMapper;
+        this.documentMapper = documentMapper;
+        this.documentJpaRepository = documentJpaRepository;
+        this.documentTraceFacadeMapper = documentTraceFacadeMapper;
+        this.documentTracesJpaRepository = documentTracesJpaRepository;
     }
 
     // doctor
@@ -40,17 +52,50 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
         DoctorEntity doctor = this.entityManager.getReference(DoctorEntity.class, careTracking.getCreatorId());
         PatientEntity patient = this.entityManager.getReference(PatientEntity.class, careTracking.getPatient().getId());
 
-        CareTrackingEntity entity = this.careTrackingMapper.toEntity(careTracking, patient);
+        CareTrackingEntity entity;
 
-        List<AppointmentEntity> appointmentEntities = careTracking.getAppointmentsId()
-                .stream()
-                .map(id -> this.entityManager.getReference(AppointmentEntity.class, id))
-                .toList();
+        if (careTrackingJpaRepository.existsById(careTracking.getId())) {
+            entity = this.careTrackingJpaRepository.findById(careTracking.getId())
+                    .orElseThrow(CareTrackingNotFoundException::new);
+        } else {
+            entity = this.careTrackingMapper.toEntity(careTracking, patient);
+        }
+
+        List<AppointmentEntity> appointmentEntities = new ArrayList<>(
+                careTracking.getAppointmentsId()
+                        .stream()
+                        .map(id -> this.entityManager.getReference(AppointmentEntity.class, id))
+                        .toList()
+        );
+
         entity.setAppointments(appointmentEntities);
         entity.setCreator(doctor);
 
         CareTrackingEntity savedEntity = this.careTrackingJpaRepository.save(entity);
+
+        saveDocuments(careTracking.getDocuments(), savedEntity);
+
         return savedEntity.getId();
+    }
+
+    private void saveDocuments(List<Document> documents, CareTrackingEntity careTrackingEntity) {
+        if (!documents.isEmpty()) {
+            documents
+                    .forEach(document -> {
+                        DocumentEntity entity = this.documentMapper.toEntity(document, null, careTrackingEntity);
+                        if (documentJpaRepository.existsById(document.getId())) {
+                            entity.setId(document.getId());
+                        }
+
+                        this.documentJpaRepository.save(entity);
+                        saveTraces(document);
+                    });
+        }
+    }
+
+    private void saveTraces(Document document) {
+        List<DocumentTracesEntity> traces = document.getTraces().stream().map(trace -> this.documentTraceFacadeMapper.toEntity(document.getId(), trace)).toList();
+        this.documentTracesJpaRepository.saveAll(traces);
     }
 
     @Override
@@ -72,6 +117,12 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
     @Override
     public CareTracking getByIdAndPatientId(UUID careTrackingId, Patient patient) throws CareTrackingNotFoundException {
         CareTrackingEntity entity = this.careTrackingJpaRepository.findByIdAndPatient_Id(careTrackingId, patient.getId()).orElseThrow(CareTrackingNotFoundException::new);
+        return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);
+    }
+
+    @Override
+    public CareTracking getByIdAndPatientIdAndDoctorId(UUID careTrackingId, Patient patient, Doctor doctor) throws CareTrackingNotFoundException {
+        CareTrackingEntity entity = this.careTrackingJpaRepository.findByIdAndPatient_IdAndCreator_Id(careTrackingId, patient.getId(), doctor.getId()).orElseThrow(CareTrackingNotFoundException::new);
         return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);
     }
 

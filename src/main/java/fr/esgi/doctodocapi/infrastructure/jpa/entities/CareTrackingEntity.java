@@ -42,9 +42,8 @@ public class CareTrackingEntity {
     @OneToMany(mappedBy = "careTracking")
     private List<CareTrackingTraceEntity> careTrackingTraces;
 
-    @Column(name = "documents", columnDefinition = "text[]", nullable = false)
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    private List<String> documents;
+    @OneToMany(mappedBy = "careTracking")
+    private List<DocumentEntity> documents;
 
     @Column(name = "created_at", nullable = false)
     private LocalDateTime createdAt;
@@ -116,11 +115,11 @@ public class CareTrackingEntity {
         this.careTrackingTraces = careTrackingTraces;
     }
 
-    public List<String> getDocuments() {
+    public List<DocumentEntity> getDocuments() {
         return documents;
     }
 
-    public void setDocuments(List<String> documents) {
+    public void setDocuments(List<DocumentEntity> documents) {
         this.documents = documents;
     }
 
