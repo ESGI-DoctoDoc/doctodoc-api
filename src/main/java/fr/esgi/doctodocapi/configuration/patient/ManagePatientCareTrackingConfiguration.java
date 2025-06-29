@@ -10,6 +10,7 @@ import fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking.*;
 import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.DocumentResponseMapper;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.*;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.IGetPatientFromContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -48,5 +49,10 @@ public class ManagePatientCareTrackingConfiguration {
     @Bean
     public IDeletePatientCareTrackingDocument deletePatientCareTrackingDocument(CareTrackingRepository careTrackingRepository, DocumentRepository documentRepository, FileStorageService fileStorageService, GetPatientFromContext getPatientFromContext) {
         return new DeletePatientCareTrackingDocument(careTrackingRepository, documentRepository, fileStorageService, getPatientFromContext);
+    }
+
+    @Bean
+    public IUpdatePatientCareTrackingDocument updatePatientCareTrackingDocument(IGetPatientFromContext getPatientFromContext, CareTrackingRepository careTrackingRepository) {
+        return new UpdatePatientCareTrackingDocument(getPatientFromContext, careTrackingRepository);
     }
 }

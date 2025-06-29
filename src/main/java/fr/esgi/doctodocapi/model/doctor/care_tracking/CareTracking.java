@@ -2,7 +2,9 @@ package fr.esgi.doctodocapi.model.doctor.care_tracking;
 
 import fr.esgi.doctodocapi.model.doctor.care_tracking.care_tracking_trace.CareTrackingTrace;
 import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
 import fr.esgi.doctodocapi.model.patient.Patient;
+import fr.esgi.doctodocapi.model.patient.medical_record.DocumentWithSameNameAlreadyExist;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -68,6 +70,14 @@ public class CareTracking {
         documents.add(document);
     }
 
+    public void updateDocument(Document oldDocument, Document newDocument) {
+        verifyIfNotClosed();
+        verifyIfFilenameAlreadyExist(newDocument.getName(), oldDocument);
+        if (!this.documents.contains(oldDocument)) throw new DocumentNotFoundException();
+        this.documents.remove(oldDocument);
+        this.documents.add(newDocument);
+    }
+
     public void addDoctor(UUID doctorId) {
         verifyIfNotClosed();
         if (doctors.contains(doctorId)) {
@@ -91,9 +101,19 @@ public class CareTracking {
         careTrackingTraces.add(trace);
     }
 
-    void verifyIfNotClosed() {
+    private void verifyIfNotClosed() {
         if (this.closedAt != null) {
             throw new ClosedCareTrackingException();
+        }
+    }
+
+    private void verifyIfFilenameAlreadyExist(String filename, Document excludedDocument) {
+        boolean exists = this.documents.stream()
+                .filter(doc -> !doc.equals(excludedDocument))
+                .anyMatch(doc -> Objects.equals(doc.getName(), filename));
+
+        if (exists) {
+            throw new DocumentWithSameNameAlreadyExist();
         }
     }
 
