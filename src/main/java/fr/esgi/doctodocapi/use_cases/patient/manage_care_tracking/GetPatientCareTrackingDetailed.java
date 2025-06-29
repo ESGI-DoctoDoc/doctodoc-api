@@ -4,10 +4,11 @@ import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetPatientCareTrackingDetailedResponse;
@@ -40,8 +41,9 @@ public class GetPatientCareTrackingDetailed implements IGetPatientCareTrackingDe
             CareTracking careTracking = this.careTrackingRepository.getByIdAndPatientId(id, patient);
             List<Doctor> doctors = getDoctors(careTracking);
             List<Appointment> appointments = careTracking.getAppointmentsId().stream().map(appointmentRepository::getById).toList();
+            List<Document> documents = careTracking.getDocuments();
 
-            return this.getPatientCareTrackingDetailedMapper.toDto(careTracking, doctors, appointments, List.of());
+            return this.getPatientCareTrackingDetailedMapper.toDto(careTracking, doctors, appointments, documents);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());

@@ -1,8 +1,8 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking;
 
 import fr.esgi.doctodocapi.model.appointment.Appointment;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetAppointmentOfCareTrackingResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetDoctorOfCareTrackingResponse;
@@ -34,7 +34,7 @@ public class GetPatientCareTrackingDetailedMapper {
 
     private List<GetDocumentsOfCareTrackingResponse> getDocumentsResponses(List<Document> documents) {
         return documents.stream().map(document ->
-                new GetDocumentsOfCareTrackingResponse(document.getId())
+                new GetDocumentsOfCareTrackingResponse(document.getId(), document.getName(), document.getType().getValue(), document.getPath())
         ).toList();
     }
 
