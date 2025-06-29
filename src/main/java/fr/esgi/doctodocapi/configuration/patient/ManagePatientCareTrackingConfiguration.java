@@ -4,6 +4,7 @@ import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking.*;
 import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.DocumentResponseMapper;
@@ -42,5 +43,10 @@ public class ManagePatientCareTrackingConfiguration {
     @Bean
     public IGetPatientCareTrackingDocumentDetail getPatientCareTrackingDocumentDetail(CareTrackingRepository careTrackingRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, GetPatientFromContext getPatientFromContext) {
         return new GetPatientCareTrackingDocumentDetail(careTrackingRepository, patientRepository, doctorRepository, getPatientFromContext);
+    }
+
+    @Bean
+    public IDeletePatientCareTrackingDocument deletePatientCareTrackingDocument(CareTrackingRepository careTrackingRepository, DocumentRepository documentRepository, FileStorageService fileStorageService, GetPatientFromContext getPatientFromContext) {
+        return new DeletePatientCareTrackingDocument(careTrackingRepository, documentRepository, fileStorageService, getPatientFromContext);
     }
 }
