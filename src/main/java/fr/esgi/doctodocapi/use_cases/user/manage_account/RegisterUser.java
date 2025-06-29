@@ -59,7 +59,7 @@ public class RegisterUser implements IRegisterUser {
         try {
             User user = User.create(email, password, phoneNumber);
             User userSaved = this.userRepository.save(user);
-            this.sendAccountValidationEmail.send(userSaved.getEmail().getValue(), userSaved.getId());
+            this.sendAccountValidationEmail.send(userSaved.getEmail().getValue(), userSaved.getId(), registerRequest.verificationUrl());
             return new RegisterResponse();
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());

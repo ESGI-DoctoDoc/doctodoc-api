@@ -10,6 +10,10 @@ public record LoginRequest(
 
         @NotBlank
         @NotNull
-        String password
+        String password,
+
+        @NotBlank
+        @NotNull
+        String verificationUrl
 ) {
 }

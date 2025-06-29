@@ -1,7 +1,8 @@
 package fr.esgi.doctodocapi.use_cases.user.ports.in;
 
-import java.util.UUID;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateEmailRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.responses.ValidateEmailResponse;
 
 public interface IValidateEmail {
-    void validate(UUID userId);
+    ValidateEmailResponse validate(ValidateEmailRequest request);
 }
