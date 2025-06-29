@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.model.doctor.care_tracking;
 
 import fr.esgi.doctodocapi.model.doctor.care_tracking.care_tracking_trace.CareTrackingTrace;
+import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.patient.Patient;
 
 import java.time.LocalDateTime;
@@ -12,7 +13,7 @@ public class CareTracking {
     private String description;
     private UUID creatorId;
     private Patient patient;
-    private List<String> documents;
+    private List<Document> documents;
     private List<UUID> doctors;
     private List<UUID> appointmentsId;
     private List<CareTrackingTrace> careTrackingTraces;
@@ -20,7 +21,7 @@ public class CareTracking {
     private LocalDateTime closedAt;
 
     public CareTracking(UUID id, String caseName, String description, UUID creatorId, Patient patient,
-                        List<String> documents, List<UUID> doctors, List<UUID> appointmentsId,
+                        List<Document> documents, List<UUID> doctors, List<UUID> appointmentsId,
                         List<CareTrackingTrace> careTrackingTraces, LocalDateTime createdAt, LocalDateTime closedAt) {
         this.id = id;
         this.caseName = caseName;
@@ -51,8 +52,16 @@ public class CareTracking {
         );
     }
 
-    public void addDocument(String document) {
-        if (documents.contains(document)) {
+    public Document getById(UUID id) {
+        return this.documents
+                .stream()
+                .filter(document -> document.getId().equals(id))
+                .findFirst()
+                .orElseThrow(DocumentNotFoundInCareTrackingException::new);
+    }
+
+    public void addDocument(Document document) {
+        if (documents.stream().anyMatch(d -> d.getName().equalsIgnoreCase(document.getName()))) {
             throw new DocumentAlreadyExistInCareTrackingException();
         }
         documents.add(document);
@@ -119,11 +128,12 @@ public class CareTracking {
         this.patient = patient;
     }
 
-    public List<String> getDocuments() {
+    public List<Document> getDocuments() {
+        // todo doctor needs permission too
         return Collections.unmodifiableList(documents);
     }
 
-    public void setDocuments(List<String> documents) {
+    public void setDocuments(List<Document> documents) {
         this.documents = documents;
     }
 

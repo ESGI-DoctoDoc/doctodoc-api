@@ -41,6 +41,10 @@ public class DocumentEntity {
     @Column(name = "deleted_at")
     private LocalDateTime deletedAt;
 
+    @ManyToOne
+    @JoinColumn(name = "care_tracking_id")
+    private CareTrackingEntity careTracking;
+
     public UUID getId() {
         return id;
     }
@@ -107,6 +111,14 @@ public class DocumentEntity {
 
     public void setTraces(List<DocumentTracesEntity> traces) {
         this.traces = traces;
+    }
+
+    public CareTrackingEntity getCareTracking() {
+        return careTracking;
+    }
+
+    public void setCareTracking(CareTrackingEntity careTracking) {
+        this.careTracking = careTracking;
     }
 
     @Override
