@@ -5,6 +5,8 @@ public enum DocumentType {
     PRESCRIPTION("Ordonnance"),
     MEDICAL_CERTIFICATE("Certificat médical"),
     ANALYSES_RESULT("Résultats d'analyses"),
+    PROFILE_PICTURE("Photo de profil"),
+    IDENTITY_FILE("Justificatif d'identité"),
     OTHER("Autre");
 
     private final String value;

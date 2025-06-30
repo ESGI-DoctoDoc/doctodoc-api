@@ -8,7 +8,7 @@ import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.doctor_managing_care_tracking.GetCareTrackingsResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.doctor_managing_care_tracking.doctor_managing_care_tracking.GetCareTrackingsResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.doctor_managing_care_tracking.IGetCareTrackings;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;

@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.CareTrackingEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DocumentEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalRecordEntity;
 import fr.esgi.doctodocapi.model.document.Document;
@@ -26,7 +27,7 @@ public class DocumentMapper {
         );
     }
 
-    public DocumentEntity toEntity(Document document, MedicalRecordEntity medicalRecordEntity, CareTrackingEntity careTrackingEntity) {
+    public DocumentEntity toEntity(Document document, MedicalRecordEntity medicalRecordEntity, CareTrackingEntity careTrackingEntity, DoctorEntity doctorEntity) {
         DocumentEntity entity = new DocumentEntity();
         entity.setId(document.getId());
         entity.setName(document.getName());
@@ -36,6 +37,7 @@ public class DocumentMapper {
         entity.setUploadedAt(document.getUploadedAt());
         entity.setMedicalRecord(medicalRecordEntity);
         entity.setCareTracking(careTrackingEntity);
+        entity.setDoctor(doctorEntity);
 
         return entity;
     }

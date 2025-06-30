@@ -11,6 +11,7 @@ import fr.esgi.doctodocapi.model.doctor.personal_information.CoordinatesGps;
 import fr.esgi.doctodocapi.model.doctor.personal_information.DoctorPersonnalInformations;
 import fr.esgi.doctodocapi.model.doctor.personal_information.Gender;
 import fr.esgi.doctodocapi.model.doctor.professionnal_informations.DoctorProfessionalInformations;
+import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.vo.birthdate.Birthdate;
 import fr.esgi.doctodocapi.model.vo.email.Email;
 import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
@@ -26,7 +27,7 @@ public class DoctorMapper {
         this.medicalConcernMapper = medicalConcernMapper;
     }
 
-    public Doctor toDomain(DoctorEntity entity, List<Slot> slots, List<Absence> absences, List<MedicalConcern> medicalConcerns) {
+    public Doctor toDomain(DoctorEntity entity, List<Slot> slots, List<Absence> absences, List<MedicalConcern> medicalConcerns, List<Document> documents) {
 
         DoctorPersonnalInformations personnalInformations = new DoctorPersonnalInformations(
                 entity.getProfilePictureUrl(),
@@ -42,7 +43,7 @@ public class DoctorMapper {
                 entity.getSpeciality(),
                 entity.getExperienceYears(),
                 entity.getLanguages(),
-                entity.getDoctorDocuments(),
+                documents,
                 entity.isAcceptPublicCoverage()
         );
 
@@ -111,7 +112,6 @@ public class DoctorMapper {
         }
         entity.setVerified(doctor.isVerified());
         entity.setAcceptPublicCoverage(professionalInformations.isAcceptPublicCoverage());
-        entity.setDoctorDocuments(professionalInformations.getDoctorDocuments());
         entity.setCustomerId(doctor.getCustomerId());
         entity.setRefused(doctor.isRefused());
 

@@ -82,9 +82,8 @@ public class DoctorEntity {
     @Column(name = "accept_public_coverage", nullable = false)
     private boolean acceptPublicCoverage;
 
-    @Column(name = "doctor_documents", columnDefinition = "text[]", nullable = false)
-    @JdbcTypeCode(SqlTypes.ARRAY)
-    private List<String> doctorDocuments;
+    @OneToMany(mappedBy = "doctor")
+    private List<DocumentEntity> doctorDocuments;
 
     @Column(name = "customer_id")
     private String customerId;
@@ -236,11 +235,11 @@ public class DoctorEntity {
         this.acceptPublicCoverage = acceptPublicCoverage;
     }
 
-    public List<String> getDoctorDocuments() {
+    public List<DocumentEntity> getDoctorDocuments() {
         return doctorDocuments;
     }
 
-    public void setDoctorDocuments(List<String> doctorDocuments) {
+    public void setDoctorDocuments(List<DocumentEntity> doctorDocuments) {
         this.doctorDocuments = doctorDocuments;
     }
 

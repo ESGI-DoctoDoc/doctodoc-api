@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.book_appointment_in_care_tracking;
+package fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_care_tracking.book_appointment_in_care_tracking;
 
 import jakarta.validation.constraints.NotNull;
 
