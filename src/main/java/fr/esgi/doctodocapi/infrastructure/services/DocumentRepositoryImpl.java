@@ -53,4 +53,21 @@ public class DocumentRepositoryImpl implements DocumentRepository {
 
         // todo delete permissions
     }
+
+    @Override
+    public void save(Document document) {
+        DocumentEntity entity = this.documentMapper.toEntity(document, null, null, null);
+
+        if (this.documentJpaRepository.existsById(document.getId())) {
+            entity.setId(document.getId());
+        }
+
+        this.documentJpaRepository.save(entity);
+        saveTraces(document);
+    }
+
+    private void saveTraces(Document document) {
+        List<DocumentTracesEntity> traces = document.getTraces().stream().map(trace -> this.documentTraceFacadeMapper.toEntity(document.getId(), trace)).toList();
+        this.documentTracesJpaRepository.saveAll(traces);
+    }
 }

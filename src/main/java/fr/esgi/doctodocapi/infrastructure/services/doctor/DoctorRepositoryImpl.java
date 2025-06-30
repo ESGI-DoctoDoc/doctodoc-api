@@ -1,15 +1,20 @@
 package fr.esgi.doctodocapi.infrastructure.services.doctor;
 
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.*;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DoctorJpaRepository;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DocumentJpaRepository;
+import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DocumentTracesJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.UserJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.DoctorFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.DoctorMapper;
+import fr.esgi.doctodocapi.infrastructure.mappers.DocumentMapper;
+import fr.esgi.doctodocapi.infrastructure.mappers.document_trace_mapper.DocumentTraceFacadeMapper;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
+import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
+import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -48,6 +53,12 @@ public class DoctorRepositoryImpl implements DoctorRepository {
      */
     private final UserJpaRepository userJpaRepository;
 
+    private final DocumentMapper documentMapper;
+    private final DocumentJpaRepository documentJpaRepository;
+    private final DocumentTraceFacadeMapper documentTraceFacadeMapper;
+    private final DocumentTracesJpaRepository documentTracesJpaRepository;
+    private final EntityManager entityManager;
+
     /**
      * Constructs a DoctorRepositoryImpl with the required repositories and mapper.
      *
@@ -55,11 +66,16 @@ public class DoctorRepositoryImpl implements DoctorRepository {
      * @param doctorMapper        Mapper for doctor domain objects and entities
      * @param userJpaRepository   Repository for user data access
      */
-    public DoctorRepositoryImpl(DoctorJpaRepository doctorJpaRepository, DoctorMapper doctorMapper, DoctorFacadeMapper doctorFacadeMapper, UserJpaRepository userJpaRepository) {
+    public DoctorRepositoryImpl(DoctorJpaRepository doctorJpaRepository, DoctorMapper doctorMapper, DoctorFacadeMapper doctorFacadeMapper, UserJpaRepository userJpaRepository, DocumentMapper documentMapper, DocumentJpaRepository documentJpaRepository, DocumentTraceFacadeMapper documentTraceFacadeMapper, DocumentTracesJpaRepository documentTracesJpaRepository, EntityManager entityManager) {
         this.doctorJpaRepository = doctorJpaRepository;
         this.doctorMapper = doctorMapper;
         this.doctorFacadeMapper = doctorFacadeMapper;
         this.userJpaRepository = userJpaRepository;
+        this.documentMapper = documentMapper;
+        this.documentJpaRepository = documentJpaRepository;
+        this.documentTraceFacadeMapper = documentTraceFacadeMapper;
+        this.documentTracesJpaRepository = documentTracesJpaRepository;
+        this.entityManager = entityManager;
     }
 
 
@@ -124,8 +140,36 @@ public class DoctorRepositoryImpl implements DoctorRepository {
     @Override
     public void save(Doctor doctor) {
         UserEntity user = this.userJpaRepository.findById(doctor.getUserId()).orElseThrow(UserNotFoundException::new);
-        DoctorEntity entityToSaved = this.doctorMapper.toEntity(doctor, user);
-        this.doctorJpaRepository.save(entityToSaved);
+        DoctorEntity entityToSaved;
+
+        if (doctorJpaRepository.existsById(doctor.getId())) {
+            entityToSaved = entityManager.getReference(DoctorEntity.class, doctor.getId());
+        } else {
+            entityToSaved = this.doctorMapper.toEntity(doctor, user);
+        }
+
+        DoctorEntity savedEntity = this.doctorJpaRepository.save(entityToSaved);
+        saveDocuments(doctor.getProfessionalInformations().getDoctorDocuments(), savedEntity);
+    }
+
+    private void saveDocuments(List<Document> documents, DoctorEntity doctorEntity) {
+        if (!documents.isEmpty()) {
+            documents
+                    .forEach(document -> {
+                        DocumentEntity entity = this.documentMapper.toEntity(document, null, null, doctorEntity);
+                        if (documentJpaRepository.existsById(document.getId())) {
+                            entity.setId(document.getId());
+                        }
+
+                        this.documentJpaRepository.save(entity);
+                        saveTraces(document);
+                    });
+        }
+    }
+
+    private void saveTraces(Document document) {
+        List<DocumentTracesEntity> traces = document.getTraces().stream().map(trace -> this.documentTraceFacadeMapper.toEntity(document.getId(), trace)).toList();
+        this.documentTracesJpaRepository.saveAll(traces);
     }
 
     /**

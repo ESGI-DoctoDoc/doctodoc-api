@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.doctor.dtos.requests;
+package fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_doctor_account;
 
 import jakarta.validation.constraints.*;
 

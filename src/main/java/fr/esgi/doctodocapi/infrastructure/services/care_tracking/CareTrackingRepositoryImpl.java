@@ -82,7 +82,7 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
         if (!documents.isEmpty()) {
             documents
                     .forEach(document -> {
-                        DocumentEntity entity = this.documentMapper.toEntity(document, null, careTrackingEntity);
+                        DocumentEntity entity = this.documentMapper.toEntity(document, null, careTrackingEntity, null);
                         if (documentJpaRepository.existsById(document.getId())) {
                             entity.setId(document.getId());
                         }

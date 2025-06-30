@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.model.doctor;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.OnBoardingDoctorRequest;
+import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_doctor_account.OnBoardingDoctorRequest;
 import fr.esgi.doctodocapi.model.doctor.calendar.Calendar;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.DoctorConsultationInformations;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorMustHaveMajority;
@@ -132,7 +133,7 @@ public class Doctor extends User {
      * @return a new Doctor instance (unverified)
      * @throws DoctorMustHaveMajority if the doctor is under 18 years old
      */
-    public static Doctor createFromOnBoarding(User user, OnBoardingDoctorRequest onBoardingDoctorRequest) {
+    public static Doctor createFromOnBoarding(User user, OnBoardingDoctorRequest onBoardingDoctorRequest, List<Document> uploadedDocuments) {
         Birthdate birthdate = Birthdate.of(onBoardingDoctorRequest.birthDate());
         verifyAge(birthdate.getValue());
         DoctorPersonnalInformations personalInformations = new DoctorPersonnalInformations(
@@ -149,7 +150,7 @@ public class Doctor extends User {
                 onBoardingDoctorRequest.speciality(),
                 onBoardingDoctorRequest.experienceYears(),
                 onBoardingDoctorRequest.languages(),
-                onBoardingDoctorRequest.doctorDocuments(),
+                uploadedDocuments,
                 onBoardingDoctorRequest.acceptPublicCoverage()
         );
 

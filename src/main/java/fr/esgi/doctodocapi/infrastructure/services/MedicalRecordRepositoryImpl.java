@@ -96,7 +96,7 @@ public class MedicalRecordRepositoryImpl implements MedicalRecordRepository {
         if (!documents.isEmpty()) {
             documents
                     .forEach(document -> {
-                        DocumentEntity entity = this.documentMapper.toEntity(document, medicalRecord, null);
+                        DocumentEntity entity = this.documentMapper.toEntity(document, medicalRecord, null, null);
                         if (documentJpaRepository.existsById(document.getId())) {
                             entity.setId(document.getId());
                         }
