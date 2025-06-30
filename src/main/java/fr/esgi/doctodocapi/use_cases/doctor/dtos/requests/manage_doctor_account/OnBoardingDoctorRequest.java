@@ -14,7 +14,7 @@ public record OnBoardingDoctorRequest (
         @NotBlank String lastName,
         @NotNull LocalDate birthDate,
         @NotBlank String bio,
-        @NotBlank String profilePictureUrl,
+        @NotBlank String pictureDocumentId,
         @NotEmpty List<String> languages,
         @NotEmpty List<String> doctorDocuments,
         @NotBlank String gender
@@ -25,7 +25,7 @@ public record OnBoardingDoctorRequest (
         firstName = firstName.trim();
         lastName = lastName.trim();
         bio = bio.trim();
-        profilePictureUrl = profilePictureUrl.trim();
+        pictureDocumentId = pictureDocumentId.trim();
         languages = languages.stream().map(String::trim).toList();
         doctorDocuments = doctorDocuments.stream().map(String::trim).toList();
     }

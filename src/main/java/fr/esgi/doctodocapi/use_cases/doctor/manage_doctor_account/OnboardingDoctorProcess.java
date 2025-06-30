@@ -5,6 +5,7 @@ import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
+import fr.esgi.doctodocapi.model.document.DocumentType;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserRepository;
@@ -73,7 +74,16 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
                     .map(this.documentRepository::getById)
                     .toList();
 
-            Doctor doctor = Doctor.createFromOnBoarding(user, request, uploadedDocuments);
+            UUID profilePictureId = UUID.fromString(request.pictureDocumentId());
+            Document profilePicture = this.documentRepository.getById(profilePictureId);
+
+            if (!profilePicture.getType().equals(DocumentType.PROFILE_PICTURE)) {
+                throw new ApiException(HttpStatus.BAD_REQUEST, "document.invalid_type", "Le document fourni n'est pas une photo de profil valide.");
+            }
+
+            String profilePictureUrl = profilePicture.getPath();
+
+            Doctor doctor = Doctor.createFromOnBoarding(user, request, uploadedDocuments, profilePictureUrl);
             this.doctorRepository.save(doctor);
             return new OnboardingProcessResponse(user.getId());
         } catch (DomainException e) {

@@ -1,6 +1,5 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
-import fr.esgi.doctodocapi.model.document.Document;
 import jakarta.persistence.*;
 import org.hibernate.annotations.JdbcTypeCode;
 import org.hibernate.type.SqlTypes;

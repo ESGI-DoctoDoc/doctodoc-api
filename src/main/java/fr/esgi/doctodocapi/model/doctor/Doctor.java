@@ -133,11 +133,11 @@ public class Doctor extends User {
      * @return a new Doctor instance (unverified)
      * @throws DoctorMustHaveMajority if the doctor is under 18 years old
      */
-    public static Doctor createFromOnBoarding(User user, OnBoardingDoctorRequest onBoardingDoctorRequest, List<Document> uploadedDocuments) {
+    public static Doctor createFromOnBoarding(User user, OnBoardingDoctorRequest onBoardingDoctorRequest, List<Document> uploadedDocuments, String profilePictureUrl) {
         Birthdate birthdate = Birthdate.of(onBoardingDoctorRequest.birthDate());
         verifyAge(birthdate.getValue());
         DoctorPersonnalInformations personalInformations = new DoctorPersonnalInformations(
-                onBoardingDoctorRequest.profilePictureUrl(),
+                profilePictureUrl,
                 onBoardingDoctorRequest.firstName(),
                 onBoardingDoctorRequest.lastName(),
                 birthdate,

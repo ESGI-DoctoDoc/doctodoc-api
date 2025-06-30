@@ -13,6 +13,7 @@ import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.document.DocumentType;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
@@ -154,17 +155,25 @@ public class DoctorRepositoryImpl implements DoctorRepository {
 
     private void saveDocuments(List<Document> documents, DoctorEntity doctorEntity) {
         if (!documents.isEmpty()) {
-            documents
-                    .forEach(document -> {
-                        DocumentEntity entity = this.documentMapper.toEntity(document, null, null, doctorEntity);
-                        if (documentJpaRepository.existsById(document.getId())) {
-                            entity.setId(document.getId());
-                        }
+            documents.forEach(document -> {
+                DocumentEntity entity = this.documentMapper.toEntity(document, null, null, doctorEntity);
+                if (documentJpaRepository.existsById(document.getId())) {
+                    entity.setId(document.getId());
+                }
 
-                        this.documentJpaRepository.save(entity);
-                        saveTraces(document);
-                    });
+                this.documentJpaRepository.save(entity);
+                saveTraces(document);
+            });
         }
+
+        List<DocumentEntity> onboardingDocs = documentJpaRepository.findAllByUploadedBy(doctorEntity.getUser().getId());
+
+        onboardingDocs.stream()
+                .filter(doc -> DocumentType.PROFILE_PICTURE.name().equals(doc.getType()))
+                .forEach(doc -> {
+                    doc.setDoctor(doctorEntity);
+                    this.documentJpaRepository.save(doc);
+                });
     }
 
     private void saveTraces(Document document) {
