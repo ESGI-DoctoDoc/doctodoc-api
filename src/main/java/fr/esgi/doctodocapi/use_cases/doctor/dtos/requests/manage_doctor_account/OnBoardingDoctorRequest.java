@@ -25,8 +25,6 @@ public record OnBoardingDoctorRequest (
         firstName = firstName.trim();
         lastName = lastName.trim();
         bio = bio.trim();
-        pictureDocumentId = pictureDocumentId.trim();
         languages = languages.stream().map(String::trim).toList();
-        doctorDocuments = doctorDocuments.stream().map(String::trim).toList();
     }
 }

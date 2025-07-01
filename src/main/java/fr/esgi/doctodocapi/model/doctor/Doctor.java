@@ -117,10 +117,10 @@ public class Doctor extends User {
      * @throws DoctorMustHaveMajority if the doctor is under 18
      */
     private static void verifyAge(LocalDate birthDate) {
-        int minimumAgeToHave = 18;
+        LocalDate today = LocalDate.now();
+        LocalDate mustBeBornBefore = today.minusYears(18);
 
-        LocalDate now = LocalDate.now().minusYears(minimumAgeToHave);
-        if (birthDate.isAfter(now)) {
+        if (!birthDate.isBefore(today) || birthDate.isAfter(mustBeBornBefore)) {
             throw new DoctorMustHaveMajority();
         }
     }
