@@ -9,7 +9,7 @@ import fr.esgi.doctodocapi.model.doctor.care_tracking.ClosedCareTrackingExceptio
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.document.GetDocumentForCareTrackingResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.document.GetDocumentForCareTrackingResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_document.IGetCareTrackingDocumentContent;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;

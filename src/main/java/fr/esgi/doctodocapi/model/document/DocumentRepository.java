@@ -6,4 +6,5 @@ public interface DocumentRepository {
     Document getById(UUID id) throws DocumentNotFoundException;
 
     void delete(Document document);
+    void save(Document document);
 }

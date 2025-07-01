@@ -1,9 +1,9 @@
 package fr.esgi.doctodocapi.presentation.doctor.manage_care_tracking.document;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.document.GetDocumentForCareTrackingResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.document.GetUrlUploadForCareTrackingResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_care_tracking.SaveDocumentRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.document.GetDocumentForCareTrackingResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.document.GetUrlUploadForCareTrackingResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_document.IUploadCareTrackingDocument;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.SaveDocumentRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;

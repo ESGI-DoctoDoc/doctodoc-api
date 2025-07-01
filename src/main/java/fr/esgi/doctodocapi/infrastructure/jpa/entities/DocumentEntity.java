@@ -45,6 +45,10 @@ public class DocumentEntity {
     @JoinColumn(name = "care_tracking_id")
     private CareTrackingEntity careTracking;
 
+    @ManyToOne
+    @JoinColumn(name = "doctor_id")
+    private DoctorEntity doctor;
+
     public UUID getId() {
         return id;
     }
@@ -119,6 +123,14 @@ public class DocumentEntity {
 
     public void setCareTracking(CareTrackingEntity careTracking) {
         this.careTracking = careTracking;
+    }
+
+    public DoctorEntity getDoctor() {
+        return doctor;
+    }
+
+    public void setDoctor(DoctorEntity doctor) {
+        this.doctor = doctor;
     }
 
     @Override

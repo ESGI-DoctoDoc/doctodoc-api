@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.doctor.dtos.requests;
+package fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_doctor_account;
 
 import jakarta.validation.constraints.*;
 
@@ -14,7 +14,7 @@ public record OnBoardingDoctorRequest (
         @NotBlank String lastName,
         @NotNull LocalDate birthDate,
         @NotBlank String bio,
-        @NotBlank String profilePictureUrl,
+        @NotBlank String pictureDocumentId,
         @NotEmpty List<String> languages,
         @NotEmpty List<String> doctorDocuments,
         @NotBlank String gender
@@ -25,8 +25,6 @@ public record OnBoardingDoctorRequest (
         firstName = firstName.trim();
         lastName = lastName.trim();
         bio = bio.trim();
-        profilePictureUrl = profilePictureUrl.trim();
         languages = languages.stream().map(String::trim).toList();
-        doctorDocuments = doctorDocuments.stream().map(String::trim).toList();
     }
 }

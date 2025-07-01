@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.document;
+package fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.document;
 
 import java.util.UUID;
 

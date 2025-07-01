@@ -5,10 +5,10 @@ import java.util.regex.Pattern;
 
 public class Password {
     /**
-     * au moins 1 caractère spécial, une maj, un chiffre et 6 caractères minimum en tout
+     * au moins 1 caractère spécial (tout ce qui n’est ni lettre ni chiffre), une maj, un chiffre et 6 caractères minimum en tout
      */
     private static final Pattern VALID_PASSWORD_REGEX =
-            Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@\\-_#$]).{6,}$");
+            Pattern.compile("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[^a-zA-Z0-9]).{6,}$");
 
     private final String value;
 
