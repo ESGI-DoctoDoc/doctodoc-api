@@ -38,7 +38,7 @@ public class AppointmentMapper {
                 entity.getStartHour(),
                 entity.getEndHour(),
                 entity.getTakenAt(),
-                AppointmentStatus.valueOf(entity.getStatus()),
+                AppointmentStatus.fromValue(entity.getStatus()),
                 answers,
                 entity.getLockedAt()
         );
