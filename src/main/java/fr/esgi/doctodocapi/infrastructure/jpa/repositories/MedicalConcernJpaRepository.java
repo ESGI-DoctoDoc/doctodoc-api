@@ -10,4 +10,5 @@ import java.util.UUID;
 public interface MedicalConcernJpaRepository extends JpaRepository<MedicalConcernEntity, UUID> {
     List<MedicalConcernEntity> findAllByDoctor_Id(UUID id);
     Optional<MedicalConcernEntity> findByIdAndDoctor_Id(UUID id, UUID doctorId);
+    boolean existsByNameIgnoreCaseAndDoctor_Id(String name, UUID doctorId);
 }

@@ -65,9 +65,6 @@ public class PayDoctorSubscription implements IPayDoctorSubscription {
             DoctorInvoice invoice = this.doctorInvoiceRepository.findBySessionId(sessionId);
             invoice.markAsPaid();
 
-            BigDecimal amount = this.paymentProcess.getAmountPaid(sessionId);
-            invoice.setAmount(amount);
-
             this.doctorInvoiceRepository.update(invoice);
 
             String subscriptionId = this.paymentProcess.getSubscriptionIdFromSession(sessionId);
@@ -85,10 +82,12 @@ public class PayDoctorSubscription implements IPayDoctorSubscription {
 
         Session session = this.paymentProcess.createCheckoutSession(customerId, request.successUrl(), request.cancelUrl());
 
+        BigDecimal amount = this.paymentProcess.getSubscriptionAmount(session.getId());
+
         DoctorSubscription subscription = DoctorSubscription.create(doctor.getId(), LocalDateTime.now());
         DoctorSubscription savedSubscription = this.doctorSubscriptionRepository.save(subscription);
 
-        DoctorInvoice invoice = DoctorInvoice.create(savedSubscription.getId(), session.getId());
+        DoctorInvoice invoice = DoctorInvoice.create(savedSubscription.getId(), amount, session.getId());
         this.doctorInvoiceRepository.save(invoice);
 
         return new SubscribeResponse(session.getUrl());

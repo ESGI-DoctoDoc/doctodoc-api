@@ -19,8 +19,8 @@
             this.sessionId = sessionId;
         }
 
-        public static DoctorInvoice create(UUID subscriptionId, String sessionId) {
-            return new DoctorInvoice(UUID.randomUUID(), subscriptionId, InvoiceState.UNPAID, null, sessionId);
+        public static DoctorInvoice create(UUID subscriptionId, BigDecimal amount, String sessionId) {
+            return new DoctorInvoice(UUID.randomUUID(), subscriptionId, InvoiceState.UNPAID, amount, sessionId);
         }
 
         public void markAsPaid() {
