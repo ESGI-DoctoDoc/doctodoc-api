@@ -35,8 +35,8 @@ public class ManageSpecialityController {
      */
     @GetMapping("/specialities")
     @ResponseStatus(HttpStatus.OK)
-    public List<GetSpecialityResponse> getAllSpecialities() {
-        return getAllSpecialities.getAll();
+    public List<GetSpecialityResponse> getAllSpecialities(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+        return getAllSpecialities.getAll(page, size);
     }
 
     /**
