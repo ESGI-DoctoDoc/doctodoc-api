@@ -4,8 +4,6 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.AppointmentEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Query;
-import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -32,8 +30,7 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
 
     int countByDoctor_Id(UUID doctorId);
 
-    @Query("SELECT COUNT(DISTINCT a.patient.id) FROM AppointmentEntity a WHERE a.doctor.id = :doctorId")
-    int countDistinctPatientsByDoctorId(@Param("doctorId") UUID doctorId);
+    int countDistinctPatient_IdByDoctor_Id(UUID doctorId);
 
     Optional<AppointmentEntity> findByIdAndPatient_Id(UUID id, UUID patientId);
 }

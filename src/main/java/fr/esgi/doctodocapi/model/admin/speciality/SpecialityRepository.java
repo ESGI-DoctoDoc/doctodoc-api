@@ -20,9 +20,7 @@ public interface SpecialityRepository {
      *
      * @return a list of all stored {@link Speciality} instances
      */
-    List<Speciality> findAll(int page, int size);
+    List<Speciality> findAll();
 
     Speciality findByName(String name) throws SpecialityNotFoundException;
-
-    boolean existsByName(String name);
 }

@@ -33,7 +33,7 @@ public class DoctorResponseMapper {
                 new AddressInfo(
                         doctor.getConsultationInformations().getAddress(),
                         doctor.getConsultationInformations().getCoordinatesGps().getClinicLatitude(),
-                        doctor.getConsultationInformations().getCoordinatesGps().getClinicLongitude()
+                        doctor.getConsultationInformations().getCoordinatesGps().getClinicLatitude()
                 )
         );
     }
@@ -58,8 +58,7 @@ public class DoctorResponseMapper {
                 )).toList(),
                 new CounterInfo(
                         appointmentCount,
-                        patientCount
-                )
+                        patientCount)
         );
     }
 }

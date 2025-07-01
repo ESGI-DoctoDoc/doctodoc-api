@@ -30,9 +30,9 @@ public class GetAllSpecialities implements IGetAllSpecialities {
      * @return a list of {@link GetSpecialityResponse} representing all available specialities
      * @throws ApiException if a domain exception occurs during retrieval
      */
-    public List<GetSpecialityResponse> getAll(int page, int size) {
+    public List<GetSpecialityResponse> getAll() {
         try {
-            List<Speciality> specialities = this.specialityRepository.findAll(page, size);
+            List<Speciality> specialities = this.specialityRepository.findAll();
             return specialities.stream().map(speciality -> new GetSpecialityResponse(
                     speciality.getId(),
                     speciality.getName(),

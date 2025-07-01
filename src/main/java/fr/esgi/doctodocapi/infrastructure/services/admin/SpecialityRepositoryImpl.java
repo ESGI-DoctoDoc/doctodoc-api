@@ -6,9 +6,6 @@ import fr.esgi.doctodocapi.infrastructure.mappers.SpecialityMapper;
 import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityNotFoundException;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -51,9 +48,8 @@ public class SpecialityRepositoryImpl implements SpecialityRepository {
      * @return a list of all specialities
      */
     @Override
-    public List<Speciality> findAll(int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<SpecialityEntity> entities = this.specialityJpaRepository.findAll(pageable);
+    public List<Speciality> findAll() {
+        List<SpecialityEntity> entities = this.specialityJpaRepository.findAll();
         return entities.stream().map(specialityMapper::toDomain).toList();
     }
 
@@ -61,10 +57,5 @@ public class SpecialityRepositoryImpl implements SpecialityRepository {
     public Speciality findByName(String name) {
         return this.specialityJpaRepository.findByName(name)
                 .map(specialityMapper::toDomain).orElseThrow(SpecialityNotFoundException::new);
-    }
-
-    @Override
-    public boolean existsByName(String name) {
-        return this.specialityJpaRepository.existsByNameIgnoreCase(name);
     }
 }
