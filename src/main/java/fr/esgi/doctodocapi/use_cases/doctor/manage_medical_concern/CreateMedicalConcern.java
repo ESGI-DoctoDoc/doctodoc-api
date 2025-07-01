@@ -4,6 +4,7 @@ import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernAlreadyExistsException;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
@@ -46,6 +47,10 @@ public class CreateMedicalConcern implements ICreateMedicalConcern {
             String username = this.getCurrentUserContext.getUsername();
             User user = this.userRepository.findByEmail(username);
             Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
+
+            if (this.medicalConcernRepository.existsByNameForDoctor(createMedicalConcernRequest.name(), doctor.getId())) {
+                throw new MedicalConcernAlreadyExistsException();
+            }
 
             MedicalConcern newMedicalConcern = MedicalConcern.create(
                     createMedicalConcernRequest.name(),

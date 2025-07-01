@@ -74,8 +74,7 @@ public class SaveMonthlySlots implements ISaveMonthlySlots {
             int targetDay = dayOfMonth.getDay();
 
             LocalDate current = firstOccurrence(dateRange.getStart(), targetDay);
-
-
+            List<Slot> newSlots = new ArrayList<>();
             List<Slot> allExistingSlots = new ArrayList<>(
                     this.slotRepository.findAllByDoctorIdAndDateAfter(doctor.getId(), startDate)
             );
@@ -86,21 +85,20 @@ public class SaveMonthlySlots implements ISaveMonthlySlots {
 
                 doctor.getCalendar().addSlot(newSlot);
                 allExistingSlots.add(newSlot);
+                newSlots.add(newSlot);
 
                 current = nextOccurrence(current, targetDay);
             }
 
-            List<Slot> createdSlots = doctor.getCalendar().getSlots();
-
-            if (!createdSlots.isEmpty()) {
+            if (!newSlots.isEmpty()) {
                 RecurrentSlot recurrentSlot = RecurrentSlot.createMonthly(startDate, endDate);
                 RecurrentSlot savedRecurrentSlot = this.recurrentSlotRepository.save(recurrentSlot);
 
-                for (Slot slot : createdSlots) {
+                for (Slot slot : newSlots) {
                     slot.setRecurrenceId(savedRecurrentSlot.getId());
                 }
 
-                List<Slot> savedSlots = this.slotRepository.saveAll(createdSlots, doctor.getId());
+                List<Slot> savedSlots = this.slotRepository.saveAll(newSlots, doctor.getId());
                 return this.slotResponseMapper.presentAll(savedSlots);
             }
 

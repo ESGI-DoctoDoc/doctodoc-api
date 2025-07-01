@@ -10,6 +10,6 @@ public interface PaymentProcess {
     String upsertCustomer(Doctor doctor) throws PaymentProcessFailedException;
     Session createCheckoutSession(String customerId, String successUrl, String cancelUrl) throws PaymentProcessFailedException;
     void updateSubscriptionToCancelIt(String subscriptionId) throws PaymentProcessFailedException;
-    BigDecimal getAmountPaid(String sessionId) throws PaymentProcessFailedException;
+    BigDecimal getSubscriptionAmount(String sessionId) throws PaymentProcessFailedException;
     String getSubscriptionIdFromSession(String sessionId) throws PaymentProcessFailedException;
 }

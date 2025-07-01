@@ -150,4 +150,9 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
                 .orElseThrow(MedicalConcernNotFoundException::new);
         return this.medicalConcernMapper.toDomain(entity);
     }
+
+    @Override
+    public boolean existsByNameForDoctor(String name, UUID doctorId) {
+        return medicalConcernJpaRepository.existsByNameIgnoreCaseAndDoctor_Id(name, doctorId);
+    }
 }

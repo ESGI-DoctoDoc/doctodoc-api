@@ -66,4 +66,6 @@ public interface MedicalConcernRepository {
     MedicalConcern save(MedicalConcern medicalConcern);
 
     MedicalConcern getMedicalConcernById(UUID id, Doctor doctor);
+
+    boolean existsByNameForDoctor(String name, UUID doctorId);
 }

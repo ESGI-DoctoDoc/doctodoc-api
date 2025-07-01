@@ -73,7 +73,7 @@ public class GetDoctorInformation implements IGetDoctorInformation {
                     hasOnBoardingDone,
                     firstName,
                     lastName,
-                    true, // todo remettre hasLicense quand ce sera bon côté webapp
+                    hasLicense,
                     isVerified
             );
 

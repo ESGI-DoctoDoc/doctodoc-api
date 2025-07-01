@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.time.LocalDate;
 
 
 @Service
@@ -86,8 +87,7 @@ public class StripeService implements PaymentProcess, InvoiceFetcher {
         }
     }
 
-
-    public BigDecimal getAmountPaid(String sessionId) {
+    public BigDecimal getSubscriptionAmount(String sessionId) {
         try {
             Session session = Session.retrieve(sessionId);
 
