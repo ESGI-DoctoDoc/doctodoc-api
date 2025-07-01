@@ -128,9 +128,12 @@ public class Appointment {
     }
 
     private boolean isLockExpired() {
-        LocalDateTime unlockedTime = this.getLockedAt().plusMinutes(LOCKED_MAX_TIME_IN_MINUTE);
-        LocalDateTime now = LocalDateTime.now();
-        return unlockedTime.isBefore(now);
+        if (this.status == AppointmentStatus.LOCKED && this.getLockedAt() != null) {
+            LocalDateTime unlockedTime = this.getLockedAt().plusMinutes(LOCKED_MAX_TIME_IN_MINUTE);
+            LocalDateTime now = LocalDateTime.now();
+            return unlockedTime.isBefore(now);
+        }
+        return true;
     }
 
     /**

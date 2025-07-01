@@ -161,14 +161,14 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     @Override
     public void cancel(Appointment appointment) {
         AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
-        appointmentEntity.setStatus(appointment.getStatus().name());
+        appointmentEntity.setStatus(appointment.getStatus().getValue());
         this.appointmentJpaRepository.save(appointmentEntity);
     }
 
     @Override
     public void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException {
         AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
-        appointmentEntity.setStatus(appointment.getStatus().name());
+        appointmentEntity.setStatus(appointment.getStatus().getValue());
         appointmentEntity.setLockedAt(appointment.getLockedAt());
         this.appointmentJpaRepository.save(appointmentEntity);
     }
@@ -176,7 +176,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     @Override
     public void delete(Appointment appointment) {
         AppointmentEntity entity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
-        entity.setStatus(appointment.getStatus().name());
+        entity.setStatus(appointment.getStatus().getValue());
         LocalDateTime now = LocalDateTime.now();
         entity.setDeletedAt(now);
         List<PreAppointmentAnswersEntity> answers = entity.getAppointmentQuestions();
@@ -190,7 +190,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     @Override
     public List<Appointment> getAllByUserAndStatusOrderByDateAsc(User user, AppointmentStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByPatient_User_IdAndStatusOrderByDateAsc(user.getId(), status.name(), pageable);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByPatient_User_IdAndStatusOrderByDateAsc(user.getId(), status.getValue(), pageable);
 
         return appointments.getContent().stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
     }
@@ -198,14 +198,14 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     @Override
     public List<Appointment> getAllByUserAndStatusOrderByDateDesc(User user, AppointmentStatus status, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByPatient_User_IdAndStatusOrderByDateDesc(user.getId(), status.name(), pageable);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByPatient_User_IdAndStatusOrderByDateDesc(user.getId(), status.getValue(), pageable);
 
         return appointments.getContent().stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
     }
 
     @Override
     public Optional<Appointment> getMostRecentUpcomingAppointment(User user) {
-        Optional<AppointmentEntity> appointmentEntity = this.appointmentJpaRepository.findFirstByPatient_User_IdAndStatusAndDateAfterOrderByDateAsc(user.getId(), AppointmentStatus.CONFIRMED.name(), LocalDate.now());
+        Optional<AppointmentEntity> appointmentEntity = this.appointmentJpaRepository.findFirstByPatient_User_IdAndStatusAndDateAfterOrderByDateAsc(user.getId(), AppointmentStatus.CONFIRMED.getValue(), LocalDate.now());
         return appointmentEntity.map(this.appointmentFacadeMapper::mapAppointmentToDomain);
     }
 

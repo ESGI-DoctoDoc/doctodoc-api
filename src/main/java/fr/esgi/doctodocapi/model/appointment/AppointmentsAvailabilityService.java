@@ -165,9 +165,7 @@ public class AppointmentsAvailabilityService {
                     if (appointment.getStatus() == AppointmentStatus.CONFIRMED) {
                         isReserved = true;
                         break;
-                    }
-
-                    if (appointment.getStatus() == AppointmentStatus.LOCKED) {
+                    } else if (appointment.getStatus() == AppointmentStatus.LOCKED && appointment.getLockedAt() != null) {
                         LocalDateTime unlockedTime = appointment.getLockedAt().plusMinutes(LOCKED_MAX_TIME_IN_MINUTE);
                         LocalDateTime now = LocalDateTime.now();
                         if (unlockedTime.isAfter(now)) {
