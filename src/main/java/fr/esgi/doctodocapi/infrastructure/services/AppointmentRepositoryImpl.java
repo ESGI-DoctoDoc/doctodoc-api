@@ -265,6 +265,6 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     public int countDistinctPatientsByDoctorId(UUID doctorId) {
-        return this.appointmentJpaRepository.countDistinctPatient_IdByDoctor_Id(doctorId);
+        return this.appointmentJpaRepository.countDistinctPatientsByDoctorId(doctorId);
     }
 }
