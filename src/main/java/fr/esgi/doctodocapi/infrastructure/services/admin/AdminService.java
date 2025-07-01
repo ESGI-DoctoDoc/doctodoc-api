@@ -22,14 +22,10 @@ public class AdminService implements ManageDoctorValidationAccount {
 
     public void validateDoctorAccount(UUID doctorId) {
         try {
-            Doctor doctor = this.doctorRepository.findDoctorByUserId(doctorId);
-
-            if (doctor == null) {
-                throw new DoctorNotFoundException();
-            }
+            Doctor doctor = this.doctorRepository.getById(doctorId);
 
             doctor.validate();
-            this.doctorRepository.save(doctor);
+            this.doctorRepository.saveValidationStatus(doctor);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCode(), e.getMessage());
@@ -38,14 +34,10 @@ public class AdminService implements ManageDoctorValidationAccount {
 
     public void refuseDoctorAccount(UUID doctorId) {
         try {
-            Doctor doctor = this.doctorRepository.findDoctorByUserId(doctorId);
-
-            if (doctor == null) {
-                throw new DoctorNotFoundException();
-            }
+            Doctor doctor = this.doctorRepository.getById(doctorId);
 
             doctor.refuse();
-            this.doctorRepository.save(doctor);
+            this.doctorRepository.saveValidationStatus(doctor);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, e.getCode(), e.getMessage());

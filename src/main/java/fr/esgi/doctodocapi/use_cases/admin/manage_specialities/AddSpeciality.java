@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.use_cases.admin.manage_specialities;
 
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
+import fr.esgi.doctodocapi.model.admin.speciality.SpecialityAlreadyExistException;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.requests.AddSpecialityRequest;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.GetSpecialityResponse;
@@ -32,7 +33,13 @@ public class AddSpeciality implements IAddSpeciality {
      */
     public GetSpecialityResponse execute(AddSpecialityRequest addSpecialityRequest) {
         try {
-            Speciality speciality = Speciality.create(addSpecialityRequest.name());
+            String normalizedName = addSpecialityRequest.name();
+            boolean alreadyExists = this.specialityRepository.existsByName(normalizedName);
+            if (alreadyExists) {
+                throw new SpecialityAlreadyExistException();
+            }
+
+            Speciality speciality = Speciality.create(normalizedName);
             Speciality savedSpeciality = this.specialityRepository.save(speciality);
             return new GetSpecialityResponse(
                     savedSpeciality.getId(),

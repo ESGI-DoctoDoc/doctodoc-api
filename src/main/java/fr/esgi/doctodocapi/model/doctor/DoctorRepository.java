@@ -52,5 +52,8 @@ public interface DoctorRepository {
     Optional<Doctor> getByUserId(UUID id);
 
     List<Doctor> searchDoctors(String value, String speciality, List<String> lowercaseLanguages, int page, int size);
+
     List<Doctor> findAllForAdmin(int page, int size);
+
+    void saveValidationStatus(Doctor doctor);
 }
