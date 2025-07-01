@@ -176,6 +176,18 @@ public class DoctorRepositoryImpl implements DoctorRepository {
                 });
     }
 
+    @Override
+    public void saveValidationStatus(Doctor doctor) {
+        DoctorEntity entity = this.doctorJpaRepository
+                .findById(doctor.getId())
+                .orElseThrow(DoctorNotFoundException::new);
+
+        entity.setVerified(doctor.isVerified());
+        entity.setRefused(doctor.isRefused());
+
+        this.doctorJpaRepository.save(entity);
+    }
+
     private void saveTraces(Document document) {
         List<DocumentTracesEntity> traces = document.getTraces().stream().map(trace -> this.documentTraceFacadeMapper.toEntity(document.getId(), trace)).toList();
         this.documentTracesJpaRepository.saveAll(traces);
