@@ -30,11 +30,6 @@ public class ResetPassword implements IResetPassword {
     private final UserRepository userRepository;
     private final TokenManager tokenManager;
     private final MailSender mailSender;
-    /**
-     * Domain or base URL of the front-end application. Injected from application properties (e.g., ${app.front.url}).
-     */
-    @Value("${app.front.url}")
-    private String domain;
 
     /**
      * Constructs the ResetPassword service with the required dependencies.
@@ -71,20 +66,21 @@ public class ResetPassword implements IResetPassword {
             User user = this.userRepository.findByEmail(email);
 
             String token = this.tokenManager.generate(user.getEmail().getValue(), "RESET_PASSWORD", RESET_TOKEN_EXPIRATION_MINUTES);
+            String url = request.verificationUrl() + "?token=" + token;
+
             String subject = "Réinitialisation de votre mot de passe Doctodoc";
-            String url = domain + "auth/resetPassword?token=" + token;
             String body = String.format("""
-                    Bonjour,
-                    
-                    Vous avez demandé à réinitialiser votre mot de passe sur Doctodoc.
-                    
-                    Merci de cliquer sur le lien suivant (valide %d minutes) :
-                    %s
-                    
-                    Si vous n'êtes pas à l'origine de cette demande, ignorez simplement ce mail.
-                    
-                    L'équipe de Doctodoc
-                    """, RESET_TOKEN_EXPIRATION_MINUTES, url);
+                Bonjour,
+
+                Vous avez demandé à réinitialiser votre mot de passe sur Doctodoc.
+
+                Merci de cliquer sur le lien suivant (valide %d minutes) :
+                %s
+
+                Si vous n'êtes pas à l'origine de cette demande, ignorez simplement ce mail.
+
+                L'équipe de Doctodoc
+                """, RESET_TOKEN_EXPIRATION_MINUTES, url);
 
             this.mailSender.sendMail(email, subject, body);
             return new RequestResetPasswordResponse();
