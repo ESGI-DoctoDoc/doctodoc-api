@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.infrastructure.services.external.dtos.fetch_response;
+package fr.esgi.doctodocapi.infrastructure.api_address.dtos.fetch_response;
 
 import java.util.List;
 

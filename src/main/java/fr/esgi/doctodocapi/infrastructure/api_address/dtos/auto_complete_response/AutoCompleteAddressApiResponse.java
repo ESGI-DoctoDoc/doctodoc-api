@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.infrastructure.services.external.dtos.auto_complete;
+package fr.esgi.doctodocapi.infrastructure.api_address.dtos.auto_complete_response;
 
 import java.util.List;
 
