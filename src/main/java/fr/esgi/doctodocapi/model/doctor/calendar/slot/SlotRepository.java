@@ -49,19 +49,9 @@ public interface SlotRepository {
      */
     List<Slot> findAllByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate);
 
-    /**
-     * Retrieves paginated slots for a doctor between two dates.
-     *
-     * @param doctorId  the UUID of the doctor
-     * @param startDate the start date (inclusive)
-     * @param endDate   the end date (inclusive)
-     * @param page      the page index (0-based)
-     * @param size      the number of slots per page
-     * @return a list of slots in the requested page
-     */
-    List<Slot> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size);
-
     Slot findOneByMedicalConcernAndDate(UUID medicalConcernId, LocalDate date);
 
-    List<Slot> findAllByDoctorIdAndDateAfterNow(UUID doctorId, LocalDate date, int page, int size);
+    List<Slot> findVisibleByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate, List<String> validStatuses, int page, int size);
+
+    List<Slot> findVisibleByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, List<String> validStatuses, int page, int size);
 }

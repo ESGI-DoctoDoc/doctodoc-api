@@ -80,7 +80,7 @@ public class SlotRepositoryImpl implements SlotRepository {
      */
     @Override
     public List<Slot> getSlotsByMedicalConcernAndDate(UUID medicalConcernId, LocalDate date) {
-        List<SlotEntity> slotsFoundByMedicalConcern = this.slotJpaRepository.findAllByMedicalConcerns_IdAndDate(medicalConcernId, date);
+        List<SlotEntity> slotsFoundByMedicalConcern = this.slotJpaRepository.findAllByMedicalConcernIdAndDateAndMedicalConcernNotDeleted(medicalConcernId, date);
 
         return slotsFoundByMedicalConcern.stream()
                 .map(this::mapSlotEntityToDomain)
@@ -136,25 +136,6 @@ public class SlotRepositoryImpl implements SlotRepository {
                 .toList();
     }
 
-    /**
-     * Retrieves paginated slots for a specific doctor within a date range.
-     *
-     * @param doctorId  the ID of the doctor
-     * @param startDate start of the date range (inclusive)
-     * @param endDate   end of the date range (inclusive)
-     * @param page      page number (zero-based)
-     * @param size      number of elements per page
-     * @return a paginated list of {@link Slot} objects
-     */
-    @Override
-    public List<Slot> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<SlotEntity> slotEntities = this.slotJpaRepository.findAllByDoctor_IdAndDateBetween(doctorId, startDate, endDate, pageable);
-        return slotEntities.getContent().stream()
-                .map(this::mapSlotEntityToDomain)
-                .toList();
-    }
-
     @Override
     public Slot findOneByMedicalConcernAndDate(UUID medicalConcernId, LocalDate date) {
         SlotEntity entity = this.slotJpaRepository
@@ -165,10 +146,22 @@ public class SlotRepositoryImpl implements SlotRepository {
     }
 
     @Override
-    public List<Slot> findAllByDoctorIdAndDateAfterNow(UUID doctorId, LocalDate date, int page, int size) {
+    public List<Slot> findVisibleByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, List<String> validStatuses, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<SlotEntity> slotEntities = this.slotJpaRepository.findAllByDoctor_IdAndDateGreaterThanEqual(doctorId, date, pageable);
+        Page<SlotEntity> slotEntities = this.slotJpaRepository.findVisibleByDoctorIdAndDateBetween(
+                doctorId, startDate, endDate, validStatuses, pageable
+        );
+        return slotEntities.getContent().stream()
+                .map(this::mapSlotEntityToDomain)
+                .toList();
+    }
 
+    @Override
+    public List<Slot> findVisibleByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate, List<String> validStatuses, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<SlotEntity> slotEntities = this.slotJpaRepository.findVisibleByDoctorIdAndDateAfter(
+                doctorId, startDate, validStatuses, pageable
+        );
         return slotEntities.getContent().stream()
                 .map(this::mapSlotEntityToDomain)
                 .toList();

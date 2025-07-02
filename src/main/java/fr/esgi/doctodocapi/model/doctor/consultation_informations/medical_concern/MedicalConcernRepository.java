@@ -67,5 +67,9 @@ public interface MedicalConcernRepository {
 
     MedicalConcern getMedicalConcernById(UUID id, Doctor doctor);
 
-    boolean     existsByNameForDoctor(String name, UUID doctorId);
+    boolean existsByNameForDoctor(String name, UUID doctorId);
+
+    MedicalConcern update(UUID concernId, UUID doctorId, String name, Integer durationInMinutes, Double price);
+
+    void delete(UUID concernId);
 }

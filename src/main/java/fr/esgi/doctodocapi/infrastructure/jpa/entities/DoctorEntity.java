@@ -54,8 +54,9 @@ public class DoctorEntity {
     @Column(name = "gender")
     private String gender;
 
-    @Column(name = "speciality", nullable = false)
-    private String speciality;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "speciality_id", nullable = false)
+    private SpecialityEntity speciality;
 
     @Column(name = "experience_years", nullable = false)
     private Short experienceYears;
@@ -131,11 +132,11 @@ public class DoctorEntity {
         this.bio = bio;
     }
 
-    public String getSpeciality() {
+    public SpecialityEntity getSpeciality() {
         return speciality;
     }
 
-    public void setSpeciality(String speciality) {
+    public void setSpeciality(SpecialityEntity speciality) {
         this.speciality = speciality;
     }
 

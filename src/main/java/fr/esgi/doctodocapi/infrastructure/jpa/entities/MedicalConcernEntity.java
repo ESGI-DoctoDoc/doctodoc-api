@@ -1,7 +1,6 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
-import org.hibernate.annotations.SQLRestriction;
 
 import java.time.LocalDate;
 import java.util.List;
@@ -9,7 +8,6 @@ import java.util.UUID;
 
 @Entity
 @Table(name = "medical_concerns")
-@SQLRestriction("deleted_at IS NULL")
 public class MedicalConcernEntity {
 
     @Id

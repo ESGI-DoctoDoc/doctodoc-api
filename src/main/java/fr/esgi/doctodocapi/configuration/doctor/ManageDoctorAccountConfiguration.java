@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.configuration.doctor;
 
+import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
@@ -21,8 +22,8 @@ import org.springframework.context.annotation.Configuration;
 public class ManageDoctorAccountConfiguration {
 
     @Bean
-    public IOnboardingDoctor onboardingDoctorProcess(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DocumentRepository documentRepository) {
-        return new OnboardingDoctorProcess(doctorRepository, userRepository, getCurrentUserContext, documentRepository);
+    public IOnboardingDoctor onboardingDoctorProcess(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DocumentRepository documentRepository, SpecialityRepository specialityRepository) {
+        return new OnboardingDoctorProcess(doctorRepository, userRepository, getCurrentUserContext, documentRepository, specialityRepository);
     }
 
     @Bean

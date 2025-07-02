@@ -12,7 +12,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
-import java.util.Optional;
+import java.util.UUID;
 
 /**
  * Implementation of the {@link SpecialityRepository} interface.
@@ -66,5 +66,12 @@ public class SpecialityRepositoryImpl implements SpecialityRepository {
     @Override
     public boolean existsByName(String name) {
         return this.specialityJpaRepository.existsByNameIgnoreCase(name);
+    }
+
+    @Override
+    public Speciality findById(UUID id) {
+        return this.specialityJpaRepository.findById(id)
+                .map(specialityMapper::toDomain)
+                .orElseThrow(SpecialityNotFoundException::new);
     }
 }

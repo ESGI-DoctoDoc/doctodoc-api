@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot;
 
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
@@ -15,6 +16,7 @@ import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -22,12 +24,18 @@ import java.util.List;
  * with pagination support.
  */
 public class GetAllSlots implements IGetAllSlots {
+    private static final List<String> VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN = Arrays.asList(
+            AppointmentStatus.CONFIRMED.getValue(),
+            AppointmentStatus.UPCOMING.getValue(),
+            AppointmentStatus.WAITING_ROOM.getValue()
+    );
 
     private final SlotRepository slotRepository;
     private final UserRepository userRepository;
     private final GetCurrentUserContext getCurrentUserContext;
     private final SlotResponseMapper slotResponseMapper;
     private final DoctorRepository doctorRepository;
+
 
     public GetAllSlots(SlotRepository slotRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, SlotResponseMapper slotResponseMapper, DoctorRepository doctorRepository) {
         this.slotRepository = slotRepository;
@@ -56,9 +64,22 @@ public class GetAllSlots implements IGetAllSlots {
             List<Slot> slots;
             if (startDate != null) {
                 LocalDate endDate = startDate.plusDays(6);
-                slots = this.slotRepository.findAllByDoctorIdAndDateBetween(doctor.getId(), startDate, endDate, page, size);
+                slots = this.slotRepository.findVisibleByDoctorIdAndDateBetween(
+                        doctor.getId(),
+                        startDate,
+                        endDate,
+                        VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN,
+                        page,
+                        size
+                );
             } else {
-                slots = this.slotRepository.findAllByDoctorIdAndDateAfterNow(doctor.getId(), LocalDate.now(), page, size);
+                slots = this.slotRepository.findVisibleByDoctorIdAndDateAfter(
+                        doctor.getId(),
+                        LocalDate.now(),
+                        VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN,
+                        page,
+                        size
+                );
             }
 
             return this.slotResponseMapper.presentAll(slots);

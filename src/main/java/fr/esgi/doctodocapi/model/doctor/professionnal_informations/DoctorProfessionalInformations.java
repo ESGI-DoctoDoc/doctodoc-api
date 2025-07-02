@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.model.doctor.professionnal_informations;
 
+import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
 import fr.esgi.doctodocapi.model.doctor.professionnal_informations.vo.experience_year.ExperienceYear;
 import fr.esgi.doctodocapi.model.doctor.professionnal_informations.vo.rpps.Rpps;
 import fr.esgi.doctodocapi.model.document.Document;
@@ -10,13 +11,13 @@ import java.util.UUID;
 public class DoctorProfessionalInformations {
     private Rpps rpps;
     private String bio;
-    private String speciality;
+    private Speciality speciality;
     private ExperienceYear experienceYears;
     private List<String> languages;
     private List<Document> doctorDocuments;
     private boolean acceptPublicCoverage;
 
-    public DoctorProfessionalInformations(String rppsValue, String bio, String speciality, Short experienceYearsValue, List<String> languages, List<Document> doctorDocuments, boolean acceptPublicCoverage) {
+    public DoctorProfessionalInformations(String rppsValue, String bio, Speciality speciality, Short experienceYearsValue, List<String> languages, List<Document> doctorDocuments, boolean acceptPublicCoverage) {
         this.rpps = Rpps.of(rppsValue);
         this.bio = bio;
         this.speciality = speciality;
@@ -57,11 +58,11 @@ public class DoctorProfessionalInformations {
         this.bio = bio;
     }
 
-    public String getSpeciality() {
+    public Speciality getSpeciality() {
         return speciality;
     }
 
-    public void setSpeciality(String speciality) {
+    public void setSpeciality(Speciality speciality) {
         this.speciality = speciality;
     }
 

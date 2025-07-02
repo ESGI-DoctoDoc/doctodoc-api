@@ -19,7 +19,7 @@ public class SearchDoctorPresentationMapper {
                 doctor.getId(),
                 doctor.getPersonalInformations().getFirstName(),
                 doctor.getPersonalInformations().getLastName(),
-                doctor.getProfessionalInformations().getSpeciality(),
+                doctor.getProfessionalInformations().getSpeciality().getName(),
                 profileUrl
         );
     }

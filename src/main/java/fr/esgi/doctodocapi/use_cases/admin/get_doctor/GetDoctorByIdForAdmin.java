@@ -37,7 +37,7 @@ public class GetDoctorByIdForAdmin implements IGetDoctorByIdForAdmin {
         try {
             Doctor doctor = this.doctorRepository.getById(doctorId);
 
-            String specialityName = doctor.getProfessionalInformations().getSpeciality();
+            String specialityName = doctor.getProfessionalInformations().getSpeciality().getName();
             Speciality speciality = specialityRepository.findByName(specialityName);
 
             List<DoctorSubscription> subscriptions = this.subscriptionRepository.findAllByDoctorId(doctorId);

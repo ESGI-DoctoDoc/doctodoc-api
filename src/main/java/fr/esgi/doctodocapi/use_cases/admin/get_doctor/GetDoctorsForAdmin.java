@@ -30,7 +30,7 @@ public class GetDoctorsForAdmin implements IGetDoctorsForAdmin {
             List<Doctor> doctors = this.doctorRepository.findAllForAdmin(page, size);
             return doctors.stream()
                     .map(doctor -> {
-                        String specialityName = doctor.getProfessionalInformations().getSpeciality();
+                        String specialityName = doctor.getProfessionalInformations().getSpeciality().getName();
                         Speciality speciality = this.specialityRepository.findByName(specialityName);
                         return this.doctorResponseMapper.toAdminResponse(doctor, speciality);
                     })
