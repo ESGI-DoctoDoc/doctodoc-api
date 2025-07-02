@@ -5,6 +5,7 @@ import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
+import fr.esgi.doctodocapi.model.doctor.personal_information.CoordinatesGps;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.document.DocumentType;
@@ -12,8 +13,10 @@ import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_doctor_account.OnBoardingDoctorRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.manage_doctor_account.FetchCoordinatesResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.manage_doctor_account.OnboardingProcessResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IOnboardingDoctor;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.out.AddressCoordinatesFetcher;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.exceptions.on_boarding.DoctorAccountAlreadyExist;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
@@ -36,6 +39,7 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
     private final GetCurrentUserContext getCurrentUserContext;
     private final DocumentRepository documentRepository;
     private final SpecialityRepository specialityRepository;
+    private final AddressCoordinatesFetcher addressCoordinatesFetcher;
 
     /**
      * Constructs the service with the required dependencies.
@@ -44,12 +48,13 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
      * @param userRepository        the repository to manage user entities
      * @param getCurrentUserContext component to retrieve the currently authenticated user context
      */
-    public OnboardingDoctorProcess(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DocumentRepository documentRepository, SpecialityRepository specialityRepository) {
+    public OnboardingDoctorProcess(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DocumentRepository documentRepository, SpecialityRepository specialityRepository, AddressCoordinatesFetcher addressCoordinatesFetcher) {
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.documentRepository = documentRepository;
         this.specialityRepository = specialityRepository;
+        this.addressCoordinatesFetcher = addressCoordinatesFetcher;
     }
 
     /**
@@ -85,11 +90,17 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
                 throw new ApiException(HttpStatus.BAD_REQUEST, "document.invalid_type", "Le document fourni n'est pas une photo de profil valide.");
             }
 
+            FetchCoordinatesResponse coordinatesResponse = this.addressCoordinatesFetcher.fetchCoordinates(request.address());
+            CoordinatesGps coordinates = CoordinatesGps.of(
+                    coordinatesResponse.latitude(),
+                    coordinatesResponse.longitude()
+            );
+
             String profilePictureUrl = profilePicture.getPath();
 
             Speciality speciality = this.specialityRepository.findByName(request.speciality());
 
-            Doctor doctor = Doctor.createFromOnBoarding(user, request, uploadedDocuments, profilePictureUrl, speciality);
+            Doctor doctor = Doctor.createFromOnBoarding(user, request, uploadedDocuments, profilePictureUrl, speciality, coordinates);
             this.doctorRepository.save(doctor);
             return new OnboardingProcessResponse(user.getId());
         } catch (DomainException e) {

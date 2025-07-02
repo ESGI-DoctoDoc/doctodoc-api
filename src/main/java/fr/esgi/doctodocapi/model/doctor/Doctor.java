@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.model.doctor;
 
 import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
+import fr.esgi.doctodocapi.model.doctor.personal_information.CoordinatesGps;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_doctor_account.OnBoardingDoctorRequest;
 import fr.esgi.doctodocapi.model.doctor.calendar.Calendar;
@@ -134,7 +135,7 @@ public class Doctor extends User {
      * @return a new Doctor instance (unverified)
      * @throws DoctorMustHaveMajority if the doctor is under 18 years old
      */
-    public static Doctor createFromOnBoarding(User user, OnBoardingDoctorRequest onBoardingDoctorRequest, List<Document> uploadedDocuments, String profilePictureUrl, Speciality speciality) {
+    public static Doctor createFromOnBoarding(User user, OnBoardingDoctorRequest onBoardingDoctorRequest, List<Document> uploadedDocuments, String profilePictureUrl, Speciality speciality, CoordinatesGps coordinatesGps) {
         Birthdate birthdate = Birthdate.of(onBoardingDoctorRequest.birthDate());
         verifyAge(birthdate.getValue());
         DoctorPersonnalInformations personalInformations = new DoctorPersonnalInformations(
@@ -157,8 +158,8 @@ public class Doctor extends User {
 
         DoctorConsultationInformations consultationInformations = new DoctorConsultationInformations(
                 null,
-                null,
-                null,
+                onBoardingDoctorRequest.address(),
+                CoordinatesGps.of(coordinatesGps.getClinicLatitude(), coordinatesGps.getClinicLongitude()),
                 List.of()
         );
 
