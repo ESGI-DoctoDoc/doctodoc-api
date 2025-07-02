@@ -72,6 +72,4 @@ public interface MedicalConcernRepository {
     MedicalConcern update(UUID concernId, UUID doctorId, String name, Integer durationInMinutes, Double price);
 
     void delete(UUID concernId);
-
-    boolean isMedicalConcernDeleted(UUID medicalConcernId);
 }

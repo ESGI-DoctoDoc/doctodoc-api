@@ -5,11 +5,10 @@ import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
-import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFoundException;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentResponse;
@@ -24,19 +23,18 @@ import java.util.List;
 import java.util.UUID;
 
 public class GetDoctorAppointments implements IGetDoctorAppointments {
+    private static final List<String> VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN = Arrays.asList(
+            AppointmentStatus.CONFIRMED.getValue(),
+            AppointmentStatus.UPCOMING.getValue(),
+            AppointmentStatus.WAITING_ROOM.getValue()
+    );
+
     private final AppointmentRepository appointmentRepository;
     private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
     private final GetCurrentUserContext getCurrentUserContext;
     private final AppointmentResponseMapper appointmentResponseMapper;
     private final CareTrackingRepository careTrackingRepository;
-
-    private static final List<String> VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN = Arrays.asList(
-            AppointmentStatus.CONFIRMED.getValue(),
-            AppointmentStatus.UPCOMING.getValue(),
-            AppointmentStatus.LOCKED.getValue(),
-            AppointmentStatus.WAITING_ROOM.getValue()
-    );
 
     public GetDoctorAppointments(AppointmentRepository appointmentRepository, UserRepository userRepository, DoctorRepository doctorRepository, GetCurrentUserContext getCurrentUserContext, AppointmentResponseMapper appointmentResponseMapper, CareTrackingRepository careTrackingRepository) {
         this.appointmentRepository = appointmentRepository;
@@ -56,28 +54,24 @@ public class GetDoctorAppointments implements IGetDoctorAppointments {
             List<Appointment> appointments;
             if (startDate != null) {
                 LocalDate endDate = startDate.plusDays(6);
-                appointments = this.appointmentRepository.findAllByDoctorIdAndDateBetween(
+                appointments = this.appointmentRepository.findVisibleAppointmentsByDoctorIdAndDateBetween(
                         doctor.getId(),
                         startDate,
                         endDate,
+                        VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN,
                         page,
                         size
                 );
             } else {
-                appointments = this.appointmentRepository.findAllByDoctorIdAndDateAfterNow(
+                appointments = this.appointmentRepository.findVisibleAppointmentsByDoctorIdAndDateAfter(
                         doctor.getId(),
                         LocalDate.now(),
+                        VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN,
                         page,
                         size
                 );
             }
             return appointments.stream()
-                    .filter(appointment -> {
-                        if(this.appointmentRepository.isMedicalConcernDeleted(appointment.getMedicalConcern().getId())) {
-                            return VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN.contains(appointment.getStatus().getValue());
-                        }
-                        return true;
-                    })
                     .map(appointment -> {
                         CareTracking careTracking = appointment.getCareTrackingId() != null
                                 ? careTrackingRepository.getById(appointment.getCareTrackingId())
@@ -92,16 +86,12 @@ public class GetDoctorAppointments implements IGetDoctorAppointments {
 
     public GetDoctorAppointmentResponse getById(UUID id) {
         try {
-            Appointment appointment = this.appointmentRepository.getById(id);
-
-            if (this.appointmentRepository.isMedicalConcernDeleted(appointment.getMedicalConcern().getId()) &&
-                    !VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN.contains(appointment.getStatus().getValue())) {
-                throw new AppointmentNotFoundException();
-            }
+            Appointment appointment = this.appointmentRepository.getVisibleById(id, VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN);
 
             CareTracking careTracking = appointment.getCareTrackingId() != null
                     ? this.careTrackingRepository.getById(appointment.getCareTrackingId())
                     : null;
+
             return this.appointmentResponseMapper.toResponse(appointment, careTracking);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());

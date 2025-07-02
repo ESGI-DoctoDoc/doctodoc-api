@@ -37,11 +37,8 @@ public interface AppointmentRepository {
 
     List<Patient> getDistinctPatientsByDoctorId(UUID doctorId, int page, int size);
 
-    List<Appointment> findAllByDoctorIdAndDateAfterNow(UUID doctorId, LocalDate date, int page, int size);
 
     boolean existsPatientByDoctorAndPatientId(UUID doctorId, UUID patientId);
-
-    List<Appointment> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size);
 
     List<Appointment> findAllWithPaginationForAdmin(int page, int size);
 
@@ -49,5 +46,9 @@ public interface AppointmentRepository {
 
     int countDistinctPatientsByDoctorId(UUID doctorId);
 
-    boolean isMedicalConcernDeleted(UUID medicalConcernId);
+    List<Appointment> findVisibleAppointmentsByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate, List<String> validStatuses, int page, int size);
+
+    List<Appointment> findVisibleAppointmentsByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, List<String> validStatuses, int page, int size);
+
+    Appointment getVisibleById(UUID id, List<String> validStatuses) throws AppointmentNotFoundException;
 }

@@ -13,7 +13,6 @@ import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
 import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFoundException;
-import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
@@ -62,16 +61,15 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     private final PreAppointmentAnswersMapper preAppointmentAnswersMapper;
     private final PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository;
     private final QuestionJpaRepository questionJpaRepository;
-    private final MedicalConcernRepository medicalConcernRepository;
     private final EntityManager entityManager;
 
 
     /**
      * Constructs an AppointmentRepositoryImpl with the required repositories and mappers.
      *
-     * @param appointmentJpaRepository    Repository for appointment data access
-     * @param appointmentMapper           Mapper for appointment domain objects and entities
-     * @param appointmentFacadeMapper     Facade mapper for appointment entities and domain objects
+     * @param appointmentJpaRepository Repository for appointment data access
+     * @param appointmentMapper        Mapper for appointment domain objects and entities
+     * @param appointmentFacadeMapper  Facade mapper for appointment entities and domain objects
      */
     public AppointmentRepositoryImpl(
             EntityManager entityManager,
@@ -80,7 +78,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
             AppointmentFacadeMapper appointmentFacadeMapper,
             PreAppointmentAnswersMapper preAppointmentAnswersMapper,
             PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository,
-            QuestionJpaRepository questionJpaRepository, MedicalConcernRepository medicalConcernRepository
+            QuestionJpaRepository questionJpaRepository
 
     ) {
         this.appointmentJpaRepository = appointmentJpaRepository;
@@ -91,7 +89,6 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         this.preAppointmentAnswersJpaRepository = preAppointmentAnswersJpaRepository;
         this.questionJpaRepository = questionJpaRepository;
         this.entityManager = entityManager;
-        this.medicalConcernRepository = medicalConcernRepository;
     }
 
     /**
@@ -133,9 +130,9 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
      * before creating and saving the appointment entity.
      *
      * @param appointment The appointment to save
-     * @throws SlotNotFoundException If the slot associated with the appointment does not exist
-     * @throws PatientNotFoundException If the patient associated with the appointment does not exist
-     * @throws DoctorNotFoundException If the doctor associated with the appointment does not exist
+     * @throws SlotNotFoundException           If the slot associated with the appointment does not exist
+     * @throws PatientNotFoundException        If the patient associated with the appointment does not exist
+     * @throws DoctorNotFoundException         If the doctor associated with the appointment does not exist
      * @throws MedicalConcernNotFoundException If the medical concern associated with the appointment does not exist
      */
     @Override
@@ -227,28 +224,8 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     }
 
     @Override
-    public List<Appointment> findAllByDoctorIdAndDateAfterNow(UUID doctorId, LocalDate date, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByDoctor_IdAndDateGreaterThanEqual(doctorId, date, pageable);
-
-        return appointments.getContent().stream()
-                .map(appointmentFacadeMapper::mapAppointmentToDomain)
-                .toList();
-    }
-
-    @Override
     public boolean existsPatientByDoctorAndPatientId(UUID doctorId, UUID patientId) {
         return this.appointmentJpaRepository.existsByDoctor_IdAndPatient_Id(doctorId, patientId);
-    }
-
-    @Override
-    public List<Appointment> findAllByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllByDoctor_IdAndDateBetween(doctorId, startDate, endDate, pageable);
-
-        return appointments.getContent().stream()
-                .map(appointmentFacadeMapper::mapAppointmentToDomain)
-                .toList();
     }
 
     @Override
@@ -271,7 +248,31 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     }
 
     @Override
-    public boolean isMedicalConcernDeleted(UUID medicalConcernId) {
-        return this.medicalConcernRepository.isMedicalConcernDeleted(medicalConcernId);
+    public List<Appointment> findVisibleAppointmentsByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate, List<String> validStatuses, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findVisibleAppointmentsByDoctorIdAndDateAfter(
+                doctorId, startDate, validStatuses, pageable
+        );
+        return appointments.getContent().stream()
+                .map(appointmentFacadeMapper::mapAppointmentToDomain)
+                .toList();
+    }
+
+    @Override
+    public List<Appointment> findVisibleAppointmentsByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, List<String> validStatuses, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findVisibleAppointmentsByDoctorIdAndDateBetween(
+                doctorId, startDate, endDate, validStatuses, pageable
+        );
+        return appointments.getContent().stream()
+                .map(appointmentFacadeMapper::mapAppointmentToDomain)
+                .toList();
+    }
+
+    @Override
+    public Appointment getVisibleById(UUID id, List<String> validStatuses) throws AppointmentNotFoundException {
+        AppointmentEntity entity = this.appointmentJpaRepository.findVisibleById(id, validStatuses)
+                .orElseThrow(AppointmentNotFoundException::new);
+        return appointmentFacadeMapper.mapAppointmentToDomain(entity);
     }
 }

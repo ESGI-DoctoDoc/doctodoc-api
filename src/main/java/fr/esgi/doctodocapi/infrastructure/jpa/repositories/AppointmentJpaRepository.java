@@ -26,9 +26,59 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
 
     boolean existsByDoctor_IdAndPatient_Id(UUID doctorId, UUID patientId);
 
-    Page<AppointmentEntity> findAllByDoctor_IdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, Pageable pageable);
+    @Query("""
+    SELECT a
+    FROM AppointmentEntity a
+    JOIN a.medicalConcern mc
+    WHERE a.doctor.id = :doctorId
+    AND a.date BETWEEN :startDate AND :endDate
+    AND (
+        mc.deletedAt IS NULL
+        OR (mc.deletedAt IS NOT NULL AND a.status IN :validStatuses)
+    )
+    ORDER BY a.date ASC
+""")
+    Page<AppointmentEntity> findVisibleAppointmentsByDoctorIdAndDateBetween(
+            @Param("doctorId") UUID doctorId,
+            @Param("startDate") LocalDate startDate,
+            @Param("endDate") LocalDate endDate,
+            @Param("validStatuses") List<String> validStatuses,
+            Pageable pageable
+    );
 
-    Page<AppointmentEntity> findAllByDoctor_IdAndDateGreaterThanEqual(UUID doctorId, LocalDate date, Pageable pageable);
+    @Query("""
+    SELECT a
+    FROM AppointmentEntity a
+    JOIN a.medicalConcern mc
+    WHERE a.doctor.id = :doctorId
+    AND a.date >= :startDate
+    AND (
+        mc.deletedAt IS NULL
+        OR (mc.deletedAt IS NOT NULL AND a.status IN :validStatuses)
+    )
+    ORDER BY a.date ASC
+""")
+    Page<AppointmentEntity> findVisibleAppointmentsByDoctorIdAndDateAfter(
+            @Param("doctorId") UUID doctorId,
+            @Param("startDate") LocalDate startDate,
+            @Param("validStatuses") List<String> validStatuses,
+            Pageable pageable
+    );
+
+    @Query("""
+    SELECT a
+    FROM AppointmentEntity a
+    JOIN a.medicalConcern mc
+    WHERE a.id = :appointmentId
+    AND (
+        mc.deletedAt IS NULL
+        OR (mc.deletedAt IS NOT NULL AND a.status IN :validStatuses)
+    )
+""")
+    Optional<AppointmentEntity> findVisibleById(
+            @Param("appointmentId") UUID appointmentId,
+            @Param("validStatuses") List<String> validStatuses
+    );
 
     int countByDoctor_Id(UUID doctorId);
 
