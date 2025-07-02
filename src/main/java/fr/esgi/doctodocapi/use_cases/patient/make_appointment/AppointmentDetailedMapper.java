@@ -6,10 +6,18 @@ import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_response
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_responses.GetAppointmentDetailedResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_responses.GetAppointmentDoctorResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.appointment_responses.GetAppointmentPatientResponse;
+import fr.esgi.doctodocapi.use_cases.patient.utils.GetDoctorProfileUrl;
 import org.springframework.stereotype.Service;
 
 @Service
 public class AppointmentDetailedMapper {
+
+    private final GetDoctorProfileUrl getDoctorProfileUrl;
+
+    public AppointmentDetailedMapper(GetDoctorProfileUrl getDoctorProfileUrl) {
+        this.getDoctorProfileUrl = getDoctorProfileUrl;
+    }
+
     public GetAppointmentDetailedResponse toDto(Appointment appointment) {
         GetAppointmentPatientResponse patient = new GetAppointmentPatientResponse(
                 appointment.getPatient().getId(),
@@ -17,6 +25,8 @@ public class AppointmentDetailedMapper {
                 appointment.getPatient().getLastName(),
                 appointment.getPatient().getEmail().getValue()
         );
+
+        String profileUrl = this.getDoctorProfileUrl.getUrl(appointment.getDoctor().getPersonalInformations().getProfilePictureUrl());
 
         GetAppointmentDoctorResponse doctor = new GetAppointmentDoctorResponse(
                 appointment.getDoctor().getId(),

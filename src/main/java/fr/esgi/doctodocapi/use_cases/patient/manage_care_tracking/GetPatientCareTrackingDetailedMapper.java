@@ -1,19 +1,26 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking;
 
 import fr.esgi.doctodocapi.model.appointment.Appointment;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetAppointmentOfCareTrackingResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetDoctorOfCareTrackingResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetDocumentsOfCareTrackingResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetPatientCareTrackingDetailedResponse;
+import fr.esgi.doctodocapi.use_cases.patient.utils.GetDoctorProfileUrl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
 public class GetPatientCareTrackingDetailedMapper {
+
+    private final GetDoctorProfileUrl getDoctorProfileUrl;
+
+    public GetPatientCareTrackingDetailedMapper(GetDoctorProfileUrl getDoctorProfileUrl) {
+        this.getDoctorProfileUrl = getDoctorProfileUrl;
+    }
 
     public GetPatientCareTrackingDetailedResponse toDto(CareTracking careTracking, List<Doctor> doctors, List<Appointment> appointments, List<Document> documents) {
         List<GetDoctorOfCareTrackingResponse> doctorsResponse = getGetDoctorOfCareTrackingResponses(doctors);
@@ -42,12 +49,14 @@ public class GetPatientCareTrackingDetailedMapper {
         return appointments.stream().map(appointment ->
         {
             Doctor doctor = appointment.getDoctor();
+            String profileUrl = this.getDoctorProfileUrl.getUrl(doctor.getPersonalInformations().getProfilePictureUrl());
+
             GetDoctorOfCareTrackingResponse doctorResponse = new GetDoctorOfCareTrackingResponse(
                     doctor.getId(),
                     doctor.getPersonalInformations().getFirstName(),
                     doctor.getPersonalInformations().getLastName(),
                     doctor.getProfessionalInformations().getSpeciality().getName(),
-                    doctor.getPersonalInformations().getProfilePictureUrl()
+                    profileUrl
             );
 
             return new GetAppointmentOfCareTrackingResponse(
@@ -62,12 +71,15 @@ public class GetPatientCareTrackingDetailedMapper {
 
     private List<GetDoctorOfCareTrackingResponse> getGetDoctorOfCareTrackingResponses(List<Doctor> doctors) {
         return doctors.stream().map(doctor ->
-                new GetDoctorOfCareTrackingResponse(doctor.getId(),
-                        doctor.getPersonalInformations().getLastName(),
-                        doctor.getPersonalInformations().getFirstName(),
-                        doctor.getProfessionalInformations().getSpeciality().getName(),
-                        doctor.getPersonalInformations().getProfilePictureUrl()
+        {
+            String profileUrl = this.getDoctorProfileUrl.getUrl(doctor.getPersonalInformations().getProfilePictureUrl());
 
-                )).toList();
+            return new GetDoctorOfCareTrackingResponse(doctor.getId(),
+                    doctor.getPersonalInformations().getLastName(),
+                    doctor.getPersonalInformations().getFirstName(),
+                    doctor.getProfessionalInformations().getSpeciality().getName(),
+                    profileUrl
+            );
+        }).toList();
     }
 }
