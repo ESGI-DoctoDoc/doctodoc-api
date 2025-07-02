@@ -21,7 +21,7 @@ public class GetDoctorDetailMapper {
                 doctor.getId(),
                 doctor.getPersonalInformations().getFirstName(),
                 doctor.getPersonalInformations().getLastName(),
-                doctor.getProfessionalInformations().getSpeciality(),
+                doctor.getProfessionalInformations().getSpeciality().getName(),
                 doctor.getProfessionalInformations().getBio(),
                 doctor.getPersonalInformations().getProfilePictureUrl(),
                 doctor.getProfessionalInformations().getRpps().getValue(),

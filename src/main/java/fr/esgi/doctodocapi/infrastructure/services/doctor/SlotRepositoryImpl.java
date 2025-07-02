@@ -12,6 +12,7 @@ import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -54,6 +55,8 @@ public class SlotRepositoryImpl implements SlotRepository {
      */
     private final MedicalConcernJpaRepository medicalConcernJpaRepository;
 
+    private final MedicalConcernRepository medicalConcernRepository;
+
     /**
      * Constructs a SlotRepositoryImpl with the required repositories and mappers.
      *
@@ -62,12 +65,13 @@ public class SlotRepositoryImpl implements SlotRepository {
      * @param appointmentFacadeMapper Facade mapper for appointment entities and domain objects
      * @param medicalConcernMapper    Mapper for medical concern domain objects and entities
      */
-    public SlotRepositoryImpl(SlotJpaRepository slotJpaRepository, SlotMapper slotMapper, AppointmentFacadeMapper appointmentFacadeMapper, MedicalConcernMapper medicalConcernMapper, MedicalConcernJpaRepository medicalConcernJpaRepository) {
+    public SlotRepositoryImpl(SlotJpaRepository slotJpaRepository, SlotMapper slotMapper, AppointmentFacadeMapper appointmentFacadeMapper, MedicalConcernMapper medicalConcernMapper, MedicalConcernJpaRepository medicalConcernJpaRepository, MedicalConcernRepository medicalConcernRepository) {
         this.slotJpaRepository = slotJpaRepository;
         this.slotMapper = slotMapper;
         this.appointmentFacadeMapper = appointmentFacadeMapper;
         this.medicalConcernMapper = medicalConcernMapper;
         this.medicalConcernJpaRepository = medicalConcernJpaRepository;
+        this.medicalConcernRepository = medicalConcernRepository;
     }
 
     /**
@@ -80,7 +84,7 @@ public class SlotRepositoryImpl implements SlotRepository {
      */
     @Override
     public List<Slot> getSlotsByMedicalConcernAndDate(UUID medicalConcernId, LocalDate date) {
-        List<SlotEntity> slotsFoundByMedicalConcern = this.slotJpaRepository.findAllByMedicalConcerns_IdAndDate(medicalConcernId, date);
+        List<SlotEntity> slotsFoundByMedicalConcern = this.slotJpaRepository.findAllByMedicalConcernIdAndDateAndMedicalConcernNotDeleted(medicalConcernId, date);
 
         return slotsFoundByMedicalConcern.stream()
                 .map(this::mapSlotEntityToDomain)
@@ -172,6 +176,11 @@ public class SlotRepositoryImpl implements SlotRepository {
         return slotEntities.getContent().stream()
                 .map(this::mapSlotEntityToDomain)
                 .toList();
+    }
+
+    @Override
+    public boolean isMedicalConcernDeleted(UUID medicalConcernId) {
+        return this.medicalConcernRepository.isMedicalConcernDeleted(medicalConcernId);
     }
 
     private SlotEntity mapSlotToEntity(Slot slot, DoctorEntity doctorEntity) {

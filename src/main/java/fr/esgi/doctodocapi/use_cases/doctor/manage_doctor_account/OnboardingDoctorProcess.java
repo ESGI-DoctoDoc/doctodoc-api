@@ -1,6 +1,8 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account;
 
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
+import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.Document;
@@ -33,6 +35,7 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
     private final UserRepository userRepository;
     private final GetCurrentUserContext getCurrentUserContext;
     private final DocumentRepository documentRepository;
+    private final SpecialityRepository specialityRepository;
 
     /**
      * Constructs the service with the required dependencies.
@@ -41,11 +44,12 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
      * @param userRepository        the repository to manage user entities
      * @param getCurrentUserContext component to retrieve the currently authenticated user context
      */
-    public OnboardingDoctorProcess(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DocumentRepository documentRepository) {
+    public OnboardingDoctorProcess(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DocumentRepository documentRepository, SpecialityRepository specialityRepository) {
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.documentRepository = documentRepository;
+        this.specialityRepository = specialityRepository;
     }
 
     /**
@@ -83,7 +87,9 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
 
             String profilePictureUrl = profilePicture.getPath();
 
-            Doctor doctor = Doctor.createFromOnBoarding(user, request, uploadedDocuments, profilePictureUrl);
+            Speciality speciality = this.specialityRepository.findByName(request.speciality());
+
+            Doctor doctor = Doctor.createFromOnBoarding(user, request, uploadedDocuments, profilePictureUrl, speciality);
             this.doctorRepository.save(doctor);
             return new OnboardingProcessResponse(user.getId());
         } catch (DomainException e) {

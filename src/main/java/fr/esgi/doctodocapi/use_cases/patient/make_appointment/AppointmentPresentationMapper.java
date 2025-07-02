@@ -15,7 +15,7 @@ public class AppointmentPresentationMapper {
                 appointment.getDoctor().getId(),
                 doctorPersonnalInformations.getFirstName(),
                 doctorPersonnalInformations.getLastName(),
-                appointment.getDoctor().getProfessionalInformations().getSpeciality(),
+                appointment.getDoctor().getProfessionalInformations().getSpeciality().getName(),
                 doctorPersonnalInformations.getProfilePictureUrl()
         );
 

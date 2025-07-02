@@ -1,10 +1,10 @@
-package fr.esgi.doctodocapi.use_cases.admin.manage_specialities;
+package fr.esgi.doctodocapi.use_cases.admin.manage_speciality;
 
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.GetSpecialityResponse;
-import fr.esgi.doctodocapi.use_cases.admin.ports.in.IGetAllSpecialities;
+import fr.esgi.doctodocapi.use_cases.admin.ports.in.manage_speciality.IGetAllSpecialities;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
 

@@ -77,13 +77,13 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
      */
     @Override
     public List<MedicalConcern> getMedicalConcerns(Doctor doctor) {
-        List<MedicalConcernEntity> entities = this.medicalConcernJpaRepository.findAllByDoctor_Id(doctor.getId());
+        List<MedicalConcernEntity> entities = this.medicalConcernJpaRepository.findAllByDoctor_IdAndDeletedAtIsNull(doctor.getId());
         return entities.stream().map(medicalConcernMapper::toDomain).toList();
     }
 
     @Override
     public List<MedicalConcern> findAllById(List<UUID> ids) {
-        List<MedicalConcernEntity> entities = this.medicalConcernJpaRepository.findAllById(ids);
+        List<MedicalConcernEntity> entities = this.medicalConcernJpaRepository.findAllByIdInAndDeletedAtIsNull(ids);
         return entities.stream().map(medicalConcernMapper::toDomain).toList();
     }
 
@@ -121,7 +121,7 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
      */
     @Override
     public MedicalConcern getById(UUID medicalConcernId) throws MedicalConcernNotFoundException {
-        MedicalConcernEntity medicalConcern = this.medicalConcernJpaRepository.findById(medicalConcernId).orElseThrow(MedicalConcernNotFoundException::new);
+        MedicalConcernEntity medicalConcern = this.medicalConcernJpaRepository.findByIdAndDeletedAtIsNull(medicalConcernId);
         return this.medicalConcernMapper.toDomain(medicalConcern);
     }
 
@@ -146,7 +146,7 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
 
     @Override
     public MedicalConcern getMedicalConcernById(UUID id, Doctor doctor) {
-        MedicalConcernEntity entity = this.medicalConcernJpaRepository.findByIdAndDoctor_Id(id, doctor.getId())
+        MedicalConcernEntity entity = this.medicalConcernJpaRepository.findByIdAndDoctor_IdAndDeletedAtIsNull(id, doctor.getId())
                 .orElseThrow(MedicalConcernNotFoundException::new);
         return this.medicalConcernMapper.toDomain(entity);
     }
@@ -154,5 +154,35 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
     @Override
     public boolean existsByNameForDoctor(String name, UUID doctorId) {
         return medicalConcernJpaRepository.existsByNameIgnoreCaseAndDoctor_Id(name, doctorId);
+    }
+
+    @Override
+    public MedicalConcern update(UUID concernId, UUID doctorId, String name, Integer durationInMinutes, Double price) {
+        MedicalConcernEntity entity = this.medicalConcernJpaRepository
+                .findByIdAndDoctor_IdAndDeletedAtIsNull(concernId, doctorId)
+                .orElseThrow(MedicalConcernNotFoundException::new);
+
+        entity.setName(name);
+        entity.setDurationInMinutes(durationInMinutes);
+        entity.setPrice(price);
+
+        MedicalConcernEntity savedEntity = this.medicalConcernJpaRepository.save(entity);
+
+        return this.medicalConcernMapper.toDomain(savedEntity);
+    }
+
+    @Override
+    public void delete(UUID concernId) {
+        MedicalConcernEntity entity = this.medicalConcernJpaRepository
+                .findById(concernId)
+                .orElseThrow(MedicalConcernNotFoundException::new);
+
+        entity.setDeletedAt(java.time.LocalDate.now());
+        this.medicalConcernJpaRepository.save(entity);
+    }
+
+    @Override
+    public boolean isMedicalConcernDeleted(UUID medicalConcernId) {
+        return this.medicalConcernJpaRepository.existsByIdAndDeletedAtIsNotNull(medicalConcernId);
     }
 }

@@ -22,7 +22,7 @@ public class AppointmentDetailedMapper {
                 appointment.getDoctor().getId(),
                 appointment.getDoctor().getPersonalInformations().getFirstName(),
                 appointment.getDoctor().getPersonalInformations().getLastName(),
-                appointment.getDoctor().getProfessionalInformations().getSpeciality(),
+                appointment.getDoctor().getProfessionalInformations().getSpeciality().getName(),
                 appointment.getDoctor().getPersonalInformations().getProfilePictureUrl()
         );
 

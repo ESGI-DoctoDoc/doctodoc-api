@@ -46,7 +46,7 @@ public class GetPatientCareTrackingDetailedMapper {
                     doctor.getId(),
                     doctor.getPersonalInformations().getFirstName(),
                     doctor.getPersonalInformations().getLastName(),
-                    doctor.getProfessionalInformations().getSpeciality(),
+                    doctor.getProfessionalInformations().getSpeciality().getName(),
                     doctor.getPersonalInformations().getProfilePictureUrl()
             );
 
@@ -65,7 +65,7 @@ public class GetPatientCareTrackingDetailedMapper {
                 new GetDoctorOfCareTrackingResponse(doctor.getId(),
                         doctor.getPersonalInformations().getLastName(),
                         doctor.getPersonalInformations().getFirstName(),
-                        doctor.getProfessionalInformations().getSpeciality(),
+                        doctor.getProfessionalInformations().getSpeciality().getName(),
                         doctor.getPersonalInformations().getProfilePictureUrl()
 
                 )).toList();
