@@ -180,9 +180,4 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
         entity.setDeletedAt(java.time.LocalDate.now());
         this.medicalConcernJpaRepository.save(entity);
     }
-
-    @Override
-    public boolean isMedicalConcernDeleted(UUID medicalConcernId) {
-        return this.medicalConcernJpaRepository.existsByIdAndDeletedAtIsNotNull(medicalConcernId);
-    }
 }

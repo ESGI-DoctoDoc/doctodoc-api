@@ -16,26 +16,29 @@ public interface DoctorJpaRepository extends JpaRepository<DoctorEntity, UUID> {
     Optional<DoctorEntity> findByUser_Id(UUID userId);
 
     @Query(value = """
-            SELECT * FROM doctors d
-            WHERE
-                (
-                    :name IS NULL OR (LOWER(d.first_name || ' ' || d.last_name) LIKE CONCAT('%', LOWER(:name), '%')
-                    OR LOWER(d.last_name || ' ' || d.first_name) LIKE CONCAT('%', LOWER(:name), '%'))
-                )
-                AND (:speciality IS NULL OR LOWER(d.speciality) = LOWER(:speciality))
-                AND (
-                    cardinality(:languages) = 0
-                    OR EXISTS (
-                        SELECT 1
-                        FROM unnest(d.languages) AS lang
-                        WHERE EXISTS (
-                            SELECT 1
-                            FROM unnest(:languages) AS input_lang
-                            WHERE LOWER(lang) = LOWER(input_lang)
+            SELECT d.*
+                FROM doctors d
+                JOIN specialities s ON d.speciality_id = s.speciality_id
+                WHERE
+                    (
+                        :name IS NULL OR (
+                            LOWER(d.first_name || ' ' || d.last_name) LIKE CONCAT('%', LOWER(:name), '%')
+                            OR LOWER(d.last_name || ' ' || d.first_name) LIKE CONCAT('%', LOWER(:name), '%')
                         )
                     )
-                )
-            """, nativeQuery = true)
+                    AND (:speciality IS NULL OR LOWER(s.name) = LOWER(:speciality))
+                    AND (
+                        cardinality(:languages) = 0
+                        OR EXISTS (
+                            SELECT 1
+                            FROM unnest(d.languages) AS lang
+                            WHERE EXISTS (
+                                SELECT 1
+                                FROM unnest(:languages) AS input_lang
+                                WHERE LOWER(lang) = LOWER(input_lang)
+                            )
+                        )
+                    )""", nativeQuery = true)
     Page<DoctorEntity> searchDoctors(
             @Param("name") String name,
             @Param("speciality") String speciality,

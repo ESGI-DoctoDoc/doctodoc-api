@@ -33,7 +33,7 @@ public class AppointmentDetailedMapper {
                 appointment.getDoctor().getPersonalInformations().getFirstName(),
                 appointment.getDoctor().getPersonalInformations().getLastName(),
                 appointment.getDoctor().getProfessionalInformations().getSpeciality().getName(),
-                appointment.getDoctor().getPersonalInformations().getProfilePictureUrl()
+                profileUrl
         );
 
         GetAppointmentAddressResponse address = new GetAppointmentAddressResponse(

@@ -24,6 +24,11 @@ import java.util.List;
  * with pagination support.
  */
 public class GetAllSlots implements IGetAllSlots {
+    private static final List<String> VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN = Arrays.asList(
+            AppointmentStatus.CONFIRMED.getValue(),
+            AppointmentStatus.UPCOMING.getValue(),
+            AppointmentStatus.WAITING_ROOM.getValue()
+    );
 
     private final SlotRepository slotRepository;
     private final UserRepository userRepository;
@@ -31,12 +36,6 @@ public class GetAllSlots implements IGetAllSlots {
     private final SlotResponseMapper slotResponseMapper;
     private final DoctorRepository doctorRepository;
 
-    private static final List<String> VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN = Arrays.asList(
-            AppointmentStatus.CONFIRMED.getValue(),
-            AppointmentStatus.UPCOMING.getValue(),
-            AppointmentStatus.LOCKED.getValue(),
-            AppointmentStatus.WAITING_ROOM.getValue()
-    );
 
     public GetAllSlots(SlotRepository slotRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, SlotResponseMapper slotResponseMapper, DoctorRepository doctorRepository) {
         this.slotRepository = slotRepository;
@@ -65,26 +64,25 @@ public class GetAllSlots implements IGetAllSlots {
             List<Slot> slots;
             if (startDate != null) {
                 LocalDate endDate = startDate.plusDays(6);
-                slots = this.slotRepository.findAllByDoctorIdAndDateBetween(doctor.getId(), startDate, endDate, page, size);
+                slots = this.slotRepository.findVisibleByDoctorIdAndDateBetween(
+                        doctor.getId(),
+                        startDate,
+                        endDate,
+                        VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN,
+                        page,
+                        size
+                );
             } else {
-                slots = this.slotRepository.findAllByDoctorIdAndDateAfterNow(doctor.getId(), LocalDate.now(), page, size);
+                slots = this.slotRepository.findVisibleByDoctorIdAndDateAfter(
+                        doctor.getId(),
+                        LocalDate.now(),
+                        VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN,
+                        page,
+                        size
+                );
             }
 
-            List<Slot> filteredSlots = slots.stream()
-                    .filter(slot -> {
-                        boolean allMedicalConcernsDeleted = slot.getAvailableMedicalConcerns().stream()
-                                .allMatch(medicalConcern -> slotRepository.isMedicalConcernDeleted(medicalConcern.getId()));
-
-                        if (allMedicalConcernsDeleted) {
-                            return slot.getAppointments().stream()
-                                    .anyMatch(appointment -> VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN.contains(appointment.getStatus().getValue()));
-                        }
-                        return true;
-                    })
-                    .toList();
-
-
-            return this.slotResponseMapper.presentAll(filteredSlots);
+            return this.slotResponseMapper.presentAll(slots);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
