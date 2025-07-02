@@ -4,6 +4,8 @@ import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
+import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
+import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
@@ -17,6 +19,7 @@ import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,6 +30,13 @@ public class GetDoctorAppointments implements IGetDoctorAppointments {
     private final GetCurrentUserContext getCurrentUserContext;
     private final AppointmentResponseMapper appointmentResponseMapper;
     private final CareTrackingRepository careTrackingRepository;
+
+    private static final List<String> VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN = Arrays.asList(
+            AppointmentStatus.CONFIRMED.getValue(),
+            AppointmentStatus.UPCOMING.getValue(),
+            AppointmentStatus.LOCKED.getValue(),
+            AppointmentStatus.WAITING_ROOM.getValue()
+    );
 
     public GetDoctorAppointments(AppointmentRepository appointmentRepository, UserRepository userRepository, DoctorRepository doctorRepository, GetCurrentUserContext getCurrentUserContext, AppointmentResponseMapper appointmentResponseMapper, CareTrackingRepository careTrackingRepository) {
         this.appointmentRepository = appointmentRepository;
@@ -62,6 +72,12 @@ public class GetDoctorAppointments implements IGetDoctorAppointments {
                 );
             }
             return appointments.stream()
+                    .filter(appointment -> {
+                        if(this.appointmentRepository.isMedicalConcernDeleted(appointment.getMedicalConcern().getId())) {
+                            return VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN.contains(appointment.getStatus().getValue());
+                        }
+                        return true;
+                    })
                     .map(appointment -> {
                         CareTracking careTracking = appointment.getCareTrackingId() != null
                                 ? careTrackingRepository.getById(appointment.getCareTrackingId())
@@ -78,13 +94,17 @@ public class GetDoctorAppointments implements IGetDoctorAppointments {
         try {
             Appointment appointment = this.appointmentRepository.getById(id);
 
+            if (this.appointmentRepository.isMedicalConcernDeleted(appointment.getMedicalConcern().getId()) &&
+                    !VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN.contains(appointment.getStatus().getValue())) {
+                throw new AppointmentNotFoundException();
+            }
+
             CareTracking careTracking = appointment.getCareTrackingId() != null
                     ? this.careTrackingRepository.getById(appointment.getCareTrackingId())
                     : null;
             return this.appointmentResponseMapper.toResponse(appointment, careTracking);
-
         } catch (DomainException e) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+            throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());
         }
     }
 }

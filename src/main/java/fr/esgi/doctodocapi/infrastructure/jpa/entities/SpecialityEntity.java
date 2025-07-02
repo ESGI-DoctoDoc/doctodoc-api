@@ -20,9 +20,6 @@ public class SpecialityEntity {
     @Column(name = "created_at", nullable = false)
     private LocalDate createdAt;
 
-    @Column(name = "deleted_at", nullable = false)
-    private LocalDate deletedAt;
-
     public UUID getId() {
         return id;
     }
@@ -45,13 +42,5 @@ public class SpecialityEntity {
 
     public void setCreatedAt(LocalDate createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public LocalDate getDeletedAt() {
-        return deletedAt;
-    }
-
-    public void setDeletedAt(LocalDate deletedAt) {
-        this.deletedAt = deletedAt;
     }
 }

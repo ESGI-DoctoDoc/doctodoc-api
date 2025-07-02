@@ -54,7 +54,7 @@ public class ManageDoctorAppointmentsController {
     }
 
     @DeleteMapping("appointments/cancel/{id}")
-    @ResponseStatus(value = HttpStatus.NO_CONTENT)
+    @ResponseStatus(value = HttpStatus.OK)
     public void cancelAppointment(@PathVariable UUID id) {
         this.cancelDoctorAppointment.cancel(id);
     }

@@ -64,4 +64,6 @@ public interface SlotRepository {
     Slot findOneByMedicalConcernAndDate(UUID medicalConcernId, LocalDate date);
 
     List<Slot> findAllByDoctorIdAndDateAfterNow(UUID doctorId, LocalDate date, int page, int size);
+
+    boolean isMedicalConcernDeleted(UUID medicalConcernId);
 }

@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot;
 
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
@@ -15,6 +16,7 @@ import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
+import java.util.Arrays;
 import java.util.List;
 
 /**
@@ -28,6 +30,13 @@ public class GetAllSlots implements IGetAllSlots {
     private final GetCurrentUserContext getCurrentUserContext;
     private final SlotResponseMapper slotResponseMapper;
     private final DoctorRepository doctorRepository;
+
+    private static final List<String> VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN = Arrays.asList(
+            AppointmentStatus.CONFIRMED.getValue(),
+            AppointmentStatus.UPCOMING.getValue(),
+            AppointmentStatus.LOCKED.getValue(),
+            AppointmentStatus.WAITING_ROOM.getValue()
+    );
 
     public GetAllSlots(SlotRepository slotRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, SlotResponseMapper slotResponseMapper, DoctorRepository doctorRepository) {
         this.slotRepository = slotRepository;
@@ -61,7 +70,21 @@ public class GetAllSlots implements IGetAllSlots {
                 slots = this.slotRepository.findAllByDoctorIdAndDateAfterNow(doctor.getId(), LocalDate.now(), page, size);
             }
 
-            return this.slotResponseMapper.presentAll(slots);
+            List<Slot> filteredSlots = slots.stream()
+                    .filter(slot -> {
+                        boolean allMedicalConcernsDeleted = slot.getAvailableMedicalConcerns().stream()
+                                .allMatch(medicalConcern -> slotRepository.isMedicalConcernDeleted(medicalConcern.getId()));
+
+                        if (allMedicalConcernsDeleted) {
+                            return slot.getAppointments().stream()
+                                    .anyMatch(appointment -> VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN.contains(appointment.getStatus().getValue()));
+                        }
+                        return true;
+                    })
+                    .toList();
+
+
+            return this.slotResponseMapper.presentAll(filteredSlots);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }

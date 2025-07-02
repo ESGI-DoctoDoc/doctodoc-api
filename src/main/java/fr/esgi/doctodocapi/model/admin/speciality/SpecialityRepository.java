@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.model.admin.speciality;
 
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Repository interface for persistence operations related to {@link Speciality}.
@@ -25,4 +26,6 @@ public interface SpecialityRepository {
     Speciality findByName(String name) throws SpecialityNotFoundException;
 
     boolean existsByName(String name);
+
+    Speciality findById(UUID id);
 }

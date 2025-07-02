@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.*;
+import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.calendar.Calendar;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.Absence;
@@ -27,7 +28,7 @@ public class DoctorMapper {
         this.medicalConcernMapper = medicalConcernMapper;
     }
 
-    public Doctor toDomain(DoctorEntity entity, List<Slot> slots, List<Absence> absences, List<MedicalConcern> medicalConcerns, List<Document> documents) {
+    public Doctor toDomain(DoctorEntity entity, List<Slot> slots, List<Absence> absences, List<MedicalConcern> medicalConcerns, List<Document> documents, Speciality speciality) {
 
         DoctorPersonnalInformations personnalInformations = new DoctorPersonnalInformations(
                 entity.getProfilePictureUrl(),
@@ -40,7 +41,7 @@ public class DoctorMapper {
         DoctorProfessionalInformations professionalInformations = new DoctorProfessionalInformations(
                 entity.getRpps(),
                 entity.getBio(),
-                entity.getSpeciality(),
+                speciality,
                 entity.getExperienceYears(),
                 entity.getLanguages(),
                 documents,
@@ -83,19 +84,22 @@ public class DoctorMapper {
         DoctorConsultationInformations consultationInformations = doctor.getConsultationInformations();
         CoordinatesGps coords = consultationInformations.getCoordinatesGps();
 
-
         DoctorEntity entity = new DoctorEntity();
+        SpecialityEntity specialityEntity = new SpecialityEntity();
+
         entity.setUser(userEntity);
         entity.setId(doctor.getUserId());
-        entity.setRpps(professionalInformations.getRpps().getValue());
         entity.setProfilePictureUrl(personnalInformations.getProfilePictureUrl());
-        entity.setBio(professionalInformations.getBio());
         entity.setFirstName(personnalInformations.getFirstName());
         entity.setLastName(personnalInformations.getLastName());
         entity.setBirthDate(personnalInformations.getBirthDate().getValue());
         entity.setGender(personnalInformations.getGender().name());
-        entity.setSpeciality(professionalInformations.getSpeciality());
+        entity.setRpps(professionalInformations.getRpps().getValue());
+        entity.setBio(professionalInformations.getBio());
+        specialityEntity.setId(professionalInformations.getSpeciality().getId());
+        entity.setSpeciality(specialityEntity);
         entity.setExperienceYears(professionalInformations.getExperienceYears().getValue());
+        entity.setAcceptPublicCoverage(professionalInformations.isAcceptPublicCoverage());
 
         List<MedicalConcernEntity> medicalConcerns =
                 consultationInformations.getMedicalConcerns().stream().map(medicalConcern -> this.medicalConcernMapper.toEntity(
@@ -111,7 +115,6 @@ public class DoctorMapper {
             entity.setClinicLongitude(consultationInformations.getCoordinatesGps().getClinicLongitude());
         }
         entity.setVerified(doctor.isVerified());
-        entity.setAcceptPublicCoverage(professionalInformations.isAcceptPublicCoverage());
         entity.setCustomerId(doctor.getCustomerId());
         entity.setRefused(doctor.isRefused());
 

@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.model.appointment;
 
-import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFound;
+import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
@@ -15,9 +15,9 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface AppointmentRepository {
-    Appointment getById(UUID id) throws AppointmentNotFound;
+    Appointment getById(UUID id) throws AppointmentNotFoundException;
 
-    Appointment getByIdAndPatientId(UUID id, UUID patientId) throws AppointmentNotFound;
+    Appointment getByIdAndPatientId(UUID id, UUID patientId) throws AppointmentNotFoundException;
 
     List<Appointment> getAppointmentsBySlot(UUID slotId);
 
@@ -48,4 +48,6 @@ public interface AppointmentRepository {
     int countAppointmentsByDoctorId(UUID doctorId);
 
     int countDistinctPatientsByDoctorId(UUID doctorId);
+
+    boolean isMedicalConcernDeleted(UUID medicalConcernId);
 }

@@ -12,7 +12,8 @@ import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
 import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
-import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFound;
+import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFoundException;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
@@ -61,7 +62,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     private final PreAppointmentAnswersMapper preAppointmentAnswersMapper;
     private final PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository;
     private final QuestionJpaRepository questionJpaRepository;
-
+    private final MedicalConcernRepository medicalConcernRepository;
     private final EntityManager entityManager;
 
 
@@ -79,7 +80,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
             AppointmentFacadeMapper appointmentFacadeMapper,
             PreAppointmentAnswersMapper preAppointmentAnswersMapper,
             PreAppointmentAnswersJpaRepository preAppointmentAnswersJpaRepository,
-            QuestionJpaRepository questionJpaRepository
+            QuestionJpaRepository questionJpaRepository, MedicalConcernRepository medicalConcernRepository
 
     ) {
         this.appointmentJpaRepository = appointmentJpaRepository;
@@ -90,6 +91,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         this.preAppointmentAnswersJpaRepository = preAppointmentAnswersJpaRepository;
         this.questionJpaRepository = questionJpaRepository;
         this.entityManager = entityManager;
+        this.medicalConcernRepository = medicalConcernRepository;
     }
 
     /**
@@ -97,18 +99,18 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
      *
      * @param id The unique identifier of the appointment to retrieve
      * @return The appointment with the specified ID
-     * @throws AppointmentNotFound If no appointment with the specified ID exists
+     * @throws AppointmentNotFoundException If no appointment with the specified ID exists
      */
     @Override
-    public Appointment getById(UUID id) throws AppointmentNotFound {
-        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(id).orElseThrow(AppointmentNotFound::new);
+    public Appointment getById(UUID id) throws AppointmentNotFoundException {
+        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(id).orElseThrow(AppointmentNotFoundException::new);
         return appointmentFacadeMapper.mapAppointmentToDomain(appointmentEntity);
     }
 
 
     @Override
-    public Appointment getByIdAndPatientId(UUID id, UUID patientId) throws AppointmentNotFound {
-        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findByIdAndPatient_Id(id, patientId).orElseThrow(AppointmentNotFound::new);
+    public Appointment getByIdAndPatientId(UUID id, UUID patientId) throws AppointmentNotFoundException {
+        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findByIdAndPatient_Id(id, patientId).orElseThrow(AppointmentNotFoundException::new);
         return appointmentFacadeMapper.mapAppointmentToDomain(appointmentEntity);
     }
 
@@ -160,14 +162,14 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     public void cancel(Appointment appointment) {
-        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
+        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFoundException::new);
         appointmentEntity.setStatus(appointment.getStatus().getValue());
         this.appointmentJpaRepository.save(appointmentEntity);
     }
 
     @Override
     public void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException {
-        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
+        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFoundException::new);
         appointmentEntity.setStatus(appointment.getStatus().getValue());
         appointmentEntity.setLockedAt(appointment.getLockedAt());
         this.appointmentJpaRepository.save(appointmentEntity);
@@ -175,7 +177,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     public void delete(Appointment appointment) {
-        AppointmentEntity entity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFound::new);
+        AppointmentEntity entity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFoundException::new);
         entity.setStatus(appointment.getStatus().getValue());
         LocalDateTime now = LocalDateTime.now();
         entity.setDeletedAt(now);
@@ -266,5 +268,10 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     @Override
     public int countDistinctPatientsByDoctorId(UUID doctorId) {
         return this.appointmentJpaRepository.countDistinctPatientsByDoctorId(doctorId);
+    }
+
+    @Override
+    public boolean isMedicalConcernDeleted(UUID medicalConcernId) {
+        return this.medicalConcernRepository.isMedicalConcernDeleted(medicalConcernId);
     }
 }
