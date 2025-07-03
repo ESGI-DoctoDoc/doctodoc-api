@@ -231,7 +231,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     @Override
     public List<Appointment> findAllWithPaginationForAdmin(int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAll(pageable);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findAllVisibleForAdmin(pageable);
         return appointments.getContent().stream()
                 .map(appointmentFacadeMapper::mapAppointmentToDomain)
                 .toList();
