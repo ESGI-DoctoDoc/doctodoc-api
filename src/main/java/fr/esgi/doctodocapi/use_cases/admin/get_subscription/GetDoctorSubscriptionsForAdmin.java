@@ -46,10 +46,15 @@ public class GetDoctorSubscriptionsForAdmin implements IGetDoctorSubscriptionsFo
                         Doctor doctor = doctorRepository.getById(doctorId);
                         DoctorInvoice invoice = invoiceRepository.findBySubscriptionId(subscription.getId());
 
-                        boolean isActive = !subscription.getEndDate().isBefore(LocalDateTime.now())
-                                && invoice.getState().equals(InvoiceState.PAID);
+                        String status;
 
-                        String status = isActive ? "active" : "inactive";
+                        if (invoice.getState().equals(InvoiceState.PAID)) {
+                            status = subscription.getEndDate().isAfter(LocalDateTime.now()) ? "active" : "expired";
+                        } else if (invoice.getState().equals(InvoiceState.PAYMENT_ERROR)) {
+                            status = "payment_error";
+                        } else {
+                            status = "inactive";
+                        }
 
                         return mapper.toAdminResponse(subscription, doctor, invoice, status);
                     })

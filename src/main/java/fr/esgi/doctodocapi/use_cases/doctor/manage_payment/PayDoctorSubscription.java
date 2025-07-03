@@ -4,6 +4,7 @@ import com.stripe.model.checkout.Session;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
+import fr.esgi.doctodocapi.model.doctor.payment.PaymentProcessFailedException;
 import fr.esgi.doctodocapi.model.doctor.payment.invoice.DoctorInvoice;
 import fr.esgi.doctodocapi.model.doctor.payment.invoice.DoctorInvoiceRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.invoice.InvoiceState;
@@ -80,17 +81,24 @@ public class PayDoctorSubscription implements IPayDoctorSubscription {
         doctor.setCustomerId(customerId);
         this.doctorRepository.save(doctor);
 
-        Session session = this.paymentProcess.createCheckoutSession(customerId, request.successUrl(), request.cancelUrl());
-
-        BigDecimal amount = this.paymentProcess.getSubscriptionAmount(session.getId());
-
         DoctorSubscription subscription = DoctorSubscription.create(doctor.getId(), LocalDateTime.now());
         DoctorSubscription savedSubscription = this.doctorSubscriptionRepository.save(subscription);
 
-        DoctorInvoice invoice = DoctorInvoice.create(savedSubscription.getId(), amount, session.getId());
-        this.doctorInvoiceRepository.save(invoice);
+        try {
+            Session session = this.paymentProcess.createCheckoutSession(customerId, request.successUrl(), request.cancelUrl());
+            BigDecimal amount = this.paymentProcess.getSubscriptionAmount(session.getId());
 
-        return new SubscribeResponse(session.getUrl());
+            DoctorInvoice invoice = DoctorInvoice.create(savedSubscription.getId(), amount, session.getId());
+            this.doctorInvoiceRepository.save(invoice);
+
+            return new SubscribeResponse(session.getUrl());
+
+        } catch (PaymentProcessFailedException e) {
+            DoctorInvoice failedInvoice = DoctorInvoice.createWithError(savedSubscription.getId());
+            this.doctorInvoiceRepository.save(failedInvoice);
+
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
     }
 
     private SubscribeResponse handleExistingSubscription(DoctorSubscription subscription, Doctor doctor, SubscribeRequest request) {

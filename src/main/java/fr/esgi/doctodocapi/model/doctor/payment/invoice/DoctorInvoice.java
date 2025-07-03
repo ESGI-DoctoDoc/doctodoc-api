@@ -1,6 +1,7 @@
     package fr.esgi.doctodocapi.model.doctor.payment.invoice;
 
     import java.math.BigDecimal;
+    import java.time.LocalDateTime;
     import java.util.Objects;
     import java.util.UUID;
 
@@ -21,6 +22,20 @@
 
         public static DoctorInvoice create(UUID subscriptionId, BigDecimal amount, String sessionId) {
             return new DoctorInvoice(UUID.randomUUID(), subscriptionId, InvoiceState.UNPAID, amount, sessionId);
+        }
+
+        public static DoctorInvoice createWithError(UUID subscriptionId) {
+            return new DoctorInvoice(
+                    UUID.randomUUID(),
+                    subscriptionId,
+                    InvoiceState.PAYMENT_ERROR,
+                    BigDecimal.ZERO,
+                    null
+            );
+        }
+
+        public void markAsPaymentError() {
+            this.state = InvoiceState.PAYMENT_ERROR;
         }
 
         public void markAsPaid() {
