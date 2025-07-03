@@ -32,6 +32,7 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     JOIN a.medicalConcern mc
     WHERE a.doctor.id = :doctorId
     AND a.date BETWEEN :startDate AND :endDate
+    AND a.status <> 'locked'
     AND (
         mc.deletedAt IS NULL
         OR (mc.deletedAt IS NOT NULL AND a.status IN :validStatuses)
@@ -52,6 +53,7 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     JOIN a.medicalConcern mc
     WHERE a.doctor.id = :doctorId
     AND a.date >= :startDate
+    AND a.status <> 'locked'
     AND (
         mc.deletedAt IS NULL
         OR (mc.deletedAt IS NOT NULL AND a.status IN :validStatuses)
@@ -70,6 +72,7 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     FROM AppointmentEntity a
     JOIN a.medicalConcern mc
     WHERE a.id = :appointmentId
+    AND a.status <> 'locked'
     AND (
         mc.deletedAt IS NULL
         OR (mc.deletedAt IS NOT NULL AND a.status IN :validStatuses)

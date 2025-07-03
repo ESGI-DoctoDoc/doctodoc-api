@@ -190,7 +190,6 @@ public class SlotRepositoryImpl implements SlotRepository {
         List<MedicalConcern> medicalConcerns = slotEntity.getMedicalConcerns().stream()
                 .map(this.medicalConcernMapper::toDomain)
                 .toList();
-
         return this.slotMapper.toDomain(slotEntity, appointments, medicalConcerns);
     }
 }
