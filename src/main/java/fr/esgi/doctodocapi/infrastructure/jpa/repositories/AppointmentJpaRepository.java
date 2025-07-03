@@ -89,4 +89,11 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     int countDistinctPatientsByDoctorId(@Param("doctorId") UUID doctorId);
 
     Optional<AppointmentEntity> findByIdAndPatient_Id(UUID id, UUID patientId);
+
+    @Query("""
+    SELECT a
+    FROM AppointmentEntity a
+    WHERE a.status <> 'locked'
+""")
+    Page<AppointmentEntity> findAllVisibleForAdmin(Pageable pageable);
 }
