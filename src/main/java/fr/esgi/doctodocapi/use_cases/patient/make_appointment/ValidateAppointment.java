@@ -92,6 +92,7 @@ public class ValidateAppointment implements IValidateAppointment {
             Patient patient = this.patientRepository.getById(saveAppointmentRequest.patientId());
             MedicalConcern medicalConcern = this.medicalConcernRepository.getById(saveAppointmentRequest.medicalConcernId());
             Doctor doctor = this.doctorRepository.getById(saveAppointmentRequest.doctorId());
+            UUID careTrackingId = saveAppointmentRequest.careTrackingId();
 
             slot.validateIfSlotIsAuthorized(medicalConcern);
 
@@ -100,7 +101,7 @@ public class ValidateAppointment implements IValidateAppointment {
                 answers = extractedPreAppointmentAnswers(saveAppointmentRequest);
             }
 
-            Appointment appointment = Appointment.init(slot, patient, doctor, medicalConcern, saveAppointmentRequest.time(), answers);
+            Appointment appointment = Appointment.init(slot, patient, doctor, medicalConcern, saveAppointmentRequest.time(), answers, careTrackingId);
             UUID appointmentLockedId = this.appointmentRepository.save(appointment);
 
             return new LockedAppointmentResponse(appointmentLockedId);
