@@ -2,7 +2,6 @@ package fr.esgi.doctodocapi.model.doctor.care_tracking;
 
 
 import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.patient.Patient;
 
 import java.util.List;
@@ -23,7 +22,4 @@ public interface CareTrackingRepository {
 
     List<CareTracking> findAllOpenedByPatientId(UUID patientId);
 
-    List<Document> getDocumentsByCareTrackingIdAndType(UUID id, String type, int page, int size);
-
-    List<Document> getDocumentsByPatientId(UUID id, int page, int size);
 }

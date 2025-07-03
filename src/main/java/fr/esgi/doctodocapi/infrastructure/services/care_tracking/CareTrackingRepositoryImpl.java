@@ -8,16 +8,13 @@ import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.DocumentMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.document_trace_mapper.DocumentTraceFacadeMapper;
-import fr.esgi.doctodocapi.infrastructure.mappers.document_trace_mapper.DocumentTraceMapper;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.document.Document;
-import fr.esgi.doctodocapi.model.document.trace.DocumentTrace;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import jakarta.persistence.EntityManager;
-import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
@@ -35,10 +32,9 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
     private final DocumentMapper documentMapper;
     private final DocumentJpaRepository documentJpaRepository;
     private final DocumentTraceFacadeMapper documentTraceFacadeMapper;
-    private final DocumentTraceMapper documentTraceMapper;
     private final DocumentTracesJpaRepository documentTracesJpaRepository;
 
-    public CareTrackingRepositoryImpl(CareTrackingJpaRepository careTrackingJpaRepository, CareTrackingMapper careTrackingMapper, EntityManager entityManager, CareTrackingFacadeMapper careTrackingFacadeMapper, DocumentMapper documentMapper, DocumentJpaRepository documentJpaRepository, DocumentTraceFacadeMapper documentTraceFacadeMapper, DocumentTraceMapper documentTraceMapper, DocumentTracesJpaRepository documentTracesJpaRepository) {
+    public CareTrackingRepositoryImpl(CareTrackingJpaRepository careTrackingJpaRepository, CareTrackingMapper careTrackingMapper, EntityManager entityManager, CareTrackingFacadeMapper careTrackingFacadeMapper, DocumentMapper documentMapper, DocumentJpaRepository documentJpaRepository, DocumentTraceFacadeMapper documentTraceFacadeMapper, DocumentTracesJpaRepository documentTracesJpaRepository) {
         this.careTrackingJpaRepository = careTrackingJpaRepository;
         this.careTrackingMapper = careTrackingMapper;
         this.entityManager = entityManager;
@@ -46,7 +42,6 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
         this.documentMapper = documentMapper;
         this.documentJpaRepository = documentJpaRepository;
         this.documentTraceFacadeMapper = documentTraceFacadeMapper;
-        this.documentTraceMapper = documentTraceMapper;
         this.documentTracesJpaRepository = documentTracesJpaRepository;
     }
 
@@ -149,25 +144,5 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
                 .stream()
                 .map(careTrackingFacadeMapper::mapCareTrackingToDomain)
                 .toList();
-    }
-
-    @Override
-    public List<Document> getDocumentsByCareTrackingIdAndType(UUID id, String type, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<DocumentEntity> documents = this.documentJpaRepository.getAllByCareTracking_IdAndTypeOrderByUploadedAtDesc(id, type, pageable);
-        return documents.getContent().stream().map(document -> {
-            List<DocumentTrace> traces = document.getTraces().stream().map(this.documentTraceMapper::toDomain).toList();
-            return this.documentMapper.toDomain(document, traces);
-        }).toList();
-    }
-
-    @Override
-    public List<Document> getDocumentsByPatientId(UUID id, int page, int size) {
-        Pageable pageable = PageRequest.of(page, size);
-        Page<DocumentEntity> documents = this.documentJpaRepository.getAllByCareTracking_IdOrderByUploadedAtDesc(id, pageable);
-        return documents.getContent().stream().map(document -> {
-            List<DocumentTrace> traces = document.getTraces().stream().map(this.documentTraceMapper::toDomain).toList();
-            return this.documentMapper.toDomain(document, traces);
-        }).toList();
     }
 }

@@ -4,21 +4,18 @@ import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.document.Document;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetAppointmentOfCareTrackingResponse;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetDoctorOfCareTrackingResponse;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetDocumentsOfCareTrackingResponse;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetPatientCareTrackingDetailedResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.*;
 import fr.esgi.doctodocapi.use_cases.patient.utils.GetDoctorProfileUrl;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
 
 @Service
-public class GetPatientCareTrackingDetailedMapper {
+public class GetPatientCareTrackingMapper {
 
     private final GetDoctorProfileUrl getDoctorProfileUrl;
 
-    public GetPatientCareTrackingDetailedMapper(GetDoctorProfileUrl getDoctorProfileUrl) {
+    public GetPatientCareTrackingMapper(GetDoctorProfileUrl getDoctorProfileUrl) {
         this.getDoctorProfileUrl = getDoctorProfileUrl;
     }
 
@@ -32,9 +29,25 @@ public class GetPatientCareTrackingDetailedMapper {
                 careTracking.getId(),
                 careTracking.getCaseName(),
                 careTracking.getDescription(),
+                careTracking.getCreatedAt(),
+                careTracking.getClosedAt(),
                 doctorsResponse,
                 appointmentsResponse,
                 documentsResponses
+        );
+
+    }
+
+    public GetPatientCareTrackingResponse toDto(CareTracking careTracking, List<Appointment> appointments) {
+        List<GetAppointmentOfCareTrackingResponse> appointmentsResponse = getAppointmentsResponse(appointments);
+
+        return new GetPatientCareTrackingResponse(
+                careTracking.getId(),
+                careTracking.getCaseName(),
+                careTracking.getDescription(),
+                careTracking.getCreatedAt(),
+                careTracking.getClosedAt(),
+                appointmentsResponse
         );
 
     }

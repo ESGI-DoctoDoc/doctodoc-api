@@ -23,15 +23,15 @@ import java.util.UUID;
 public class GetPatientCareTrackingDetailed implements IGetPatientCareTrackingDetailed {
     private final CareTrackingRepository careTrackingRepository;
     private final GetPatientFromContext getPatientFromContext;
-    private final GetPatientCareTrackingDetailedMapper getPatientCareTrackingDetailedMapper;
+    private final GetPatientCareTrackingMapper getPatientCareTrackingMapper;
     private final DoctorRepository doctorRepository;
     private final AppointmentRepository appointmentRepository;
 
 
-    public GetPatientCareTrackingDetailed(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, GetPatientCareTrackingDetailedMapper getPatientCareTrackingDetailedMapper, DoctorRepository doctorRepository, AppointmentRepository appointmentRepository) {
+    public GetPatientCareTrackingDetailed(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, GetPatientCareTrackingMapper getPatientCareTrackingMapper, DoctorRepository doctorRepository, AppointmentRepository appointmentRepository) {
         this.careTrackingRepository = careTrackingRepository;
         this.getPatientFromContext = getPatientFromContext;
-        this.getPatientCareTrackingDetailedMapper = getPatientCareTrackingDetailedMapper;
+        this.getPatientCareTrackingMapper = getPatientCareTrackingMapper;
         this.doctorRepository = doctorRepository;
         this.appointmentRepository = appointmentRepository;
     }
@@ -44,7 +44,7 @@ public class GetPatientCareTrackingDetailed implements IGetPatientCareTrackingDe
             List<Appointment> appointments = careTracking.getAppointmentsId().stream().map(appointmentRepository::getById).toList();
             List<Document> documents = careTracking.getDocuments().stream().sorted(Comparator.comparing(Document::getUploadedAt).reversed()).toList();
 
-            return this.getPatientCareTrackingDetailedMapper.toDto(careTracking, doctors, appointments, documents);
+            return this.getPatientCareTrackingMapper.toDto(careTracking, doctors, appointments, documents);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());

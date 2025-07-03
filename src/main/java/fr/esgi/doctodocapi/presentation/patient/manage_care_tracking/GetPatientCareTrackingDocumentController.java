@@ -6,7 +6,10 @@ import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IGetA
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IGetPatientCareTrackingDocumentDetail;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IGetPatientDocumentCareTrackingContent;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 import java.util.UUID;
@@ -25,9 +28,9 @@ public class GetPatientCareTrackingDocumentController {
         this.getPatientCareTrackingDocumentDetail = getPatientCareTrackingDocumentDetail;
     }
 
-    @GetMapping("{careTrackingId}/documents")
-    public List<GetDocumentResponse> getAll(@PathVariable UUID careTrackingId, @RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) String type) {
-        return this.getAllDocuments.process(careTrackingId, type, page, size);
+    @GetMapping("{id}/documents/")
+    public List<GetDocumentResponse> getAll(@PathVariable UUID id) {
+        return this.getAllDocuments.process(id);
     }
 
     @GetMapping("{careTrackingId}/documents/{id}")

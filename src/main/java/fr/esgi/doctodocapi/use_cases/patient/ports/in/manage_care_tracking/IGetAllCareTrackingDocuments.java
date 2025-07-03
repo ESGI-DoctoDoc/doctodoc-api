@@ -6,5 +6,5 @@ import java.util.List;
 import java.util.UUID;
 
 public interface IGetAllCareTrackingDocuments {
-    List<GetDocumentResponse> process(UUID careTrackingId, String type, int page, int size);
+    List<GetDocumentResponse> process(UUID careTrackingId);
 }

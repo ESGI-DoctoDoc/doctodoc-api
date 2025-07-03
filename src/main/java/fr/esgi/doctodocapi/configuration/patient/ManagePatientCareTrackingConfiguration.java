@@ -17,13 +17,13 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ManagePatientCareTrackingConfiguration {
     @Bean
-    public IGetPatientCareTrackings patientCareTrackings(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, AppointmentRepository appointmentRepository) {
-        return new GetPatientCareTrackings(careTrackingRepository, getPatientFromContext, appointmentRepository);
+    public IGetPatientCareTrackings patientCareTrackings(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, AppointmentRepository appointmentRepository, GetPatientCareTrackingMapper getPatientCareTrackingMapper) {
+        return new GetPatientCareTrackings(careTrackingRepository, getPatientFromContext, appointmentRepository, getPatientCareTrackingMapper);
     }
 
     @Bean
-    public IGetPatientCareTrackingDetailed patientCareTrackingDetailed(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, GetPatientCareTrackingDetailedMapper getPatientCareTrackingDetailedMapper, DoctorRepository doctorRepository, AppointmentRepository appointmentRepository) {
-        return new GetPatientCareTrackingDetailed(careTrackingRepository, getPatientFromContext, getPatientCareTrackingDetailedMapper, doctorRepository, appointmentRepository);
+    public IGetPatientCareTrackingDetailed patientCareTrackingDetailed(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, GetPatientCareTrackingMapper getPatientCareTrackingMapper, DoctorRepository doctorRepository, AppointmentRepository appointmentRepository) {
+        return new GetPatientCareTrackingDetailed(careTrackingRepository, getPatientFromContext, getPatientCareTrackingMapper, doctorRepository, appointmentRepository);
     }
 
     @Bean

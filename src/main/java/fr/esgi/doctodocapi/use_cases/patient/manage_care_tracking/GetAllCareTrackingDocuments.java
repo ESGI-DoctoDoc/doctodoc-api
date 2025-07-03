@@ -4,8 +4,6 @@ import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
-import fr.esgi.doctodocapi.model.document.Document;
-import fr.esgi.doctodocapi.model.document.DocumentType;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentResponse;
@@ -27,20 +25,11 @@ public class GetAllCareTrackingDocuments implements IGetAllCareTrackingDocuments
         this.getPatientFromContext = getPatientFromContext;
     }
 
-    public List<GetDocumentResponse> process(UUID careTrackingId, String type, int page, int size) {
+    public List<GetDocumentResponse> process(UUID id) {
         try {
             Patient patient = this.getPatientFromContext.get();
-            CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(careTrackingId, patient);
-
-            List<Document> documents;
-
-            if (type != null) {
-                DocumentType documentType = DocumentType.fromValue(type);
-                documents = this.careTrackingRepository.getDocumentsByCareTrackingIdAndType(careTracking.getId(), documentType.getValue(), page, size);
-            } else {
-                documents = this.careTrackingRepository.getDocumentsByPatientId(careTracking.getId(), page, size);
-            }
-            return documents.stream().map(this.documentResponseMapper::toDto).toList();
+            CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(id, patient);
+            return careTracking.getDocuments().stream().map(this.documentResponseMapper::toDto).toList();
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());
