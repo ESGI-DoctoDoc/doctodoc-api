@@ -41,7 +41,7 @@ public class GetPatientCareTrackingDetailedMapper {
 
     private List<GetDocumentsOfCareTrackingResponse> getDocumentsResponses(List<Document> documents) {
         return documents.stream().map(document ->
-                new GetDocumentsOfCareTrackingResponse(document.getId())
+                new GetDocumentsOfCareTrackingResponse(document.getId(), document.getName(), document.getType().getValue(), document.getPath())
         ).toList();
     }
 

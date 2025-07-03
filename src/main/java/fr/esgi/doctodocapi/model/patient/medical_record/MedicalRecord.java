@@ -44,12 +44,12 @@ public record MedicalRecord(UUID id, UUID patientId, List<Document> documents) {
         this.documents.add(newDocument);
     }
 
-    public void verifyIfFilenameAlreadyExist(String filename) {
+    private void verifyIfFilenameAlreadyExist(String filename) {
         if (this.documents.stream().anyMatch(document -> Objects.equals(document.getName(), filename)))
             throw new DocumentWithSameNameAlreadyExist();
     }
 
-    public void verifyIfFilenameAlreadyExist(String filename, Document excludedDocument) {
+    private void verifyIfFilenameAlreadyExist(String filename, Document excludedDocument) {
         boolean exists = this.documents.stream()
                 .filter(doc -> !doc.equals(excludedDocument))
                 .anyMatch(doc -> Objects.equals(doc.getName(), filename));

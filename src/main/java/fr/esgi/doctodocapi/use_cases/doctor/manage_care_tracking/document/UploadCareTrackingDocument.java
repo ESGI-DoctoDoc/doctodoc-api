@@ -23,8 +23,8 @@ import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
 
-import static fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document.CareTrackingFolders.FOLDER_CARE_TRACKING_FILE;
-import static fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document.CareTrackingFolders.FOLDER_ROOT;
+import static fr.esgi.doctodocapi.use_cases.CareTrackingFolders.FOLDER_CARE_TRACKING_FILE;
+import static fr.esgi.doctodocapi.use_cases.CareTrackingFolders.FOLDER_ROOT;
 
 public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
 
@@ -93,7 +93,7 @@ public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
 
 
     private CareTracking retrieveAndValidateCareTracking(UUID careTrackingId, Doctor doctor) {
-        CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctorId(careTrackingId, doctor);
+        CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctor(careTrackingId, doctor);
 
         if (careTracking.getClosedAt() != null) {
             throw new ClosedCareTrackingException();

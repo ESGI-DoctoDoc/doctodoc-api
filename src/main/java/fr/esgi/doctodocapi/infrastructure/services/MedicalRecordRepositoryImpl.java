@@ -70,7 +70,7 @@ public class MedicalRecordRepositoryImpl implements MedicalRecordRepository {
     @Override
     public List<Document> getDocumentsByTypeAndPatientId(String type, UUID patientId, int page, int size) throws MedicalConcernNotFoundException {
         Pageable pageable = PageRequest.of(page, size);
-        Page<DocumentEntity> documents = this.documentJpaRepository.getAllByMedicalRecord_PatientIdAndTypeContainsIgnoreCaseOrderByUploadedAtDesc(patientId, type, pageable);
+        Page<DocumentEntity> documents = this.documentJpaRepository.getAllByMedicalRecord_PatientIdAndTypeOrderByUploadedAtDesc(patientId, type, pageable);
         return documents.getContent().stream().map(document -> {
             List<DocumentTrace> traces = document.getTraces().stream().map(this.documentTraceMapper::toDomain).toList();
             return this.documentMapper.toDomain(document, traces);

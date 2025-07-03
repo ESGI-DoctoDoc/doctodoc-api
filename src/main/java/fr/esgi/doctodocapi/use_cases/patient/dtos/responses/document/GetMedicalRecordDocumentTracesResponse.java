@@ -7,7 +7,7 @@ import java.time.LocalDateTime;
 public record GetMedicalRecordDocumentTracesResponse(
         String type,
         String description,
-        GetMedicalRecordDocumentUser user,
+        GetDocumentUser user,
         @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd HH:mm")
         LocalDateTime date
 ) {

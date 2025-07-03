@@ -2,7 +2,9 @@ package fr.esgi.doctodocapi.model.doctor.care_tracking;
 
 import fr.esgi.doctodocapi.model.doctor.care_tracking.care_tracking_trace.CareTrackingTrace;
 import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
 import fr.esgi.doctodocapi.model.patient.Patient;
+import fr.esgi.doctodocapi.model.patient.medical_record.DocumentWithSameNameAlreadyExist;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -61,13 +63,23 @@ public class CareTracking {
     }
 
     public void addDocument(Document document) {
+        verifyIfNotClosed();
         if (documents.stream().anyMatch(d -> d.getName().equalsIgnoreCase(document.getName()))) {
             throw new DocumentAlreadyExistInCareTrackingException();
         }
         documents.add(document);
     }
 
+    public void updateDocument(Document oldDocument, Document newDocument) {
+        verifyIfNotClosed();
+        verifyIfFilenameAlreadyExist(newDocument.getName(), oldDocument);
+        if (!this.documents.contains(oldDocument)) throw new DocumentNotFoundException();
+        this.documents.remove(oldDocument);
+        this.documents.add(newDocument);
+    }
+
     public void addDoctor(UUID doctorId) {
+        verifyIfNotClosed();
         if (doctors.contains(doctorId)) {
             throw new DoctorAlreadyExistInCareTrackingException();
         }
@@ -75,6 +87,7 @@ public class CareTracking {
     }
 
     public void addAppointment(UUID appointmentId) {
+        verifyIfNotClosed();
         if (appointmentsId.contains(appointmentId)) {
             throw new AppointmentAlreadyExistInCareTrackingException();
         }
@@ -86,6 +99,22 @@ public class CareTracking {
             throw new TraceAlreadyExistInCareTrackingException();
         }
         careTrackingTraces.add(trace);
+    }
+
+    private void verifyIfNotClosed() {
+        if (this.closedAt != null) {
+            throw new ClosedCareTrackingException();
+        }
+    }
+
+    private void verifyIfFilenameAlreadyExist(String filename, Document excludedDocument) {
+        boolean exists = this.documents.stream()
+                .filter(doc -> !doc.equals(excludedDocument))
+                .anyMatch(doc -> Objects.equals(doc.getName(), filename));
+
+        if (exists) {
+            throw new DocumentWithSameNameAlreadyExist();
+        }
     }
 
     public UUID getId() {
