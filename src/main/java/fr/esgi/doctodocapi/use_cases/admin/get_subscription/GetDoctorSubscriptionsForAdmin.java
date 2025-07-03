@@ -6,6 +6,7 @@ import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.invoice.DoctorInvoice;
 import fr.esgi.doctodocapi.model.doctor.payment.invoice.DoctorInvoiceRepository;
+import fr.esgi.doctodocapi.model.doctor.payment.invoice.InvoiceState;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscription;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.get_subscriptions.GetSubscriptionForAdminResponse;
@@ -13,6 +14,7 @@ import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_subscription.IGetDoctorS
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,7 +45,13 @@ public class GetDoctorSubscriptionsForAdmin implements IGetDoctorSubscriptionsFo
                         UUID doctorId = subscription.getDoctorId();
                         Doctor doctor = doctorRepository.getById(doctorId);
                         DoctorInvoice invoice = invoiceRepository.findBySubscriptionId(subscription.getId());
-                        return mapper.toAdminResponse(subscription, doctor, invoice);
+
+                        boolean isActive = !subscription.getEndDate().isBefore(LocalDateTime.now())
+                                && invoice.getState().equals(InvoiceState.PAID);
+
+                        String status = isActive ? "active" : "inactive";
+
+                        return mapper.toAdminResponse(subscription, doctor, invoice, status);
                     })
                     .toList();
 

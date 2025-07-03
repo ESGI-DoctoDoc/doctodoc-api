@@ -25,7 +25,7 @@ public class GetDoctorSubscriptionController {
 
     @GetMapping("subscriptions")
     @ResponseStatus(HttpStatus.OK)
-    public List<GetSubscriptionForAdminResponse> getSubscriptions(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public List<GetSubscriptionForAdminResponse> getSubscriptions(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "15") int size) {
         return this.getDoctorSubscriptionsForAdmin.execute(page, size);
     }
 
