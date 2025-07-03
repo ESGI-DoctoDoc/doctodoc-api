@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -27,9 +28,9 @@ public interface CareTrackingJpaRepository extends JpaRepository<CareTrackingEnt
     Optional<CareTrackingEntity> findByIdAndDoctorAccess(@Param("careTrackingId") UUID careTrackingId,
                                                          @Param("doctorId") UUID doctorId);
 
-    Optional<CareTrackingEntity> findByIdAndPatient_IdAndCreator_Id(UUID careTrackingId, UUID patientId, UUID doctorId);
-
     // patient
     Page<CareTrackingEntity> findAllByPatient_IdOrderByCreatedAtDesc(UUID patientId, Pageable pageable);
+
+    List<CareTrackingEntity> findAllByPatient_IdAndClosedAtNullOrderByCreatedAtDesc(UUID patientId);
 
 }

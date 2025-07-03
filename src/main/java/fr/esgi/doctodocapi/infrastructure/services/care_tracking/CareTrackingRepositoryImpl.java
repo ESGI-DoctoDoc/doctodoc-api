@@ -134,10 +134,18 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
 
     // patient
     @Override
-    public List<CareTracking> findAllByPatientId(UUID patientId, int page, int size) {
+    public List<CareTracking> findAllOpenedByPatientId(UUID patientId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         return this.careTrackingJpaRepository.findAllByPatient_IdOrderByCreatedAtDesc(patientId, pageable)
+                .stream()
+                .map(careTrackingFacadeMapper::mapCareTrackingToDomain)
+                .toList();
+    }
+
+    @Override
+    public List<CareTracking> findAllOpenedByPatientId(UUID patientId) {
+        return this.careTrackingJpaRepository.findAllByPatient_IdAndClosedAtNullOrderByCreatedAtDesc(patientId)
                 .stream()
                 .map(careTrackingFacadeMapper::mapCareTrackingToDomain)
                 .toList();

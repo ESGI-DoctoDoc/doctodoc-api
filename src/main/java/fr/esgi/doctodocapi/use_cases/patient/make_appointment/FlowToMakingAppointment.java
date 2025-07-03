@@ -1,15 +1,20 @@
 package fr.esgi.doctodocapi.use_cases.patient.make_appointment;
 
+import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.AppointmentsAvailabilityService;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionType;
+import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetCareTrackingForAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetMedicalConcernsResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorListQuestionsResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorQuestionsResponse;
@@ -32,6 +37,8 @@ import java.util.UUID;
 public class FlowToMakingAppointment implements IFlowToMakingAppointment {
     private final MedicalConcernRepository medicalConcernRepository;
     private final DoctorRepository doctorRepository;
+    private final CareTrackingRepository careTrackingRepository;
+    private final GetPatientFromContext getPatientFromContext;
     private final AppointmentsAvailabilityService appointmentsAvailabilityService;
 
     /**
@@ -41,11 +48,11 @@ public class FlowToMakingAppointment implements IFlowToMakingAppointment {
      * @param doctorRepository                repository for retrieving doctor entities
      * @param appointmentsAvailabilityService service responsible for calculating appointment availability
      */
-    public FlowToMakingAppointment(MedicalConcernRepository medicalConcernRepository,
-                                   DoctorRepository doctorRepository,
-                                   AppointmentsAvailabilityService appointmentsAvailabilityService) {
+    public FlowToMakingAppointment(MedicalConcernRepository medicalConcernRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, AppointmentsAvailabilityService appointmentsAvailabilityService) {
         this.medicalConcernRepository = medicalConcernRepository;
         this.doctorRepository = doctorRepository;
+        this.careTrackingRepository = careTrackingRepository;
+        this.getPatientFromContext = getPatientFromContext;
         this.appointmentsAvailabilityService = appointmentsAvailabilityService;
     }
 
@@ -107,6 +114,20 @@ public class FlowToMakingAppointment implements IFlowToMakingAppointment {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
     }
+
+    public List<GetCareTrackingForAppointmentResponse> getCareTracking() {
+        try {
+            Patient patient = this.getPatientFromContext.get();
+            List<CareTracking> careTrackings = this.careTrackingRepository.findAllOpenedByPatientId(patient.getId());
+
+            return careTrackings.stream()
+                    .map(careTracking -> new GetCareTrackingForAppointmentResponse(careTracking.getId(), careTracking.getCaseName(), careTracking.getDescription()))
+                    .toList();
+        } catch (DomainException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
+    }
+
 
     /**
      * Retrieves available appointment slots for a given medical concern on a specific date.
