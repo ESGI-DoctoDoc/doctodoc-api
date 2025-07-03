@@ -102,7 +102,7 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
     public List<CareTracking> findAll(UUID doctorId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return this.careTrackingJpaRepository.findAllByCreator_Id(doctorId, pageable)
+        return this.careTrackingJpaRepository.findAllByDoctorAccess(doctorId, pageable)
                 .stream()
                 .map(careTrackingFacadeMapper::mapCareTrackingToDomain)
                 .toList();
@@ -125,13 +125,6 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
         CareTrackingEntity entity = this.careTrackingJpaRepository.findByIdAndDoctorAccess(careTrackingId, doctor.getId()).orElseThrow(CareTrackingNotFoundException::new);
         return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);
     }
-
-    @Override
-    public CareTracking getByIdAndPatientIdAndDoctorId(UUID careTrackingId, Patient patient, Doctor doctor) throws CareTrackingNotFoundException {
-        CareTrackingEntity entity = this.careTrackingJpaRepository.findByIdAndPatient_IdAndCreator_Id(careTrackingId, patient.getId(), doctor.getId()).orElseThrow(CareTrackingNotFoundException::new);
-        return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);
-    }
-
 
     // patient
 
