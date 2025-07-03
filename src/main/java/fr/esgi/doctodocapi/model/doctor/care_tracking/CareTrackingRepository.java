@@ -14,7 +14,6 @@ public interface CareTrackingRepository {
     CareTracking getById(UUID id) throws CareTrackingNotFoundException;
     CareTracking getByIdAndPatientId(UUID careTrackingId, Patient patient) throws CareTrackingNotFoundException;
     CareTracking getByIdAndDoctorId(UUID careTrackingId, Doctor doctor) throws CareTrackingNotFoundException;
-    CareTracking getByIdAndPatientIdAndDoctorId(UUID careTrackingId, Patient patient, Doctor doctor) throws CareTrackingNotFoundException;
 
     // Patient
     List<CareTracking> findAllByPatientId(UUID patientId, int page, int size);

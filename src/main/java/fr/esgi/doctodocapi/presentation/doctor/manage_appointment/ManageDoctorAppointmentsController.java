@@ -37,7 +37,7 @@ public class ManageDoctorAppointmentsController {
 
     @GetMapping("appointments")
     @ResponseStatus(HttpStatus.OK)
-    public List<GetDoctorAppointmentResponse> getAllAppointments(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
+    public List<GetDoctorAppointmentResponse> getAllAppointments(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "1000") int size, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
         return this.getDoctorAppointments.execute(page, size, startDate);
     }
 

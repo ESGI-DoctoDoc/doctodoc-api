@@ -53,6 +53,7 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
             WHERE a2.slot_id = s.slot_id AND a2.status IN (:validStatuses)
         ))
     )
+    ORDER BY s.date ASC, s.start_hour ASC
 """, nativeQuery = true)
     Page<SlotEntity> findVisibleByDoctorIdAndDateAfter(
             @Param("doctorId") UUID doctorId,
@@ -86,6 +87,7 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
             WHERE a2.slot_id = s.slot_id AND a2.status IN (:validStatuses)
         ))
     )
+    ORDER BY s.date ASC, s.start_hour ASC
 """, nativeQuery = true)
     Page<SlotEntity> findVisibleByDoctorIdAndDateBetween(
             @Param("doctorId") UUID doctorId,
