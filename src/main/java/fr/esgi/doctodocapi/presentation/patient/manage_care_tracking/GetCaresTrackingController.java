@@ -30,7 +30,7 @@ public class GetCaresTrackingController {
 
     @GetMapping("patients/care-trackings/{id}")
     @ResponseStatus(value = HttpStatus.OK)
-    public GetPatientCareTrackingDetailedResponse getAll(@PathVariable UUID id) {
+    public GetPatientCareTrackingDetailedResponse get(@PathVariable UUID id) {
         return this.getPatientCareTrackingDetailed.process(id);
     }
 }

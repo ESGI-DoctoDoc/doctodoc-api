@@ -16,6 +16,7 @@ import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IGetP
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
+import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
 
@@ -41,7 +42,7 @@ public class GetPatientCareTrackingDetailed implements IGetPatientCareTrackingDe
             CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(id, patient);
             List<Doctor> doctors = getDoctors(careTracking);
             List<Appointment> appointments = careTracking.getAppointmentsId().stream().map(appointmentRepository::getById).toList();
-            List<Document> documents = careTracking.getDocuments();
+            List<Document> documents = careTracking.getDocuments().stream().sorted(Comparator.comparing(Document::getUploadedAt).reversed()).toList();
 
             return this.getPatientCareTrackingDetailedMapper.toDto(careTracking, doctors, appointments, documents);
 
