@@ -1,7 +1,11 @@
 package fr.esgi.doctodocapi.infrastructure.security.config;
 
 import fr.esgi.doctodocapi.infrastructure.jwt.JwtService;
+import fr.esgi.doctodocapi.use_cases.exceptions.InvalidTokenException;
+import fr.esgi.doctodocapi.use_cases.exceptions.TokenExpiredException;
 import fr.esgi.doctodocapi.use_cases.exceptions.UnauthorizedException;
+import io.jsonwebtoken.ExpiredJwtException;
+import io.jsonwebtoken.JwtException;
 import jakarta.servlet.FilterChain;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -59,6 +63,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
             filterChain.doFilter(request, response);
 
+        } catch (ExpiredJwtException e) {
+            throw new TokenExpiredException();
+        } catch (JwtException e) {
+            throw new InvalidTokenException();
         } catch (Exception e) {
             throw new UnauthorizedException();
         }
