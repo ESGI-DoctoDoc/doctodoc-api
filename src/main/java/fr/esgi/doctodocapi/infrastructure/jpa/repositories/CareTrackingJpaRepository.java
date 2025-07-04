@@ -28,6 +28,19 @@ public interface CareTrackingJpaRepository extends JpaRepository<CareTrackingEnt
     Optional<CareTrackingEntity> findByIdAndDoctorAccess(@Param("careTrackingId") UUID careTrackingId,
                                                          @Param("doctorId") UUID doctorId);
 
+    @Query(value = """
+        SELECT * FROM cares_tracking c
+        WHERE (:doctorId = ANY (c.doctors) OR c.doctor_id = :doctorId)
+        """,
+            countQuery = """
+        SELECT COUNT(*) FROM cares_tracking c
+        WHERE (:doctorId = ANY (c.doctors) OR c.doctor_id = :doctorId)
+        """,
+            nativeQuery = true)
+    Page<CareTrackingEntity> findAllByDoctorAccess(@Param("doctorId") UUID doctorId, Pageable pageable);
+
+    Optional<CareTrackingEntity> findByIdAndPatient_IdAndCreator_Id(UUID careTrackingId, UUID patientId, UUID doctorId);
+
     // patient
     Page<CareTrackingEntity> findAllByPatient_IdOrderByCreatedAtDesc(UUID patientId, Pageable pageable);
 

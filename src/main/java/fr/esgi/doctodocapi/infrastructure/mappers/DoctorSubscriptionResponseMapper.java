@@ -14,9 +14,7 @@ import java.time.format.DateTimeFormatter;
 public class DoctorSubscriptionResponseMapper {
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
 
-    public GetSubscriptionForAdminResponse toAdminResponse(DoctorSubscription subscription, Doctor doctor, DoctorInvoice invoice) {
-        String status = computeStatus(subscription.getEndDate());
-
+    public GetSubscriptionForAdminResponse toAdminResponse(DoctorSubscription subscription, Doctor doctor, DoctorInvoice invoice, String status) {
         return new GetSubscriptionForAdminResponse(
                 subscription.getId(),
                 new DoctorInfoForAdmin(
@@ -31,10 +29,6 @@ public class DoctorSubscriptionResponseMapper {
                 status,
                 formatDate(subscription.getCreatedAt())
         );
-    }
-
-    private String computeStatus(LocalDateTime endDate) {
-        return endDate.isBefore(LocalDateTime.now()) ? "inactive" : "active";
     }
 
     private String formatDate(LocalDateTime date) {

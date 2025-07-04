@@ -24,7 +24,7 @@ public class GetAppointmentController {
 
     @GetMapping("appointments")
     @ResponseStatus(HttpStatus.OK)
-    public List<GetAppointmentForAdminResponse> fetchAppointments(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public List<GetAppointmentForAdminResponse> fetchAppointments(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
         return this.getAppointments.getDoctorAppointment(page, size);
     }
 

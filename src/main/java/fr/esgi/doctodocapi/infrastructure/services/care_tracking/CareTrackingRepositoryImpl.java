@@ -13,6 +13,9 @@ import fr.esgi.doctodocapi.model.care_tracking.CareTrackingNotFoundException;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingNotFoundException;
+import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import jakarta.persistence.EntityManager;
@@ -103,7 +106,7 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
     public List<CareTracking> findAll(UUID doctorId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
-        return this.careTrackingJpaRepository.findAllByCreator_Id(doctorId, pageable)
+        return this.careTrackingJpaRepository.findAllByDoctorAccess(doctorId, pageable)
                 .stream()
                 .map(careTrackingFacadeMapper::mapCareTrackingToDomain)
                 .toList();
@@ -122,15 +125,14 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
         return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);
     }
 
-
     @Override
     public CareTracking getByIdAndDoctor(UUID careTrackingId, Doctor doctor) throws CareTrackingNotFoundException {
         CareTrackingEntity entity = this.careTrackingJpaRepository.findByIdAndDoctorAccess(careTrackingId, doctor.getId()).orElseThrow(CareTrackingNotFoundException::new);
         return this.careTrackingFacadeMapper.mapCareTrackingToDomain(entity);
     }
 
-
     // patient
+
     @Override
     public List<CareTracking> findAllOpenedByPatientId(UUID patientId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
