@@ -34,6 +34,10 @@ public class CareTrackingDocument {
         return new CareTrackingDocument(Document.copyOf(document.getDocument()), document.isShared);
     }
 
+    public void shared() {
+        this.isShared = !this.isShared;
+    }
+
     public Document getDocument() {
         return document;
     }
@@ -57,4 +61,5 @@ public class CareTrackingDocument {
     public int hashCode() {
         return Objects.hashCode(document.getId());
     }
+
 }

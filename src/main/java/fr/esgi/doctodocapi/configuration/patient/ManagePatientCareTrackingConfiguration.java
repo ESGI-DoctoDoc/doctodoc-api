@@ -2,12 +2,12 @@ package fr.esgi.doctodocapi.configuration.patient;
 
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
-import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking.*;
-import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.DocumentResponseMapper;
+import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.DocumentMedicalRecordResponseMapper;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.*;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.IGetPatientFromContext;
@@ -32,13 +32,13 @@ public class ManagePatientCareTrackingConfiguration {
     }
 
     @Bean
-    public IGetPatientDocumentCareTrackingContent getPatientDocumentCareTrackingContent(CareTrackingRepository careTrackingRepository, FileStorageService fileStorageService, GetPatientFromContext getPatientFromContext) {
-        return new GetPatientDocumentCareTrackingContent(careTrackingRepository, fileStorageService, getPatientFromContext);
+    public IGetPatientDocumentCareTrackingContent getPatientDocumentCareTrackingContent(CareTrackingRepository careTrackingRepository, FileStorageService fileStorageService, GetPatientFromContext getPatientFromContext, DocumentCareTrackingResponseMapper documentCareTrackingResponseMapper) {
+        return new GetPatientDocumentCareTrackingContent(careTrackingRepository, fileStorageService, getPatientFromContext, documentCareTrackingResponseMapper);
     }
 
     @Bean
-    public IGetAllCareTrackingDocuments getAllCareTrackingDocuments(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, DocumentResponseMapper documentResponseMapper) {
-        return new GetAllCareTrackingDocuments(careTrackingRepository, getPatientFromContext, documentResponseMapper);
+    public IGetAllCareTrackingDocuments getAllCareTrackingDocuments(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, DocumentMedicalRecordResponseMapper documentMedicalRecordResponseMapper, DocumentCareTrackingResponseMapper documentCareTrackingResponseMapper) {
+        return new GetAllCareTrackingDocuments(careTrackingRepository, documentCareTrackingResponseMapper, getPatientFromContext);
     }
 
     @Bean
@@ -59,5 +59,10 @@ public class ManagePatientCareTrackingConfiguration {
     @Bean
     public IGetPatientCareTrackingDocumentTraces getPatientCareTrackingDocumentTraces(PatientRepository patientRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext) {
         return new GetPatientCareTrackingDocumentTraces(patientRepository, doctorRepository, careTrackingRepository, getPatientFromContext);
+    }
+
+    @Bean
+    public IManageDocumentVisibility manageDocumentVisibility(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext) {
+        return new ManageDocumentVisibility(careTrackingRepository, getPatientFromContext);
     }
 }

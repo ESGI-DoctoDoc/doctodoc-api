@@ -3,8 +3,8 @@ package fr.esgi.doctodocapi.configuration.patient;
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
-import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.medical_record.MedicalRecordRepository;
+import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.*;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.*;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
@@ -15,8 +15,8 @@ import org.springframework.context.annotation.Configuration;
 public class ManageMedicalRecordConfiguration {
 
     @Bean
-    public IGetAllMedicalRecordDocuments getAllMedicalRecordDocuments(GetPatientFromContext getPatientFromContext, MedicalRecordRepository medicalRecordRepository, DocumentResponseMapper documentResponseMapper) {
-        return new GetAllMedicalRecordDocuments(medicalRecordRepository, getPatientFromContext, documentResponseMapper);
+    public IGetAllMedicalRecordDocuments getAllMedicalRecordDocuments(GetPatientFromContext getPatientFromContext, MedicalRecordRepository medicalRecordRepository, DocumentMedicalRecordResponseMapper documentMedicalRecordResponseMapper) {
+        return new GetAllMedicalRecordDocuments(medicalRecordRepository, getPatientFromContext, documentMedicalRecordResponseMapper);
     }
 
     @Bean

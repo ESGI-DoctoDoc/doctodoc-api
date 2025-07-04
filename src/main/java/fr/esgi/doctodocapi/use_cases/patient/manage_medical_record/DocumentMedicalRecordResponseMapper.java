@@ -5,7 +5,7 @@ import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocument
 import org.springframework.stereotype.Service;
 
 @Service
-public class DocumentResponseMapper {
+public class DocumentMedicalRecordResponseMapper {
     public GetDocumentResponse toDto(Document document) {
         return new GetDocumentResponse(document.getId(), document.getName(), document.getType().getValue(), document.getPath());
     }

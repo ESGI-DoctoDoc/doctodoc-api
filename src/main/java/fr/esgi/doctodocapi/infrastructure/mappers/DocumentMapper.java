@@ -23,8 +23,7 @@ public class DocumentMapper {
                 DocumentType.valueOf(entity.getType()),
                 entity.getUploadedBy(),
                 entity.getUploadedAt(),
-                traces,
-                List.of()
+                traces
         );
     }
 
