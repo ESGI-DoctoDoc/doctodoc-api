@@ -35,7 +35,7 @@ public class GetPatientDocumentCareTrackingContent implements IGetPatientDocumen
             CareTrackingDocument document = careTracking.getById(id);
             String url = this.fileStorageService.getFile(document.getDocument().getPath());
 
-            return this.documentCareTrackingResponseMapper.toDto(document);
+            return this.documentCareTrackingResponseMapper.toDto(document, url);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());

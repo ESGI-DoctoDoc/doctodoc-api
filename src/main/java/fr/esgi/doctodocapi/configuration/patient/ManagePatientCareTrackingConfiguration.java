@@ -7,7 +7,6 @@ import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking.*;
-import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.DocumentMedicalRecordResponseMapper;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.*;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.IGetPatientFromContext;
@@ -37,7 +36,7 @@ public class ManagePatientCareTrackingConfiguration {
     }
 
     @Bean
-    public IGetAllCareTrackingDocuments getAllCareTrackingDocuments(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, DocumentMedicalRecordResponseMapper documentMedicalRecordResponseMapper, DocumentCareTrackingResponseMapper documentCareTrackingResponseMapper) {
+    public IGetAllCareTrackingDocuments getAllCareTrackingDocuments(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, DocumentCareTrackingResponseMapper documentCareTrackingResponseMapper) {
         return new GetAllCareTrackingDocuments(careTrackingRepository, documentCareTrackingResponseMapper, getPatientFromContext);
     }
 

@@ -15,4 +15,14 @@ public class DocumentCareTrackingResponseMapper {
                 document.isShared()
         );
     }
+
+    public GetDocumentsOfCareTrackingResponse toDto(CareTrackingDocument document, String url) {
+        return new GetDocumentsOfCareTrackingResponse(
+                document.getDocument().getId(),
+                document.getDocument().getName(),
+                document.getDocument().getType().getValue(),
+                url,
+                document.isShared()
+        );
+    }
 }
