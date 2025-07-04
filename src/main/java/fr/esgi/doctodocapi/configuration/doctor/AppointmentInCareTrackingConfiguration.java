@@ -8,7 +8,7 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.book_appointment_in_care_tracking.BookAppointmentInCareTracking;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.book_appointment_in_care_tracking.IBookAppointmentInCareTracking;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.book_appointment_in_care_tracking.IBookAppointmentInCareTracking;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

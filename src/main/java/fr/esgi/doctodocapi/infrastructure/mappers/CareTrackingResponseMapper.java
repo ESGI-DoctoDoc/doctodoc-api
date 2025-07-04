@@ -1,8 +1,11 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.doctor_managing_care_tracking.doctor_managing_care_tracking.CareTrackingPatientInfo;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.doctor_managing_care_tracking.doctor_managing_care_tracking.GetCareTrackingsResponse;
+import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.doctor_managing_care_tracking.AppointmentInfo;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.doctor_managing_care_tracking.CareTrackingPatientInfo;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.doctor_managing_care_tracking.GetCareTrackingsResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.doctor_managing_care_tracking.MedicalConcernInfoForCareTracking;
 import org.springframework.stereotype.Service;
 
 import java.time.format.DateTimeFormatter;
@@ -10,12 +13,35 @@ import java.util.List;
 
 @Service
 public class CareTrackingResponseMapper {
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-    public List<GetCareTrackingsResponse> toResponseList(List<CareTracking> careTrackings) {
-        return careTrackings.stream()
-                .map(this::toResponse)
-                .toList();
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ISO_LOCAL_DATE;
+
+    public GetCareTrackingsResponse toResponse(CareTracking careTracking, List<Appointment> appointments) {
+        return new GetCareTrackingsResponse(
+                careTracking.getId(),
+                careTracking.getCaseName(),
+                careTracking.getCreatedAt().format(DATE_FORMATTER),
+                new CareTrackingPatientInfo(
+                        careTracking.getPatient().getId(),
+                        careTracking.getPatient().getFirstName(),
+                        careTracking.getPatient().getLastName(),
+                        careTracking.getPatient().getEmail().getValue(),
+                        careTracking.getPatient().getPhoneNumber().getValue()
+                ),
+                appointments.stream()
+                        .map(appointment -> new AppointmentInfo(
+                                appointment.getId(),
+                                new MedicalConcernInfoForCareTracking(
+                                        appointment.getMedicalConcern().getId(),
+                                        appointment.getMedicalConcern().getName()
+                                ),
+                                appointment.getDate().format(DATE_FORMATTER),
+                                appointment.getHoursRange().getStart().toString(),
+                                appointment.getStatus().getValue(),
+                                appointment.getDoctorNotes()
+                        ))
+                        .toList()
+        );
     }
 
     public GetCareTrackingsResponse toResponse(CareTracking careTracking) {
@@ -29,7 +55,8 @@ public class CareTrackingResponseMapper {
                         careTracking.getPatient().getLastName(),
                         careTracking.getPatient().getEmail().getValue(),
                         careTracking.getPatient().getPhoneNumber().getValue()
-                )
+                ),
+                List.of()
         );
     }
 }

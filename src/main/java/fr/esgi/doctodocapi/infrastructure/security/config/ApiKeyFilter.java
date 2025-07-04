@@ -29,4 +29,11 @@ public class ApiKeyFilter extends OncePerRequestFilter {
 
         filterChain.doFilter(request, response);
     }
+
+    @Override
+    protected boolean shouldNotFilter(HttpServletRequest request) {
+        String path = request.getServletPath();
+        // Ignorer les appels SockJS pour laisser passer le handshake
+        return path.startsWith("/ws");
+    }
 }
