@@ -1,9 +1,9 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking;
 
 import fr.esgi.doctodocapi.model.appointment.Appointment;
-import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
-import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.*;
 import fr.esgi.doctodocapi.use_cases.patient.utils.GetDoctorProfileUrl;
 import org.springframework.stereotype.Service;
@@ -19,10 +19,10 @@ public class GetPatientCareTrackingMapper {
         this.getDoctorProfileUrl = getDoctorProfileUrl;
     }
 
-    public GetPatientCareTrackingDetailedResponse toDto(CareTracking careTracking, List<Doctor> doctors, List<Appointment> appointments, List<Document> documents) {
+    public GetPatientCareTrackingDetailedResponse toDto(CareTracking careTracking, List<Doctor> doctors, List<Appointment> appointments, List<CareTrackingDocument> documents) {
         List<GetDoctorOfCareTrackingResponse> doctorsResponse = getGetDoctorOfCareTrackingResponses(doctors);
         List<GetAppointmentOfCareTrackingResponse> appointmentsResponse = getAppointmentsResponse(appointments);
-        List<GetDocumentsOfCareTrackingResponse> documentsResponses = getDocumentsResponses(documents);
+        List<GetDocumentsOfCareTrackingResponse> documentsResponses = getDocumentsResponsesBis(documents);
 
 
         return new GetPatientCareTrackingDetailedResponse(
@@ -52,9 +52,15 @@ public class GetPatientCareTrackingMapper {
 
     }
 
-    private List<GetDocumentsOfCareTrackingResponse> getDocumentsResponses(List<Document> documents) {
+    private List<GetDocumentsOfCareTrackingResponse> getDocumentsResponsesBis(List<CareTrackingDocument> documents) {
         return documents.stream().map(document ->
-                new GetDocumentsOfCareTrackingResponse(document.getId(), document.getName(), document.getType().getValue(), document.getPath())
+                new GetDocumentsOfCareTrackingResponse(
+                        document.getDocument().getId(),
+                        document.getDocument().getName(),
+                        document.getDocument().getType().getValue(),
+                        document.getDocument().getPath(),
+                        document.isShared()
+                )
         ).toList();
     }
 

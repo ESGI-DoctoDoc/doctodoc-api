@@ -2,15 +2,15 @@ package fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking;
 
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.DomainException;
-import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
-import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentDetailResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetDocumentDetailOfCareTrackingResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentUser;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IGetPatientCareTrackingDocumentDetail;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.IGetPatientFromContext;
@@ -32,21 +32,22 @@ public class GetPatientCareTrackingDocumentDetail implements IGetPatientCareTrac
         this.getPatientFromContext = getPatientFromContext;
     }
 
-    public GetDocumentDetailResponse process(UUID careTrackingId, UUID id) {
+    public GetDocumentDetailOfCareTrackingResponse process(UUID careTrackingId, UUID id) {
         try {
             Patient patient = this.getPatientFromContext.get();
 
             CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(careTrackingId, patient);
-            Document document = careTracking.getById(id);
+            CareTrackingDocument document = careTracking.getById(id);
 
-            GetDocumentUser user = getGetUploadedByUser(document.getUploadedBy());
+            GetDocumentUser user = getGetUploadedByUser(document.getDocument().getUploadedBy());
 
-            return new GetDocumentDetailResponse(
+            return new GetDocumentDetailOfCareTrackingResponse(
                     id,
-                    document.getType().getValue(),
-                    document.getName(),
-                    document.getPath(),
-                    document.getUploadedAt(),
+                    document.getDocument().getType().getValue(),
+                    document.getDocument().getName(),
+                    document.getDocument().getPath(),
+                    document.isShared(),
+                    document.getDocument().getUploadedAt(),
                     user
             );
 

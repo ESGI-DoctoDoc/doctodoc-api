@@ -1,15 +1,15 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document;
 
 import fr.esgi.doctodocapi.model.DomainException;
-import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.care_tracking.ClosedCareTrackingException;
+import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
-import fr.esgi.doctodocapi.model.document.DocumentType;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_care_tracking.SaveDocumentRequest;
@@ -22,9 +22,6 @@ import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
 import java.util.UUID;
-
-import static fr.esgi.doctodocapi.use_cases.CareTrackingFolders.FOLDER_CARE_TRACKING_FILE;
-import static fr.esgi.doctodocapi.use_cases.CareTrackingFolders.FOLDER_ROOT;
 
 public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
 
@@ -54,26 +51,22 @@ public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
             CareTracking careTracking = retrieveAndValidateCareTracking(careTrackingId, doctor);
             UUID patientId = careTracking.getPatient().getId();
 
-            String prefixPath = FOLDER_ROOT + patientId + FOLDER_CARE_TRACKING_FILE;
-
-            Document document = Document.init(
+            CareTrackingDocument careTrackingDocument = CareTrackingDocument.create(
                     request.filename(),
-                    prefixPath,
-                    DocumentType.fromValue(request.type()),
-                    user.getId()
+                    request.type(),
+                    patientId,
+                    user.getId(),
+                    careTracking.getId()
             );
 
-            document.setPath(prefixPath + document.getId());
-
-            careTracking.addDocument(document);
-
+            careTracking.addDocument(careTrackingDocument);
             this.careTrackingRepository.save(careTracking);
 
             return new GetDocumentForCareTrackingResponse(
-                    document.getId(),
-                    document.getName(),
-                    document.getType().getValue(),
-                    document.getPath()
+                    careTrackingDocument.getDocument().getId(),
+                    careTrackingDocument.getDocument().getName(),
+                    careTrackingDocument.getDocument().getType().getValue(),
+                    careTrackingDocument.getDocument().getPath()
             );
 
         } catch (DomainException e) {

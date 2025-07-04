@@ -4,7 +4,7 @@ import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
-import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentResponse;
@@ -31,10 +31,10 @@ public class GetPatientDocumentCareTrackingContent implements IGetPatientDocumen
             Patient patient = this.getPatientFromContext.get();
             CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(careTrackingId, patient);
 
-            Document document = careTracking.getById(id);
-            String url = this.fileStorageService.getFile(document.getPath());
+            CareTrackingDocument document = careTracking.getById(id);
+            String url = this.fileStorageService.getFile(document.getDocument().getPath());
 
-            return new GetDocumentResponse(id, document.getName(), document.getType().getValue(), url);
+            return new GetDocumentResponse(id, document.getDocument().getName(), document.getDocument().getType().getValue(), url);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());

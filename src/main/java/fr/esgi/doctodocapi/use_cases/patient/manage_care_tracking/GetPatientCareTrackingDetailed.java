@@ -4,11 +4,11 @@ import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
-import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
-import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetPatientCareTrackingDetailedResponse;
@@ -16,9 +16,10 @@ import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IGetP
 import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
-import java.util.Comparator;
 import java.util.List;
 import java.util.UUID;
+
+import static java.util.Comparator.comparing;
 
 public class GetPatientCareTrackingDetailed implements IGetPatientCareTrackingDetailed {
     private final CareTrackingRepository careTrackingRepository;
@@ -42,7 +43,11 @@ public class GetPatientCareTrackingDetailed implements IGetPatientCareTrackingDe
             CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(id, patient);
             List<Doctor> doctors = getDoctors(careTracking);
             List<Appointment> appointments = careTracking.getAppointmentsId().stream().map(appointmentRepository::getById).toList();
-            List<Document> documents = careTracking.getDocuments().stream().sorted(Comparator.comparing(Document::getUploadedAt).reversed()).toList();
+            List<CareTrackingDocument> documents = careTracking
+                    .getDocuments()
+                    .stream()
+                    .sorted(comparing((CareTrackingDocument doc) -> doc.getDocument().getUploadedAt()).reversed())
+                    .toList();
 
             return this.getPatientCareTrackingMapper.toDto(careTracking, doctors, appointments, documents);
 

@@ -3,7 +3,7 @@ package fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
-import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
 import fr.esgi.doctodocapi.model.document.DocumentType;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
@@ -30,16 +30,18 @@ public class UpdatePatientCareTrackingDocument implements IUpdatePatientCareTrac
             Patient patient = this.getPatientFromContext.get();
             CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(careTrackingId, patient);
 
-            Document document = careTracking.getById(id);
+            CareTrackingDocument document = careTracking.getById(id);
 
-            Document newDocument = Document.copyOf(document);
-            newDocument.setId(document.getId());
-            newDocument.update(saveDocumentRequest.filename(), DocumentType.fromValue(saveDocumentRequest.type()), patient.getUserId());
+            CareTrackingDocument newDocument = CareTrackingDocument.copyOf(document);
+
+
+            newDocument.getDocument().setId(document.getDocument().getId());
+            newDocument.getDocument().update(saveDocumentRequest.filename(), DocumentType.fromValue(saveDocumentRequest.type()), patient.getUserId());
 
             careTracking.updateDocument(document, newDocument);
 
             this.careTrackingRepository.save(careTracking);
-            return new GetDocumentResponse(newDocument.getId(), newDocument.getName(), document.getType().getValue(), newDocument.getPath());
+            return new GetDocumentResponse(newDocument.getDocument().getId(), newDocument.getDocument().getName(), document.getDocument().getType().getValue(), newDocument.getDocument().getPath());
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());
         }

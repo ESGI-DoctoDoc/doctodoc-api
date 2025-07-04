@@ -6,6 +6,7 @@ public record GetDocumentsOfCareTrackingResponse(
         UUID id,
         String name,
         String type,
-        String url
+        String url,
+        boolean isShared
 ) {
 }

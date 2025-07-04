@@ -1,12 +1,12 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document;
 
 import fr.esgi.doctodocapi.model.DomainException;
-import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.care_tracking.ClosedCareTrackingException;
-import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.document.GetDocumentForCareTrackingResponse;
@@ -42,14 +42,16 @@ public class GetCareTrackingDocumentContent implements IGetCareTrackingDocumentC
 
             CareTracking careTracking = retrieveAndValidateCareTracking(careTrackingId, doctor);
 
-            Document document = careTracking.getById(documentId);
+            CareTrackingDocument document = careTracking.getById(documentId);
+            // todo : verify if it's shared
+            // todo document.isShared()
 
-            String url = this.fileStorageService.getFile(document.getPath());
+            String url = this.fileStorageService.getFile(document.getDocument().getPath());
 
             return new GetDocumentForCareTrackingResponse(
-                    document.getId(),
-                    document.getName(),
-                    document.getType().getValue(),
+                    document.getDocument().getId(),
+                    document.getDocument().getName(),
+                    document.getDocument().getType().getValue(),
                     url
             );
         } catch (DomainException e) {

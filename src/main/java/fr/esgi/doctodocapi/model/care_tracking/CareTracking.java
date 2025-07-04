@@ -1,10 +1,10 @@
 package fr.esgi.doctodocapi.model.care_tracking;
 
 import fr.esgi.doctodocapi.model.care_tracking.care_tracking_trace.CareTrackingTrace;
-import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
 import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
-import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.medical_record.DocumentWithSameNameAlreadyExist;
+import fr.esgi.doctodocapi.model.patient.Patient;
 
 import java.time.LocalDateTime;
 import java.util.*;
@@ -15,7 +15,7 @@ public class CareTracking {
     private String description;
     private UUID creatorId;
     private Patient patient;
-    private List<Document> documents;
+    private List<CareTrackingDocument> documents;
     private List<UUID> doctors;
     private List<UUID> appointmentsId;
     private List<CareTrackingTrace> careTrackingTraces;
@@ -23,7 +23,7 @@ public class CareTracking {
     private LocalDateTime closedAt;
 
     public CareTracking(UUID id, String caseName, String description, UUID creatorId, Patient patient,
-                        List<Document> documents, List<UUID> doctors, List<UUID> appointmentsId,
+                        List<CareTrackingDocument> documents, List<UUID> doctors, List<UUID> appointmentsId,
                         List<CareTrackingTrace> careTrackingTraces, LocalDateTime createdAt, LocalDateTime closedAt) {
         this.id = id;
         this.caseName = caseName;
@@ -54,37 +54,35 @@ public class CareTracking {
         );
     }
 
-    public Document getById(UUID id) {
+    public CareTrackingDocument getById(UUID id) {
         return this.documents
                 .stream()
-                .filter(document -> document.getId().equals(id))
+                .filter(document -> document.getDocument().getId().equals(id))
                 .findFirst()
                 .orElseThrow(DocumentNotFoundInCareTrackingException::new);
     }
 
-    public void addDocument(Document document) {
-        verifyIfNotClosed();
-        if (documents.stream().anyMatch(d -> d.getName().equalsIgnoreCase(document.getName()))) {
+    public void addDocument(CareTrackingDocument careTrackingDocument) {
+        if (documents.stream().anyMatch(d -> d.getDocument().getName().equalsIgnoreCase(careTrackingDocument.getDocument().getName()))) {
             throw new DocumentAlreadyExistInCareTrackingException();
         }
-        documents.add(document);
+        documents.add(careTrackingDocument);
     }
 
-    public void updateDocument(Document oldDocument, Document newDocument) {
-        verifyIfNotClosed();
-        verifyIfFilenameAlreadyExist(newDocument.getName(), oldDocument);
+    public void updateDocument(CareTrackingDocument oldDocument, CareTrackingDocument newDocument) {
+        verifyIfFilenameAlreadyExist(newDocument.getDocument().getName(), oldDocument);
         if (!this.documents.contains(oldDocument)) throw new DocumentNotFoundException();
         this.documents.remove(oldDocument);
         this.documents.add(newDocument);
     }
 
-    public void addDoctor(UUID doctorId) {
-        verifyIfNotClosed();
-        if (doctors.contains(doctorId)) {
-            throw new DoctorAlreadyExistInCareTrackingException();
-        }
-        doctors.add(doctorId);
-    }
+//    public void addDoctor(UUID doctorId) {
+//        verifyIfNotClosed();
+//        if (doctors.contains(doctorId)) {
+//            throw new DoctorAlreadyExistInCareTrackingException();
+//        }
+//        doctors.add(doctorId);
+//    }
 
     public void addAppointment(UUID appointmentId) {
         verifyIfNotClosed();
@@ -107,10 +105,10 @@ public class CareTracking {
         }
     }
 
-    private void verifyIfFilenameAlreadyExist(String filename, Document excludedDocument) {
+    private void verifyIfFilenameAlreadyExist(String filename, CareTrackingDocument excludedDocument) {
         boolean exists = this.documents.stream()
                 .filter(doc -> !doc.equals(excludedDocument))
-                .anyMatch(doc -> Objects.equals(doc.getName(), filename));
+                .anyMatch(doc -> Objects.equals(doc.getDocument().getName(), filename));
 
         if (exists) {
             throw new DocumentWithSameNameAlreadyExist();
@@ -157,12 +155,12 @@ public class CareTracking {
         this.patient = patient;
     }
 
-    public List<Document> getDocuments() {
+    public List<CareTrackingDocument> getDocuments() {
         // todo doctor needs permission too
         return Collections.unmodifiableList(documents);
     }
 
-    public void setDocuments(List<Document> documents) {
+    public void setDocuments(List<CareTrackingDocument> documents) {
         this.documents = documents;
     }
 

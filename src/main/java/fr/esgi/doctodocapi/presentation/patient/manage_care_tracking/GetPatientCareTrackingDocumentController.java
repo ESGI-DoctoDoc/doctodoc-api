@@ -1,6 +1,6 @@
 package fr.esgi.doctodocapi.presentation.patient.manage_care_tracking;
 
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentDetailResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.care_tracking_responses.GetDocumentDetailOfCareTrackingResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IGetAllCareTrackingDocuments;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IGetPatientCareTrackingDocumentDetail;
@@ -28,7 +28,7 @@ public class GetPatientCareTrackingDocumentController {
         this.getPatientCareTrackingDocumentDetail = getPatientCareTrackingDocumentDetail;
     }
 
-    @GetMapping("{id}/documents/")
+    @GetMapping("{id}/documents")
     public List<GetDocumentResponse> getAll(@PathVariable UUID id) {
         return this.getAllDocuments.process(id);
     }
@@ -39,7 +39,7 @@ public class GetPatientCareTrackingDocumentController {
     }
 
     @GetMapping("{careTrackingId}/documents/detail/{id}")
-    public GetDocumentDetailResponse getDetail(@PathVariable UUID careTrackingId, @PathVariable UUID id) {
+    public GetDocumentDetailOfCareTrackingResponse getDetail(@PathVariable UUID careTrackingId, @PathVariable UUID id) {
         return this.getPatientCareTrackingDocumentDetail.process(careTrackingId, id);
     }
 }

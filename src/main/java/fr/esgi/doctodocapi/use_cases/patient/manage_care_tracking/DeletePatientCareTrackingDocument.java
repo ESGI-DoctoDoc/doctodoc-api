@@ -4,7 +4,7 @@ import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
-import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
@@ -33,11 +33,11 @@ public class DeletePatientCareTrackingDocument implements IDeletePatientCareTrac
             Patient patient = this.getPatientFromContext.get();
 
             CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(careTrackingId, patient);
-            Document document = careTracking.getById(id);
-            document.delete(patient.getUserId());
+            CareTrackingDocument document = careTracking.getById(id);
+            document.getDocument().delete(patient.getUserId());
 
-            this.documentRepository.delete(document);
-            this.fileStorageService.delete(document.getPath());
+            this.documentRepository.delete(document.getDocument());
+            this.fileStorageService.delete(document.getDocument().getPath());
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());

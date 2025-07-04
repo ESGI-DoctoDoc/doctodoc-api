@@ -2,11 +2,11 @@ package fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking;
 
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.DomainException;
-import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
-import fr.esgi.doctodocapi.model.document.Document;
+import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.trace.DocumentTrace;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
@@ -37,9 +37,9 @@ public class GetPatientCareTrackingDocumentTraces implements IGetPatientCareTrac
         try {
             Patient patient = this.getPatientFromContext.get();
             CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(careTrackingId, patient);
-            Document document = careTracking.getById(documentId);
+            CareTrackingDocument document = careTracking.getById(documentId);
 
-            List<DocumentTrace> traces = document.getTraces();
+            List<DocumentTrace> traces = document.getDocument().getTraces();
 
             return traces.stream().map(trace -> {
                 GetDocumentUser user = this.getGetUploadedByUser(trace.userId());
