@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.configuration.doctor;
 
+import fr.esgi.doctodocapi.infrastructure.mappers.GetDoctorProfileResponseMapper;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
@@ -7,11 +8,13 @@ import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.AddressAutocomplete;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.GetDoctorInformation;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.GetDoctorProfileInformation;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.OnboardingDoctorProcess;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.document.GetDoctorOnboardingDocumentContent;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.document.UploadDoctorOnboardingDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.doctor_information.IGetDoctorInformation;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IAutocompleteAddress;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IGetDoctorProfileInformation;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IOnboardingDoctor;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.document.IGetDoctorOnboardingDocumentContent;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.document.IUploadDoctorOnboardingDocument;
@@ -48,5 +51,10 @@ public class ManageDoctorAccountConfiguration {
     @Bean
     public IAutocompleteAddress autocompleteAddress(AddressAutoCompleteInput input) {
         return new AddressAutocomplete(input);
+    }
+
+    @Bean
+    public IGetDoctorProfileInformation getDoctorProfileInformation(UserRepository userRepository, DoctorRepository doctorRepository, GetCurrentUserContext getCurrentUserContext, DoctorSubscriptionRepository doctorSubscriptionRepository, GetDoctorProfileResponseMapper doctorProfileResponseMapper) {
+        return new GetDoctorProfileInformation(userRepository, doctorRepository, getCurrentUserContext, doctorSubscriptionRepository, doctorProfileResponseMapper);
     }
 }
