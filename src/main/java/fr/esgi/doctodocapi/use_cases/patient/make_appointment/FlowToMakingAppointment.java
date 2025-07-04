@@ -4,9 +4,9 @@ import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.AppointmentsAvailabilityService;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
-import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;

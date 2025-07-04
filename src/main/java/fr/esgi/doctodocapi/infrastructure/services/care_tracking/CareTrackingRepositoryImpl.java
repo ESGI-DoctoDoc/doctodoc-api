@@ -13,9 +13,6 @@ import fr.esgi.doctodocapi.model.care_tracking.CareTrackingNotFoundException;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingNotFoundException;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import jakarta.persistence.EntityManager;
@@ -134,7 +131,7 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
     // patient
 
     @Override
-    public List<CareTracking> findAllOpenedByPatientId(UUID patientId, int page, int size) {
+    public List<CareTracking> findAllByPatientId(UUID patientId, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
 
         return this.careTrackingJpaRepository.findAllByPatient_IdOrderByCreatedAtDesc(patientId, pageable)

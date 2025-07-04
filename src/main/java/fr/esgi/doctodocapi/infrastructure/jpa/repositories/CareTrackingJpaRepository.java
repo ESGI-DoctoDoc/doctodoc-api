@@ -13,8 +13,6 @@ import java.util.UUID;
 
 public interface CareTrackingJpaRepository extends JpaRepository<CareTrackingEntity, UUID> {
     // doctor
-    Page<CareTrackingEntity> findAllByCreator_Id(UUID doctorId, Pageable pageable);
-
     Optional<CareTrackingEntity> findByIdAndPatient_Id(UUID careTrackingId, UUID patientId);
 
     @Query(value = """
@@ -38,8 +36,6 @@ public interface CareTrackingJpaRepository extends JpaRepository<CareTrackingEnt
         """,
             nativeQuery = true)
     Page<CareTrackingEntity> findAllByDoctorAccess(@Param("doctorId") UUID doctorId, Pageable pageable);
-
-    Optional<CareTrackingEntity> findByIdAndPatient_IdAndCreator_Id(UUID careTrackingId, UUID patientId, UUID doctorId);
 
     // patient
     Page<CareTrackingEntity> findAllByPatient_IdOrderByCreatedAtDesc(UUID patientId, Pageable pageable);

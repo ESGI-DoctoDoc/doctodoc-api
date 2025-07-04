@@ -33,7 +33,7 @@ public class GetPatientCareTrackings implements IGetPatientCareTrackings {
         try {
             Patient patient = this.getPatientFromContext.get();
 
-            List<CareTracking> caresTracking = this.careTrackingRepository.findAllOpenedByPatientId(patient.getId(), page, size);
+            List<CareTracking> caresTracking = this.careTrackingRepository.findAllByPatientId(patient.getId(), page, size);
 
             return caresTracking.stream().map(careTracking -> {
                 List<Appointment> appointments = careTracking.getAppointmentsId()
