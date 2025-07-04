@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.model.doctor.care_tracking.care_tracking_trace;
+package fr.esgi.doctodocapi.model.care_tracking.care_tracking_trace;
 
 import java.time.LocalDateTime;
 import java.util.Objects;

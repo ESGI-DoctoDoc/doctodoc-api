@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.model.doctor.care_tracking;
+package fr.esgi.doctodocapi.model.care_tracking;
 
 import fr.esgi.doctodocapi.model.DomainException;
 

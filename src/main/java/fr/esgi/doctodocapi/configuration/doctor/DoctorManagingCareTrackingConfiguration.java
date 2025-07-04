@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.configuration.doctor;
 
 import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingResponseMapper;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;

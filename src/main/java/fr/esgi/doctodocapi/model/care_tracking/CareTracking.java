@@ -1,10 +1,10 @@
-package fr.esgi.doctodocapi.model.doctor.care_tracking;
+package fr.esgi.doctodocapi.model.care_tracking;
 
-import fr.esgi.doctodocapi.model.doctor.care_tracking.care_tracking_trace.CareTrackingTrace;
+import fr.esgi.doctodocapi.model.care_tracking.care_tracking_trace.CareTrackingTrace;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
 import fr.esgi.doctodocapi.model.patient.Patient;
-import fr.esgi.doctodocapi.model.patient.medical_record.DocumentWithSameNameAlreadyExist;
+import fr.esgi.doctodocapi.model.medical_record.DocumentWithSameNameAlreadyExist;
 
 import java.time.LocalDateTime;
 import java.util.*;

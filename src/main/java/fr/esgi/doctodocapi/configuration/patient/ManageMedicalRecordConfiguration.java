@@ -4,7 +4,7 @@ import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecordRepository;
 import fr.esgi.doctodocapi.use_cases.patient.manage_medical_record.*;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.*;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;

@@ -2,8 +2,8 @@ package fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking;
 
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.DomainException;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;

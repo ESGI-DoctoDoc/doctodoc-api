@@ -13,9 +13,9 @@ import fr.esgi.doctodocapi.infrastructure.mappers.document_trace_mapper.Document
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.trace.DocumentTrace;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordNotFoundException;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecord;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecordNotFoundException;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecordRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;

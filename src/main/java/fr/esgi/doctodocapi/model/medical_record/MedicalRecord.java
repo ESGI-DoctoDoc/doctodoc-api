@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.model.patient.medical_record;
+package fr.esgi.doctodocapi.model.medical_record;
 
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentNotFoundException;
