@@ -7,11 +7,11 @@ import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecord;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecordRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentDetailResponse;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetMedicalRecordDocumentUser;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentUser;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetMedicalRecordDocumentDetail;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.IGetPatientFromContext;
 import org.springframework.http.HttpStatus;
@@ -39,7 +39,7 @@ public class GetMedicalRecordDocumentDetail implements IGetMedicalRecordDocument
             MedicalRecord medicalRecord = this.medicalRecordRepository.getByPatientId(patient.getId());
             Document document = medicalRecord.getById(id);
 
-            GetMedicalRecordDocumentUser user = getGetUploadedByUser(document.getUploadedBy());
+            GetDocumentUser user = getGetUploadedByUser(document.getUploadedBy());
 
             return new GetDocumentDetailResponse(
                     id,
@@ -55,18 +55,18 @@ public class GetMedicalRecordDocumentDetail implements IGetMedicalRecordDocument
         }
     }
 
-    private GetMedicalRecordDocumentUser getGetUploadedByUser(UUID id) {
-        GetMedicalRecordDocumentUser user = null;
+    private GetDocumentUser getGetUploadedByUser(UUID id) {
+        GetDocumentUser user = null;
 
         Optional<Patient> patientFound = this.patientRepository.getByUserId(id);
         if (patientFound.isPresent()) {
             Patient patient = patientFound.get();
-            user = new GetMedicalRecordDocumentUser(patient.getFirstName(), patient.getLastName());
+            user = new GetDocumentUser(patient.getFirstName(), patient.getLastName());
         } else {
             Optional<Doctor> doctorFound = this.doctorRepository.getByUserId(id);
             if (doctorFound.isPresent()) {
                 Doctor doctor = doctorFound.get();
-                user = new GetMedicalRecordDocumentUser(doctor.getPersonalInformations().getFirstName(), doctor.getPersonalInformations().getLastName());
+                user = new GetDocumentUser(doctor.getPersonalInformations().getFirstName(), doctor.getPersonalInformations().getLastName());
             }
         }
         return user;

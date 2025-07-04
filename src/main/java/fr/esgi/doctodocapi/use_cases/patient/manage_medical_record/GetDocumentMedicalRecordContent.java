@@ -4,8 +4,8 @@ import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.patient.Patient;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecord;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecordRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.document.GetDocumentResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_medical_record.IGetDocumentMedicalRecordContent;

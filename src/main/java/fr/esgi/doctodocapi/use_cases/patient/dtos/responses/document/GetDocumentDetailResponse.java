@@ -9,6 +9,6 @@ public record GetDocumentDetailResponse(
         String name,
         String url,
         LocalDateTime uploadedAt,
-        GetMedicalRecordDocumentUser uploadedByUser
+        GetDocumentUser uploadedByUser
 ) {
 }

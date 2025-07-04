@@ -13,4 +13,9 @@ public interface DocumentJpaRepository extends JpaRepository<DocumentEntity, UUI
 
     Page<DocumentEntity> getAllByMedicalRecord_PatientIdAndTypeContainsIgnoreCaseOrderByUploadedAtDesc(UUID medicalRecordPatientId, String type, Pageable pageable);
     List<DocumentEntity> findAllByUploadedBy(UUID uploadedBy);
+    Page<DocumentEntity> getAllByMedicalRecord_PatientIdAndTypeOrderByUploadedAtDesc(UUID medicalRecordPatientId, String type, Pageable pageable);
+
+    Page<DocumentEntity> getAllByCareTracking_IdAndTypeOrderByUploadedAtDesc(UUID careTrackingId, String type, Pageable pageable);
+
+    Page<DocumentEntity> getAllByCareTracking_IdOrderByUploadedAtDesc(UUID id, Pageable pageable);
 }

@@ -8,8 +8,8 @@ import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthReques
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.RequestResetPasswordResponse;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.UpdatePasswordResponse;
-import fr.esgi.doctodocapi.use_cases.user.manage_account.ResetPassword;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.IAuthenticatePatient;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IResetPassword;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -22,9 +22,9 @@ import org.springframework.web.bind.annotation.*;
 public class AuthPatientController {
 
     private final IAuthenticatePatient authenticatePatient;
-    private final ResetPassword resetPassword;
+    private final IResetPassword resetPassword;
 
-    public AuthPatientController(IAuthenticatePatient authenticatePatient, ResetPassword resetPassword) {
+    public AuthPatientController(IAuthenticatePatient authenticatePatient, IResetPassword resetPassword) {
         this.authenticatePatient = authenticatePatient;
         this.resetPassword = resetPassword;
     }

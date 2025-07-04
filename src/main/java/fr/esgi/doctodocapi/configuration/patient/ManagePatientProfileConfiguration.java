@@ -3,7 +3,7 @@ package fr.esgi.doctodocapi.configuration.patient;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor_recruitment.DoctorRecruitmentRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecordRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.patient.manage_account.GetInformations;
 import fr.esgi.doctodocapi.use_cases.patient.manage_account.ManageProfile;
