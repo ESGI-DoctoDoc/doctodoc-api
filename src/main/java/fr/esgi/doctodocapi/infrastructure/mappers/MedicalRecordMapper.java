@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalRecordEntity;
 import fr.esgi.doctodocapi.model.document.Document;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecord;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

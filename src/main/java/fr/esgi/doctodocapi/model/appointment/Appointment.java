@@ -68,7 +68,7 @@ public class Appointment {
      * @return a new Appointment instance locked for booking
      * @throws CannotBookAppointmentException if the new appointment overlaps with an existing one
      */
-    public static Appointment init(Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, List<PreAppointmentAnswers> answers) {
+    public static Appointment init(Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, List<PreAppointmentAnswers> answers, UUID careTrackingId) {
         HoursRange appointmentHoursRange = HoursRange.of(startHour, startHour.plusMinutes(medicalConcern.getDurationInMinutes().getValue()));
         verifyIfConflicts(slot, appointmentHoursRange);
 
@@ -85,7 +85,7 @@ public class Appointment {
                 answers,
                 LocalDateTime.now(),
                 null,
-                null
+                careTrackingId
         );
     }
 
