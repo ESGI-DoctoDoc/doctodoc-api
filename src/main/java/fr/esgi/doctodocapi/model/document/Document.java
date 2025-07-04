@@ -65,6 +65,10 @@ public class Document {
         this.traces.add(new DocumentUpdateTrace(userId));
     }
 
+    public void addTrace(DocumentTrace trace) {
+        this.traces.add(trace);
+    }
+
     public List<DocumentTrace> getTraces() {
         return List.copyOf(traces);
     }

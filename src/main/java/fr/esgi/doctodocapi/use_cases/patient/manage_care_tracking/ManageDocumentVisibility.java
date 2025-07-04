@@ -26,7 +26,7 @@ public class ManageDocumentVisibility implements IManageDocumentVisibility {
             Patient patient = this.getPatientFromContext.get();
             CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(careTrackingId, patient);
             CareTrackingDocument document = careTracking.getById(documentId);
-            document.shared();
+            document.shared(patient.getId());
             this.careTrackingRepository.save(careTracking);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());

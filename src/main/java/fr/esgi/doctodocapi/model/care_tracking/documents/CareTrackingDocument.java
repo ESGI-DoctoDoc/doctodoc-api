@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.model.care_tracking.documents;
 
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentType;
+import fr.esgi.doctodocapi.model.document.trace.DocumentTrace;
 import fr.esgi.doctodocapi.use_cases.CareTrackingFolders;
 
 import java.util.Objects;
@@ -34,8 +35,15 @@ public class CareTrackingDocument {
         return new CareTrackingDocument(Document.copyOf(document.getDocument()), document.isShared);
     }
 
-    public void shared() {
+    public void shared(UUID patientId) {
         this.isShared = !this.isShared;
+        DocumentTrace trace;
+        if (this.isShared) {
+            trace = new DocumentShareTrace(patientId);
+        } else {
+            trace = new DocumentUnShareTrace(patientId);
+        }
+        this.getDocument().addTrace(trace);
     }
 
     public Document getDocument() {
