@@ -6,6 +6,5 @@ import java.util.UUID;
 
 public interface MessageRepository {
     void save(Message message);
-    List<Message> findByCareTrackingIdAndDoctorId(UUID careTrackingId, UUID doctorId);
-    List<Message> findByCareTrackingId(UUID careTrackingId); // New method
+    List<Message> findByCareTrackingId(UUID careTrackingId);
 }

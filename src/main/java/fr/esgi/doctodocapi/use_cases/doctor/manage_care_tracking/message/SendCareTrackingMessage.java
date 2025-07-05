@@ -2,10 +2,10 @@ package fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.message;
 
 import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingMessageResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.message.Message;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.message.MessageRepository;
 import fr.esgi.doctodocapi.model.user.User;
@@ -47,7 +47,7 @@ public class SendCareTrackingMessage implements ISendCareTrackingMessage {
             User user = this.userRepository.findByEmail(username);
             Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctorId(careTrackingId, doctor);
+            CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctor(careTrackingId, doctor);
 
             Message message = Message.create(doctor.getId(), careTracking.getId(), request.content());
             this.messageRepository.save(message);

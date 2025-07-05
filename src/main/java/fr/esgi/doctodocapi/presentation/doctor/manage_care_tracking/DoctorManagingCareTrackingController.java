@@ -33,7 +33,7 @@ public class DoctorManagingCareTrackingController {
 
     @GetMapping("care-tracking")
     @ResponseStatus(HttpStatus.OK)
-    public List<GetCareTrackingsResponse> getCareTrackings(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "10") int size) {
+    public List<GetCareTrackingsResponse> getCareTrackings(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "20") int size) {
         return this.getCareTracking.execute(page, size);
     }
 

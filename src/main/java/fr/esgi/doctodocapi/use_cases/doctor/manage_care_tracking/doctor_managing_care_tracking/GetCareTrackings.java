@@ -4,8 +4,8 @@ import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingResponseMapper;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.user.User;
@@ -48,10 +48,7 @@ public class GetCareTrackings implements IGetCareTrackings {
                     .map(careTracking -> {
                         List<Appointment> appointments = getAppointments(careTracking);
 
-                        List<Doctor> doctors = careTracking.getDoctors().stream()
-                                .map(doctorRepository::getById)
-                                .filter(Objects::nonNull)
-                                .toList();
+                        List<Doctor> doctors = getDoctorList(careTracking);
 
                         return careTrackingResponseMapper.toResponse(careTracking, appointments, doctors, creator);
                     })
@@ -69,20 +66,24 @@ public class GetCareTrackings implements IGetCareTrackings {
             User user = this.userRepository.findByEmail(username);
             Doctor creator = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctorId(careTrackingId, creator);
+            CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctor(careTrackingId, creator);
 
             List<Appointment> appointments = getAppointments(careTracking);
 
-            List<Doctor> doctors = careTracking.getDoctors().stream()
-                    .map(doctorRepository::getById)
-                    .filter(Objects::nonNull)
-                    .toList();
+            List<Doctor> doctors = getDoctorList(careTracking);
 
             return this.careTrackingResponseMapper.toResponse(careTracking, appointments, doctors, creator);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
+    }
+
+    private List<Doctor> getDoctorList(CareTracking careTracking) {
+        return careTracking.getDoctors().stream()
+                .map(doctorRepository::getById)
+                .filter(Objects::nonNull)
+                .toList();
     }
 
     private List<Appointment> getAppointments(CareTracking careTracking) {
