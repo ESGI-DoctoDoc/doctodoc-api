@@ -1,15 +1,13 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_account;
 
+import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.patient.Patient;
-import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
-import fr.esgi.doctodocapi.model.patient.PatientRepository;
-import fr.esgi.doctodocapi.model.user.User;
-import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.SaveTokenFcmRequest;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetProfileResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_account.IGetInformations;
-import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.TokenFcmRepository;
 import org.springframework.http.HttpStatus;
 
 /**
@@ -20,22 +18,17 @@ import org.springframework.http.HttpStatus;
  * </p>
  */
 public class GetInformations implements IGetInformations {
-    private final PatientRepository patientRepository;
-    private final GetCurrentUserContext getCurrentUserContext;
-    private final UserRepository userRepository;
+    private final GetPatientFromContext getPatientFromContext;
+    private final TokenFcmRepository tokenFcmRepository;
     private final ProfilePresentationMapper profilePresentationMapper;
 
     /**
      * Constructs the service with required dependencies.
-     *
-     * @param patientRepository     repository for accessing patient entities
-     * @param getCurrentUserContext interface to access the currently authenticated user's context
-     * @param userRepository        repository for accessing user entities
+     * @param getPatientFromContext interface to access the currently authenticated user's context
      */
-    public GetInformations(PatientRepository patientRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, ProfilePresentationMapper profilePresentationMapper) {
-        this.patientRepository = patientRepository;
-        this.getCurrentUserContext = getCurrentUserContext;
-        this.userRepository = userRepository;
+    public GetInformations(GetPatientFromContext getPatientFromContext, TokenFcmRepository tokenFcmRepository, ProfilePresentationMapper profilePresentationMapper) {
+        this.getPatientFromContext = getPatientFromContext;
+        this.tokenFcmRepository = tokenFcmRepository;
         this.profilePresentationMapper = profilePresentationMapper;
     }
 
@@ -47,13 +40,18 @@ public class GetInformations implements IGetInformations {
      */
     public GetProfileResponse getBasicPatientInfo() {
         try {
-            String email = this.getCurrentUserContext.getUsername();
-            User user = this.userRepository.findByEmail(email);
-
-            Patient patient = this.patientRepository.getByUserId(user.getId())
-                    .orElseThrow(PatientNotFoundException::new);
-
+            Patient patient = this.getPatientFromContext.get();
             return this.profilePresentationMapper.toDto(patient);
+        } catch (DomainException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
+    }
+
+    @Override
+    public void setTokenFcm(SaveTokenFcmRequest saveTokenFcmRequest) {
+        try {
+            Patient patient = this.getPatientFromContext.get();
+            this.tokenFcmRepository.save(patient.getId(), saveTokenFcmRequest.token());
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }

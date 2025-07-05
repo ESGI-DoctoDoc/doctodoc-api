@@ -35,3 +35,5 @@ build/
 /src/main/resources/application.properties
 /bdd/
 /.mvn/
+/monitoring/
+/src/main/resources/docto-doc-3ab67a45b93b.json
