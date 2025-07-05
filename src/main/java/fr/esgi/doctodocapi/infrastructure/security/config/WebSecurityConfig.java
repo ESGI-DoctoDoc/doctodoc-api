@@ -79,7 +79,8 @@ public class WebSecurityConfig {
                                 "/patients/password-reset",
                                 "/doctors/register",
                                 "/patients/register",
-                                "/actuator/health"
+                                "/actuator/health",
+                                "/ws/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

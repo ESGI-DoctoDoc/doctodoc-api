@@ -63,9 +63,8 @@ public class GetDoctorAppointments implements IGetDoctorAppointments {
                         size
                 );
             } else {
-                appointments = this.appointmentRepository.findVisibleAppointmentsByDoctorIdAndDateAfter(
+                appointments = this.appointmentRepository.findVisibleAppointmentsByDoctorId(
                         doctor.getId(),
-                        LocalDate.now(),
                         VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN,
                         page,
                         size

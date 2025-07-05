@@ -10,6 +10,7 @@ import fr.esgi.doctodocapi.infrastructure.mappers.MedicalConcernMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.QuestionMapper;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
+import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernAlreadyExistsException;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
@@ -161,6 +162,10 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
         MedicalConcernEntity entity = this.medicalConcernJpaRepository
                 .findByIdAndDoctor_IdAndDeletedAtIsNull(concernId, doctorId)
                 .orElseThrow(MedicalConcernNotFoundException::new);
+
+        if (this.medicalConcernJpaRepository.existsByNameIgnoreCaseAndDoctor_Id(name, doctorId)) {
+            throw new MedicalConcernAlreadyExistsException();
+        }
 
         entity.setName(name);
         entity.setDurationInMinutes(durationInMinutes);
