@@ -28,6 +28,9 @@ public class DocumentEntity {
     @Column(name = "uploaded_by", nullable = false)
     private UUID uploadedBy;
 
+    @Column(name = "is_shared", nullable = false)
+    private boolean isShared;
+
     @ManyToOne
     @JoinColumn(name = "medical_record_id")
     private MedicalRecordEntity medicalRecord;
@@ -131,6 +134,14 @@ public class DocumentEntity {
 
     public void setDoctor(DoctorEntity doctor) {
         this.doctor = doctor;
+    }
+
+    public boolean isShared() {
+        return isShared;
+    }
+
+    public void setShared(boolean shared) {
+        isShared = shared;
     }
 
     @Override

@@ -13,9 +13,9 @@ import fr.esgi.doctodocapi.infrastructure.mappers.document_trace_mapper.Document
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.trace.DocumentTrace;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecord;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordNotFoundException;
-import fr.esgi.doctodocapi.model.patient.medical_record.MedicalRecordRepository;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecord;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecordNotFoundException;
+import fr.esgi.doctodocapi.model.medical_record.MedicalRecordRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -70,7 +70,7 @@ public class MedicalRecordRepositoryImpl implements MedicalRecordRepository {
     @Override
     public List<Document> getDocumentsByTypeAndPatientId(String type, UUID patientId, int page, int size) throws MedicalConcernNotFoundException {
         Pageable pageable = PageRequest.of(page, size);
-        Page<DocumentEntity> documents = this.documentJpaRepository.getAllByMedicalRecord_PatientIdAndTypeContainsIgnoreCaseOrderByUploadedAtDesc(patientId, type, pageable);
+        Page<DocumentEntity> documents = this.documentJpaRepository.getAllByMedicalRecord_PatientIdAndTypeOrderByUploadedAtDesc(patientId, type, pageable);
         return documents.getContent().stream().map(document -> {
             List<DocumentTrace> traces = document.getTraces().stream().map(this.documentTraceMapper::toDomain).toList();
             return this.documentMapper.toDomain(document, traces);

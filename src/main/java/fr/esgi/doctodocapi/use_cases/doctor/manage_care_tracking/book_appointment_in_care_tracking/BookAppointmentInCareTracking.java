@@ -4,9 +4,9 @@ import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTracking;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.CareTrackingRepository;
-import fr.esgi.doctodocapi.model.doctor.care_tracking.ClosedCareTrackingException;
+import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.care_tracking.ClosedCareTrackingException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
@@ -86,7 +86,7 @@ public class BookAppointmentInCareTracking implements IBookAppointmentInCareTrac
     }
 
     private CareTracking retrieveAndValidateCareTracking(UUID careTrackingId, Patient patient) {
-        CareTracking careTracking = this.careTrackingRepository.getByIdAndPatientId(careTrackingId, patient);
+        CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(careTrackingId, patient);
 
         if (careTracking.getClosedAt() != null) {
             throw new ClosedCareTrackingException();

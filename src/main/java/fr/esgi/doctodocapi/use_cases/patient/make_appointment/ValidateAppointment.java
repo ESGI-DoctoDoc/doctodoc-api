@@ -5,6 +5,9 @@ import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
+import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.care_tracking.ClosedCareTrackingException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
@@ -56,6 +59,8 @@ public class ValidateAppointment implements IValidateAppointment {
      */
     private final DoctorRepository doctorRepository;
 
+    private final CareTrackingRepository careTrackingRepository;
+
     private final GetPatientFromContext getPatientFromContext;
 
     /**
@@ -68,12 +73,13 @@ public class ValidateAppointment implements IValidateAppointment {
      * @param doctorRepository         Repository for accessing doctor data
      * @param getPatientFromContext    get patient from context
      */
-    public ValidateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, GetPatientFromContext getPatientFromContext) {
+    public ValidateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext) {
         this.slotRepository = slotRepository;
         this.patientRepository = patientRepository;
         this.medicalConcernRepository = medicalConcernRepository;
         this.appointmentRepository = appointmentRepository;
         this.doctorRepository = doctorRepository;
+        this.careTrackingRepository = careTrackingRepository;
         this.getPatientFromContext = getPatientFromContext;
     }
 
@@ -93,6 +99,12 @@ public class ValidateAppointment implements IValidateAppointment {
             MedicalConcern medicalConcern = this.medicalConcernRepository.getById(saveAppointmentRequest.medicalConcernId());
             Doctor doctor = this.doctorRepository.getById(saveAppointmentRequest.doctorId());
 
+            UUID careTrackingId = saveAppointmentRequest.careTrackingId();
+            if (careTrackingId != null) {
+                CareTracking careTracking = this.careTrackingRepository.getById(careTrackingId);
+                if (careTracking.getClosedAt() != null) throw new ClosedCareTrackingException();
+            }
+
             slot.validateIfSlotIsAuthorized(medicalConcern);
 
             List<PreAppointmentAnswers> answers = new ArrayList<>();
@@ -100,7 +112,7 @@ public class ValidateAppointment implements IValidateAppointment {
                 answers = extractedPreAppointmentAnswers(saveAppointmentRequest);
             }
 
-            Appointment appointment = Appointment.init(slot, patient, doctor, medicalConcern, saveAppointmentRequest.time(), answers);
+            Appointment appointment = Appointment.init(slot, patient, doctor, medicalConcern, saveAppointmentRequest.time(), answers, careTrackingId);
             UUID appointmentLockedId = this.appointmentRepository.save(appointment);
 
             return new LockedAppointmentResponse(appointmentLockedId);

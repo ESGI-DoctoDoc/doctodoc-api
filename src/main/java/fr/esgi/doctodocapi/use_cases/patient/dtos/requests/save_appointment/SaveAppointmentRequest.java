@@ -12,6 +12,7 @@ public record SaveAppointmentRequest(
         @NotNull UUID patientId,
         @NotNull UUID medicalConcernId,
         @NotNull UUID slotId,
+        UUID careTrackingId,
         @NotNull LocalDate date,
         @NotNull LocalTime time,
         List<SaveAnswersForAnAppointmentRequest> responses
