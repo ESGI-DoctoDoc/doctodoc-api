@@ -34,11 +34,7 @@ public class GetCareTrackingMessages implements IGetCareTrackingMessages {
 
     public List<CareTrackingMessageResponse> execute(UUID careTrackingId) {
         try {
-            String username = this.getCurrentUserContext.getUsername();
-            User user = this.userRepository.findByEmail(username);
-            Doctor currentDoctor = this.doctorRepository.findDoctorByUserId(user.getId());
-
-            List<Message> messages = this.messageRepository.findByCareTrackingIdAndDoctorId(careTrackingId, currentDoctor.getId());
+            List<Message> messages = this.messageRepository.findByCareTrackingId(careTrackingId);
 
             return messages.stream()
                     .map(message -> {

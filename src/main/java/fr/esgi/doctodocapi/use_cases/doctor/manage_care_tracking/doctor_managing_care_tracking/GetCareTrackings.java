@@ -40,20 +40,20 @@ public class GetCareTrackings implements IGetCareTrackings {
 
         try {
             User user = userRepository.findByEmail(username);
-            Doctor doctor = doctorRepository.findDoctorByUserId(user.getId());
+            Doctor creator = doctorRepository.findDoctorByUserId(user.getId());
 
-            List<CareTracking> careTrackings = careTrackingRepository.findAll(doctor.getId(), page, size);
+            List<CareTracking> careTrackings = careTrackingRepository.findAll(creator.getId(), page, size);
 
             return careTrackings.stream()
                     .map(careTracking -> {
-                        List<Appointment> appointments = Optional.ofNullable(careTracking.getAppointmentsId())
-                                .orElseGet(Collections::emptyList)
-                                .stream()
-                                .map(appointmentRepository::getById)
+                        List<Appointment> appointments = getAppointments(careTracking);
+
+                        List<Doctor> doctors = careTracking.getDoctors().stream()
+                                .map(doctorRepository::getById)
                                 .filter(Objects::nonNull)
                                 .toList();
 
-                        return careTrackingResponseMapper.toResponse(careTracking, appointments);
+                        return careTrackingResponseMapper.toResponse(careTracking, appointments, doctors, creator);
                     })
                     .toList();
 
@@ -67,21 +67,30 @@ public class GetCareTrackings implements IGetCareTrackings {
         try {
             String username = this.getCurrentUserContext.getUsername();
             User user = this.userRepository.findByEmail(username);
-            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
+            Doctor creator = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctorId(careTrackingId, doctor);
+            CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctorId(careTrackingId, creator);
 
-            List<Appointment> appointments = Optional.ofNullable(careTracking.getAppointmentsId())
-                    .orElseGet(List::of)
-                    .stream()
-                    .map(appointmentRepository::getById)
+            List<Appointment> appointments = getAppointments(careTracking);
+
+            List<Doctor> doctors = careTracking.getDoctors().stream()
+                    .map(doctorRepository::getById)
                     .filter(Objects::nonNull)
                     .toList();
 
-            return this.careTrackingResponseMapper.toResponse(careTracking, appointments);
+            return this.careTrackingResponseMapper.toResponse(careTracking, appointments, doctors, creator);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
+    }
+
+    private List<Appointment> getAppointments(CareTracking careTracking) {
+        return Optional.ofNullable(careTracking.getAppointmentsId())
+                .orElseGet(List::of)
+                .stream()
+                .map(appointmentRepository::getById)
+                .filter(Objects::nonNull)
+                .toList();
     }
 }

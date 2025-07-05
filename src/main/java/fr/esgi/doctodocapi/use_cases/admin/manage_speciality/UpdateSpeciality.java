@@ -21,8 +21,7 @@ public class UpdateSpeciality implements IUpdateSpeciality {
     public GetSpecialityResponse update(UUID id, UpdateSpecialityRequest request) {
         try {
             Speciality speciality = this.specialityRepository.findById(id);
-            speciality.setName(request.name());
-            Speciality updated = this.specialityRepository.save(speciality);
+            Speciality updated = this.specialityRepository.update(speciality.getId(), request.name());
             return new GetSpecialityResponse(updated.getId(), updated.getName(), updated.getCreatedAt());
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());

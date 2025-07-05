@@ -46,7 +46,7 @@ public interface AppointmentRepository {
 
     int countDistinctPatientsByDoctorId(UUID doctorId);
 
-    List<Appointment> findVisibleAppointmentsByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate, List<String> validStatuses, int page, int size);
+    List<Appointment> findVisibleAppointmentsByDoctorId(UUID doctorId, List<String> validStatuses, int page, int size);
 
     List<Appointment> findVisibleAppointmentsByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, List<String> validStatuses, int page, int size);
 

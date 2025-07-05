@@ -52,7 +52,6 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     FROM AppointmentEntity a
     JOIN a.medicalConcern mc
     WHERE a.doctor.id = :doctorId
-    AND a.date >= :startDate
     AND a.status <> 'locked'
     AND (
         mc.deletedAt IS NULL
@@ -60,9 +59,8 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     )
     ORDER BY a.date ASC
 """)
-    Page<AppointmentEntity> findVisibleAppointmentsByDoctorIdAndDateAfter(
+    Page<AppointmentEntity> findVisibleAppointmentsByDoctorId(
             @Param("doctorId") UUID doctorId,
-            @Param("startDate") LocalDate startDate,
             @Param("validStatuses") List<String> validStatuses,
             Pageable pageable
     );
@@ -83,7 +81,7 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
             @Param("validStatuses") List<String> validStatuses
     );
 
-    int countByDoctor_Id(UUID doctorId);
+    int countByDoctor_IdAndDateGreaterThanEqual(UUID doctorId, LocalDate date);
 
     @Query("SELECT COUNT(DISTINCT a.patient.id) FROM AppointmentEntity a WHERE a.doctor.id = :doctorId")
     int countDistinctPatientsByDoctorId(@Param("doctorId") UUID doctorId);
@@ -93,7 +91,7 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     @Query("""
     SELECT a
     FROM AppointmentEntity a
-    WHERE a.status <> 'locked'
+    WHERE a.status IN ('confirmed', 'completed' )
 """)
     Page<AppointmentEntity> findAllVisibleForAdmin(Pageable pageable);
 }

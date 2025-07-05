@@ -40,4 +40,12 @@ public class MessageRepositoryImpl implements MessageRepository {
                 .map(messageMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<Message> findByCareTrackingId(UUID careTrackingId) {
+        List<MessageEntity> messageEntities = this.messageJpaRepository.findByCareTrackingId(careTrackingId);
+        return messageEntities.stream()
+                .map(messageMapper::toDomain)
+                .toList();
+    }
 }

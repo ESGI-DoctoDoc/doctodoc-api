@@ -28,4 +28,6 @@ public interface SpecialityRepository {
     boolean existsByName(String name);
 
     Speciality findById(UUID id);
+
+    Speciality update(UUID id, String newName);
 }

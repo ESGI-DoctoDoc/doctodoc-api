@@ -8,6 +8,7 @@ public record GetCareTrackingsResponse(
         String name,
         String createdAt,
         CareTrackingPatientInfo patient,
+        List<CareTrackingDoctorInfo> doctors,
         List<AppointmentInfo> appointments
 ) {
 }

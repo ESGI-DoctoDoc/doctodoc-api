@@ -23,6 +23,6 @@ public interface MedicalConcernJpaRepository extends JpaRepository<MedicalConcer
 
     boolean existsByIdAndDeletedAtIsNotNull(UUID id);
 
-    @Query("SELECT CASE WHEN COUNT(mc) > 0 THEN true ELSE false END FROM MedicalConcernEntity mc WHERE LOWER(CAST(UNACCENT(mc.name) AS string)) = LOWER(CAST(UNACCENT(:name) AS string)) AND mc.doctor.id = :doctorId")
+    @Query("SELECT CASE WHEN COUNT(mc) > 0 THEN true ELSE false END FROM MedicalConcernEntity mc WHERE LOWER(CAST(UNACCENT(mc.name) AS string)) = LOWER(CAST(UNACCENT(:name) AS string)) AND mc.doctor.id = :doctorId AND mc.deletedAt IS NULL")
     boolean existsByNameIgnoreCaseAndDoctor_Id(String name, UUID doctorId);
 }

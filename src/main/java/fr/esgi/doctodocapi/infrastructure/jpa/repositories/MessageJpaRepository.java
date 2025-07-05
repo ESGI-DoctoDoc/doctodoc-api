@@ -8,4 +8,5 @@ import java.util.UUID;
 
 public interface MessageJpaRepository extends JpaRepository<MessageEntity, UUID> {
     List<MessageEntity> findByCareTrackingIdAndSenderId(UUID careTrackingId, UUID senderId);
+    List<MessageEntity> findByCareTrackingId(UUID careTrackingId);
 }
