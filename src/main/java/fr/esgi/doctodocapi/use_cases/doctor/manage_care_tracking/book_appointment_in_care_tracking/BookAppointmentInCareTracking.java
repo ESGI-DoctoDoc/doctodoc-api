@@ -23,7 +23,7 @@ import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_care_tracking.book_appointment_in_care_tracking.BookAppointmentRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_care_tracking.book_appointment_in_care_tracking.PreAppointmentAnswerRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.book_appointment_in_care_tracking.BookedAppointmentResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.book_appointment_in_care_tracking.IBookAppointmentInCareTracking;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.book_appointment_in_care_tracking.IBookAppointmentInCareTracking;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;

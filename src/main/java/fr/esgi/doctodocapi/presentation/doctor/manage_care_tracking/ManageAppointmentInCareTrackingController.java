@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.presentation.doctor.manage_care_tracking;
 
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_care_tracking.book_appointment_in_care_tracking.BookAppointmentRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.book_appointment_in_care_tracking.BookedAppointmentResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.book_appointment_in_care_tracking.IBookAppointmentInCareTracking;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.book_appointment_in_care_tracking.IBookAppointmentInCareTracking;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;

@@ -239,7 +239,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     public int countAppointmentsByDoctorId(UUID doctorId) {
-        return this.appointmentJpaRepository.countByDoctor_Id(doctorId);
+        return this.appointmentJpaRepository.countByDoctor_IdAndDateGreaterThanEqual(doctorId, LocalDate.now());
     }
 
     @Override
@@ -248,10 +248,10 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     }
 
     @Override
-    public List<Appointment> findVisibleAppointmentsByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate, List<String> validStatuses, int page, int size) {
+    public List<Appointment> findVisibleAppointmentsByDoctorId(UUID doctorId, List<String> validStatuses, int page, int size) {
         Pageable pageable = PageRequest.of(page, size);
-        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findVisibleAppointmentsByDoctorIdAndDateAfter(
-                doctorId, startDate, validStatuses, pageable
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.findVisibleAppointmentsByDoctorId(
+                doctorId, validStatuses, pageable
         );
         return appointments.getContent().stream()
                 .map(appointmentFacadeMapper::mapAppointmentToDomain)
