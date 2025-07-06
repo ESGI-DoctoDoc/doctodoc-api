@@ -24,7 +24,7 @@ jobs:
         run: echo "${{ secrets.PROPERTIES_PROD_CONFIG }}" > ./src/main/resources/application.properties
 
       - name: Configure firebase config
-        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" > ./src/main/resources/firebase-service-account-key.json
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" | base64 -d > ./src/main/resources/firebase-service-account-key.json
 
       # https://github.com/docker/login-action
       - name: Log in to Docker Hub
