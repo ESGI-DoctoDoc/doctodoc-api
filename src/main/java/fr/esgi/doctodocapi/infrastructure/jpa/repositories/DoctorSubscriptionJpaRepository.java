@@ -13,8 +13,8 @@ import java.util.UUID;
 public interface DoctorSubscriptionJpaRepository extends JpaRepository<DoctorSubscriptionEntity, UUID> {
     @Query(value = """
             SELECT s.*
-            FROM doctor_subscription s
-            JOIN doctor_invoice i ON i.subscription_id = s.id
+            FROM doctor_subscriptions s
+            JOIN doctor_invoices i ON i.subscription_id = s.id
             WHERE s.doctor_id = :doctorId
             AND s.end_date::date >= CAST(:now AS date)
             AND i.state = 'PAID'
