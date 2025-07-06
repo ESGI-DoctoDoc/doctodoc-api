@@ -22,6 +22,9 @@ jobs:
       - name: Configure firebase config
         run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" | base64 -d > ./src/main/resources/firebase-service-account-key.json
 
+      - name: test
+        run: echo ./src/main/resources/firebase-service-account-key-2.json
+
       - name: Fetch Project Version
         id: extract_project_version
         run: |
