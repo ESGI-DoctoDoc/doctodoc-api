@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -94,4 +96,10 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     WHERE a.status IN ('confirmed', 'completed' )
 """)
     Page<AppointmentEntity> findAllVisibleForAdmin(Pageable pageable);
+
+    void deleteAllByStatusAndLockedAtBefore(String status, LocalDateTime lockedAtBefore);
+
+    List<AppointmentEntity> findAllByStatusAndDateAndStartHour(String status, LocalDate date, LocalTime startHour);
+
+    List<AppointmentEntity> findAllByStatusAndDateBefore(String status, LocalDate dateBefore);
 }
