@@ -19,6 +19,9 @@ jobs:
       - name: Configure application.properties stage configuration
         run: echo "${{ secrets.PROPERTIES_STAGE_CONFIG }}" > ./src/main/resources/application.properties
 
+      - name: Configure firebase config
+        run: echo "${{ secrets.FIREBASE_SERVICE_ACCOUNT_KEY }}" > ./src/main/resources/firebase-service-account-key.json
+
       - name: Fetch Project Version
         id: extract_project_version
         run: |

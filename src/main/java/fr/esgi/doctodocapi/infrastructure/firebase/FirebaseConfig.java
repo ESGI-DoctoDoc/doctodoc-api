@@ -27,7 +27,7 @@ public class FirebaseConfig {
                     .getResourceAsStream(firebaseConfigPath);
 
             if (serviceAccount == null) {
-                throw new IllegalStateException("Fichier serviceAccountKey.json introuvable dans les ressources.");
+                throw new IllegalStateException("Fichier firebase-service-account-key.json introuvable dans les ressources.");
             }
 
             FirebaseOptions options = FirebaseOptions.builder()

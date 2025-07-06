@@ -36,4 +36,4 @@ build/
 /bdd/
 /.mvn/
 /monitoring/
-/src/main/resources/docto-doc-3ab67a45b93b.json
+/src/main/resources/firebase-service-account-key.json
