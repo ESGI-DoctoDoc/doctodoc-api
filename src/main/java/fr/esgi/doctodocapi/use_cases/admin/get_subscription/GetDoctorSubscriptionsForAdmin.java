@@ -35,7 +35,6 @@ public class GetDoctorSubscriptionsForAdmin implements IGetDoctorSubscriptionsFo
         this.invoiceRepository = invoiceRepository;
     }
 
-    @Override
     public List<GetSubscriptionForAdminResponse> execute(int page, int size) {
         try {
             List<DoctorSubscription> subscriptions = subscriptionRepository.findAllWithPagination(page, size);

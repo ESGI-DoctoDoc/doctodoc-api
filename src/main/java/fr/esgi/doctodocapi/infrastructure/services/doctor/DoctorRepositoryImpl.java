@@ -216,4 +216,12 @@ public class DoctorRepositoryImpl implements DoctorRepository {
                 .map(doctorFacadeMapper::mapDoctorToDomain)
                 .toList();
     }
+
+    @Override
+    public List<Doctor> searchDoctorsByName(String name, int page, int size) {
+        String nameLower = (name == null || name.isBlank()) ? null : name.toLowerCase();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<DoctorEntity> doctors = this.doctorJpaRepository.searchByDoctorName(nameLower, pageable);
+        return doctors.stream().map(this.doctorFacadeMapper::mapDoctorToDomain).toList();
+    }
 }

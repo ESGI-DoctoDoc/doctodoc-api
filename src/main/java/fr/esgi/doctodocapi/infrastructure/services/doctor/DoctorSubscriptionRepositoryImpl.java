@@ -71,4 +71,15 @@ public class DoctorSubscriptionRepositoryImpl implements DoctorSubscriptionRepos
                 .map(this.doctorSubscriptionMapper::toDomain)
                 .toList();
     }
+
+    @Override
+    public List<DoctorSubscription> findAllByDoctorIdWithPagination(UUID doctorId, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        DoctorEntity doctorEntity = this.entityManager.getReference(DoctorEntity.class, doctorId);
+
+        return this.subscriptionJpaRepository.findAllByDoctor(doctorEntity, pageable)
+                .stream()
+                .map(this.doctorSubscriptionMapper::toDomain)
+                .toList();
+    }
 }

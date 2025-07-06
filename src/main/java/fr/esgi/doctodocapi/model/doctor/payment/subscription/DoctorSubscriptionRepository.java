@@ -10,4 +10,5 @@ public interface DoctorSubscriptionRepository {
     Optional<DoctorSubscription> findActivePaidSubscriptionByDoctorId(UUID doctorId);
     List<DoctorSubscription> findAllWithPagination(int page, int size);
     List<DoctorSubscription> findAllByDoctorId(UUID doctorId);
+    List<DoctorSubscription> findAllByDoctorIdWithPagination(UUID doctorId, int page, int size);
 }

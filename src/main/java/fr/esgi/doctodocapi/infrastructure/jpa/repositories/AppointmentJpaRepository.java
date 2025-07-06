@@ -94,4 +94,7 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     WHERE a.status IN ('confirmed', 'completed' )
 """)
     Page<AppointmentEntity> findAllVisibleForAdmin(Pageable pageable);
+
+    @Query("SELECT a FROM AppointmentEntity a WHERE LOWER(CONCAT(a.patient.firstName, ' ', a.patient.lastName)) LIKE LOWER(CONCAT('%', :name, '%'))")
+    Page<AppointmentEntity> searchByPatientName(@Param("name") String name, Pageable pageable);
 }

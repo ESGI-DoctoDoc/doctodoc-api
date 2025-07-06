@@ -275,4 +275,12 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
                 .orElseThrow(AppointmentNotFoundException::new);
         return appointmentFacadeMapper.mapAppointmentToDomain(entity);
     }
+
+    @Override
+    public List<Appointment> searchAppointmentsByPatientName(String patientName, int page, int size) {
+        String nameLower = (patientName == null || patientName.isBlank()) ? null : patientName.toLowerCase();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.searchByPatientName(nameLower, pageable);
+        return appointments.getContent().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
+    }
 }
