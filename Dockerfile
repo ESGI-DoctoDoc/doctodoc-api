@@ -11,4 +11,4 @@ ENV TZ=Europe/Paris
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
 
 COPY --from=builder /app/source/target/*.jar app/app.jar
-ENTRYPOINT ["java", "-Duser.timezone=Europe/Paris", "-jar", "app.jar"]
+ENTRYPOINT ["java", "-Duser.timezone=Europe/Paris", "-jar", "app/app.jar"]
