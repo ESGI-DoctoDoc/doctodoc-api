@@ -11,16 +11,16 @@ import java.util.Optional;
 import java.util.UUID;
 
 public interface DoctorSubscriptionJpaRepository extends JpaRepository<DoctorSubscriptionEntity, UUID> {
-    @Query("""
-    SELECT s
-    FROM DoctorSubscriptionEntity s
-    JOIN DoctorInvoiceEntity i ON i.subscription = s
-    WHERE s.doctor = :doctor
-    AND s.endDate > :now
-    AND i.state = 'PAID'
-    ORDER BY s.endDate DESC
-    LIMIT 1
-""")
+    @Query(value = """
+                    SELECT s.*
+                    FROM doctor_subscription s
+                    JOIN doctor_invoice i ON i.subscription_id = s.id
+                    WHERE s.doctor_id = :doctorId
+                    AND s.end_date::date >= :now::date
+                    AND i.state = 'PAID'
+                    ORDER BY s.end_date DESC
+                    LIMIT 1
+            """, nativeQuery = true)
     Optional<DoctorSubscriptionEntity> findFirstPaidSubscriptionByDoctor(DoctorEntity doctor, LocalDateTime now);
 
     @Query("""
