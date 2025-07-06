@@ -8,11 +8,12 @@ import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.exceptions.CannotDeleteDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.IDeletePatientCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.IGetPatientFromContext;
-import org.springframework.http.HttpStatus;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class DeletePatientCareTrackingDocument implements IDeletePatientCareTrackingDocument {
@@ -34,13 +35,17 @@ public class DeletePatientCareTrackingDocument implements IDeletePatientCareTrac
 
             CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(careTrackingId, patient);
             CareTrackingDocument document = careTracking.getById(id);
+
+            if (!Objects.equals(patient.getId(), document.getDocument().getUploadedBy())) {
+                throw new CannotDeleteDocument();
+            }
             document.getDocument().delete(patient.getUserId());
 
             this.documentRepository.delete(document.getDocument());
             this.fileStorageService.delete(document.getDocument().getPath());
 
-        } catch (DomainException e) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        } catch (DomainException | ApiException e) {
+            throw new CannotDeleteDocument();
         }
     }
 }
