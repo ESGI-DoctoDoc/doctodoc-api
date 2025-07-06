@@ -5,5 +5,5 @@ import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetSearchDoctorRespo
 import java.util.List;
 
 public interface ISearchDoctor {
-    List<GetSearchDoctorResponse> process(String name, String speciality, List<String> languages, int page, int size);
+    List<GetSearchDoctorResponse> process(String name, String speciality, List<String> languages, boolean valid, int page, int size);
 }
