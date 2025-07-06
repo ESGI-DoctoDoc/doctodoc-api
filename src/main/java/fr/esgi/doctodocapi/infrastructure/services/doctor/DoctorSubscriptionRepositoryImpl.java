@@ -12,7 +12,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -41,7 +41,7 @@ public class DoctorSubscriptionRepositoryImpl implements DoctorSubscriptionRepos
     public Optional<DoctorSubscription> findActivePaidSubscriptionByDoctorId(UUID doctorId) {
         DoctorEntity doctorEntity = this.entityManager.getReference(DoctorEntity.class, doctorId);
         return this.subscriptionJpaRepository
-                .findFirstPaidSubscriptionByDoctor(doctorEntity, LocalDateTime.now())
+                .findFirstPaidSubscriptionByDoctor(doctorEntity.getId(), LocalDate.now())
                 .map(this.doctorSubscriptionMapper::toDomain);
     }
 

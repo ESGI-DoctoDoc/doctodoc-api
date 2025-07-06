@@ -5,23 +5,24 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorSubscriptionEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
 public interface DoctorSubscriptionJpaRepository extends JpaRepository<DoctorSubscriptionEntity, UUID> {
     @Query(value = """
-                    SELECT s.*
-                    FROM doctor_subscription s
-                    JOIN doctor_invoice i ON i.subscription_id = s.id
-                    WHERE s.doctor_id = :doctorId
-                    AND s.end_date::date >= :now::date
-                    AND i.state = 'PAID'
-                    ORDER BY s.end_date DESC
-                    LIMIT 1
+            SELECT s.*
+            FROM doctor_subscription s
+            JOIN doctor_invoice i ON i.subscription_id = s.id
+            WHERE s.doctor_id = :doctorId
+            AND s.end_date::date >= CAST(:now AS date)
+            AND i.state = 'PAID'
+            ORDER BY s.end_date DESC
+            LIMIT 1
             """, nativeQuery = true)
-    Optional<DoctorSubscriptionEntity> findFirstPaidSubscriptionByDoctor(DoctorEntity doctor, LocalDateTime now);
+    Optional<DoctorSubscriptionEntity> findFirstPaidSubscriptionByDoctor(UUID doctorId, LocalDate now);
+
 
     @Query("""
     SELECT s
