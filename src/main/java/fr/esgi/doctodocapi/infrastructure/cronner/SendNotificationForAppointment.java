@@ -48,7 +48,7 @@ public class SendNotificationForAppointment {
 
             sendAppointmentNotification(appointmentsToNotified);
 
-            logger.info("SUCCESS - Sent reminders appointments");
+            logger.info("SUCCESS - Sent reminders appointments {}", appointmentsToNotified.size());
 
         } catch (Exception e) {
             logger.error("ERROR - Cannot send notifications {}", e.getMessage());
