@@ -1,12 +1,12 @@
 package fr.esgi.doctodocapi.presentation.patient.manage_account;
 
+import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.SaveTokenFcmRequest;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetProfileResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_account.IGetInformations;
+import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * REST controller providing endpoints to retrieve patient-related information.
@@ -30,5 +30,11 @@ public class GetInformationsController {
     @ResponseStatus(value = HttpStatus.OK)
     public GetProfileResponse getBasicPatientInfo() {
         return this.getInformations.getBasicPatientInfo();
+    }
+
+    @PutMapping("patients/user/token-fcm")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void setTokenFcm(@Valid @RequestBody SaveTokenFcmRequest saveTokenFcmRequest) {
+        this.getInformations.setTokenFcm(saveTokenFcmRequest);
     }
 }
