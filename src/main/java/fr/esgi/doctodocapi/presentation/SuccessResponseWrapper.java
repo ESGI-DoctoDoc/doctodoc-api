@@ -49,7 +49,10 @@ public class SuccessResponseWrapper implements ResponseBodyAdvice<Object> {
             ServerHttpRequest request,
             ServerHttpResponse response) {
 
-        if (body instanceof ErrorResponse) {
+        if (body instanceof ErrorResponse
+                || body instanceof byte[]
+                || body instanceof org.springframework.core.io.Resource
+                || selectedContentType.includes(MediaType.APPLICATION_OCTET_STREAM)) {
             return body;
         }
         return new SuccessResponse(true, body);
