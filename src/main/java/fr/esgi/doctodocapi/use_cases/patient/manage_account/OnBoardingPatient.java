@@ -82,7 +82,6 @@ public class OnBoardingPatient implements IOnBoardingPatient {
             Doctor doctor = null;
             if (treatingDoctorId != null) {
                 doctor = this.doctorRepository.getById(treatingDoctorId);
-
             }
 
             Patient patient = Patient.createFromOnBoarding(user, firstName, lastName, birthdate, doctor, gender);
