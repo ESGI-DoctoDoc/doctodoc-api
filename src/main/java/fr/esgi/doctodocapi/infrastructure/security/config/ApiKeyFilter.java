@@ -34,6 +34,6 @@ public class ApiKeyFilter extends OncePerRequestFilter {
     protected boolean shouldNotFilter(HttpServletRequest request) {
         String path = request.getServletPath();
         // Ignorer les appels SockJS pour laisser passer le handshake
-        return path.startsWith("/ws");
+        return path.startsWith("/ws") || path.contains("/swagger") || path.contains("/v3/api-docs");
     }
 }

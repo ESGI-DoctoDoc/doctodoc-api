@@ -23,9 +23,10 @@ public class SearchDoctorController {
     public List<GetSearchDoctorResponse> search(@RequestParam(defaultValue = "") String name,
                                                 @RequestParam(defaultValue = "") String speciality,
                                                 @RequestParam(defaultValue = "") List<String> languages,
+                                                @RequestParam(defaultValue = "true") boolean valid,
                                                 @RequestParam(defaultValue = "0") int page,
                                                 @RequestParam(defaultValue = "10") int size
     ) {
-        return this.searchDoctor.process(name, speciality, languages, page, size);
+        return this.searchDoctor.process(name, speciality, languages, valid, page, size);
     }
 }

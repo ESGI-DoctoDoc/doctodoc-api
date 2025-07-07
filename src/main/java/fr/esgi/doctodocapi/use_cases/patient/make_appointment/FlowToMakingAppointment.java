@@ -11,6 +11,8 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionType;
+import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscription;
+import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
@@ -19,13 +21,13 @@ import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appoi
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorListQuestionsResponse;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.doctor_questions.GetDoctorQuestionsResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IFlowToMakingAppointment;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
-import java.util.ArrayList;
-import java.util.Comparator;
-import java.util.List;
-import java.util.UUID;
+import java.time.LocalDateTime;
+import java.util.*;
 
 /**
  * Service managing the flow to making an appointment for a patient.
@@ -35,8 +37,11 @@ import java.util.UUID;
  * </p>
  */
 public class FlowToMakingAppointment implements IFlowToMakingAppointment {
+    private static final Logger logger = LoggerFactory.getLogger(FlowToMakingAppointment.class);
+
     private final MedicalConcernRepository medicalConcernRepository;
     private final DoctorRepository doctorRepository;
+    private final DoctorSubscriptionRepository doctorSubscriptionRepository;
     private final CareTrackingRepository careTrackingRepository;
     private final GetPatientFromContext getPatientFromContext;
     private final AppointmentsAvailabilityService appointmentsAvailabilityService;
@@ -48,9 +53,10 @@ public class FlowToMakingAppointment implements IFlowToMakingAppointment {
      * @param doctorRepository                repository for retrieving doctor entities
      * @param appointmentsAvailabilityService service responsible for calculating appointment availability
      */
-    public FlowToMakingAppointment(MedicalConcernRepository medicalConcernRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, AppointmentsAvailabilityService appointmentsAvailabilityService) {
+    public FlowToMakingAppointment(MedicalConcernRepository medicalConcernRepository, DoctorRepository doctorRepository, DoctorSubscriptionRepository doctorSubscriptionRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, AppointmentsAvailabilityService appointmentsAvailabilityService) {
         this.medicalConcernRepository = medicalConcernRepository;
         this.doctorRepository = doctorRepository;
+        this.doctorSubscriptionRepository = doctorSubscriptionRepository;
         this.careTrackingRepository = careTrackingRepository;
         this.getPatientFromContext = getPatientFromContext;
         this.appointmentsAvailabilityService = appointmentsAvailabilityService;
@@ -140,8 +146,25 @@ public class FlowToMakingAppointment implements IFlowToMakingAppointment {
     public List<GetAppointmentAvailabilityResponse> getAppointmentsAvailability(UUID medicalConcernId, LocalDate date) {
         try {
             MedicalConcern medicalConcern = this.medicalConcernRepository.getById(medicalConcernId);
-            List<GetAppointmentAvailabilityResponse> appointments = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern, date);
-            return appointments.stream().sorted(Comparator.comparing(GetAppointmentAvailabilityResponse::start)).toList();
+            Optional<DoctorSubscription> doctorSubscription = this.doctorSubscriptionRepository.findActivePaidSubscriptionByDoctorId(medicalConcern.getDoctorId());
+
+            if (doctorSubscription.isEmpty())
+                throw new ApiException(HttpStatus.BAD_REQUEST, "doctor.subscription-not-found", "the subscription of doctor doesn't exist");
+
+            List<GetAppointmentAvailabilityResponse> appointments = new ArrayList<>();
+
+            LocalDateTime endDate = doctorSubscription.get().getEndDate();
+
+            if (date.isEqual(endDate.toLocalDate()) || date.isBefore(endDate.toLocalDate())) {
+                logger.info("Get available appointments for the requested date {}.", date);
+
+                appointments = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern, date);
+                return appointments.stream().sorted(Comparator.comparing(GetAppointmentAvailabilityResponse::start)).toList();
+            } else {
+                logger.info("No available appointments: the requested date {} is after the doctor's subscription end date {}.", date, endDate.toLocalDate());
+                return appointments;
+            }
+
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }

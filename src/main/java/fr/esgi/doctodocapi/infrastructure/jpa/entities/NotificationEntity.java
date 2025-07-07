@@ -19,6 +19,9 @@ public class NotificationEntity {
     @Column(name = "content", nullable = false)
     private String content;
 
+    @Column(name = "recipient_id", nullable = false)
+    private UUID recipientId;
+
     @Column(name = "is_read", nullable = false)
     private boolean isRead = false;
 
@@ -63,5 +66,13 @@ public class NotificationEntity {
 
     public void setSendAt(LocalDateTime sendAt) {
         this.sendAt = sendAt;
+    }
+
+    public UUID getRecipientId() {
+        return recipientId;
+    }
+
+    public void setRecipientId(UUID recipientId) {
+        this.recipientId = recipientId;
     }
 }

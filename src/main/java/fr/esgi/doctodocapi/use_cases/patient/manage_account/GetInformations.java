@@ -48,7 +48,7 @@ public class GetInformations implements IGetInformations {
 
             // todo : test notification TO REMOVE
             String tokenFcm = this.tokenFcmRepository.get(patient.getId());
-            NotificationMessage message = new NotificationMessage("Bienvenue sur l'application", "Ceci est une notification de test");
+            NotificationMessage message = new NotificationMessage(patient.getUserId(), "Bienvenue sur l'application", "Ceci est une notification de test");
             this.notificationService.send(tokenFcm, message);
 
             return this.profilePresentationMapper.toDto(patient);

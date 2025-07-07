@@ -15,15 +15,25 @@ public class SearchDoctorService {
     }
 
 
-    public List<Doctor> getDoctor(String name, String speciality, List<String> languages, int page, int size) {
+    public List<Doctor> getDoctor(String name, String speciality, List<String> languages, boolean valid, int page, int size) {
         String nameLower = (name == null || name.isBlank()) ? null : name.toLowerCase();
         String specialityLower = (speciality == null || speciality.isBlank()) ? null : speciality.toLowerCase();
-        return this.doctorRepository.searchDoctors(
-                nameLower,
-                specialityLower,
-                languages,
-                page, size
-        );
+
+        if (valid) {
+            return this.doctorRepository.searchValidDoctors(
+                    nameLower,
+                    specialityLower,
+                    languages,
+                    page, size
+            );
+        } else {
+            return this.doctorRepository.searchDoctors(
+                    nameLower,
+                    specialityLower,
+                    languages,
+                    page, size
+            );
+        }
     }
 
 }
