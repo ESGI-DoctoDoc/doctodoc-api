@@ -1,8 +1,11 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
+import org.hibernate.annotations.JdbcTypeCode;
+import org.hibernate.type.SqlTypes;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.UUID;
 
 @Entity
@@ -26,6 +29,10 @@ public class MessageEntity {
 
     @Column(name = "sent_at")
     private LocalDateTime sentAt;
+
+    @Column(name = "files", columnDefinition = "uuid[]")
+    @JdbcTypeCode(SqlTypes.ARRAY)
+    private List<UUID> files;
 
     public UUID getId() {
         return id;
@@ -65,5 +72,13 @@ public class MessageEntity {
 
     public void setSentAt(LocalDateTime sentAt) {
         this.sentAt = sentAt;
+    }
+
+    public List<UUID> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<UUID> files) {
+        this.files = files;
     }
 }
