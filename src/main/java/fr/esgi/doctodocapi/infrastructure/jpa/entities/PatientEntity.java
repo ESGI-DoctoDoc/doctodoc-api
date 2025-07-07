@@ -36,6 +36,9 @@ public class PatientEntity {
     @Column(name = "gender")
     private String gender;
 
+    @Column(name = "fcm_token")
+    private String fcmToken;
+
     @Column(name = "is_main_account", nullable = false)
     private boolean isMainAccount;
 
@@ -130,6 +133,13 @@ public class PatientEntity {
         this.gender = gender;
     }
 
+    public String getFcmToken() {
+        return fcmToken;
+    }
+
+    public void setTokenFcm(String fcmTocken) {
+        this.fcmToken = fcmTocken;
+    }
 
     public LocalDateTime getDeletedAt() {
         return deletedAt;

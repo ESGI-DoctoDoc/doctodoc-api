@@ -80,7 +80,10 @@ public class WebSecurityConfig {
                                 "/doctors/register",
                                 "/patients/register",
                                 "/actuator/health",
-                                "/ws/**"
+                                "/ws/**",
+                                "/swagger-ui/**",
+                                "/v3/api-docs/**",
+                                "/webjars/**"
                         ).permitAll()
                         .anyRequest().authenticated()
                 )

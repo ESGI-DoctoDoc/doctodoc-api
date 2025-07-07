@@ -1,6 +1,9 @@
 package fr.esgi.doctodocapi.infrastructure.services.doctor;
 
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.*;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.DocumentEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.DocumentTracesEntity;
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DoctorJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DocumentJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.DocumentTracesJpaRepository;
@@ -128,6 +131,15 @@ public class DoctorRepositoryImpl implements DoctorRepository {
         String[] array = (languages != null) ? languages.toArray(new String[0]) : new String[0];
 
         Page<DoctorEntity> doctors = this.doctorJpaRepository.searchDoctors(name, speciality, array, pageable);
+        return doctors.stream().map(this.doctorFacadeMapper::mapDoctorToDomain).toList();
+    }
+
+    @Override
+    public List<Doctor> searchValidDoctors(String name, String speciality, List<String> languages, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        String[] array = (languages != null) ? languages.toArray(new String[0]) : new String[0];
+
+        Page<DoctorEntity> doctors = this.doctorJpaRepository.searchValidDoctors(name, speciality, array, pageable);
         return doctors.stream().map(this.doctorFacadeMapper::mapDoctorToDomain).toList();
     }
 

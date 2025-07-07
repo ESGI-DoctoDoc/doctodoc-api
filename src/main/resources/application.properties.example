@@ -25,3 +25,12 @@ spring.mail.port=
 spring.mail.username=
 spring.mail.password=
 spring.mail.test-connection=
+
+# Configuration Stripe
+stripe.api.key=
+
+# Configuration API Address
+api.address=
+
+# Configuration de firebase
+firebase.config.path=
