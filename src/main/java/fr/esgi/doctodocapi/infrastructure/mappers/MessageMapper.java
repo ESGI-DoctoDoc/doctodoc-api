@@ -15,6 +15,7 @@ public class MessageMapper {
                 entity.getSender().getId(),
                 entity.getCareTracking().getId(),
                 entity.getContent(),
+                entity.getFiles(),
                 entity.getSentAt()
         );
     }
@@ -24,6 +25,7 @@ public class MessageMapper {
         entity.setSender(sender);
         entity.setCareTracking(careTracking);
         entity.setContent(domain.getContent());
+        entity.setFiles(domain.getFiles());
         entity.setSentAt(domain.getSentAt());
         return entity;
     }

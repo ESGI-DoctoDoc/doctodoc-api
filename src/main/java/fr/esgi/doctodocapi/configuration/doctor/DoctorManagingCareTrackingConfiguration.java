@@ -51,12 +51,18 @@ public class DoctorManagingCareTrackingConfiguration {
     }
 
     @Bean
-    public ISendCareTrackingMessage sendCareTrackingMessage(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, MessageRepository messageRepository, SimpMessagingTemplate messagingTemplate, CareTrackingMessageResponseMapper careTrackingMessageResponseMapper) {
-        return new SendCareTrackingMessage(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, messageRepository, messagingTemplate, careTrackingMessageResponseMapper);
+    public ISendCareTrackingMessage sendCareTrackingMessage(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, MessageRepository messageRepository, SimpMessagingTemplate messagingTemplate, CareTrackingMessageResponseMapper careTrackingMessageResponseMapper, FileStorageService fileStorageService) {
+        return new SendCareTrackingMessage(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, messageRepository, messagingTemplate, careTrackingMessageResponseMapper, fileStorageService);
     }
 
     @Bean
-    public IGetCareTrackingMessages getCareTrackingMessages(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, MessageRepository messageRepository, CareTrackingMessageResponseMapper careTrackingMessageResponseMapper) {
-        return new GetCareTrackingMessages(getCurrentUserContext, userRepository, doctorRepository, messageRepository, careTrackingMessageResponseMapper);
+    public IGetCareTrackingMessages getCareTrackingMessages( MessageRepository messageRepository,
+                                                             CareTrackingRepository careTrackingRepository,
+                                                             DoctorRepository doctorRepository,
+                                                             UserRepository userRepository,
+                                                             GetCurrentUserContext getCurrentUserContext,
+                                                             CareTrackingMessageResponseMapper messageResponseMapper,
+                                                             FileStorageService fileStorageService) {
+        return new GetCareTrackingMessages(messageRepository, careTrackingRepository, doctorRepository, userRepository, getCurrentUserContext, messageResponseMapper, fileStorageService);
     }
 }
