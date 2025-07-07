@@ -27,7 +27,7 @@ public class DeleteAppointmentsLocked {
         try {
             String status = AppointmentStatus.LOCKED.getValue();
             LocalDateTime nowMinusFiveMinutes = LocalDateTime.now().minusMinutes(5);
-            this.appointmentJpaRepository.deleteAllByStatusAndLockedAtBefore(status, nowMinusFiveMinutes);
+            this.appointmentJpaRepository.deleteAllByStatusAndLockedAtBeforeAndDeletedAtNotNull(status, nowMinusFiveMinutes);
             logger.info("SUCCESS - Deleting appointments in locked status");
         } catch (Exception e) {
             logger.error("ERROR - Cannot delete locked appointments cause of {}", e.getMessage());

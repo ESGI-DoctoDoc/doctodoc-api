@@ -161,6 +161,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     public void cancel(Appointment appointment) {
         AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFoundException::new);
         appointmentEntity.setStatus(appointment.getStatus().getValue());
+        appointmentEntity.setCancelExplanation(appointment.getCancelExplanation());
         this.appointmentJpaRepository.save(appointmentEntity);
     }
 

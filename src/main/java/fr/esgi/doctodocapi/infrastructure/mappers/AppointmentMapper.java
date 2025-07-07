@@ -27,6 +27,7 @@ public class AppointmentMapper {
                 AppointmentStatus.fromValue(entity.getStatus()),
                 answers,
                 entity.getLockedAt(),
+                entity.getCancelExplanation(),
                 entity.getDoctorNotes() == null ? null : entity.getDoctorNotes(),
                 entity.getCareTracking() == null ? null : entity.getCareTracking().getId()
         );
@@ -40,7 +41,8 @@ public class AppointmentMapper {
                 entity.getTakenAt(),
                 AppointmentStatus.fromValue(entity.getStatus()),
                 answers,
-                entity.getLockedAt()
+                entity.getLockedAt(),
+                entity.getCancelExplanation()
         );
     }
 
@@ -57,6 +59,7 @@ public class AppointmentMapper {
         entity.setStatus(appointment.getStatus().getValue());
         entity.setLockedAt(appointment.getLockedAt());
         entity.setDoctorNotes(appointment.getDoctorNotes());
+        entity.setCancelExplanation(appointment.getCancelExplanation());
         entity.setCareTracking(appointment.getCareTrackingId() != null ? careTrackingEntity : null);
         return entity;
     }

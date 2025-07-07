@@ -29,9 +29,10 @@ public class Appointment {
     private AppointmentStatus status;
     private List<PreAppointmentAnswers> preAppointmentAnswers;
     private String doctorNotes;
+    private String cancelExplanation;
     private UUID careTrackingId;
 
-    public Appointment(UUID id, Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt, String doctorNotes, UUID careTrackingId) {
+    public Appointment(UUID id, Slot slot, Patient patient, Doctor doctor, MedicalConcern medicalConcern, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt, String cancelExplanation, String doctorNotes, UUID careTrackingId) {
         this.id = id;
         this.slot = slot;
         this.patient = patient;
@@ -44,16 +45,18 @@ public class Appointment {
         this.status = status;
         this.preAppointmentAnswers = answers;
         this.doctorNotes = doctorNotes;
+        this.cancelExplanation = cancelExplanation;
         this.careTrackingId = careTrackingId;
     }
 
-    public Appointment(UUID id, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt) {
+    public Appointment(UUID id, LocalTime startHour, LocalTime endHour, LocalDateTime takenAt, AppointmentStatus status, List<PreAppointmentAnswers> answers, LocalDateTime lockedAt, String cancelExplanation) {
         this.id = id;
         this.hoursRange = HoursRange.of(startHour, endHour);
         this.takenAt = takenAt;
         this.lockedAt = lockedAt;
         this.status = status;
         this.preAppointmentAnswers = answers;
+        this.cancelExplanation = cancelExplanation;
     }
 
     /**
@@ -85,6 +88,7 @@ public class Appointment {
                 answers,
                 LocalDateTime.now(),
                 null,
+                null,
                 careTrackingId
         );
     }
@@ -104,6 +108,7 @@ public class Appointment {
                 LocalDateTime.now(),
                 AppointmentStatus.CONFIRMED,
                 answers,
+                null,
                 null,
                 doctorNotes,
                 careTrackingId
@@ -150,6 +155,14 @@ public class Appointment {
      */
     public void cancel() {
         this.status = AppointmentStatus.CANCELLED;
+    }
+
+    /**
+     * Confirms the appointment by changing its status to CANCELLED.
+     */
+    public void cancel(String cancelExplanation) {
+        this.status = AppointmentStatus.CANCELLED;
+        this.cancelExplanation = cancelExplanation;
     }
 
 
@@ -255,6 +268,14 @@ public class Appointment {
 
     public void setCareTrackingId(UUID careTrackingId) {
         this.careTrackingId = careTrackingId;
+    }
+
+    public String getCancelExplanation() {
+        return cancelExplanation;
+    }
+
+    public void setCancelExplanation(String cancelExplanation) {
+        this.cancelExplanation = cancelExplanation;
     }
 
     @Override

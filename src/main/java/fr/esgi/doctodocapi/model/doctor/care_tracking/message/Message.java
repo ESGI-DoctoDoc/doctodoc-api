@@ -1,6 +1,8 @@
 package fr.esgi.doctodocapi.model.doctor.care_tracking.message;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.UUID;
 
 public class Message {
@@ -8,18 +10,27 @@ public class Message {
     private UUID senderId;
     private UUID careTrackingId;
     private String content;
+    private List<UUID> files;
     private LocalDateTime sentAt;
 
-    public Message(UUID id, UUID senderId, UUID careTrackingId, String content, LocalDateTime sentAt) {
+    public Message(UUID id, UUID senderId, UUID careTrackingId, String content, List<UUID> files, LocalDateTime sentAt) {
         this.id = id;
         this.senderId = senderId;
         this.careTrackingId = careTrackingId;
         this.content = content;
+        this.files = files != null ? files : new ArrayList<>();
         this.sentAt = sentAt;
     }
 
-    public static Message create(UUID senderId, UUID careTrackingId, String content) {
-        return new Message(UUID.randomUUID(), senderId, careTrackingId, content, LocalDateTime.now());
+    public static Message create(UUID senderId, UUID careTrackingId, String content, List<UUID> files) {
+        return new Message(
+                UUID.randomUUID(),
+                senderId,
+                careTrackingId,
+                content,
+                files,
+                LocalDateTime.now()
+        );
     }
 
     public UUID getId() {
@@ -60,5 +71,13 @@ public class Message {
 
     public void setCareTrackingId(UUID careTrackingId) {
         this.careTrackingId = careTrackingId;
+    }
+
+    public List<UUID> getFiles() {
+        return files;
+    }
+
+    public void setFiles(List<UUID> files) {
+        this.files = files;
     }
 }
