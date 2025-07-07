@@ -10,12 +10,14 @@ import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.AddressAutocom
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.GetDoctorInformation;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.GetDoctorProfileInformation;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.OnboardingDoctorProcess;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.document.DeleteDoctorDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.document.GetDoctorOnboardingDocumentContent;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.document.UploadDoctorOnboardingDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.doctor_information.IGetDoctorInformation;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IAutocompleteAddress;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IGetDoctorProfileInformation;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IOnboardingDoctor;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.document.IDeleteDoctorDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.document.IGetDoctorOnboardingDocumentContent;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.document.IUploadDoctorOnboardingDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.AddressAutoCompleteInput;
@@ -56,5 +58,10 @@ public class ManageDoctorAccountConfiguration {
     @Bean
     public IGetDoctorProfileInformation getDoctorProfileInformation(UserRepository userRepository, DoctorRepository doctorRepository, GetCurrentUserContext getCurrentUserContext, DoctorSubscriptionRepository doctorSubscriptionRepository, GetDoctorProfileResponseMapper doctorProfileResponseMapper) {
         return new GetDoctorProfileInformation(userRepository, doctorRepository, getCurrentUserContext, doctorSubscriptionRepository, doctorProfileResponseMapper);
+    }
+
+    @Bean
+    public IDeleteDoctorDocument deleteDoctorDocument(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, DocumentRepository documentRepository, FileStorageService fileStorageService) {
+        return new DeleteDoctorDocument(getCurrentUserContext, userRepository, doctorRepository, documentRepository, fileStorageService);
     }
 }

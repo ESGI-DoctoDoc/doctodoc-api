@@ -11,12 +11,14 @@ import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.GetCareTrackings;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.InitializeCareTracking;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document.DeleteDoctorCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document.GetCareTrackingDocumentContent;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document.UploadCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.message.GetCareTrackingMessages;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.message.SendCareTrackingMessage;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.IGetCareTrackings;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.IInitializeCareTracking;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.message.IDeleteDoctorCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.message.IGetCareTrackingMessages;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.message.ISendCareTrackingMessage;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_document.IGetCareTrackingDocumentContent;
@@ -58,5 +60,10 @@ public class DoctorManagingCareTrackingConfiguration {
     @Bean
     public IGetCareTrackingMessages getCareTrackingMessages(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, MessageRepository messageRepository, CareTrackingMessageResponseMapper careTrackingMessageResponseMapper) {
         return new GetCareTrackingMessages(getCurrentUserContext, userRepository, doctorRepository, messageRepository, careTrackingMessageResponseMapper);
+    }
+
+    @Bean
+    public IDeleteDoctorCareTrackingDocument deleteDoctorCareTrackingDocument(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, DocumentRepository documentRepository, FileStorageService fileStorageService) {
+        return new DeleteDoctorCareTrackingDocument(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, documentRepository, fileStorageService);
     }
 }
