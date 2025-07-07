@@ -7,8 +7,6 @@ import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.SaveTokenFcmRequest;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetProfileResponse;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_account.IGetInformations;
-import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationMessage;
-import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationService;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.TokenFcmRepository;
 import org.springframework.http.HttpStatus;
 
@@ -23,17 +21,15 @@ public class GetInformations implements IGetInformations {
     private final GetPatientFromContext getPatientFromContext;
     private final TokenFcmRepository tokenFcmRepository;
     private final ProfilePresentationMapper profilePresentationMapper;
-    private final NotificationService notificationService;
 
     /**
      * Constructs the service with required dependencies.
      * @param getPatientFromContext interface to access the currently authenticated user's context
      */
-    public GetInformations(GetPatientFromContext getPatientFromContext, TokenFcmRepository tokenFcmRepository, ProfilePresentationMapper profilePresentationMapper, NotificationService notificationService) {
+    public GetInformations(GetPatientFromContext getPatientFromContext, TokenFcmRepository tokenFcmRepository, ProfilePresentationMapper profilePresentationMapper) {
         this.getPatientFromContext = getPatientFromContext;
         this.tokenFcmRepository = tokenFcmRepository;
         this.profilePresentationMapper = profilePresentationMapper;
-        this.notificationService = notificationService;
     }
 
     /**
@@ -45,12 +41,6 @@ public class GetInformations implements IGetInformations {
     public GetProfileResponse getBasicPatientInfo() {
         try {
             Patient patient = this.getPatientFromContext.get();
-
-            // todo : test notification TO REMOVE
-            String tokenFcm = this.tokenFcmRepository.get(patient.getId());
-            NotificationMessage message = new NotificationMessage(patient.getUserId(), "Bienvenue sur l'application", "Ceci est une notification de test");
-            this.notificationService.send(tokenFcm, message);
-
             return this.profilePresentationMapper.toDto(patient);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
