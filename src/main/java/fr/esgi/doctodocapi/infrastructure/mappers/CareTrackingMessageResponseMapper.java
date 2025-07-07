@@ -7,16 +7,13 @@ import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_respons
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.messaga.SenderInfo;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 @Service
 public class CareTrackingMessageResponseMapper {
-    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
 
-
-    public CareTrackingMessageResponse toResponse(Message message, Doctor sender) {
+    public CareTrackingMessageResponse toResponse(Message message, Doctor sender, List<String> fileUrls) {
         return new CareTrackingMessageResponse(
                 message.getId(),
                 new SenderInfo(
@@ -26,14 +23,13 @@ public class CareTrackingMessageResponseMapper {
                 ),
                 new ContentInfo(
                         message.getContent(),
-                        List.of()
+                        fileUrls
                 ),
-                formatDate(message.getSentAt())
+                message.getSentAt().format(DateTimeFormatter.ISO_LOCAL_DATE_TIME)
         );
     }
 
-    private String formatDate(LocalDateTime date) {
-        return date.format(DATE_FORMATTER);
+    public CareTrackingMessageResponse toResponse(Message message, Doctor sender) {
+        return toResponse(message, sender, List.of());
     }
-
 }

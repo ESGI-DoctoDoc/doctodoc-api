@@ -5,8 +5,10 @@ import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_respons
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.message.IGetCareTrackingMessages;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.message.ISendCareTrackingMessage;
 import jakarta.validation.Valid;
+import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
@@ -27,7 +29,11 @@ public class CareTrackingMessageController {
     }
 
     @GetMapping("/{id}/messages")
-    public List<CareTrackingMessageResponse> getMessages(@PathVariable UUID id) {
-        return this.getCareTrackingMessages.execute(id);
+    public List<CareTrackingMessageResponse> getMessages(
+            @PathVariable UUID id,
+            @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE_TIME) LocalDateTime cursorSentAt,
+            @RequestParam(required = false) UUID cursorId
+    ) {
+        return getCareTrackingMessages.execute(id, cursorSentAt, cursorId);
     }
 }
