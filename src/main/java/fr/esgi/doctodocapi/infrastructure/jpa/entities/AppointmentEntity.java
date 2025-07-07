@@ -63,6 +63,9 @@ public class AppointmentEntity {
     @Column(name ="doctor_notes", columnDefinition = "text")
     private String doctorNotes;
 
+    @Column(name = "cancel_explanation", columnDefinition = "text")
+    private String cancelExplanation;
+
     @ManyToOne
     @JoinColumn(name = "care_tracking_id")
     private CareTrackingEntity careTracking;
@@ -185,6 +188,14 @@ public class AppointmentEntity {
 
     public void setCareTracking(CareTrackingEntity careTracking) {
         this.careTracking = careTracking;
+    }
+
+    public String getCancelExplanation() {
+        return cancelExplanation;
+    }
+
+    public void setCancelExplanation(String cancelExplanation) {
+        this.cancelExplanation = cancelExplanation;
     }
 
     @Override

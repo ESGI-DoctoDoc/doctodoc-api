@@ -97,7 +97,7 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
 """)
     Page<AppointmentEntity> findAllVisibleForAdmin(Pageable pageable);
 
-    void deleteAllByStatusAndLockedAtBefore(String status, LocalDateTime lockedAtBefore);
+    void deleteAllByStatusAndLockedAtBeforeAndDeletedAtNotNull(String status, LocalDateTime lockedAtBefore);
 
     List<AppointmentEntity> findAllByStatusAndDateAndStartHour(String status, LocalDate date, LocalTime startHour);
 
