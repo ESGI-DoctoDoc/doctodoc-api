@@ -81,7 +81,8 @@ public class SendNotificationForAppointment {
                 String doctorFullName = appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
                 String formattedDate = appointment.getStartHour().format(TIME_FORMATTER);
                 NotificationMessage message = new NotificationMessage(
-                        "Vous avez un rdv avec le docteur " + doctorFullName + " aujourd'hui à  " + formattedDate,
+                        appointment.getPatient().getUser().getId(),
+                        "Vous avez pris un rdv avec le docteur " + doctorFullName + " aujourd'hui à  " + formattedDate,
                         "Rappel de RDV",
                         Map.of("appointment_id", appointment.getId().toString())
                 );

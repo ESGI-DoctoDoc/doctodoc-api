@@ -6,22 +6,23 @@ import com.google.firebase.messaging.Message;
 import com.google.firebase.messaging.Notification;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.NotificationEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.NotificationJpaRepository;
+import fr.esgi.doctodocapi.infrastructure.mappers.NotificationMapper;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationMessage;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
-
 @Service
 public class FirebaseMessagingServiceImpl implements NotificationService {
     private static final Logger logger = LoggerFactory.getLogger(FirebaseMessagingServiceImpl.class);
 
     private final NotificationJpaRepository notificationJpaRepository;
+    private final NotificationMapper notificationMapper;
 
-    public FirebaseMessagingServiceImpl(NotificationJpaRepository notificationJpaRepository) {
+    public FirebaseMessagingServiceImpl(NotificationJpaRepository notificationJpaRepository, NotificationMapper notificationMapper) {
         this.notificationJpaRepository = notificationJpaRepository;
+        this.notificationMapper = notificationMapper;
     }
 
     private static Message build(String fcmToken, NotificationMessage notificationMessage) {
@@ -60,10 +61,7 @@ public class FirebaseMessagingServiceImpl implements NotificationService {
     }
 
     private void saveNotification(NotificationMessage message) {
-        NotificationEntity notificationEntity = new NotificationEntity();
-        notificationEntity.setTitle(message.getTitle());
-        notificationEntity.setContent(message.getBody());
-        notificationEntity.setSendAt(LocalDateTime.now());
+        NotificationEntity notificationEntity = this.notificationMapper.toEntity(message);
         this.notificationJpaRepository.save(notificationEntity);
     }
 }
