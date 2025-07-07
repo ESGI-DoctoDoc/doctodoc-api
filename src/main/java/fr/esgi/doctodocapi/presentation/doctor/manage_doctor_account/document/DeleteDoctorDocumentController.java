@@ -3,14 +3,12 @@ package fr.esgi.doctodocapi.presentation.doctor.manage_doctor_account.document;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.manage_doctor_account.document.DeleteDoctorDocumentResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.document.IDeleteDoctorDocument;
 import org.springframework.http.HttpStatus;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.UUID;
 
 @RestController
 @RequestMapping("/doctors/onboarding")
-@PreAuthorize("hasRole('ROLE_DOCTOR')")
 public class DeleteDoctorDocumentController {
     private final IDeleteDoctorDocument deleteDoctorDocument;
 

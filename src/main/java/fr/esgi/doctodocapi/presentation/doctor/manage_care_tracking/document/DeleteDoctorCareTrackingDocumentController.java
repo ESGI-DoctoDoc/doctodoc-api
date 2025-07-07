@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.UUID;
 
 @RestController
-@RequestMapping("/doctors/care-trackings")
+@RequestMapping("/doctors/care-tracking")
 @PreAuthorize("hasRole('ROLE_DOCTOR')")
 public class DeleteDoctorCareTrackingDocumentController {
     private final IDeleteDoctorCareTrackingDocument deleteDocument;

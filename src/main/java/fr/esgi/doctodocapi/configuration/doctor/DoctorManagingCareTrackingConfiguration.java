@@ -38,8 +38,8 @@ public class DoctorManagingCareTrackingConfiguration {
     }
 
     @Bean
-    public IGetCareTrackings getCareTrackings(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, CareTrackingResponseMapper careTrackingResponseMapper, AppointmentRepository appointmentRepository) {
-        return new GetCareTrackings(careTrackingRepository, doctorRepository, userRepository, getCurrentUserContext, careTrackingResponseMapper, appointmentRepository);
+    public IGetCareTrackings getCareTrackings(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, CareTrackingResponseMapper careTrackingResponseMapper, AppointmentRepository appointmentRepository, FileStorageService fileStorageService) {
+        return new GetCareTrackings(careTrackingRepository, doctorRepository, userRepository, getCurrentUserContext, careTrackingResponseMapper, appointmentRepository, fileStorageService);
     }
 
     @Bean

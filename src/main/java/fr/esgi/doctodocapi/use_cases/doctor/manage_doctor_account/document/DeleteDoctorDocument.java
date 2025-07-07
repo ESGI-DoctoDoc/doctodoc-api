@@ -37,11 +37,10 @@ public class DeleteDoctorDocument implements IDeleteDoctorDocument {
         try {
             String username = this.getCurrentUserContext.getUsername();
             User user = this.userRepository.findByEmail(username);
-            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
             Document document = this.documentRepository.getById(documentId);
 
-            if (!Objects.equals(doctor.getId(), document.getUploadedBy())) {
+            if (!Objects.equals(user.getId(), document.getUploadedBy())) {
                 throw new CannotDeleteDocument();
             }
 
