@@ -39,7 +39,7 @@ public class DeletePatientCareTrackingDocument implements IDeletePatientCareTrac
             if (!Objects.equals(patient.getId(), document.getDocument().getUploadedBy())) {
                 throw new CannotDeleteDocument();
             }
-            document.getDocument().delete(patient.getUserId());
+            document.getDocument().delete(patient.getUserId())  ;
 
             this.documentRepository.delete(document.getDocument());
             this.fileStorageService.delete(document.getDocument().getPath());

@@ -21,7 +21,7 @@ public class CareTrackingResponseMapper {
         this.getDoctorProfileUrl = getDoctorProfileUrl;
     }
 
-    public GetCareTrackingsResponse toResponse(CareTracking careTracking, List<Appointment> appointments, List<Doctor> doctors, Doctor creator) {
+    public GetCareTrackingsResponse toResponse(CareTracking careTracking, List<Appointment> appointments, List<Doctor> doctors, Doctor creator, List<String> documentsUrl) {
 
         List<Doctor> fullDoctorList = new ArrayList<>(doctors);
         fullDoctorList.add(creator);
@@ -39,6 +39,7 @@ public class CareTrackingResponseMapper {
                 careTracking.getId(),
                 careTracking.getCaseName(),
                 careTracking.getCreatedAt().format(DATE_FORMATTER),
+                documentsUrl,
                 new CareTrackingPatientInfo(
                         careTracking.getPatient().getId(),
                         careTracking.getPatient().getFirstName(),
