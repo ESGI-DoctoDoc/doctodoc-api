@@ -13,7 +13,6 @@ import fr.esgi.doctodocapi.use_cases.patient.manage_account.ProfilePresentationM
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_account.IGetInformations;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_account.IManageProfile;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_account.IOnBoardingPatient;
-import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationService;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.TokenFcmRepository;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
@@ -22,8 +21,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class ManagePatientProfileConfiguration {
     @Bean
-    public IGetInformations getInformations(GetPatientFromContext patientFromContext, TokenFcmRepository tokenFcmRepository, ProfilePresentationMapper profilePresentationMapper, NotificationService notificationService) {
-        return new GetInformations(patientFromContext, tokenFcmRepository, profilePresentationMapper, notificationService);
+    public IGetInformations getInformations(GetPatientFromContext patientFromContext, TokenFcmRepository tokenFcmRepository, ProfilePresentationMapper profilePresentationMapper) {
+        return new GetInformations(patientFromContext, tokenFcmRepository, profilePresentationMapper);
     }
 
     @Bean
