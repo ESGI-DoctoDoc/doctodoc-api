@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.NotificationEntity;
+import fr.esgi.doctodocapi.model.notification.Notification;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationMessage;
 import org.springframework.stereotype.Service;
 
@@ -14,7 +15,17 @@ public class NotificationMapper {
         entity.setTitle(message.getTitle());
         entity.setContent(message.getBody());
         entity.setSendAt(LocalDateTime.now());
-
+        entity.setIsRead(false);
         return entity;
+    }
+
+    public Notification toDomain(NotificationEntity entity) {
+        return new Notification(
+                entity.getId(),
+                entity.getTitle(),
+                entity.getContent(),
+                entity.isRead(),
+                entity.getSendAt()
+        );
     }
 }
