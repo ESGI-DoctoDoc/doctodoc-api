@@ -6,6 +6,6 @@ public record CareTrackingMessageResponse(
         UUID id,
         SenderInfo sender,
         ContentInfo content,
-        String sendAt
+        String sentAt
 ) {
 }

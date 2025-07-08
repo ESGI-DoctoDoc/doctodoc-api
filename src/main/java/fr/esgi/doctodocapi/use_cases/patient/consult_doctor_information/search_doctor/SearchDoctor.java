@@ -16,8 +16,8 @@ public class SearchDoctor implements ISearchDoctor {
         this.searchDoctorPresentationMapper = searchDoctorPresentationMapper;
     }
 
-    public List<GetSearchDoctorResponse> process(String name, String speciality, List<String> languages, int page, int size) {
-        List<Doctor> doctors = this.searchDoctorService.getDoctor(name, speciality, languages, page, size);
+    public List<GetSearchDoctorResponse> process(String name, String speciality, List<String> languages, boolean valid, int page, int size) {
+        List<Doctor> doctors = this.searchDoctorService.getDoctor(name, speciality, languages, valid, page, size);
         return doctors.stream().map(this.searchDoctorPresentationMapper::toDto).toList();
     }
 }

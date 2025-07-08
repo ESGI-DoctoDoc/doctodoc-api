@@ -53,6 +53,8 @@ public interface DoctorRepository {
 
     List<Doctor> searchDoctors(String value, String speciality, List<String> lowercaseLanguages, int page, int size);
 
+    List<Doctor> searchValidDoctors(String name, String speciality, List<String> languages, int page, int size);
+
     List<Doctor> findAllForAdmin(int page, int size);
 
     void saveValidationStatus(Doctor doctor);

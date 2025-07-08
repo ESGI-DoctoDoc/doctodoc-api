@@ -161,6 +161,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     public void cancel(Appointment appointment) {
         AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFoundException::new);
         appointmentEntity.setStatus(appointment.getStatus().getValue());
+        appointmentEntity.setCancelExplanation(appointment.getCancelExplanation());
         this.appointmentJpaRepository.save(appointmentEntity);
     }
 
@@ -204,7 +205,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
     @Override
     public Optional<Appointment> getMostRecentUpcomingAppointment(User user) {
-        Optional<AppointmentEntity> appointmentEntity = this.appointmentJpaRepository.findFirstByPatient_User_IdAndStatusAndDateAfterOrderByDateAsc(user.getId(), AppointmentStatus.CONFIRMED.getValue(), LocalDate.now());
+        Optional<AppointmentEntity> appointmentEntity = this.appointmentJpaRepository.findFirstByPatient_User_IdAndStatusAndDateIsGreaterThanEqualOrderByDateAsc(user.getId(), AppointmentStatus.CONFIRMED.getValue(), LocalDate.now());
         return appointmentEntity.map(this.appointmentFacadeMapper::mapAppointmentToDomain);
     }
 

@@ -6,6 +6,7 @@ import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.CancelAppointmentRequest;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.ICancelAppointment;
 import org.springframework.http.HttpStatus;
 
@@ -20,11 +21,11 @@ public class CancelAppointment implements ICancelAppointment {
         this.getPatientFromContext = getPatientFromContext;
     }
 
-    public void cancel(UUID id) {
+    public void cancel(UUID id, CancelAppointmentRequest cancelAppointmentRequest) {
         try {
             Patient patient = this.getPatientFromContext.get();
             Appointment appointment = this.appointmentRepository.getByIdAndPatientId(id, patient.getId());
-            appointment.cancel();
+            appointment.cancel(cancelAppointmentRequest.reason());
             this.appointmentRepository.cancel(appointment);
             // todo : send a mail to confirm
             // todo : send a mail for the doctor

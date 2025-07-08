@@ -120,33 +120,38 @@ class AppointmentsAvailabilityServiceTest {
         Appointment confirmed = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern,
                 LocalTime.of(9, 0), LocalTime.of(9, 15),
-                fixedNow.minusDays(1), AppointmentStatus.CONFIRMED, List.of(), null, null, null
+                fixedNow.minusDays(1), AppointmentStatus.CONFIRMED, List.of(), null, null,
+                null, null
         );
 
         Appointment confirmed2 = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern2,
                 LocalTime.of(10, 0), LocalTime.of(10, 30),
-                fixedNow.minusDays(2), AppointmentStatus.CONFIRMED, List.of(), null, null, null
+                fixedNow.minusDays(2), AppointmentStatus.CONFIRMED, List.of(), null, null,
+                null, null
         );
 
         Appointment lockedNotExpired = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern,
                 LocalTime.of(9, 15), LocalTime.of(9, 30),
                 fixedNow.minusMinutes(2),
-                AppointmentStatus.LOCKED, List.of(), LocalDateTime.now().minusMinutes(2), null, null
+                AppointmentStatus.LOCKED, List.of(), LocalDateTime.now().minusMinutes(2), null,
+                null, null
         );
 
         Appointment lockedExpired = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern,
                 LocalTime.of(9, 30), LocalTime.of(9, 45),
                 fixedNow.minusMinutes(10),
-                AppointmentStatus.LOCKED, List.of(), LocalDateTime.now().minusMinutes(10), null, null
+                AppointmentStatus.LOCKED, List.of(), LocalDateTime.now().minusMinutes(10), null,
+                null, null
         );
 
         Appointment cancelled = new Appointment(
                 UUID.randomUUID(), slot, null, null, medicalConcern,
                 LocalTime.of(9, 45), LocalTime.of(10, 0),
-                fixedNow, AppointmentStatus.CANCELLED, List.of(), null, null, null
+                fixedNow, AppointmentStatus.CANCELLED, List.of(), null, null,
+                null, null
         );
 
         // Expected results
@@ -261,7 +266,7 @@ class AppointmentsAvailabilityServiceTest {
 
         // Appointment confirmé : 09:15 - 09:30
         Appointment appointment = new Appointment(UUID.randomUUID(), slot, null, null, concern,
-                LocalTime.of(9, 15), LocalTime.of(9, 30), LocalDateTime.now(), AppointmentStatus.CONFIRMED, List.of(), LocalDateTime.now(), null, null);
+                LocalTime.of(9, 15), LocalTime.of(9, 30), LocalDateTime.now(), AppointmentStatus.CONFIRMED, List.of(), LocalDateTime.now(), null, null, null);
 
         when(slotRepository.getSlotsByMedicalConcernAndDate(concern.getId(), date)).thenReturn(List.of(slot));
         when(appointmentRepository.getAppointmentsBySlot(slot.getId())).thenReturn(List.of(appointment));
