@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public record GetSearchSpecialityResponse(
         UUID id,
-        String name
+        String name,
+        String createdAt
 ) {
 }

@@ -2,10 +2,12 @@ package fr.esgi.doctodocapi.infrastructure.services.admin;
 
 import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
-import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
+import fr.esgi.doctodocapi.model.doctor.payment.invoice.DoctorInvoiceRepository;
+import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
 import fr.esgi.doctodocapi.use_cases.admin.ports.out.RetrieveSearchData;
 import org.springframework.stereotype.Service;
 
@@ -17,7 +19,7 @@ public class SearchAdminService implements RetrieveSearchData {
     private final AppointmentRepository appointmentRepository;
     private final SpecialityRepository specialityRepository;
 
-    public SearchAdminService(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, SpecialityRepository specialityRepository) {
+    public SearchAdminService(DoctorRepository doctorRepository, AppointmentRepository appointmentRepository, SpecialityRepository specialityRepository, DoctorInvoiceRepository doctorInvoiceRepository, DoctorSubscriptionRepository doctorSubscriptionRepository) {
         this.doctorRepository = doctorRepository;
         this.appointmentRepository = appointmentRepository;
         this.specialityRepository = specialityRepository;

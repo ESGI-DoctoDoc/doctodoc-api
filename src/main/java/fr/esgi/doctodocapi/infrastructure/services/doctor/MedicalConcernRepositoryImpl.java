@@ -16,6 +16,9 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.util.List;
@@ -184,5 +187,24 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
 
         entity.setDeletedAt(java.time.LocalDate.now());
         this.medicalConcernJpaRepository.save(entity);
+    }
+
+    @Override
+    public List<MedicalConcern> searchByName(UUID doctorId, String concernName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        Page<MedicalConcernEntity> result = this.medicalConcernJpaRepository
+                .searchByDoctorIdAndNameContainingIgnoreCase(doctorId, concernName, pageable);
+
+        List<MedicalConcernEntity> entities = result.getContent();
+
+        entities.forEach(entity -> {
+            List<QuestionEntity> questions = this.questionJpaRepository.findAllByMedicalConcern_Id(entity.getId());
+            entity.setQuestions(questions);
+        });
+
+        return entities.stream()
+                .map(medicalConcernMapper::toDomain)
+                .toList();
     }
 }

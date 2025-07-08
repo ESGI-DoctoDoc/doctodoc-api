@@ -1,5 +1,7 @@
 package fr.esgi.doctodocapi.configuration.admin;
 
+import fr.esgi.doctodocapi.model.doctor.payment.invoice.DoctorInvoiceRepository;
+import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.search.IAdminSearchFetcher;
 import fr.esgi.doctodocapi.use_cases.admin.ports.out.RetrieveSearchData;
 import fr.esgi.doctodocapi.use_cases.admin.search.AdminSearchFetcher;
@@ -11,7 +13,7 @@ import org.springframework.context.annotation.Configuration;
 public class AdminSearchConfiguration {
 
     @Bean
-    public IAdminSearchFetcher getAdminSearchFetcher(RetrieveSearchData retrieveSearchData, SearchAdminPresentationMapper searchAdminPresentationMapper) {
-        return new AdminSearchFetcher(retrieveSearchData, searchAdminPresentationMapper);
+    public IAdminSearchFetcher getAdminSearchFetcher(RetrieveSearchData retrieveSearchData, SearchAdminPresentationMapper searchAdminPresentationMapper, DoctorSubscriptionRepository doctorSubscriptionRepository, DoctorInvoiceRepository doctorInvoiceRepository) {
+        return new AdminSearchFetcher(retrieveSearchData, searchAdminPresentationMapper, doctorInvoiceRepository, doctorSubscriptionRepository);
     }
 }

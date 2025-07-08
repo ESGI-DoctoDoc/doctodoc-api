@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface RetrieveSearchData {
     List<Doctor> getDoctors(String name, int page, int size);
+
     List<Appointment> getAppointments(String patientName, int page, int size);
+
     List<Speciality> getSpecialities(String name, int page, int size);
 }

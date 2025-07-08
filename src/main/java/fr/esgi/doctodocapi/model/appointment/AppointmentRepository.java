@@ -53,4 +53,6 @@ public interface AppointmentRepository {
     Appointment getVisibleById(UUID id, List<String> validStatuses) throws AppointmentNotFoundException;
 
     List<Appointment> searchAppointmentsByPatientName(String patientName, int page, int size);
+
+    List<Appointment> searchAppointmentsByDoctorAndPatientName(UUID doctorId, String patientName, int page, int size);
 }

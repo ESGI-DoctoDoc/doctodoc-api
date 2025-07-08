@@ -58,4 +58,6 @@ public interface PatientRepository {
     Patient update(Patient patient);
 
     void delete(UUID patient);
+
+    List<Patient> searchByDoctorAndName(UUID doctorId, String name, int page, int size);
 }

@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.admin.dtos.responses.search;
+package fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.search;
 
 import java.util.UUID;
 
@@ -9,7 +9,9 @@ public record GetSearchAppointmentResponse(
         AppointmentMedicalConcern medicalConcern,
         String start,
         String startHour,
-        String status
+        String endHour,
+        String status,
+        String createdAt
 ) {
     public record AppointmentDoctor(
             UUID id,

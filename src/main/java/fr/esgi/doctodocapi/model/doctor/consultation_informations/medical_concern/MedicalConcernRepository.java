@@ -72,4 +72,6 @@ public interface MedicalConcernRepository {
     MedicalConcern update(UUID concernId, UUID doctorId, String name, Integer durationInMinutes, Double price);
 
     void delete(UUID concernId);
+
+    List<MedicalConcern> searchByName(UUID doctorId, String concernName, int page, int size);
 }

@@ -105,4 +105,15 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
 
     @Query("SELECT a FROM AppointmentEntity a WHERE LOWER(CONCAT(a.patient.firstName, ' ', a.patient.lastName)) LIKE LOWER(CONCAT('%', :name, '%'))")
     Page<AppointmentEntity> searchByPatientName(@Param("name") String name, Pageable pageable);
+
+    @Query("""
+    SELECT a FROM AppointmentEntity a
+    WHERE a.doctor.id = :doctorId
+    AND LOWER(CONCAT(a.patient.firstName, ' ', a.patient.lastName)) LIKE LOWER(CONCAT('%', :name, '%'))
+""")
+    Page<AppointmentEntity> searchByDoctorAndPatientName(
+            @Param("doctorId") UUID doctorId,
+            @Param("name") String name,
+            Pageable pageable
+    );
 }

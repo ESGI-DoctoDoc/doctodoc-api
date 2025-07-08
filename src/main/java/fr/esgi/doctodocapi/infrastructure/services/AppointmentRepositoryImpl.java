@@ -284,4 +284,11 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         Page<AppointmentEntity> appointments = this.appointmentJpaRepository.searchByPatientName(nameLower, pageable);
         return appointments.getContent().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
     }
+
+    @Override
+    public List<Appointment> searchAppointmentsByDoctorAndPatientName(UUID doctorId, String patientName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> pageResult = this.appointmentJpaRepository.searchByDoctorAndPatientName(doctorId, patientName, pageable);
+        return pageResult.getContent().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
+    }
 }

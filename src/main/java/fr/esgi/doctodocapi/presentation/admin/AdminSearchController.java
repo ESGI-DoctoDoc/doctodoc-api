@@ -3,6 +3,7 @@ package fr.esgi.doctodocapi.presentation.admin;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.search.GetSearchAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.search.GetSearchDoctorForAdminResponse;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.search.GetSearchSpecialityResponse;
+import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.search.GetSearchSubscriptionResponse;
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.search.IAdminSearchFetcher;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -48,5 +49,15 @@ public class AdminSearchController {
             @RequestParam(defaultValue = "20") int size
     ) {
         return adminSearchFetcher.searchSpecialities(name, page, size);
+    }
+
+    @GetMapping("/search/subscriptions")
+    @ResponseStatus(HttpStatus.OK)
+    public List<GetSearchSubscriptionResponse> getSubscriptionsByDoctorName(
+            @RequestParam(defaultValue = "") String name,
+            @RequestParam(defaultValue = "0") int page,
+            @RequestParam(defaultValue = "20") int size
+    ) {
+        return adminSearchFetcher.searchSubscriptions(name, page, size);
     }
 }
