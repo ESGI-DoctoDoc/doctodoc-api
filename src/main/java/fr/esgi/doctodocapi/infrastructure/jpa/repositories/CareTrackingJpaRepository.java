@@ -61,4 +61,6 @@ public interface CareTrackingJpaRepository extends JpaRepository<CareTrackingEnt
             @Param("patientName") String patientName,
             Pageable pageable
     );
+
+    boolean existsByCaseNameIgnoreCaseAndPatientIdAndIdNot(String name, UUID patientId, UUID excludeId);
 }

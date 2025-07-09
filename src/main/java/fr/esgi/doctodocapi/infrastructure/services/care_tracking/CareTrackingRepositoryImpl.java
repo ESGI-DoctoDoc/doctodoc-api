@@ -9,6 +9,7 @@ import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.DocumentMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.document_trace_mapper.DocumentTraceFacadeMapper;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
+import fr.esgi.doctodocapi.model.care_tracking.CareTrackingAlreadyExistException;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingNotFoundException;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
@@ -161,15 +162,32 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
 
     @Override
     public CareTracking update(CareTracking careTracking) {
-        DoctorEntity doctor = entityManager.getReference(DoctorEntity.class, careTracking.getCreatorId());
-        PatientEntity patient = entityManager.getReference(PatientEntity.class, careTracking.getPatient().getId());
+        CareTrackingEntity entity = this.careTrackingJpaRepository.findById(careTracking.getId())
+                .orElseThrow(CareTrackingNotFoundException::new);
 
-        CareTrackingEntity entityToSave = careTrackingMapper.toEntity(careTracking, patient);
-        entityToSave.setId(careTracking.getId());
-        entityToSave.setCreator(doctor);
+        boolean nameAlreadyExists = this.careTrackingJpaRepository.existsByCaseNameIgnoreCaseAndPatientIdAndIdNot(
+                careTracking.getCaseName(), careTracking.getPatient().getId(), careTracking.getId()
+        );
+        if (nameAlreadyExists) {
+            throw new CareTrackingAlreadyExistException();
+        }
 
-        CareTrackingEntity saved = careTrackingJpaRepository.save(entityToSave);
+        entity.setCaseName(careTracking.getCaseName());
+        entity.setDescription(careTracking.getDescription());
 
-        return careTrackingFacadeMapper.mapCareTrackingToDomain(saved);
+        CareTrackingEntity saved = this.careTrackingJpaRepository.save(entity);
+
+        return this.careTrackingFacadeMapper.mapCareTrackingToDomain(saved);
+    }
+
+    @Override
+    public UUID close(CareTracking careTracking) {
+        CareTrackingEntity entity = this.careTrackingJpaRepository.findById(careTracking.getId())
+                .orElseThrow(CareTrackingNotFoundException::new);
+
+        entity.setClosedAt(careTracking.getClosedAt());
+
+        CareTrackingEntity savedEntity = this.careTrackingJpaRepository.save(entity);
+        return savedEntity.getId();
     }
 }

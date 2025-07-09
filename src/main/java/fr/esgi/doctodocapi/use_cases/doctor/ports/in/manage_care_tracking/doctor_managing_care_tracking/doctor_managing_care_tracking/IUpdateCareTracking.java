@@ -7,5 +7,4 @@ import java.util.UUID;
 
 public interface IUpdateCareTracking {
     GetCareTrackingResponse execute(UUID careTrackingId, UpdateCareTrackingRequest request);
-
 }

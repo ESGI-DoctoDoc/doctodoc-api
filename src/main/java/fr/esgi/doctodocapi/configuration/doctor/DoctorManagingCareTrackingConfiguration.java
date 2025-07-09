@@ -10,6 +10,7 @@ import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_care_tracking.doctor_managing_care_tracking.UpdateCareTrackingRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.CloseCareTracking;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.GetCareTrackings;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.InitializeCareTracking;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.UpdateCareTracking;
@@ -18,6 +19,7 @@ import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document.GetCar
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document.UploadCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.message.GetCareTrackingMessages;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.message.SendCareTrackingMessage;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.ICloseCareTracking;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.IGetCareTrackings;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.IInitializeCareTracking;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.IUpdateCareTracking;
@@ -79,5 +81,10 @@ public class DoctorManagingCareTrackingConfiguration {
     @Bean
     public IUpdateCareTracking updateCareTracking(CareTrackingRepository careTrackingRepository, GetCurrentUserContext currentUserContext, UserRepository userRepository, DoctorRepository doctorRepository) {
         return new UpdateCareTracking(careTrackingRepository, currentUserContext, userRepository, doctorRepository);
+    }
+
+    @Bean
+    public ICloseCareTracking closeCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository) {
+        return new CloseCareTracking(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository);
     }
 }
