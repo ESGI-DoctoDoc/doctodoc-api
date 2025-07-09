@@ -276,4 +276,13 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
                 .orElseThrow(AppointmentNotFoundException::new);
         return appointmentFacadeMapper.mapAppointmentToDomain(entity);
     }
+
+    @Override
+    public List<Appointment> findAppointmentsByDoctorIdAndPatientId(UUID doctorId, UUID patientId) {
+        List<AppointmentEntity> appointments = this.appointmentJpaRepository
+                .findAllByDoctor_IdAndPatient_IdAndDeletedAtIsNull(doctorId, patientId);
+        return appointments.stream()
+                .map(appointmentFacadeMapper::mapAppointmentToDomain)
+                .toList();
+    }
 }
