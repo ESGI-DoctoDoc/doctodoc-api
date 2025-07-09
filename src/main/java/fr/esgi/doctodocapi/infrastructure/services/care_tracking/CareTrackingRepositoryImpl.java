@@ -71,6 +71,7 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
 
         entity.setAppointments(appointmentEntities);
         entity.setCreator(doctor);
+        entity.setDoctors(careTracking.getDoctors());
 
         CareTrackingEntity savedEntity = this.careTrackingJpaRepository.save(entity);
 
