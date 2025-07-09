@@ -54,6 +54,13 @@ public class CareTracking {
         );
     }
 
+    public void addDoctorIfNotPresent(UUID doctorId) {
+        verifyIfNotClosed();
+        if (!this.doctors.contains(doctorId) && !Objects.equals(this.creatorId, doctorId)) {
+            this.doctors.add(doctorId);
+        }
+    }
+
     public CareTrackingDocument getById(UUID id) {
         return this.documents
                 .stream()
@@ -75,14 +82,6 @@ public class CareTracking {
         this.documents.remove(oldDocument);
         this.documents.add(newDocument);
     }
-
-//    public void addDoctor(UUID doctorId) {
-//        verifyIfNotClosed();
-//        if (doctors.contains(doctorId)) {
-//            throw new DoctorAlreadyExistInCareTrackingException();
-//        }
-//        doctors.add(doctorId);
-//    }
 
     public void addAppointment(UUID appointmentId) {
         verifyIfNotClosed();
