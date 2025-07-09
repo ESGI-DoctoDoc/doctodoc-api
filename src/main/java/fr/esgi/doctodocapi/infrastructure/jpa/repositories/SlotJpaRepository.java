@@ -96,4 +96,8 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
             @Param("validStatuses") List<String> validStatuses,
             Pageable pageable
     );
+
+    List<SlotEntity> findAllByDateAfterAndDoctor_Id(LocalDate dateAfter, UUID doctorId);
+
+    List<SlotEntity> findAllByDateBeforeAndDoctor_Id(LocalDate dateBefore, UUID doctorId);
 }

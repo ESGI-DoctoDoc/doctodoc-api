@@ -5,6 +5,7 @@ import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.AppointmentsAvailabilityService;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
+import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
@@ -19,8 +20,8 @@ import org.springframework.context.annotation.Configuration;
 @Configuration
 public class MakingAppointmentConfiguration {
     @Bean
-    public IFlowToMakingAppointment flowToMakingAppointment(MedicalConcernRepository medicalConcernRepository, DoctorRepository doctorRepository, DoctorSubscriptionRepository doctorSubscriptionRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, AppointmentsAvailabilityService appointmentsAvailabilityService) {
-        return new FlowToMakingAppointment(medicalConcernRepository, doctorRepository, doctorSubscriptionRepository, careTrackingRepository, getPatientFromContext, appointmentsAvailabilityService);
+    public IFlowToMakingAppointment flowToMakingAppointment(MedicalConcernRepository medicalConcernRepository, DoctorRepository doctorRepository, DoctorSubscriptionRepository doctorSubscriptionRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, AppointmentsAvailabilityService appointmentsAvailabilityService, SlotRepository slotRepository, AbsenceRepository absenceRepository) {
+        return new FlowToMakingAppointment(medicalConcernRepository, doctorRepository, doctorSubscriptionRepository, careTrackingRepository, getPatientFromContext, appointmentsAvailabilityService, slotRepository, absenceRepository);
     }
 
     @Bean

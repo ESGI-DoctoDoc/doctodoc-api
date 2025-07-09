@@ -19,7 +19,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -155,6 +157,37 @@ public class SlotRepositoryImpl implements SlotRepository {
                 .map(this::mapSlotEntityToDomain)
                 .toList();
     }
+
+    @Override
+    public List<Slot> getByNextDateAndDoctorId(LocalDate date, UUID doctorId) {
+        List<SlotEntity> entities = this.slotJpaRepository.findAllByDateAfterAndDoctor_Id(date, doctorId);
+
+        Optional<LocalDate> closestNextDate = entities.stream()
+                .map(SlotEntity::getDate)
+                .min(Comparator.naturalOrder()); // la plus proche date future
+
+        return closestNextDate.map(localDate -> entities.stream()
+                .filter(slot -> slot.getDate().equals(localDate))
+                .map(this::mapSlotEntityToDomain)
+                .toList()).orElseGet(List::of);
+
+    }
+
+    @Override
+    public List<Slot> getByPreviousDateAndDoctorId(LocalDate date, UUID doctorId) {
+        List<SlotEntity> entities = this.slotJpaRepository.findAllByDateBeforeAndDoctor_Id(date, doctorId);
+
+        // Trouve la date la plus récente avant `date`
+        Optional<LocalDate> closestPreviousDate = entities.stream()
+                .map(SlotEntity::getDate)
+                .max(Comparator.naturalOrder());
+
+        return closestPreviousDate.map(localDate -> entities.stream()
+                .filter(slot -> slot.getDate().equals(localDate))
+                .map(this::mapSlotEntityToDomain)
+                .toList()).orElseGet(List::of);
+    }
+
 
     @Override
     public List<Slot> findVisibleByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate, List<String> validStatuses, int page, int size) {
