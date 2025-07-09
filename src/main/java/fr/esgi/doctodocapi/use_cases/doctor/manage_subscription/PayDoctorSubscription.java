@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.doctor.manage_payment;
+package fr.esgi.doctodocapi.use_cases.doctor.manage_subscription;
 
 import com.stripe.model.checkout.Session;
 import fr.esgi.doctodocapi.model.DomainException;
@@ -13,7 +13,7 @@ import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionR
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.SubscribeRequest;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.SubscribeResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.subscription_response.SubscribeResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.IPayDoctorSubscription;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.PaymentProcess;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;

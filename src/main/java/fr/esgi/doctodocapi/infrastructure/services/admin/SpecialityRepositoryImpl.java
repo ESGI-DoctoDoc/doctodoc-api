@@ -92,4 +92,12 @@ public class SpecialityRepositoryImpl implements SpecialityRepository {
                 .map(specialityMapper::toDomain)
                 .orElseThrow(SpecialityNotFoundException::new);
     }
+
+    @Override
+    public List<Speciality> searchSpecialitiesByName(String name, int page, int size) {
+        String nameLower = (name == null || name.isBlank()) ? null : name.toLowerCase();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<SpecialityEntity> specialities = this.specialityJpaRepository.searchByName(nameLower, pageable);
+        return specialities.stream().map(this.specialityMapper::toDomain).toList();
+    }
 }

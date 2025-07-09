@@ -58,4 +58,6 @@ public interface DoctorRepository {
     List<Doctor> findAllForAdmin(int page, int size);
 
     void saveValidationStatus(Doctor doctor);
+
+    List<Doctor> searchDoctorsByName(String name, int page, int size);
 }

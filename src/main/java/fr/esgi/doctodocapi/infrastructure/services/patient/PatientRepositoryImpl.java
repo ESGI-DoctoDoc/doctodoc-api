@@ -10,6 +10,8 @@ import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import jakarta.persistence.EntityManager;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
@@ -156,4 +158,10 @@ public class PatientRepositoryImpl implements PatientRepository {
         this.patientJpaRepository.save(entity);
     }
 
+    @Override
+    public List<Patient> searchByDoctorAndName(UUID doctorId, String name, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        List<PatientEntity> entities = this.patientJpaRepository.searchByDoctorAndNameFromAppointments(doctorId, name, pageable);
+        return entities.stream().map(this.patientMapper::toDomain).toList();
+    }
 }

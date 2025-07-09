@@ -278,6 +278,21 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     }
 
     @Override
+    public List<Appointment> searchAppointmentsByPatientName(String patientName, int page, int size) {
+        String nameLower = (patientName == null || patientName.isBlank()) ? null : patientName.toLowerCase();
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> appointments = this.appointmentJpaRepository.searchByPatientName(nameLower, pageable);
+        return appointments.getContent().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
+    }
+
+    @Override
+    public List<Appointment> searchAppointmentsByDoctorAndPatientName(UUID doctorId, String patientName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<AppointmentEntity> pageResult = this.appointmentJpaRepository.searchByDoctorAndPatientName(doctorId, patientName, pageable);
+        return pageResult.getContent().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
+    }
+
+    @Override
     public List<Appointment> findAppointmentsByDoctorIdAndPatientId(UUID doctorId, UUID patientId) {
         List<AppointmentEntity> appointments = this.appointmentJpaRepository
                 .findAllByDoctor_IdAndPatient_IdAndDeletedAtIsNull(doctorId, patientId);

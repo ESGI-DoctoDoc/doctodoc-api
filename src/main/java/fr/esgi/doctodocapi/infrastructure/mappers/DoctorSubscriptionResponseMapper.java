@@ -5,6 +5,8 @@ import fr.esgi.doctodocapi.model.doctor.payment.invoice.DoctorInvoice;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscription;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.DoctorInfoForAdmin;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.get_subscriptions.GetSubscriptionForAdminResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.subscription_response.DoctorSubscriptionInfo;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.subscription_response.GetDoctorSubscriptionResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -30,6 +32,25 @@ public class DoctorSubscriptionResponseMapper {
                 formatDate(subscription.getCreatedAt())
         );
     }
+
+    public GetDoctorSubscriptionResponse toDoctorResponse(DoctorSubscription subscription, Doctor doctor, DoctorInvoice invoice, String status) {
+        return new GetDoctorSubscriptionResponse(
+                subscription.getId(),
+                new DoctorSubscriptionInfo(
+                        doctor.getId(),
+                        doctor.getPersonalInformations().getFirstName(),
+                        doctor.getPersonalInformations().getLastName(),
+                        doctor.getEmail().getValue()
+                ),
+                subscription.getStartDate().toString(),
+                subscription.getEndDate().toString(),
+                invoice.getAmount(),
+                status,
+                formatDate(subscription.getCreatedAt())
+        );
+    }
+
+
 
     private String formatDate(LocalDateTime date) {
         return date.format(DATE_FORMATTER);

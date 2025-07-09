@@ -2,6 +2,8 @@ package fr.esgi.doctodocapi.infrastructure.jpa.repositories;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorSubscriptionEntity;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
@@ -33,4 +35,5 @@ public interface DoctorSubscriptionJpaRepository extends JpaRepository<DoctorSub
 """)
     Optional<DoctorSubscriptionEntity> findLatestSubscriptionByDoctor(DoctorEntity doctor);
     List<DoctorSubscriptionEntity> findAllByDoctor(DoctorEntity doctor);
+    Page<DoctorSubscriptionEntity> findAllByDoctor(DoctorEntity doctor, Pageable pageable);
 }
