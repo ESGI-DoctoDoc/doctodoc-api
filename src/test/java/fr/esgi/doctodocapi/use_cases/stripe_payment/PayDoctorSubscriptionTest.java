@@ -1,11 +1,9 @@
 package fr.esgi.doctodocapi.use_cases.stripe_payment;
 
-import com.stripe.exception.StripeException;
 import com.stripe.model.checkout.Session;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.PaymentProcessFailedException;
-import fr.esgi.doctodocapi.model.doctor.payment.invoice.DoctorInvoice;
 import fr.esgi.doctodocapi.model.doctor.payment.invoice.DoctorInvoiceRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.invoice.InvoiceState;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscription;
@@ -13,8 +11,8 @@ import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionR
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.SubscribeRequest;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.SubscribeResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.manage_payment.PayDoctorSubscription;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.subscription_response.SubscribeResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_subscription.PayDoctorSubscription;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.PaymentProcess;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.junit.jupiter.api.BeforeEach;

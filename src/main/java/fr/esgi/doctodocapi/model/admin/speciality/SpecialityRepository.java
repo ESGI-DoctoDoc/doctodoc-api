@@ -30,4 +30,6 @@ public interface SpecialityRepository {
     Speciality findById(UUID id);
 
     Speciality update(UUID id, String newName);
+
+    List<Speciality> searchSpecialitiesByName(String name, int page, int size);
 }

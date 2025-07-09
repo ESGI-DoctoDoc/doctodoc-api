@@ -84,4 +84,6 @@ public interface DoctorJpaRepository extends JpaRepository<DoctorEntity, UUID> {
             Pageable pageable
     );
 
+    @Query("SELECT d FROM DoctorEntity d WHERE LOWER(CONCAT(d.firstName, ' ', d.lastName)) LIKE LOWER(CONCAT('%', :name, '%'))")
+    Page<DoctorEntity> searchByDoctorName(@Param("name") String name, Pageable pageable);
 }

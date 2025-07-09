@@ -147,4 +147,15 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
                 .map(careTrackingFacadeMapper::mapCareTrackingToDomain)
                 .toList();
     }
+
+    @Override
+    public List<CareTracking> findAllByDoctorAndPatientName(UUID doctorId, String patientName, int page, int size) {
+        Pageable pageable = PageRequest.of(page, size);
+
+        return this.careTrackingJpaRepository
+                .findByDoctorIdAndPatientName(doctorId, patientName, pageable)
+                .stream()
+                .map(careTrackingFacadeMapper::mapCareTrackingToDomain)
+                .toList();
+    }
 }

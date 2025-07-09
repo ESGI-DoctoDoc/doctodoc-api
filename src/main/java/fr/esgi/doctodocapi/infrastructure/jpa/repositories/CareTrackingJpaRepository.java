@@ -42,4 +42,23 @@ public interface CareTrackingJpaRepository extends JpaRepository<CareTrackingEnt
 
     List<CareTrackingEntity> findAllByPatient_IdAndClosedAtNullOrderByCreatedAtDesc(UUID patientId);
 
+    @Query(value = """
+    SELECT c.* FROM cares_tracking c
+    JOIN patients p ON p.patient_id = c.patient_id
+    WHERE (:doctorId = ANY (c.doctors) OR c.doctor_id = :doctorId)
+    AND LOWER(CONCAT(p.first_name, ' ', p.last_name)) LIKE CONCAT('%', :patientName, '%')
+    ORDER BY c.created_at DESC
+    """,
+            countQuery = """
+    SELECT COUNT(*) FROM cares_tracking c
+    JOIN patients p ON p.patient_id = c.patient_id
+    WHERE (:doctorId = ANY (c.doctors) OR c.doctor_id = :doctorId)
+    AND LOWER(CONCAT(p.first_name, ' ', p.last_name)) LIKE CONCAT('%', :patientName, '%')
+    """,
+            nativeQuery = true)
+    Page<CareTrackingEntity> findByDoctorIdAndPatientName(
+            @Param("doctorId") UUID doctorId,
+            @Param("patientName") String patientName,
+            Pageable pageable
+    );
 }
