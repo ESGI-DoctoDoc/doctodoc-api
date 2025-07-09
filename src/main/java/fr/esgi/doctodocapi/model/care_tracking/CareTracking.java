@@ -54,6 +54,13 @@ public class CareTracking {
         );
     }
 
+    public void addDoctorIfNotPresent(UUID doctorId) {
+        verifyIfNotClosed();
+        if (!this.doctors.contains(doctorId)) {
+            this.doctors.add(doctorId);
+        }
+    }
+
     public CareTrackingDocument getById(UUID id) {
         return this.documents
                 .stream()

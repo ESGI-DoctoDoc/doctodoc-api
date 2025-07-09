@@ -154,6 +154,15 @@ public class ValidateAppointment implements IValidateAppointment {
             Patient patient = this.getPatientFromContext.get();
             Appointment appointment = this.appointmentRepository.getByIdAndPatientId(id, patient.getId());
             appointment.confirm();
+
+            UUID careTrackingId = appointment.getCareTrackingId();
+            if (careTrackingId != null) {
+                CareTracking careTracking = this.careTrackingRepository.getById(careTrackingId);
+                careTracking.addDoctorIfNotPresent(appointment.getDoctor().getId());
+
+                this.careTrackingRepository.save(careTracking);
+            }
+
             this.appointmentRepository.confirm(appointment);
             // todo send an email to inform the patient and if it's not main account, send to user
         } catch (DomainException e) {
