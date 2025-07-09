@@ -121,6 +121,17 @@ public class SlotRepositoryImpl implements SlotRepository {
         return savedEntities.stream().map(this.slotMapper::toDomain).toList();
     }
 
+    @Override
+    public Slot save(Slot slot, UUID doctorId) {
+        DoctorEntity doctorEntity = new DoctorEntity();
+        doctorEntity.setId(doctorId);
+
+        SlotEntity slotEntity = mapSlotToEntity(slot, doctorEntity);
+        SlotEntity savedEntity = this.slotJpaRepository.save(slotEntity);
+
+        return this.slotMapper.toDomain(savedEntity);
+    }
+
     /**
      * Retrieves all future slots (after the given date) for a specific doctor.
      *

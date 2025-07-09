@@ -40,6 +40,8 @@ public interface SlotRepository {
      */
     List<Slot> saveAll(List<Slot> slots, UUID doctorId);
 
+    Slot save(Slot slot, UUID doctorId);
+
     /**
      * Retrieves all slots for a given doctor starting from a specified date, ordered by date in ascending order.
      *
