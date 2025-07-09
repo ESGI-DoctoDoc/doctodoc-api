@@ -102,4 +102,6 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     List<AppointmentEntity> findAllByStatusAndDateAndStartHour(String status, LocalDate date, LocalTime startHour);
 
     List<AppointmentEntity> findAllByStatusAndDateBefore(String status, LocalDate dateBefore);
+
+    List<AppointmentEntity> findAllByDoctor_IdAndPatient_IdAndDeletedAtIsNull(UUID doctorId, UUID patientId);
 }
