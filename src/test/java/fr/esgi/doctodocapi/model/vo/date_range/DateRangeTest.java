@@ -14,7 +14,7 @@ class DateRangeTest {
         LocalDate end = LocalDate.of(2025, 7, 31);
         InvalidDateRangeException ex = assertThrows(InvalidDateRangeException.class,
                 () -> DateRange.of(start, end));
-        assertEquals("invalid-date-range", ex.getCode());
+        assertEquals("date-range.invalid", ex.getCode());
     }
 
     @Test
