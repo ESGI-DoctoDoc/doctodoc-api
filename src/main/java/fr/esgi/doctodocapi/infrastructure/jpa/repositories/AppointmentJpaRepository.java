@@ -116,4 +116,6 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
             @Param("name") String name,
             Pageable pageable
     );
+
+    List<AppointmentEntity> findAllByDoctor_IdAndPatient_IdAndDeletedAtIsNull(UUID doctorId, UUID patientId);
 }

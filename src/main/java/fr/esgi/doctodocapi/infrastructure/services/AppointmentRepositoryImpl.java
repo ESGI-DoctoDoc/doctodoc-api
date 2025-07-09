@@ -291,4 +291,13 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         Page<AppointmentEntity> pageResult = this.appointmentJpaRepository.searchByDoctorAndPatientName(doctorId, patientName, pageable);
         return pageResult.getContent().stream().map(this.appointmentFacadeMapper::mapAppointmentToDomain).toList();
     }
+
+    @Override
+    public List<Appointment> findAppointmentsByDoctorIdAndPatientId(UUID doctorId, UUID patientId) {
+        List<AppointmentEntity> appointments = this.appointmentJpaRepository
+                .findAllByDoctor_IdAndPatient_IdAndDeletedAtIsNull(doctorId, patientId);
+        return appointments.stream()
+                .map(appointmentFacadeMapper::mapAppointmentToDomain)
+                .toList();
+    }
 }

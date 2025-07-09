@@ -5,6 +5,7 @@ import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.GetSearchDoctorRespo
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_referent_doctor.IGetReferentDoctor;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_referent_doctor.ISetReferentDoctor;
 import jakarta.validation.Valid;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
@@ -20,12 +21,13 @@ public class ManageReferentDoctorController {
         this.addReferentDoctor = addReferentDoctor;
     }
 
-    @GetMapping()
+    @GetMapping
     public GetSearchDoctorResponse get() {
         return this.getReferentDoctor.process();
     }
 
-    @PostMapping()
+    @PostMapping
+    @ResponseStatus(value = HttpStatus.OK)
     public GetSearchDoctorResponse set(@Valid @RequestBody SaveReferentDoctorRequest saveReferentDoctorRequest) {
         return this.addReferentDoctor.process(saveReferentDoctorRequest);
     }

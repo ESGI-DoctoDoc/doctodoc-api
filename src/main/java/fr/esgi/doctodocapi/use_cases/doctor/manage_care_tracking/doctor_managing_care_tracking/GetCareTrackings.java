@@ -13,10 +13,13 @@ import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.doctor_managing_care_tracking.GetCareTrackingsResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.IGetCareTrackings;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
+import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class GetCareTrackings implements IGetCareTrackings {
     private final CareTrackingRepository careTrackingRepository;
@@ -25,14 +28,16 @@ public class GetCareTrackings implements IGetCareTrackings {
     private final GetCurrentUserContext getCurrentUserContext;
     private final CareTrackingResponseMapper careTrackingResponseMapper;
     private final AppointmentRepository appointmentRepository;
+    private final FileStorageService fileStorageService;
 
-    public GetCareTrackings(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, CareTrackingResponseMapper careTrackingResponseMapper, AppointmentRepository appointmentRepository) {
+    public GetCareTrackings(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, CareTrackingResponseMapper careTrackingResponseMapper, AppointmentRepository appointmentRepository, FileStorageService fileStorageService) {
         this.careTrackingRepository = careTrackingRepository;
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.careTrackingResponseMapper = careTrackingResponseMapper;
         this.appointmentRepository = appointmentRepository;
+        this.fileStorageService = fileStorageService;
     }
 
     public List<GetCareTrackingsResponse> execute(int page, int size) {
@@ -50,7 +55,9 @@ public class GetCareTrackings implements IGetCareTrackings {
 
                         List<Doctor> doctors = getDoctorList(careTracking);
 
-                        return careTrackingResponseMapper.toResponse(careTracking, appointments, doctors, creator);
+                        List<String> files = getDocumentFiles(careTracking);
+
+                        return careTrackingResponseMapper.toResponse(careTracking, appointments, doctors, creator, files);
                     })
                     .toList();
 
@@ -72,11 +79,32 @@ public class GetCareTrackings implements IGetCareTrackings {
 
             List<Doctor> doctors = getDoctorList(careTracking);
 
-            return this.careTrackingResponseMapper.toResponse(careTracking, appointments, doctors, creator);
+            List<String> files = getDocumentFiles(careTracking);
+
+            return this.careTrackingResponseMapper.toResponse(careTracking, appointments, doctors, creator, files);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
+    }
+
+    private List<String> getDocumentFiles(CareTracking careTracking) {
+        Map<UUID, String> documentsUrl = getDocumentMap(careTracking);
+
+        return careTracking.getDocuments() != null
+                ? careTracking.getDocuments().stream()
+                .map(doc -> documentsUrl.get(doc.getDocument().getId()))
+                .filter(Objects::nonNull)
+                .toList()
+                : List.of();
+    }
+
+    private Map<UUID, String> getDocumentMap(CareTracking careTracking) {
+        return careTracking.getDocuments().stream()
+                .collect(Collectors.toMap(
+                        doc -> doc.getDocument().getId(),
+                        doc -> this.fileStorageService.getFile(doc.getDocument().getPath())
+                ));
     }
 
     private List<Doctor> getDoctorList(CareTracking careTracking) {
