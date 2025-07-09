@@ -41,7 +41,7 @@ public class AdminSearchController {
         return adminSearchFetcher.searchAppointments(name, page, size);
     }
 
-    @GetMapping("/search/specialties")
+    @GetMapping("/search/specialities")
     @ResponseStatus(HttpStatus.OK)
     public List<GetSearchSpecialityResponse> getSpecialtiesByName(
             @RequestParam(defaultValue = "") String name,

@@ -52,7 +52,7 @@ public class DoctorSearchPresentationMapper {
                 patient.getLastName(),
                 patient.getEmail().getValue(),
                 patient.getPhoneNumber().getValue(),
-                patient.getGender().name().toLowerCase()
+                patient.getGender().name()
         );
     }
 
