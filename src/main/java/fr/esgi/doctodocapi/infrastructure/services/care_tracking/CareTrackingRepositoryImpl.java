@@ -158,4 +158,18 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
                 .map(careTrackingFacadeMapper::mapCareTrackingToDomain)
                 .toList();
     }
+
+    @Override
+    public CareTracking update(CareTracking careTracking) {
+        DoctorEntity doctor = entityManager.getReference(DoctorEntity.class, careTracking.getCreatorId());
+        PatientEntity patient = entityManager.getReference(PatientEntity.class, careTracking.getPatient().getId());
+
+        CareTrackingEntity entityToSave = careTrackingMapper.toEntity(careTracking, patient);
+        entityToSave.setId(careTracking.getId());
+        entityToSave.setCreator(doctor);
+
+        CareTrackingEntity saved = careTrackingJpaRepository.save(entityToSave);
+
+        return careTrackingFacadeMapper.mapCareTrackingToDomain(saved);
+    }
 }

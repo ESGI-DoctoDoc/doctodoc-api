@@ -25,4 +25,6 @@ public interface CareTrackingRepository {
     List<CareTracking> findAllOpenedByPatientId(UUID patientId);
 
     List<CareTracking> findAllByDoctorAndPatientName(UUID doctorId, String patientName, int page, int size);
+
+    CareTracking update(CareTracking careTracking);
 }
