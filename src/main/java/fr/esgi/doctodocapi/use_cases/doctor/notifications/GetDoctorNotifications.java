@@ -10,6 +10,8 @@ import fr.esgi.doctodocapi.use_cases.doctor.ports.in.notifications.IGetDoctorNot
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
+import java.util.Comparator;
 import java.util.List;
 
 public class GetDoctorNotifications implements IGetDoctorNotifications {
@@ -27,7 +29,16 @@ public class GetDoctorNotifications implements IGetDoctorNotifications {
         try {
             Doctor doctor = this.getDoctorFromContext.get();
             List<Notification> notifications = this.notificationRepository.getAllByRecipientId(doctor.getId());
-            return notifications.stream().map(this.notificationDoctorPresentationMapper::toDto).toList();
+
+            LocalDateTime nowMinusOneWeek = LocalDateTime.now().minusWeeks(1);
+
+            List<Notification> notificationsSentInLastWeek = notifications
+                    .stream()
+                    .filter(notification -> notification.getSendAt().isEqual(nowMinusOneWeek) || notification.getSendAt().isAfter(nowMinusOneWeek))
+                    .sorted(Comparator.comparing(Notification::getSendAt).reversed())
+                    .toList();
+
+            return notificationsSentInLastWeek.stream().map(this.notificationDoctorPresentationMapper::toDto).toList();
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }

@@ -12,5 +12,5 @@ public interface NotificationJpaRepository extends JpaRepository<NotificationEnt
 
     List<NotificationEntity> findAllByRecipientId(UUID recipientId);
 
-    Optional<NotificationEntity> findByIdAndRecipientIdOrderBySendAtDesc(UUID id, UUID recipientId);
+    Optional<NotificationEntity> findByIdAndRecipientId(UUID id, UUID recipientId);
 }
