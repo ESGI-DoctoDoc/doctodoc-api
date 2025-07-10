@@ -37,33 +37,43 @@ public class UpdateSlot implements IUpdateSlot {
         this.medicalConcernRepository = medicalConcernRepository;
     }
 
-//    public GetUpdatedSlotResponse execute(UUID slotId, UpdateSlotRequest request) {
-//        String username = this.currentUserContext.getUsername();
-//        try {
-//            User user = this.userRepository.findByEmail(username);
-//            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
-//
-//            Slot slot = this.slotRepository.getById(slotId);
-//            LocalTime newStart = LocalTime.parse(request.startHour());
-//            LocalTime newEnd = LocalTime.parse(request.endHour());
-//            HoursRange newRange = HoursRange.of(newStart, newEnd);
-//
-//            if (request.medicalConcernIds().isEmpty()) {
-//                throw new AtLeastOneMedicalConcernException();
-//            }
-//            List<MedicalConcern> newConcerns = this.medicalConcernRepository.findAllById(request.medicalConcernIds());
-//            slot.update(newRange, newConcerns);
-//
-//            List<Slot> existingSlots = this.slotRepository.findAllByDoctorIdAndDate(doctor.getId(), slot.getDate());
-//            slot.validateAgainstOverlaps(existingSlots.stream()
-//                    .filter(validSlot -> !validSlot.getId().equals(slot.getId()))
-//                    .toList());
-//
-//            this.slotRepository.save(slot, doctor.getId());
-//
-//            return new GetUpdatedSlotResponse();
-//        } catch (DomainException e) {
-//            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
-//        }
-//    }
+    public GetUpdatedSlotResponse execute(UUID slotId, UpdateSlotRequest request) {
+        String username = this.currentUserContext.getUsername();
+        try {
+            User user = this.userRepository.findByEmail(username);
+            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
+
+            Slot slot = this.slotRepository.getById(slotId);
+            LocalTime newStart = LocalTime.parse(request.startHour());
+            LocalTime newEnd = LocalTime.parse(request.endHour());
+            HoursRange newRange = HoursRange.of(newStart, newEnd);
+
+            if (request.medicalConcernIds().isEmpty()) {
+                throw new AtLeastOneMedicalConcernException();
+            }
+            List<MedicalConcern> newConcerns = this.medicalConcernRepository.findAllById(request.medicalConcernIds());
+            slot.update(newRange, newConcerns);
+
+            List<Slot> existingSlots = this.slotRepository.findAllByDoctorIdAndDate(doctor.getId(), slot.getDate());
+            slot.validateAgainstOverlaps(existingSlots.stream()
+                    .filter(validSlot -> !validSlot.getId().equals(slot.getId()))
+                    .toList());
+
+            Slot savedSlot = this.slotRepository.update(slot);
+
+            return new GetUpdatedSlotResponse(
+                    savedSlot.getId(),
+                    savedSlot.getHoursRange().getStart().toString(),
+                    savedSlot.getHoursRange().getEnd().toString(),
+                    savedSlot.getAvailableMedicalConcerns().stream()
+                            .map(mc -> new GetUpdatedSlotResponse.MedicalConcernUpdateResponse(
+                                    mc.getId(),
+                                    mc.getName()
+                            ))
+                            .toList()
+            );
+        } catch (DomainException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
+    }
 }

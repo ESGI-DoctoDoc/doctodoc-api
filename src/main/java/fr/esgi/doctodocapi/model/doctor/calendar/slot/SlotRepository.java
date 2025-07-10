@@ -60,4 +60,6 @@ public interface SlotRepository {
     List<Slot> findAllByDoctorIdAndDate(UUID doctorId, LocalDate date);
 
     Slot findVisibleById(UUID slotId, List<String> validStatuses);
+
+    Slot update(Slot slot);
 }
