@@ -7,9 +7,9 @@ import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.message.MessageRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
+import fr.esgi.doctodocapi.model.notification.NotificationRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_care_tracking.doctor_managing_care_tracking.UpdateCareTrackingRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.CloseCareTracking;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.GetCareTrackings;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.InitializeCareTracking;
@@ -58,8 +58,8 @@ public class DoctorManagingCareTrackingConfiguration {
     }
 
     @Bean
-    public ISendCareTrackingMessage sendCareTrackingMessage(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, MessageRepository messageRepository, SimpMessagingTemplate messagingTemplate, CareTrackingMessageResponseMapper careTrackingMessageResponseMapper, FileStorageService fileStorageService) {
-        return new SendCareTrackingMessage(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, messageRepository, messagingTemplate, careTrackingMessageResponseMapper, fileStorageService);
+    public ISendCareTrackingMessage sendCareTrackingMessage(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, MessageRepository messageRepository, SimpMessagingTemplate messagingTemplate, CareTrackingMessageResponseMapper careTrackingMessageResponseMapper, FileStorageService fileStorageService, NotificationRepository notificationRepository) {
+        return new SendCareTrackingMessage(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, messageRepository, messagingTemplate, careTrackingMessageResponseMapper, fileStorageService, notificationRepository);
     }
 
     @Bean
