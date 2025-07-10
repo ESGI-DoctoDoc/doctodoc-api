@@ -111,4 +111,10 @@ public class ManageSlotsController {
     public DeleteSlotResponse delete(@PathVariable UUID id) {
         return this.deleteSlot.execute(id);
     }
+
+    @PutMapping("slots/{id}/recurrence")
+    @ResponseStatus(HttpStatus.OK)
+    public List<GetUpdatedSlotResponse> updateAllFromRecurrence(@PathVariable UUID id, @Valid @RequestBody UpdateSlotRequest request) {
+        return this.updateSlot.executeAllFromRecurrence(id, request);
+    }
 }

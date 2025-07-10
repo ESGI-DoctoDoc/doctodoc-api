@@ -18,7 +18,9 @@ import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDate;
 import java.time.LocalTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -43,7 +45,48 @@ public class UpdateSlot implements IUpdateSlot {
             User user = this.userRepository.findByEmail(username);
             Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            Slot slot = this.slotRepository.getById(slotId);
+            Slot originalSlot = this.slotRepository.getById(slotId);
+            LocalTime newStart = LocalTime.parse(request.startHour());
+            LocalTime newEnd = LocalTime.parse(request.endHour());
+            HoursRange newRange = HoursRange.of(newStart, newEnd);
+
+            if (request.medicalConcerns().isEmpty()) {
+                throw new AtLeastOneMedicalConcernException();
+            }
+
+            List<MedicalConcern> newConcerns = this.medicalConcernRepository.findAllById(request.medicalConcerns());
+
+            originalSlot.update(newRange, newConcerns);
+            List<Slot> slotsSameDay = this.slotRepository.findAllByDoctorIdAndDate(doctor.getId(), originalSlot.getDate());
+            originalSlot.validateAgainstOverlaps(slotsSameDay.stream()
+                    .filter(s -> !s.getId().equals(originalSlot.getId()))
+                    .toList());
+
+            Slot savedSlot = this.slotRepository.update(originalSlot);
+
+            return new GetUpdatedSlotResponse(
+                    savedSlot.getId(),
+                    savedSlot.getHoursRange().getStart().toString(),
+                    savedSlot.getHoursRange().getEnd().toString(),
+                    savedSlot.getAvailableMedicalConcerns().stream()
+                            .map(mc -> new GetUpdatedSlotResponse.MedicalConcernUpdateResponse(mc.getId(), mc.getName()))
+                            .toList()
+            );
+
+        } catch (DomainException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
+    }
+
+    public List<GetUpdatedSlotResponse> executeAllFromRecurrence(UUID slotId, UpdateSlotRequest request) {
+        String username = this.currentUserContext.getUsername();
+        try {
+            User user = this.userRepository.findByEmail(username);
+            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
+
+            Slot originalSlot = this.slotRepository.getById(slotId);
+            UUID recurrenceId = originalSlot.getRecurrenceId();
+
             LocalTime newStart = LocalTime.parse(request.startHour());
             LocalTime newEnd = LocalTime.parse(request.endHour());
             HoursRange newRange = HoursRange.of(newStart, newEnd);
@@ -52,26 +95,39 @@ public class UpdateSlot implements IUpdateSlot {
                 throw new AtLeastOneMedicalConcernException();
             }
             List<MedicalConcern> newConcerns = this.medicalConcernRepository.findAllById(request.medicalConcerns());
-            slot.update(newRange, newConcerns);
 
-            List<Slot> existingSlots = this.slotRepository.findAllByDoctorIdAndDate(doctor.getId(), slot.getDate());
-            slot.validateAgainstOverlaps(existingSlots.stream()
-                    .filter(validSlot -> !validSlot.getId().equals(slot.getId()))
-                    .toList());
+            List<Slot> recurrentSlots = this.slotRepository.findAllByDoctorIdAndDateGreaterThanEqual(doctor.getId(), originalSlot.getDate()).stream()
+                    .filter(s -> recurrenceId.equals(s.getRecurrenceId()))
+                    .toList();
 
-            Slot savedSlot = this.slotRepository.update(slot);
+            List<GetUpdatedSlotResponse> responses = new ArrayList<>();
 
-            return new GetUpdatedSlotResponse(
-                    savedSlot.getId(),
-                    savedSlot.getHoursRange().getStart().toString(),
-                    savedSlot.getHoursRange().getEnd().toString(),
-                    savedSlot.getAvailableMedicalConcerns().stream()
-                            .map(mc -> new GetUpdatedSlotResponse.MedicalConcernUpdateResponse(
-                                    mc.getId(),
-                                    mc.getName()
-                            ))
-                            .toList()
-            );
+            for (Slot slot : recurrentSlots) {
+                if (slot.getDate().isBefore(LocalDate.now())) {
+                    continue;
+                }
+                slot.update(newRange, newConcerns);
+
+                List<Slot> sameDaySlots = this.slotRepository.findAllByDoctorIdAndDate(doctor.getId(), slot.getDate()).stream()
+                        .filter(s -> !s.getId().equals(slot.getId()))
+                        .toList();
+
+                slot.validateAgainstOverlaps(sameDaySlots);
+
+                Slot updatedSlot = this.slotRepository.update(slot);
+
+                responses.add(new GetUpdatedSlotResponse(
+                        updatedSlot.getId(),
+                        updatedSlot.getHoursRange().getStart().toString(),
+                        updatedSlot.getHoursRange().getEnd().toString(),
+                        updatedSlot.getAvailableMedicalConcerns().stream()
+                                .map(mc -> new GetUpdatedSlotResponse.MedicalConcernUpdateResponse(mc.getId(), mc.getName()))
+                                .toList()
+                ));
+            }
+
+            return responses;
+
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
