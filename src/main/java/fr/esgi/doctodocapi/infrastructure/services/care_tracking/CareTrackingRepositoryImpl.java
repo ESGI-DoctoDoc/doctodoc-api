@@ -163,7 +163,7 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
 
     @Override
     public CareTracking update(CareTracking careTracking) {
-        CareTrackingEntity entity = this.careTrackingJpaRepository.findById(careTracking.getId())
+        CareTrackingEntity entity = this.careTrackingJpaRepository.findToUpdate(careTracking.getId())
                 .orElseThrow(CareTrackingNotFoundException::new);
 
         boolean nameAlreadyExists = this.careTrackingJpaRepository.existsByCaseNameIgnoreCaseAndPatientIdAndIdNot(

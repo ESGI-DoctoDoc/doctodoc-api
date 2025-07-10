@@ -40,7 +40,8 @@ public class UpdateCareTracking implements IUpdateCareTracking {
             CareTracking savedCareTracking = careTrackingRepository.update(careTracking);
             return new GetCareTrackingResponse(
                     savedCareTracking.getId(),
-                    savedCareTracking.getCaseName()
+                    savedCareTracking.getCaseName(),
+                    savedCareTracking.getDescription()
             );
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
