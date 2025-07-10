@@ -62,4 +62,6 @@ public interface SlotRepository {
     Slot findVisibleById(UUID slotId, List<String> validStatuses);
 
     Slot update(Slot slot);
+
+    Slot delete(UUID slotId);
 }

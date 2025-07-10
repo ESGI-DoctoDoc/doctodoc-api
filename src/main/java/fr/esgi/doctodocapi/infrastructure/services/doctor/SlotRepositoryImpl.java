@@ -218,6 +218,14 @@ public class SlotRepositoryImpl implements SlotRepository {
         return mapSlotEntityToDomain(updated);
     }
 
+    @Override
+    public Slot delete(UUID slotId) {
+        SlotEntity entity = this.entityManager.getReference(SlotEntity.class, slotId);
+        entity.setDeletedAt(LocalDate.now());
+        SlotEntity updated = this.slotJpaRepository.save(entity);
+        return mapSlotEntityToDomain(updated);
+    }
+
     private SlotEntity mapSlotToEntity(Slot slot, DoctorEntity doctorEntity) {
         List<UUID> medicalConcernIds = slot.getAvailableMedicalConcerns().stream()
                 .map(MedicalConcern::getId)

@@ -2,14 +2,14 @@ package fr.esgi.doctodocapi.presentation.doctor.manage_slot;
 
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.ExceptionalSlotRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.MonthlySlotRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.UpdateSlotRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.WeeklySlotRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.DeleteSlotResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotByIdResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.IGetSlots;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveExceptionalSlot;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveMonthlySlots;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveWeeklySlots;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetUpdatedSlotResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.*;
 import jakarta.validation.Valid;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,12 +36,16 @@ public class ManageSlotsController {
     private final ISaveMonthlySlots saveMonthlySlots;
     private final IGetSlots getSlots;
     private final ISaveExceptionalSlot saveExceptionalSlot;
+    private final IUpdateSlot updateSlot;
+    private final IDeleteSlot deleteSlot;
 
-    public ManageSlotsController(ISaveWeeklySlots saveWeeklySlots, ISaveMonthlySlots saveMonthlySlots, IGetSlots getSlots, ISaveExceptionalSlot saveExceptionalSlot) {
+    public ManageSlotsController(ISaveWeeklySlots saveWeeklySlots, ISaveMonthlySlots saveMonthlySlots, IGetSlots getSlots, ISaveExceptionalSlot saveExceptionalSlot, IUpdateSlot updateSlot, IDeleteSlot deleteSlot) {
         this.saveWeeklySlots = saveWeeklySlots;
         this.saveMonthlySlots = saveMonthlySlots;
         this.getSlots = getSlots;
         this.saveExceptionalSlot = saveExceptionalSlot;
+        this.updateSlot = updateSlot;
+        this.deleteSlot = deleteSlot;
     }
 
     /**
@@ -94,5 +98,17 @@ public class ManageSlotsController {
     @ResponseStatus(HttpStatus.OK)
     public GetSlotByIdResponse getSlotById(@PathVariable UUID id) {
         return this.getSlots.getSlotById(id);
+    }
+
+    @PutMapping("slots/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public GetUpdatedSlotResponse update(@PathVariable UUID id, @Valid @RequestBody UpdateSlotRequest request) {
+        return this.updateSlot.execute(id, request);
+    }
+
+    @DeleteMapping("slots/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public DeleteSlotResponse delete(@PathVariable UUID id) {
+        return this.deleteSlot.execute(id);
     }
 }

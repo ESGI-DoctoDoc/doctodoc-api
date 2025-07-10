@@ -48,10 +48,10 @@ public class UpdateSlot implements IUpdateSlot {
             LocalTime newEnd = LocalTime.parse(request.endHour());
             HoursRange newRange = HoursRange.of(newStart, newEnd);
 
-            if (request.medicalConcernIds().isEmpty()) {
+            if (request.medicalConcerns().isEmpty()) {
                 throw new AtLeastOneMedicalConcernException();
             }
-            List<MedicalConcern> newConcerns = this.medicalConcernRepository.findAllById(request.medicalConcernIds());
+            List<MedicalConcern> newConcerns = this.medicalConcernRepository.findAllById(request.medicalConcerns());
             slot.update(newRange, newConcerns);
 
             List<Slot> existingSlots = this.slotRepository.findAllByDoctorIdAndDate(doctor.getId(), slot.getDate());

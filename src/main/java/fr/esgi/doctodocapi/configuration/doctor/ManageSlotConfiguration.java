@@ -1,19 +1,14 @@
 package fr.esgi.doctodocapi.configuration.doctor;
 
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotResponseMapper;
+import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.RecurrentSlotRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot.SaveExceptionalSlot;
-import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot.SaveWeeklySlots;
-import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot.SaveMonthlySlots;
-import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot.GetSlots;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveExceptionalSlot;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveWeeklySlots;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveMonthlySlots;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.IGetSlots;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot.*;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.*;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -39,5 +34,15 @@ public class ManageSlotConfiguration {
     @Bean
     public ISaveExceptionalSlot saveExceptionalSlot(SlotRepository slotRepository, MedicalConcernRepository medicalConcernRepository, UserRepository userRepository, DoctorRepository doctorRepository, GetCurrentUserContext getCurrentUserContext, SlotResponseMapper slotResponseMapper) {
         return new SaveExceptionalSlot(slotRepository, medicalConcernRepository, userRepository, doctorRepository, getCurrentUserContext, slotResponseMapper);
+    }
+
+    @Bean
+    public IUpdateSlot updateSlot(GetCurrentUserContext currentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, SlotRepository slotRepository, MedicalConcernRepository medicalConcernRepository) {
+        return new UpdateSlot(currentUserContext, userRepository, doctorRepository, slotRepository, medicalConcernRepository);
+    }
+
+    @Bean
+    public IDeleteSlot deleteSlot(SlotRepository slotRepository, AppointmentRepository appointmentRepository) {
+        return new DeleteSlot(slotRepository, appointmentRepository);
     }
 }

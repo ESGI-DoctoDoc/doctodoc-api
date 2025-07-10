@@ -8,5 +8,5 @@ import java.util.UUID;
 public record UpdateSlotRequest(
         @NotNull String startHour,
         @NotNull String endHour,
-        @NotNull List<UUID> medicalConcernIds
+        @NotNull List<UUID> medicalConcerns
 ) {}
