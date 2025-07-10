@@ -81,6 +81,10 @@ public class FlowToMakingAppointment implements IFlowToMakingAppointment {
     public List<GetMedicalConcernsResponse> getMedicalConcerns(UUID doctorId) {
         try {
             Doctor doctor = this.doctorRepository.getById(doctorId);
+
+            Optional<DoctorSubscription> doctorSubscription = this.doctorSubscriptionRepository.findActivePaidSubscriptionByDoctorId(doctor.getId());
+            if (doctorSubscription.isEmpty()) return List.of();
+
             List<MedicalConcern> medicalConcerns = this.medicalConcernRepository.getMedicalConcerns(doctor);
 
             return medicalConcerns.stream()
@@ -154,15 +158,17 @@ public class FlowToMakingAppointment implements IFlowToMakingAppointment {
      */
     public GetAppointmentAvailabilityResponse getAppointmentsAvailability(UUID medicalConcernId, LocalDate date) {
         try {
-            MedicalConcern medicalConcern = this.medicalConcernRepository.getById(medicalConcernId);
-
-            DoctorSubscription doctorSubscription = verifyDoctorSubscription(medicalConcern);
-            UUID doctorId = doctorSubscription.getDoctorId();
-
 
             List<GetTodayAppointmentAvailabilityResponse> appointments = new ArrayList<>();
 
-            LocalDateTime endDate = doctorSubscription.getEndDate();
+            MedicalConcern medicalConcern = this.medicalConcernRepository.getById(medicalConcernId);
+
+            Optional<DoctorSubscription> doctorSubscription = this.doctorSubscriptionRepository.findActivePaidSubscriptionByDoctorId(medicalConcern.getDoctorId());
+            if (doctorSubscription.isEmpty()) return new GetAppointmentAvailabilityResponse(appointments, null, null);
+
+            UUID doctorId = doctorSubscription.get().getDoctorId();
+
+            LocalDateTime endDate = doctorSubscription.get().getEndDate();
 
             if (date.isEqual(endDate.toLocalDate()) || date.isBefore(endDate.toLocalDate())) {
                 logger.info("Get available appointments for the requested date {}.", date);
@@ -184,17 +190,6 @@ public class FlowToMakingAppointment implements IFlowToMakingAppointment {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
     }
-
-
-    private DoctorSubscription verifyDoctorSubscription(MedicalConcern medicalConcern) {
-        Optional<DoctorSubscription> doctorSubscription = this.doctorSubscriptionRepository.findActivePaidSubscriptionByDoctorId(medicalConcern.getDoctorId());
-
-        if (doctorSubscription.isEmpty())
-            throw new ApiException(HttpStatus.BAD_REQUEST, "doctor.subscription-not-found", "the subscription of doctor doesn't exist");
-
-        return doctorSubscription.get();
-    }
-
 
     private LocalDate findNextOrPreviousSlot(
             LocalDate startDate,
