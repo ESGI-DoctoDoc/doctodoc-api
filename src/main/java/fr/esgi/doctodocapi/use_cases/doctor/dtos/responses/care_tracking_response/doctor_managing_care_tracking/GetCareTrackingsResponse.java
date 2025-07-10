@@ -7,6 +7,7 @@ public record GetCareTrackingsResponse(
         UUID id,
         String name,
         String createdAt,
+        String closedAt,
         List<String> files,
         CareTrackingPatientInfo patient,
         List<CareTrackingDoctorInfo> doctors,

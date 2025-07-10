@@ -61,4 +61,13 @@ public interface CareTrackingJpaRepository extends JpaRepository<CareTrackingEnt
             @Param("patientName") String patientName,
             Pageable pageable
     );
+
+    boolean existsByCaseNameIgnoreCaseAndPatientIdAndIdNot(String name, UUID patientId, UUID excludeId);
+
+    @Query("""
+    SELECT c FROM CareTrackingEntity c
+    WHERE c.id = :id
+      AND c.closedAt IS NULL
+    """)
+    Optional<CareTrackingEntity> findToUpdate(@Param("id") UUID id);
 }
