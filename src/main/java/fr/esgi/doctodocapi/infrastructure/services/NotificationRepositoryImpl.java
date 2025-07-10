@@ -29,7 +29,7 @@ public class NotificationRepositoryImpl implements NotificationRepository {
 
     @Override
     public Notification getByIdAndRecipientId(UUID id, UUID userId) throws NotificationNotFoundException {
-        NotificationEntity entity = this.notificationJpaRepository.findByIdAndRecipientId(id, userId).orElseThrow(NotificationNotFoundException::new);
+        NotificationEntity entity = this.notificationJpaRepository.findByIdAndRecipientIdOrderBySendAtDesc(id, userId).orElseThrow(NotificationNotFoundException::new);
         return this.notificationMapper.toDomain(entity);
     }
 
@@ -39,5 +39,11 @@ public class NotificationRepositoryImpl implements NotificationRepository {
         entity.setIsRead(notification.isRead());
         this.notificationJpaRepository.save(entity);
 
+    }
+
+    @Override
+    public List<Notification> getAllByRecipientId(UUID id) {
+        List<NotificationEntity> notifications = this.notificationJpaRepository.findAllByRecipientId(id);
+        return notifications.stream().map(notificationMapper::toDomain).toList();
     }
 }

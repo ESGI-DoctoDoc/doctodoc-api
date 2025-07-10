@@ -1,6 +1,5 @@
 package fr.esgi.doctodocapi.presentation.doctor.manage_slot;
 
-import fr.esgi.doctodocapi.infrastructure.api_sms.MessageSenderImpl;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.ExceptionalSlotRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.MonthlySlotRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.WeeklySlotRequest;
