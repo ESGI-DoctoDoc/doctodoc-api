@@ -8,10 +8,7 @@ import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.CareTrackingMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.DocumentMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.document_trace_mapper.DocumentTraceFacadeMapper;
-import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
-import fr.esgi.doctodocapi.model.care_tracking.CareTrackingAlreadyExistException;
-import fr.esgi.doctodocapi.model.care_tracking.CareTrackingNotFoundException;
-import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
+import fr.esgi.doctodocapi.model.care_tracking.*;
 import fr.esgi.doctodocapi.model.care_tracking.documents.CareTrackingDocument;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.document.Document;
@@ -164,7 +161,7 @@ public class CareTrackingRepositoryImpl implements CareTrackingRepository {
     @Override
     public CareTracking update(CareTracking careTracking) {
         CareTrackingEntity entity = this.careTrackingJpaRepository.findToUpdate(careTracking.getId())
-                .orElseThrow(CareTrackingNotFoundException::new);
+                .orElseThrow(ClosedCareTrackingException::new);
 
         boolean nameAlreadyExists = this.careTrackingJpaRepository.existsByCaseNameIgnoreCaseAndPatientIdAndIdNot(
                 careTracking.getCaseName(), careTracking.getPatient().getId(), careTracking.getId()
