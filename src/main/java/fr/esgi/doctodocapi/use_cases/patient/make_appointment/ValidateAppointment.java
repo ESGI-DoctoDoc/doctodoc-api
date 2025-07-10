@@ -5,6 +5,7 @@ import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.PreAppointmentAnswers;
+import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFoundException;
 import fr.esgi.doctodocapi.model.care_tracking.CareTracking;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.care_tracking.ClosedCareTrackingException;
@@ -26,6 +27,7 @@ import org.springframework.http.HttpStatus;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 /**
@@ -133,7 +135,12 @@ public class ValidateAppointment implements IValidateAppointment {
     public void unlocked(UUID id) {
         try {
             Patient patient = this.getPatientFromContext.get();
-            Appointment appointment = this.appointmentRepository.getByIdAndPatientId(id, patient.getId());
+            Appointment appointment = this.appointmentRepository.getById(id);
+
+            if (!Objects.equals(appointment.getPatient().getUserId(), patient.getUserId())) {
+                throw new AppointmentNotFoundException();
+            }
+
             this.appointmentRepository.delete(appointment);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
@@ -151,9 +158,24 @@ public class ValidateAppointment implements IValidateAppointment {
      */
     public void confirm(UUID id) {
         try {
+
             Patient patient = this.getPatientFromContext.get();
-            Appointment appointment = this.appointmentRepository.getByIdAndPatientId(id, patient.getId());
+            Appointment appointment = this.appointmentRepository.getById(id);
+
+            if (!Objects.equals(appointment.getPatient().getUserId(), patient.getUserId())) {
+                throw new AppointmentNotFoundException();
+            }
+
             appointment.confirm();
+
+            UUID careTrackingId = appointment.getCareTrackingId();
+            if (careTrackingId != null) {
+                CareTracking careTracking = this.careTrackingRepository.getById(careTrackingId);
+                careTracking.addDoctorIfNotPresent(appointment.getDoctor().getId());
+
+                this.careTrackingRepository.save(careTracking);
+            }
+
             this.appointmentRepository.confirm(appointment);
             // todo send an email to inform the patient and if it's not main account, send to user
         } catch (DomainException e) {

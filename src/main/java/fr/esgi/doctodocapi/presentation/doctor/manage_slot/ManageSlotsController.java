@@ -1,12 +1,16 @@
 package fr.esgi.doctodocapi.presentation.doctor.manage_slot;
 
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.ExceptionalSlotRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.MonthlySlotRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.WeeklySlotRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.IGetAllSlots;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveExceptionalSlot;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveMonthlySlots;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveWeeklySlots;
 import jakarta.validation.Valid;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -23,14 +27,18 @@ import java.util.List;
 @RequestMapping("doctors")
 @PreAuthorize("hasRole('ROLE_DOCTOR')")
 public class ManageSlotsController {
+    private static final Logger logger = LoggerFactory.getLogger(ManageSlotsController.class);
+
     private final ISaveWeeklySlots saveWeeklySlots;
     private final ISaveMonthlySlots saveMonthlySlots;
     private final IGetAllSlots getAllSlots;
+    private final ISaveExceptionalSlot saveExceptionalSlot;
 
-    public ManageSlotsController(ISaveWeeklySlots saveWeeklySlots, ISaveMonthlySlots saveMonthlySlots, IGetAllSlots getAllSlots) {
+    public ManageSlotsController(ISaveWeeklySlots saveWeeklySlots, ISaveMonthlySlots saveMonthlySlots, IGetAllSlots getAllSlots, ISaveExceptionalSlot saveExceptionalSlot) {
         this.saveWeeklySlots = saveWeeklySlots;
         this.saveMonthlySlots = saveMonthlySlots;
         this.getAllSlots = getAllSlots;
+        this.saveExceptionalSlot = saveExceptionalSlot;
     }
 
     /**
@@ -57,6 +65,12 @@ public class ManageSlotsController {
         return saveMonthlySlots.execute(request);
     }
 
+    @PostMapping("/slots")
+    @ResponseStatus(HttpStatus.CREATED)
+    public GetSlotResponse createExceptionalSlot(@Valid @RequestBody ExceptionalSlotRequest request) {
+        logger.info("[POST /doctors/slots] Received payload: {}", request);
+        return this.saveExceptionalSlot.execute(request);
+    }
 
     /**
      * Retrieves all the doctor's slots starting from a specified date,
