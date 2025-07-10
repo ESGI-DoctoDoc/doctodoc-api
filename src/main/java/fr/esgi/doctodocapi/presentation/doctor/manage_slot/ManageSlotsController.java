@@ -1,11 +1,12 @@
 package fr.esgi.doctodocapi.presentation.doctor.manage_slot;
 
-import fr.esgi.doctodocapi.infrastructure.api_sms.MessageSenderImpl;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.ExceptionalSlotRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.MonthlySlotRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.WeeklySlotRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotByIdResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.IGetAllSlots;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.IGetSlots;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveExceptionalSlot;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveMonthlySlots;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveWeeklySlots;
@@ -19,6 +20,7 @@ import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDate;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * REST controller responsible for managing doctor's slots (weekly, monthly, and retrieval).
@@ -32,13 +34,13 @@ public class ManageSlotsController {
 
     private final ISaveWeeklySlots saveWeeklySlots;
     private final ISaveMonthlySlots saveMonthlySlots;
-    private final IGetAllSlots getAllSlots;
+    private final IGetSlots getSlots;
     private final ISaveExceptionalSlot saveExceptionalSlot;
 
-    public ManageSlotsController(ISaveWeeklySlots saveWeeklySlots, ISaveMonthlySlots saveMonthlySlots, IGetAllSlots getAllSlots, ISaveExceptionalSlot saveExceptionalSlot) {
+    public ManageSlotsController(ISaveWeeklySlots saveWeeklySlots, ISaveMonthlySlots saveMonthlySlots, IGetSlots getSlots, ISaveExceptionalSlot saveExceptionalSlot) {
         this.saveWeeklySlots = saveWeeklySlots;
         this.saveMonthlySlots = saveMonthlySlots;
-        this.getAllSlots = getAllSlots;
+        this.getSlots = getSlots;
         this.saveExceptionalSlot = saveExceptionalSlot;
     }
 
@@ -85,6 +87,12 @@ public class ManageSlotsController {
     @GetMapping("/slots")
     @ResponseStatus(value = HttpStatus.OK)
     public List<GetSlotResponse> getAllSlots(@RequestParam(defaultValue = "0") int page, @RequestParam(defaultValue = "1000") int size, @RequestParam(required = false) @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate) {
-        return this.getAllSlots.getAll(page, size, startDate);
+        return this.getSlots.getAll(page, size, startDate);
+    }
+
+    @GetMapping("slots/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public GetSlotByIdResponse getSlotById(@PathVariable UUID id) {
+        return this.getSlots.getSlotById(id);
     }
 }
