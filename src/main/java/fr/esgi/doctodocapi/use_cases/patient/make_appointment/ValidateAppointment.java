@@ -16,6 +16,9 @@ import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.Question;
+import fr.esgi.doctodocapi.model.notification.Notification;
+import fr.esgi.doctodocapi.model.notification.NotificationRepository;
+import fr.esgi.doctodocapi.model.notification.NotificationsType;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
@@ -64,6 +67,7 @@ public class ValidateAppointment implements IValidateAppointment {
     private final CareTrackingRepository careTrackingRepository;
 
     private final GetPatientFromContext getPatientFromContext;
+    private final NotificationRepository notificationRepository;
 
     /**
      * Constructs a ValidateAppointment service with the required repositories.
@@ -75,7 +79,7 @@ public class ValidateAppointment implements IValidateAppointment {
      * @param doctorRepository         Repository for accessing doctor data
      * @param getPatientFromContext    get patient from context
      */
-    public ValidateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext) {
+    public ValidateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, NotificationRepository notificationRepository) {
         this.slotRepository = slotRepository;
         this.patientRepository = patientRepository;
         this.medicalConcernRepository = medicalConcernRepository;
@@ -83,6 +87,7 @@ public class ValidateAppointment implements IValidateAppointment {
         this.doctorRepository = doctorRepository;
         this.careTrackingRepository = careTrackingRepository;
         this.getPatientFromContext = getPatientFromContext;
+        this.notificationRepository = notificationRepository;
     }
 
     /**
@@ -171,18 +176,20 @@ public class ValidateAppointment implements IValidateAppointment {
             UUID careTrackingId = appointment.getCareTrackingId();
             if (careTrackingId != null) {
                 CareTracking careTracking = this.careTrackingRepository.getById(careTrackingId);
-                careTracking.addDoctorIfNotPresent(appointment.getDoctor().getId());
-
-                this.careTrackingRepository.save(careTracking);
+                if (careTracking.addDoctorIfNotPresent(appointment.getDoctor().getId())) {
+                    this.careTrackingRepository.save(careTracking);
+                    notifyDoctorOfCareTrackingAddition(appointment.getDoctor().getId(), careTracking.getCaseName());
+                }
             }
 
             this.appointmentRepository.confirm(appointment);
             // todo send an email to inform the patient and if it's not main account, send to user
+
+            notifyDoctorOfNewAppointment(patient, appointment);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
     }
-
 
     /**
      * Extracts pre-appointment answers from the appointment request.
@@ -202,6 +209,22 @@ public class ValidateAppointment implements IValidateAppointment {
         });
 
         return answers;
+    }
+
+    private void notifyDoctorOfNewAppointment(Patient patient, Appointment appointment) {
+        String patientFullName = patient.getFirstName() + " " + patient.getLastName();
+        Notification notification = NotificationsType.newAppointment(
+                appointment.getDoctor().getId(),
+                appointment.getDate(),
+                appointment.getHoursRange().getStart(),
+                patientFullName
+        );
+        this.notificationRepository.save(notification);
+    }
+
+    private void notifyDoctorOfCareTrackingAddition(UUID doctorId, String careTrackingName) {
+        Notification notification = NotificationsType.addInCareTracking(doctorId, careTrackingName);
+        this.notificationRepository.save(notification);
     }
 
 }

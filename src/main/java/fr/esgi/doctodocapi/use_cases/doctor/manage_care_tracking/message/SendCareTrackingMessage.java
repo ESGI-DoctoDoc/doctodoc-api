@@ -8,6 +8,9 @@ import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.message.Message;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.message.MessageRepository;
+import fr.esgi.doctodocapi.model.notification.Notification;
+import fr.esgi.doctodocapi.model.notification.NotificationRepository;
+import fr.esgi.doctodocapi.model.notification.NotificationsType;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_care_tracking.message.SendMessageRequest;
@@ -19,11 +22,7 @@ import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.messaging.simp.SimpMessagingTemplate;
 
-import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 import java.util.stream.Collectors;
 
 public class SendCareTrackingMessage implements ISendCareTrackingMessage {
@@ -35,8 +34,9 @@ public class SendCareTrackingMessage implements ISendCareTrackingMessage {
     private final SimpMessagingTemplate messagingTemplate;
     private final CareTrackingMessageResponseMapper careTrackingMessageResponseMapper;
     private final FileStorageService fileStorageService;
+    private final NotificationRepository notificationRepository;
 
-    public SendCareTrackingMessage(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, MessageRepository messageRepository, SimpMessagingTemplate messagingTemplate, CareTrackingMessageResponseMapper careTrackingMessageResponseMapper, FileStorageService fileStorageService) {
+    public SendCareTrackingMessage(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, MessageRepository messageRepository, SimpMessagingTemplate messagingTemplate, CareTrackingMessageResponseMapper careTrackingMessageResponseMapper, FileStorageService fileStorageService, NotificationRepository notificationRepository) {
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
         this.doctorRepository = doctorRepository;
@@ -45,6 +45,7 @@ public class SendCareTrackingMessage implements ISendCareTrackingMessage {
         this.messagingTemplate = messagingTemplate;
         this.careTrackingMessageResponseMapper = careTrackingMessageResponseMapper;
         this.fileStorageService = fileStorageService;
+        this.notificationRepository = notificationRepository;
     }
 
     public CareTrackingMessageResponse execute(UUID careTrackingId, SendMessageRequest request) {
@@ -83,6 +84,8 @@ public class SendCareTrackingMessage implements ISendCareTrackingMessage {
 
             this.messagingTemplate.convertAndSend("/topic/" + careTrackingId, response);
 
+            notifyDoctorOfNewMessages(careTracking, sender.getId());
+
             return response;
 
         } catch (DomainException e) {
@@ -90,5 +93,18 @@ public class SendCareTrackingMessage implements ISendCareTrackingMessage {
         } catch (Exception e) {
             throw new ApiException(HttpStatus.INTERNAL_SERVER_ERROR, "INTERNAL_ERROR", e.getMessage());
         }
+    }
+
+    private void notifyDoctorOfNewMessages(CareTracking careTracking, UUID sender) {
+        List<UUID> doctors = new ArrayList<>(careTracking.getDoctors());
+        doctors.add(careTracking.getCreatorId());
+
+        doctors = doctors.stream().filter(id -> !Objects.equals(sender, id)).toList();
+
+        doctors.forEach(doctorId -> {
+                    Notification notification = NotificationsType.newMessageInCareTracking(doctorId, careTracking.getCaseName());
+                    this.notificationRepository.save(notification);
+                }
+        );
     }
 }

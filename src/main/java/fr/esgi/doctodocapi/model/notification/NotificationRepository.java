@@ -11,4 +11,6 @@ public interface NotificationRepository {
     void markAsRead(Notification notification);
 
     List<Notification> getAllByRecipientId(UUID id);
+
+    void save(Notification notification);
 }

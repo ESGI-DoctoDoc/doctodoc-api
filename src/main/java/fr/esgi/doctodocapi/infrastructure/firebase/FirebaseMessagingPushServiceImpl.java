@@ -8,19 +8,19 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.NotificationEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.NotificationJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.NotificationMapper;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationMessage;
-import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationService;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationPushService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 
 @Service
-public class FirebaseMessagingServiceImpl implements NotificationService {
-    private static final Logger logger = LoggerFactory.getLogger(FirebaseMessagingServiceImpl.class);
+public class FirebaseMessagingPushServiceImpl implements NotificationPushService {
+    private static final Logger logger = LoggerFactory.getLogger(FirebaseMessagingPushServiceImpl.class);
 
     private final NotificationJpaRepository notificationJpaRepository;
     private final NotificationMapper notificationMapper;
 
-    public FirebaseMessagingServiceImpl(NotificationJpaRepository notificationJpaRepository, NotificationMapper notificationMapper) {
+    public FirebaseMessagingPushServiceImpl(NotificationJpaRepository notificationJpaRepository, NotificationMapper notificationMapper) {
         this.notificationJpaRepository = notificationJpaRepository;
         this.notificationMapper = notificationMapper;
     }
