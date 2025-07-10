@@ -26,6 +26,7 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
     );
 
     List<SlotEntity> findAllByDoctor_IdAndDateAfter(UUID doctorId, LocalDate date);
+    List<SlotEntity> findAllByDoctorIdAndDateGreaterThanEqual(UUID doctorId, LocalDate date);
     Optional<SlotEntity> findFirstByMedicalConcerns_IdAndDate(UUID medicalConcernId, LocalDate date);
 
     @Query(value = """
@@ -96,4 +97,6 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
             @Param("validStatuses") List<String> validStatuses,
             Pageable pageable
     );
+
+    List<SlotEntity> findAllByDoctor_IdAndDate(UUID doctorId, LocalDate date);
 }
