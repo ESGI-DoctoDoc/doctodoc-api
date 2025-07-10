@@ -61,6 +61,15 @@ public class CareTracking {
         }
     }
 
+    public void close() {
+        this.setClosedAt(LocalDateTime.now());
+    }
+
+    public void update(String caseName, String description) {
+        this.setCaseName(caseName);
+        this.setDescription(description);
+    }
+
     public CareTrackingDocument getById(UUID id) {
         return this.documents
                 .stream()
