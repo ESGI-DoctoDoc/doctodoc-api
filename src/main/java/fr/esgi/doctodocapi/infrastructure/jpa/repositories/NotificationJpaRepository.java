@@ -10,5 +10,7 @@ import java.util.UUID;
 public interface NotificationJpaRepository extends JpaRepository<NotificationEntity, UUID> {
     List<NotificationEntity> findAllByRecipientIdAndIsReadIsFalse(UUID recipientId);
 
+    List<NotificationEntity> findAllByRecipientId(UUID recipientId);
+
     Optional<NotificationEntity> findByIdAndRecipientId(UUID id, UUID recipientId);
 }
