@@ -77,14 +77,16 @@ public class SaveWeeklySlots implements ISaveWeeklySlots {
             LocalDate current = alignToDayOfWeek(dateRange.getStart(), request.day());
             List<Slot> newSlots = new ArrayList<>();
             List<Slot> existingSlots = new ArrayList<>(
-                    this.slotRepository.findAllByDoctorIdAndDateAfter(doctor.getId(), startDate)
+                    this.slotRepository.findAllByDoctorIdAndDateGreaterThanEqual(doctor.getId(), startDate)
             );
 
             while (!current.isAfter(dateRange.getEnd())) {
                 Slot newSlot = Slot.createRecurrence(current, request.startHour(), request.endHour(), concerns, null);
                 newSlot.validateAgainstOverlaps(existingSlots);
+
                 doctor.getCalendar().addSlot(newSlot);
                 existingSlots.add(newSlot);
+
                 newSlots.add(newSlot);
                 current = current.plusWeeks(1);
             }

@@ -6,9 +6,11 @@ import fr.esgi.doctodocapi.model.doctor.calendar.slot.RecurrentSlotRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot.SaveExceptionalSlot;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot.SaveWeeklySlots;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot.SaveMonthlySlots;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot.GetAllSlots;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveExceptionalSlot;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveWeeklySlots;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.ISaveMonthlySlots;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.IGetAllSlots;
@@ -32,5 +34,10 @@ public class ManageSlotConfiguration {
     @Bean
     public IGetAllSlots getAllSlots(SlotRepository slotRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, SlotResponseMapper slotResponseMapper, DoctorRepository doctorRepository) {
         return new GetAllSlots(slotRepository, userRepository, getCurrentUserContext, slotResponseMapper, doctorRepository);
+    }
+
+    @Bean
+    public ISaveExceptionalSlot saveExceptionalSlot(SlotRepository slotRepository, MedicalConcernRepository medicalConcernRepository, UserRepository userRepository, DoctorRepository doctorRepository, GetCurrentUserContext getCurrentUserContext, SlotResponseMapper slotResponseMapper) {
+        return new SaveExceptionalSlot(slotRepository, medicalConcernRepository, userRepository, doctorRepository, getCurrentUserContext, slotResponseMapper);
     }
 }
