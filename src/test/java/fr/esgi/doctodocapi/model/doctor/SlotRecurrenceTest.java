@@ -89,4 +89,53 @@ class SlotRecurrenceTest {
 
         assertThrows(OverlappingSlotException.class, () -> slot2.validateAgainstOverlaps(List.of(slot1)));
     }
+
+    @Test
+    void should_not_throw_when_slots_have_same_time_but_no_common_concern() {
+        Slot slot1 = createRecurrence(LocalDate.of(2025, 6, 24), "08:00", "09:00", List.of(concernA), UUID.randomUUID());
+        Slot slot2 = createRecurrence(LocalDate.of(2025, 6, 24), "08:00", "09:00", List.of(concernB), UUID.randomUUID());
+
+        assertDoesNotThrow(() -> slot2.validateAgainstOverlaps(List.of(slot1)));
+    }
+
+    @Test
+    void should_throw_when_exact_time_and_concern_overlap() {
+        Slot slot1 = createRecurrence(LocalDate.of(2025, 7, 1), "08:00", "09:00", List.of(concernA), UUID.randomUUID());
+        Slot slot2 = createRecurrence(LocalDate.of(2025, 7, 1), "08:00", "09:00", List.of(concernA), UUID.randomUUID());
+
+        assertThrows(OverlappingSlotException.class, () -> slot2.validateAgainstOverlaps(List.of(slot1)));
+    }
+
+    @Test
+    void should_not_throw_if_same_concern_but_on_different_dates() {
+        Slot slot1 = createRecurrence(LocalDate.of(2025, 7, 1), "08:00", "09:00", List.of(concernA), UUID.randomUUID());
+        Slot slot2 = createRecurrence(LocalDate.of(2025, 7, 2), "08:00", "09:00", List.of(concernA), UUID.randomUUID());
+
+        assertDoesNotThrow(() -> slot2.validateAgainstOverlaps(List.of(slot1)));
+    }
+
+    @Test
+    void should_throw_when_slot_overlaps_multiple_existing_slots() {
+        Slot slot1 = createRecurrence(LocalDate.of(2025, 7, 3), "08:00", "08:30", List.of(concernA), UUID.randomUUID());
+        Slot slot2 = createRecurrence(LocalDate.of(2025, 7, 3), "08:30", "09:00", List.of(concernA), UUID.randomUUID());
+        Slot newSlot = createRecurrence(LocalDate.of(2025, 7, 3), "08:15", "08:45", List.of(concernA), UUID.randomUUID());
+
+        assertThrows(OverlappingSlotException.class, () -> newSlot.validateAgainstOverlaps(List.of(slot1, slot2)));
+    }
+
+    @Test
+    void should_throw_when_partial_overlap_and_common_concern() {
+        Slot slot1 = createRecurrence(LocalDate.of(2025, 7, 4), "08:00", "09:00", List.of(concernA), UUID.randomUUID());
+        Slot slot2 = createRecurrence(LocalDate.of(2025, 7, 4), "08:30", "09:30", List.of(concernA), UUID.randomUUID());
+
+        assertThrows(OverlappingSlotException.class, () -> slot2.validateAgainstOverlaps(List.of(slot1)));
+    }
+
+    @Test
+    void should_not_throw_when_partial_overlap_without_common_concern() {
+        Slot slot1 = createRecurrence(LocalDate.of(2025, 7, 5), "08:00", "09:00", List.of(concernA), UUID.randomUUID());
+        Slot slot2 = createRecurrence(LocalDate.of(2025, 7, 5), "08:30", "09:30", List.of(concernB), UUID.randomUUID());
+
+        assertDoesNotThrow(() -> slot2.validateAgainstOverlaps(List.of(slot1)));
+    }
 }

@@ -5,6 +5,7 @@ import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
+import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotCannotBeInThePastException;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
@@ -17,6 +18,7 @@ import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDate;
 import java.util.List;
 
 public class SaveExceptionalSlot implements ISaveExceptionalSlot {
@@ -37,7 +39,6 @@ public class SaveExceptionalSlot implements ISaveExceptionalSlot {
     }
 
     public GetSlotResponse execute(ExceptionalSlotRequest request) {
-        System.out.println("[CreateExceptionalSlot] Request received: " + request);
         try {
             String username = this.getCurrentUserContext.getUsername();
             User user = this.userRepository.findByEmail(username);
@@ -45,9 +46,14 @@ public class SaveExceptionalSlot implements ISaveExceptionalSlot {
 
             List<MedicalConcern> concerns = this.medicalConcernRepository.findAllById(request.medicalConcerns());
 
-            Slot newSlot = Slot.create(request.date(), request.startHour(), request.endHour(), concerns);
+            Slot newSlot = Slot.create(request.start(), request.startHour(), request.endHour(), concerns);
 
-            List<Slot> existingSlots = this.slotRepository.findAllByDoctorIdAndDateAfter(doctor.getId(), request.date());
+            LocalDate slotDate = request.start();
+            if (slotDate.isBefore(LocalDate.now())) {
+                throw new SlotCannotBeInThePastException();
+            }
+
+            List<Slot> existingSlots = this.slotRepository.findAllByDoctorIdAndDate(doctor.getId(), slotDate);
             newSlot.validateAgainstOverlaps(existingSlots);
 
             doctor.getCalendar().addSlot(newSlot);
