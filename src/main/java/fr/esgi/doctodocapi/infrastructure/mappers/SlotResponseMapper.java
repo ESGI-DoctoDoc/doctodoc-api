@@ -29,6 +29,10 @@ public class SlotResponseMapper {
                 .toList();
     }
 
+    public GetSlotResponse present(Slot slot) {
+        return toGetSlotResponse(slot);
+    }
+
     private GetSlotResponse toGetSlotResponse(Slot slot) {
         String recurrence = determineRecurrence(slot);
         Integer dayNumber = determineDayNumber(slot, recurrence);

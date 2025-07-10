@@ -1,6 +1,5 @@
 package fr.esgi.doctodocapi.infrastructure.jpa.repositories;
 
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.AppointmentEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.SlotEntity;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -27,6 +26,7 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
     );
 
     List<SlotEntity> findAllByDoctor_IdAndDateAfter(UUID doctorId, LocalDate date);
+    List<SlotEntity> findAllByDoctorIdAndDateGreaterThanEqual(UUID doctorId, LocalDate date);
     Optional<SlotEntity> findFirstByMedicalConcerns_IdAndDate(UUID medicalConcernId, LocalDate date);
 
     @Query(value = """
@@ -97,6 +97,8 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
             @Param("validStatuses") List<String> validStatuses,
             Pageable pageable
     );
+
+    List<SlotEntity> findAllByDoctor_IdAndDate(UUID doctorId, LocalDate date);
 
     @Query(value = """
     SELECT DISTINCT s.*

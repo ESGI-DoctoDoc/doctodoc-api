@@ -76,7 +76,7 @@ public class SaveMonthlySlots implements ISaveMonthlySlots {
             LocalDate current = firstOccurrence(dateRange.getStart(), targetDay);
             List<Slot> newSlots = new ArrayList<>();
             List<Slot> allExistingSlots = new ArrayList<>(
-                    this.slotRepository.findAllByDoctorIdAndDateAfter(doctor.getId(), startDate)
+                    this.slotRepository.findAllByDoctorIdAndDateGreaterThanEqual(doctor.getId(), startDate)
             );
 
             while (!current.isAfter(dateRange.getEnd())) {
