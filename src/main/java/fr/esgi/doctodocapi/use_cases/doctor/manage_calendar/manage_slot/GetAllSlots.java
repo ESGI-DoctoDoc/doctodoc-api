@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Use case for retrieving all the slots of a doctor within a date range (1 week),
@@ -83,6 +84,21 @@ public class GetAllSlots implements IGetAllSlots {
             }
 
             return this.slotResponseMapper.presentAll(slots);
+        } catch (DomainException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
+    }
+
+    public GetSlotResponse getSlotById(UUID slotId) {
+        try {
+            String username = this.getCurrentUserContext.getUsername();
+            User user = this.userRepository.findByEmail(username);
+            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
+
+            Slot slot = this.slotRepository.findVisibleById(slotId, VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN);
+
+            return this.slotResponseMapper.presentAll(slot).get(0);
+
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }

@@ -54,4 +54,6 @@ public interface SlotRepository {
     List<Slot> findVisibleByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate, List<String> validStatuses, int page, int size);
 
     List<Slot> findVisibleByDoctorIdAndDateBetween(UUID doctorId, LocalDate startDate, LocalDate endDate, List<String> validStatuses, int page, int size);
+
+    Slot findVisibleById(UUID slotId, List<String> validStatuses);
 }

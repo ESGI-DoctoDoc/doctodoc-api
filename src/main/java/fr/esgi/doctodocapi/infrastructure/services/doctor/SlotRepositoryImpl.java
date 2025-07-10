@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.infrastructure.services.doctor;
 
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.AppointmentEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.SlotEntity;
@@ -9,6 +10,7 @@ import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.MedicalConcernMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotMapper;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
+import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
@@ -165,6 +167,13 @@ public class SlotRepositoryImpl implements SlotRepository {
         return slotEntities.getContent().stream()
                 .map(this::mapSlotEntityToDomain)
                 .toList();
+    }
+
+    @Override
+    public Slot findVisibleById(UUID id, List<String> validStatuses) throws SlotNotFoundException {
+        SlotEntity entity = this.slotJpaRepository.findVisibleById(id, validStatuses)
+                .orElseThrow(SlotNotFoundException::new);
+        return mapSlotEntityToDomain(entity);
     }
 
     private SlotEntity mapSlotToEntity(Slot slot, DoctorEntity doctorEntity) {
