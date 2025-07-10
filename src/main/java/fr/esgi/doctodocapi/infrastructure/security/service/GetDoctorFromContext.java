@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.infrastructure.security.service;
 
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
-import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
+import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.IGetDoctorFromContext;
@@ -29,7 +29,7 @@ public class GetDoctorFromContext implements IGetDoctorFromContext {
         User user = this.userRepository.findByEmail(username);
 
         Optional<Doctor> doctor = this.doctorRepository.getByUserId(user.getId());
-        if (doctor.isEmpty()) throw new PatientNotFoundException();
+        if (doctor.isEmpty()) throw new DoctorNotFoundException();
 
         return doctor.get();
     }
