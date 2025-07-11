@@ -99,17 +99,4 @@ public class GetSlots implements IGetSlots {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
     }
-
-    public List<GetSlotResponse> execute(LocalDate date) {
-        try {
-            String email = getCurrentUserContext.getUsername();
-            User user = userRepository.findByEmail(email);
-            Doctor doctor = doctorRepository.findDoctorByUserId(user.getId());
-
-            List<Slot> slots = slotRepository.findAllByDoctorIdAndDate(doctor.getId(), date);
-            return slotResponseMapper.presentAll(slots);
-        } catch (DomainException e) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
-        }
-    }
 }

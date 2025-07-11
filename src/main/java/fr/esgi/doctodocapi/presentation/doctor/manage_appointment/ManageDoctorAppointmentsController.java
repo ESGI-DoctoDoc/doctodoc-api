@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.presentation.doctor.manage_appointment;
 
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.cancel_appointment.CancelDoctorAppointmentRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_appointment.SaveDoctorAppointmentRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_appointment.UpdateDoctorAppointmentRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.*;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.*;
 import jakarta.validation.Valid;
@@ -24,13 +25,15 @@ public class ManageDoctorAppointmentsController {
     private final IGetAppointmentsAvailabilityForDoctor getAppointmentsAvailabilityForDoctor;
     private final ICancelDoctorAppointment cancelDoctorAppointment;
     private final ICompleteAppointment completeAppointment;
+    private final IUpdateDoctorAppointment updateDoctorAppointment;
 
-    public ManageDoctorAppointmentsController(IGetDoctorAppointments getDoctorAppointments, ISaveDoctorAppointment saveDoctorAppointment, IGetAppointmentsAvailabilityForDoctor getAppointmentsAvailabilityForDoctor, ICancelDoctorAppointment cancelDoctorAppointment, ICompleteAppointment completeAppointment) {
+    public ManageDoctorAppointmentsController(IGetDoctorAppointments getDoctorAppointments, ISaveDoctorAppointment saveDoctorAppointment, IGetAppointmentsAvailabilityForDoctor getAppointmentsAvailabilityForDoctor, ICancelDoctorAppointment cancelDoctorAppointment, ICompleteAppointment completeAppointment, IUpdateDoctorAppointment updateDoctorAppointment) {
         this.getDoctorAppointments = getDoctorAppointments;
         this.saveDoctorAppointment = saveDoctorAppointment;
         this.getAppointmentsAvailabilityForDoctor = getAppointmentsAvailabilityForDoctor;
         this.cancelDoctorAppointment = cancelDoctorAppointment;
         this.completeAppointment = completeAppointment;
+        this.updateDoctorAppointment = updateDoctorAppointment;
     }
 
     @GetMapping("appointments")
@@ -67,5 +70,11 @@ public class ManageDoctorAppointmentsController {
     @ResponseStatus(HttpStatus.OK)
     public GetDoctorAppointmentResponse getAppointmentById(@PathVariable UUID id) {
         return this.getDoctorAppointments.getById(id);
+    }
+
+    @PutMapping("appointments/{id}")
+    @ResponseStatus(HttpStatus.OK)
+    public SaveDoctorAppointmentResponse updateAppointment(@PathVariable UUID id, @Valid @RequestBody UpdateDoctorAppointmentRequest request) {
+        return this.updateDoctorAppointment.execute(id, request);
     }
 }

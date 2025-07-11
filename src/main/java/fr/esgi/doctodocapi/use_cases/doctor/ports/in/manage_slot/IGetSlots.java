@@ -10,5 +10,4 @@ import java.util.UUID;
 public interface IGetSlots {
     List<GetSlotResponse> getAll(int page, int size, LocalDate startDate);
     GetSlotByIdResponse getSlotById(UUID slotId);
-    List<GetSlotResponse> execute(LocalDate date);
 }

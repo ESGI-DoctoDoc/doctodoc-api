@@ -117,10 +117,4 @@ public class ManageSlotsController {
     public List<DeleteSlotResponse> deleteAllFromRecurrence(@PathVariable UUID id) {
         return this.deleteSlot.executeAllFromRecurrence(id);
     }
-
-    @GetMapping("/slots/by-date")
-    @ResponseStatus(HttpStatus.OK)
-    public List<GetSlotResponse> getSlotsByDate(@RequestParam @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate date) {
-        return this.getSlots.execute(date);
-    }
 }
