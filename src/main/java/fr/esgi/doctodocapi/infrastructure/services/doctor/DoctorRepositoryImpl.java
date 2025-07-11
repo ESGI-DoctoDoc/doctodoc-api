@@ -165,6 +165,20 @@ public class DoctorRepositoryImpl implements DoctorRepository {
         saveDocuments(doctor.getProfessionalInformations().getDoctorDocuments(), savedEntity);
     }
 
+    @Override
+    public Doctor updateProfile(Doctor doctor) {
+        DoctorEntity entity = this.entityManager.find(DoctorEntity.class, doctor.getId());
+
+        entity.setFirstName(doctor.getPersonalInformations().getFirstName());
+        entity.setLastName(doctor.getPersonalInformations().getLastName());
+        entity.setAddress(doctor.getConsultationInformations().getAddress());
+        entity.setBio(doctor.getProfessionalInformations().getBio());
+        entity.setProfilePictureUrl(doctor.getPersonalInformations().getProfilePictureUrl());
+
+        DoctorEntity savedEntity = this.doctorJpaRepository.save(entity);
+        return doctorFacadeMapper.mapDoctorToDomain(savedEntity);
+    }
+
     private void saveDocuments(List<Document> documents, DoctorEntity doctorEntity) {
         if (!documents.isEmpty()) {
             documents.forEach(document -> {
