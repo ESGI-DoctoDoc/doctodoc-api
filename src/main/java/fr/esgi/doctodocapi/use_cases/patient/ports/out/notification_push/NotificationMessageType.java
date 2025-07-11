@@ -13,9 +13,29 @@ public class NotificationMessageType {
     private static final Locale LOCALE_FR = Locale.FRANCE;
     private static final DateTimeFormatter TIME_FORMATTER = DateTimeFormatter.ofPattern("HH:mm").withLocale(LOCALE_FR);
     private static final String TITLE_CARE_TRACKING = "Suivi de dossier";
+    private static final String TITLE_APPOINTMENT_CANCELED = "Rendez-vous";
 
     private NotificationMessageType() {
     }
+
+    // -------------------------------
+    // Appointments
+    // -------------------------------
+
+    public static NotificationMessage cancelAppointment(UUID recipientId, LocalDate date, LocalTime startTime, String explanation) {
+        String message = String.format(
+                "Votre rendez-vous le %s à %s a été annulé par le docteur pour la raison suivante : %s.",
+                formatDate(date),
+                formatTime(startTime),
+                explanation
+        );
+        return new NotificationMessage(
+                recipientId,
+                TITLE_APPOINTMENT_CANCELED,
+                message
+        );
+    }
+
 
     // -------------------------------
     // Care Tracking
