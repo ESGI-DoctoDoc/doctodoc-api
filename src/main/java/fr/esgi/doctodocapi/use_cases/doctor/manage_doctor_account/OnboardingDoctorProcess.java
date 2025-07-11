@@ -102,10 +102,6 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
 
             Doctor doctor = Doctor.createFromOnBoarding(user, request, uploadedDocuments, profilePictureUrl, speciality, coordinates);
 
-            for (Document document : uploadedDocuments) {
-                doctor.getProfessionalInformations().addDocument(document);
-            }
-
             this.doctorRepository.save(doctor);
             return new OnboardingProcessResponse(user.getId());
         } catch (DomainException e) {
