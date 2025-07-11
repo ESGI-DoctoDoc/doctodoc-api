@@ -15,6 +15,7 @@ public final class NotificationsType {
     private static final String TITLE_APPOINTMENT_NEW = "Nouveau rendez-vous";
     private static final String TITLE_APPOINTMENT_CANCELED = "Rendez-vous annulé";
     private static final String TITLE_CARE_TRACKING = "Suivi de dossier";
+    private static final String TITLE_DOCTEUR = "Docteur";
 
     private NotificationsType() {
     }
@@ -72,10 +73,13 @@ public final class NotificationsType {
     // -------------------------------
     public static Notification addDoctorRecruitment(UUID recipientId, String doctorFullName) {
         String message = String.format("Un patient souhaite ajouter le médecin %s", doctorFullName);
-        return Notification.init(recipientId, TITLE_CARE_TRACKING, message);
+        return Notification.init(recipientId, TITLE_DOCTEUR, message);
     }
 
-
+    public static Notification verifyDoctor(UUID recipientId) {
+        String message = "Un nouveau docteur souhaite accèder à DoctoDoc";
+        return Notification.init(recipientId, TITLE_DOCTEUR, message);
+    }
 
     // -------------------------------
     // Private helpers
