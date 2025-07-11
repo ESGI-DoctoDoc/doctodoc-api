@@ -6,6 +6,7 @@ import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.personal_information.CoordinatesGps;
+import fr.esgi.doctodocapi.model.doctor.professionnal_informations.vo.rpps.RppsAlreadyExistException;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.document.DocumentType;
@@ -78,6 +79,10 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
                 throw new DoctorAccountAlreadyExist();
             }
 
+            if (this.doctorRepository.existsByRpps(request.rpps())) {
+                throw new RppsAlreadyExistException();
+            }
+
             List<Document> uploadedDocuments = request.doctorDocuments().stream()
                     .map(UUID::fromString)
                     .map(this.documentRepository::getById)
@@ -101,10 +106,6 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
             Speciality speciality = this.specialityRepository.findByName(request.speciality());
 
             Doctor doctor = Doctor.createFromOnBoarding(user, request, uploadedDocuments, profilePictureUrl, speciality, coordinates);
-
-            for (Document document : uploadedDocuments) {
-                doctor.getProfessionalInformations().addDocument(document);
-            }
 
             this.doctorRepository.save(doctor);
             return new OnboardingProcessResponse(user.getId());

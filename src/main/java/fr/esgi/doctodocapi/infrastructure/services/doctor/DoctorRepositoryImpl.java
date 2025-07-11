@@ -236,4 +236,9 @@ public class DoctorRepositoryImpl implements DoctorRepository {
         Page<DoctorEntity> doctors = this.doctorJpaRepository.searchByDoctorName(nameLower, pageable);
         return doctors.stream().map(this.doctorFacadeMapper::mapDoctorToDomain).toList();
     }
+
+    @Override
+    public boolean existsByRpps(String rpps) {
+        return doctorJpaRepository.existsByRpps(rpps);
+    }
 }
