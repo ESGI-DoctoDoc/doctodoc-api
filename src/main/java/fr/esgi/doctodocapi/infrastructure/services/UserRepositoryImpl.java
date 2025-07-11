@@ -3,6 +3,7 @@ package fr.esgi.doctodocapi.infrastructure.services;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.UserEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.UserJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.UserMapper;
+import fr.esgi.doctodocapi.model.user.InvalidPassword;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserRepository;
@@ -96,6 +97,7 @@ public class UserRepositoryImpl implements UserRepository {
 
     }
 
+
     /**
      * Saves a user to the database.
      * This method hashes the user's password before saving.
@@ -143,5 +145,18 @@ public class UserRepositoryImpl implements UserRepository {
         UserEntity userSaved = this.userMapper.toEntity(user, hashPassword);
         userSaved.setId(user.getId());
         this.userJpaRepository.save(userSaved);
+    }
+
+    @Override
+    public void changePassword(UUID userId, String newPassword, String oldPassword) {
+        UserEntity userFound = this.userJpaRepository.findById(userId).orElseThrow(UserNotFoundException::new);
+
+        if (!this.passwordEncoder.matches(oldPassword, userFound.getPassword())) {
+            throw new InvalidPassword();
+        }
+        String newHashPassword = this.passwordEncoder.encode(newPassword);
+
+        userFound.setPassword(newHashPassword);
+        this.userJpaRepository.save(userFound);
     }
 }
