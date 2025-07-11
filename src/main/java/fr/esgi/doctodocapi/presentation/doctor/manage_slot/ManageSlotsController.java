@@ -106,15 +106,21 @@ public class ManageSlotsController {
         return this.updateSlot.execute(id, request);
     }
 
+    @PutMapping("slots/{id}/recurrence")
+    @ResponseStatus(HttpStatus.OK)
+    public List<GetUpdatedSlotResponse> updateAllFromRecurrence(@PathVariable UUID id, @Valid @RequestBody UpdateSlotRequest request) {
+        return this.updateSlot.executeAllFromRecurrence(id, request);
+    }
+
     @DeleteMapping("slots/{id}")
     @ResponseStatus(HttpStatus.OK)
     public DeleteSlotResponse delete(@PathVariable UUID id) {
         return this.deleteSlot.execute(id);
     }
 
-    @PutMapping("slots/{id}/recurrence")
+    @DeleteMapping("slots/{id}/recurrence")
     @ResponseStatus(HttpStatus.OK)
-    public List<GetUpdatedSlotResponse> updateAllFromRecurrence(@PathVariable UUID id, @Valid @RequestBody UpdateSlotRequest request) {
-        return this.updateSlot.executeAllFromRecurrence(id, request);
+    public List<DeleteSlotResponse> deleteAllFromRecurrence(@PathVariable UUID id) {
+        return this.deleteSlot.executeAllFromRecurrence(id);
     }
 }

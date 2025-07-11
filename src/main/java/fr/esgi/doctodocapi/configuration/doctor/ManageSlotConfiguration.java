@@ -9,6 +9,7 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot.*;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.*;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.out.IGetDoctorFromContext;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -42,7 +43,7 @@ public class ManageSlotConfiguration {
     }
 
     @Bean
-    public IDeleteSlot deleteSlot(SlotRepository slotRepository, AppointmentRepository appointmentRepository) {
-        return new DeleteSlot(slotRepository, appointmentRepository);
+    public IDeleteSlot deleteSlot(SlotRepository slotRepository, AppointmentRepository appointmentRepository, IGetDoctorFromContext getDoctorFromContext) {
+        return new DeleteSlot(slotRepository, appointmentRepository, getDoctorFromContext);
     }
 }
