@@ -6,7 +6,7 @@ import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.vo.hours_range.HoursRange;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.get_appointment_availability_response.GetTodayAppointmentAvailabilityResponse;
 import org.springframework.stereotype.Service;
 
 import java.time.Clock;
@@ -75,35 +75,40 @@ public class AppointmentsAvailabilityService {
      * @param date The date for which to find available appointments
      * @return A list of available appointment slots with their reservation status
      */
-    public List<GetAppointmentAvailabilityResponse> getAvailableAppointment(MedicalConcern medicalConcern, LocalDate date) {
-        List<GetAppointmentAvailabilityResponse> appointmentsAvailable = new ArrayList<>();
+    public List<GetTodayAppointmentAvailabilityResponse> getAvailableAppointment(MedicalConcern medicalConcern, LocalDate date) {
+        List<GetTodayAppointmentAvailabilityResponse> appointmentsAvailable = new ArrayList<>();
         List<Slot> slots = this.slotRepository.getSlotsByMedicalConcernAndDate(medicalConcern.getId(), date);
         List<Absence> absences = this.absenceRepository.findAllByDoctorIdAndDate(medicalConcern.getDoctorId(), date);
 
-        slots.forEach(slot -> {
-            List<GetAppointmentAvailabilityResponse> defaultAppointmentsAvailable = getSlotDivision(medicalConcern, slot);
-
-            if (!absences.isEmpty()) {
-                defaultAppointmentsAvailable = filterAppointmentsByAbsences(absences, defaultAppointmentsAvailable);
-            }
-
-            // appointments
-            List<Appointment> appointments = this.appointmentRepository.getAppointmentsBySlot(slot.getId());
-
-            if (appointments.isEmpty()) {
-                appointmentsAvailable.addAll(defaultAppointmentsAvailable);
-            } else {
-
-                List<GetAppointmentAvailabilityResponse> result = filterAppointmentsByReservations(slot.getId(), defaultAppointmentsAvailable, appointments);
-                appointmentsAvailable.addAll(result);
-            }
-
-        });
+        slots.forEach(slot -> appointmentsAvailable.addAll(extractAppointmentAvailable(medicalConcern, slot, absences)));
 
         return this.filterAppointmentsAfterNow(appointmentsAvailable);
     }
 
-    public List<GetAppointmentAvailabilityResponse> filterAppointmentsAfterNow(List<GetAppointmentAvailabilityResponse> appointmentsAvailable) {
+    public List<GetTodayAppointmentAvailabilityResponse> extractAppointmentAvailable(MedicalConcern medicalConcern, Slot slot, List<Absence> absences) {
+        List<GetTodayAppointmentAvailabilityResponse> appointmentsAvailable = new ArrayList<>();
+
+        List<GetTodayAppointmentAvailabilityResponse> defaultAppointmentsAvailable = getSlotDivision(medicalConcern.getDurationInMinutes().getValue(), slot);
+
+        if (!absences.isEmpty()) {
+            defaultAppointmentsAvailable = filterAppointmentsByAbsences(absences, defaultAppointmentsAvailable);
+        }
+
+        // appointments
+        List<Appointment> appointments = this.appointmentRepository.getAppointmentsBySlot(slot.getId());
+
+        if (appointments.isEmpty()) {
+            appointmentsAvailable.addAll(defaultAppointmentsAvailable);
+        } else {
+
+            List<GetTodayAppointmentAvailabilityResponse> result = filterAppointmentsByReservations(slot.getId(), defaultAppointmentsAvailable, appointments);
+            appointmentsAvailable.addAll(result);
+        }
+
+        return appointmentsAvailable;
+    }
+
+    public List<GetTodayAppointmentAvailabilityResponse> filterAppointmentsAfterNow(List<GetTodayAppointmentAvailabilityResponse> appointmentsAvailable) {
         LocalDateTime nowPlus15 = LocalDateTime.now(clock).plusMinutes(15);
 
         return appointmentsAvailable.stream()
@@ -115,13 +120,13 @@ public class AppointmentsAvailabilityService {
     }
 
 
-    private List<GetAppointmentAvailabilityResponse> filterAppointmentsByAbsences(
+    private List<GetTodayAppointmentAvailabilityResponse> filterAppointmentsByAbsences(
             List<Absence> absences,
-            List<GetAppointmentAvailabilityResponse> appointmentAvailabilityResponses
+            List<GetTodayAppointmentAvailabilityResponse> appointmentAvailabilityResponses
     ) {
-        List<GetAppointmentAvailabilityResponse> appointmentsAvailable = new ArrayList<>();
+        List<GetTodayAppointmentAvailabilityResponse> appointmentsAvailable = new ArrayList<>();
 
-        for (GetAppointmentAvailabilityResponse slotFragment : appointmentAvailabilityResponses) {
+        for (GetTodayAppointmentAvailabilityResponse slotFragment : appointmentAvailabilityResponses) {
             HoursRange fragmentRange = HoursRange.of(slotFragment.start(), slotFragment.end());
 
             boolean isOverlapping = absences.stream()
@@ -148,11 +153,11 @@ public class AppointmentsAvailabilityService {
      * @param appointments The list of existing appointments to check against
      * @return A list of appointment slots with their reservation status updated
      */
-    private List<GetAppointmentAvailabilityResponse> filterAppointmentsByReservations(UUID slotId, List<GetAppointmentAvailabilityResponse> defaultAppointmentsAvailable, List<Appointment> appointments) {
-        List<GetAppointmentAvailabilityResponse> appointmentsAvailable = new ArrayList<>();
+    private List<GetTodayAppointmentAvailabilityResponse> filterAppointmentsByReservations(UUID slotId, List<GetTodayAppointmentAvailabilityResponse> defaultAppointmentsAvailable, List<Appointment> appointments) {
+        List<GetTodayAppointmentAvailabilityResponse> appointmentsAvailable = new ArrayList<>();
         List<Appointment> sortedAppointments = sortAppointmentsByStartHour(appointments);
 
-        for (GetAppointmentAvailabilityResponse slotFragment : defaultAppointmentsAvailable) {
+        for (GetTodayAppointmentAvailabilityResponse slotFragment : defaultAppointmentsAvailable) {
             HoursRange slotFragmentHoursRange = HoursRange.of(slotFragment.start(), slotFragment.end());
             boolean isReserved = false;
 
@@ -180,7 +185,7 @@ public class AppointmentsAvailabilityService {
             }
 
             appointmentsAvailable.add(
-                    new GetAppointmentAvailabilityResponse(
+                    new GetTodayAppointmentAvailabilityResponse(
                             slotId,
                             slotFragment.date(),
                             slotFragment.start(),
@@ -197,21 +202,20 @@ public class AppointmentsAvailabilityService {
      * This method creates potential appointment slots by dividing the slot's time range into segments
      * of the duration specified by the medical concern.
      *
-     * @param medicalConcern The medical concern that determines the duration of each appointment
+     * @param medicalConcernDuration The medical concern's duration that determines the duration of each appointment
      * @param slot The slot to divide into smaller appointment time slots
      * @return A list of potential appointment slots
      */
-    private List<GetAppointmentAvailabilityResponse> getSlotDivision(MedicalConcern medicalConcern, Slot slot) {
-        List<GetAppointmentAvailabilityResponse> appointmentsAvailable = new ArrayList<>();
+    private List<GetTodayAppointmentAvailabilityResponse> getSlotDivision(Integer medicalConcernDuration, Slot slot) {
+        List<GetTodayAppointmentAvailabilityResponse> appointmentsAvailable = new ArrayList<>();
 
-        Integer duration = medicalConcern.getDurationInMinutes().getValue();
         LocalTime startHour = slot.getHoursRange().getStart();
         LocalTime endHour = slot.getHoursRange().getEnd();
 
         LocalTime currentStart = startHour;
-        while (!currentStart.plusMinutes(duration).isAfter(endHour)) {
-            LocalTime availableAppointmentEnd = currentStart.plusMinutes(duration);
-            appointmentsAvailable.add(new GetAppointmentAvailabilityResponse(slot.getId(), slot.getDate(), currentStart, availableAppointmentEnd, false));
+        while (!currentStart.plusMinutes(medicalConcernDuration).isAfter(endHour)) {
+            LocalTime availableAppointmentEnd = currentStart.plusMinutes(medicalConcernDuration);
+            appointmentsAvailable.add(new GetTodayAppointmentAvailabilityResponse(slot.getId(), slot.getDate(), currentStart, availableAppointmentEnd, false));
             currentStart = availableAppointmentEnd;
         }
 
