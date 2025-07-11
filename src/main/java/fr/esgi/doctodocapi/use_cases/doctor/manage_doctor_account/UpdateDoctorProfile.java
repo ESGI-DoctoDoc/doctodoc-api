@@ -34,15 +34,21 @@ public class UpdateDoctorProfile implements IUpdateDoctorProfile {
         try {
             Doctor doctor = this.getDoctorFromContext.get();
 
-            FetchCoordinatesResponse coordinatesResponse = this.addressCoordinatesFetcher.fetchCoordinates(request.address());
-            CoordinatesGps coordinates = CoordinatesGps.of(
-                    coordinatesResponse.latitude(),
-                    coordinatesResponse.longitude()
-            );
+            CoordinatesGps coordinates = null;
+            if (request.address() != null) {
+                FetchCoordinatesResponse coordinatesResponse = this.addressCoordinatesFetcher.fetchCoordinates(request.address());
+                coordinates = CoordinatesGps.of(
+                        coordinatesResponse.latitude(),
+                        coordinatesResponse.longitude()
+                );
+            }
 
-            UUID profilePictureId = UUID.fromString(request.profilePictureUrl());
-            Document profilePicture = this.documentRepository.getById(profilePictureId);
-            String profilePictureUrl = profilePicture.getPath();
+            String profilePictureUrl = doctor.getPersonalInformations().getProfilePictureUrl();
+            if (request.profilePictureUrl() != null) {
+                UUID profilePictureId = UUID.fromString(request.profilePictureUrl());
+                Document profilePicture = this.documentRepository.getById(profilePictureId);
+                profilePictureUrl = profilePicture.getPath();
+            }
 
             doctor.update(
                     request.firstname(),
@@ -58,8 +64,8 @@ public class UpdateDoctorProfile implements IUpdateDoctorProfile {
             return new GetUpdatedProfileResponse(
                     savedDoctor.getPersonalInformations().getFirstName(),
                     savedDoctor.getPersonalInformations().getLastName(),
-                    savedDoctor.getConsultationInformations().getAddress(),
                     savedDoctor.getProfessionalInformations().getBio(),
+                    savedDoctor.getConsultationInformations().getAddress(),
                     savedDoctor.getPersonalInformations().getProfilePictureUrl()
             );
         } catch (DomainException e) {
