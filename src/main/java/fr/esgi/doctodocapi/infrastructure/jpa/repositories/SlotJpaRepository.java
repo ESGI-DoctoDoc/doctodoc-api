@@ -25,7 +25,6 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
             @Param("date") LocalDate date
     );
 
-    List<SlotEntity> findAllByDoctor_IdAndDateAfter(UUID doctorId, LocalDate date);
     List<SlotEntity> findAllByDoctorIdAndDateGreaterThanEqual(UUID doctorId, LocalDate date);
     Optional<SlotEntity> findFirstByMedicalConcerns_IdAndDate(UUID medicalConcernId, LocalDate date);
 
