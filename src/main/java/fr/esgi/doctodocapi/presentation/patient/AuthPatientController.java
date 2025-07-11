@@ -1,14 +1,12 @@
 package fr.esgi.doctodocapi.presentation.patient;
 
 import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.DoubleAuthenticationUserResponse;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ResetPasswordRequest;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.UpdatePasswordRequest;
-import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
+import fr.esgi.doctodocapi.use_cases.user.dtos.requests.*;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.RequestResetPasswordResponse;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.UpdatePasswordResponse;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.IAuthenticatePatient;
+import fr.esgi.doctodocapi.use_cases.user.ports.in.IChangePassword;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.IResetPassword;
 import jakarta.validation.Valid;
 import org.springframework.http.HttpStatus;
@@ -23,10 +21,12 @@ public class AuthPatientController {
 
     private final IAuthenticatePatient authenticatePatient;
     private final IResetPassword resetPassword;
+    private final IChangePassword changePassword;
 
-    public AuthPatientController(IAuthenticatePatient authenticatePatient, IResetPassword resetPassword) {
+    public AuthPatientController(IAuthenticatePatient authenticatePatient, IResetPassword resetPassword, IChangePassword changePassword) {
         this.authenticatePatient = authenticatePatient;
         this.resetPassword = resetPassword;
+        this.changePassword = changePassword;
     }
 
     /**
@@ -75,5 +75,11 @@ public class AuthPatientController {
     @ResponseStatus(value = HttpStatus.OK)
     public UpdatePasswordResponse updatePassword(@Valid @RequestBody UpdatePasswordRequest updatePasswordRequest) {
         return this.resetPassword.updatePassword(updatePasswordRequest);
+    }
+
+    @PatchMapping("/change-password")
+    @ResponseStatus(value = HttpStatus.OK)
+    public void changePassword(@Valid @RequestBody ChangePasswordRequest changePasswordRequest) {
+        this.changePassword.process(changePasswordRequest);
     }
 }
