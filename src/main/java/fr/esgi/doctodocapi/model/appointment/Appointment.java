@@ -149,6 +149,10 @@ public class Appointment {
         this.lockedAt = null;
     }
 
+    public void completed() {
+        this.status = AppointmentStatus.COMPLETED;
+    }
+
     /**
      * Confirms the appointment by changing its status to CANCELLED.
      */

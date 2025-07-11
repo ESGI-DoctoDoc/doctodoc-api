@@ -1,12 +1,7 @@
 package fr.esgi.doctodocapi.model.appointment;
 
 import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFoundException;
-import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.question.QuestionNotFoundException;
-import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorNotFoundException;
-import fr.esgi.doctodocapi.model.doctor.exceptions.MedicalConcernNotFoundException;
-import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
 import fr.esgi.doctodocapi.model.patient.Patient;
-import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.user.User;
 
 import java.time.LocalDate;
@@ -17,15 +12,15 @@ import java.util.UUID;
 public interface AppointmentRepository {
     Appointment getById(UUID id) throws AppointmentNotFoundException;
 
-    Appointment getByIdAndPatientId(UUID id, UUID patientId) throws AppointmentNotFoundException;
-
     List<Appointment> getAppointmentsBySlot(UUID slotId);
 
     UUID save(Appointment appointment);
 
     void cancel(Appointment appointment);
 
-    void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException;
+    void confirm(Appointment appointment) throws AppointmentNotFoundException;
+
+    void complete(Appointment appointment) throws AppointmentNotFoundException;
 
     void delete(Appointment appointment);
 
