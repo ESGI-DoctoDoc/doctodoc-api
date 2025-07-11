@@ -46,6 +46,7 @@ public class CareTrackingResponseMapper {
         return new GetCareTrackingsResponse(
                 careTracking.getId(),
                 careTracking.getCaseName(),
+                careTracking.getDescription(),
                 careTracking.getCreatedAt().format(DATE_FORMATTER),
                 careTracking.getClosedAt() != null ? careTracking.getClosedAt().format(DATE_FORMATTER) : null,
                 documentsUrl,

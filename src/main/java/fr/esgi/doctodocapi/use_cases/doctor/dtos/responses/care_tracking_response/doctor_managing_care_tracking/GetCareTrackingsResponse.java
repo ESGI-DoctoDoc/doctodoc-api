@@ -6,6 +6,7 @@ import java.util.UUID;
 public record GetCareTrackingsResponse(
         UUID id,
         String name,
+        String description,
         String createdAt,
         String closedAt,
         List<String> files,
