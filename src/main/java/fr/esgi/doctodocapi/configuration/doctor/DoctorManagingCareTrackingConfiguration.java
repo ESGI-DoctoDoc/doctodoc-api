@@ -29,6 +29,7 @@ import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.messag
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_document.IGetCareTrackingDocumentContent;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_document.IUploadCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationPushService;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -84,7 +85,7 @@ public class DoctorManagingCareTrackingConfiguration {
     }
 
     @Bean
-    public ICloseCareTracking closeCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository) {
-        return new CloseCareTracking(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, notificationRepository);
+    public ICloseCareTracking closeCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService) {
+        return new CloseCareTracking(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, notificationRepository, notificationPushService);
     }
 }
