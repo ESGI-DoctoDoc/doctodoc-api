@@ -18,6 +18,8 @@ public interface DoctorRepository {
      */
     void save(Doctor doctor);
 
+    Doctor updateProfile(Doctor doctor);
+
     /**
      * Finds a Doctor by the associated User ID.
      *

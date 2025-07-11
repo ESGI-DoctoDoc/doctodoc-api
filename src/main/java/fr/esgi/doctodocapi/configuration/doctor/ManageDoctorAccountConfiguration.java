@@ -6,10 +6,7 @@ import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
-import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.AddressAutocomplete;
-import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.GetDoctorInformation;
-import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.GetDoctorProfileInformation;
-import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.OnboardingDoctorProcess;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.*;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.document.DeleteDoctorDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.document.GetDoctorOnboardingDocumentContent;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.document.UploadDoctorOnboardingDocument;
@@ -17,11 +14,13 @@ import fr.esgi.doctodocapi.use_cases.doctor.ports.in.doctor_information.IGetDoct
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IAutocompleteAddress;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IGetDoctorProfileInformation;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IOnboardingDoctor;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.IUpdateDoctorProfile;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.document.IDeleteDoctorDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.document.IGetDoctorOnboardingDocumentContent;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.document.IUploadDoctorOnboardingDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.AddressAutoCompleteInput;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.AddressCoordinatesFetcher;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.out.IGetDoctorFromContext;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import fr.esgi.doctodocapi.use_cases.patient.utils.GetDoctorProfileUrl;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
@@ -64,5 +63,10 @@ public class ManageDoctorAccountConfiguration {
     @Bean
     public IDeleteDoctorDocument deleteDoctorDocument(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, DocumentRepository documentRepository, FileStorageService fileStorageService) {
         return new DeleteDoctorDocument(getCurrentUserContext, userRepository, doctorRepository, documentRepository, fileStorageService);
+    }
+
+    @Bean
+    public IUpdateDoctorProfile updateDoctorProfile(IGetDoctorFromContext getDoctorFromContext, DoctorRepository doctorRepository, AddressCoordinatesFetcher addressCoordinatesFetcher, DocumentRepository documentRepository) {
+        return new UpdateDoctorProfile(getDoctorFromContext, doctorRepository, addressCoordinatesFetcher, documentRepository);
     }
 }
