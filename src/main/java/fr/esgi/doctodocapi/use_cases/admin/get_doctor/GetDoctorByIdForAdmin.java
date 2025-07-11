@@ -9,6 +9,8 @@ import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscription;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
+import fr.esgi.doctodocapi.model.doctor_report.DoctorReport;
+import fr.esgi.doctodocapi.model.patient.DoctorReportRepository;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.get_doctors.GetDoctorByIdResponse;
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorByIdForAdmin;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
@@ -24,13 +26,15 @@ public class GetDoctorByIdForAdmin implements IGetDoctorByIdForAdmin {
     private final DoctorSubscriptionRepository subscriptionRepository;
     private final AppointmentRepository appointmentRepository;
     private final DoctorResponseMapper doctorResponseMapper;
+    private final DoctorReportRepository doctorReportRepository;
 
-    public GetDoctorByIdForAdmin(DoctorRepository doctorRepository, SpecialityRepository specialityRepository, DoctorSubscriptionRepository subscriptionRepository, AppointmentRepository appointmentRepository, DoctorResponseMapper doctorResponseMapper) {
+    public GetDoctorByIdForAdmin(DoctorRepository doctorRepository, SpecialityRepository specialityRepository, DoctorSubscriptionRepository subscriptionRepository, AppointmentRepository appointmentRepository, DoctorResponseMapper doctorResponseMapper, DoctorReportRepository doctorReportRepository) {
         this.doctorRepository = doctorRepository;
         this.specialityRepository = specialityRepository;
         this.subscriptionRepository = subscriptionRepository;
         this.appointmentRepository = appointmentRepository;
         this.doctorResponseMapper = doctorResponseMapper;
+        this.doctorReportRepository = doctorReportRepository;
     }
 
     public GetDoctorByIdResponse execute(UUID doctorId) {
@@ -42,6 +46,9 @@ public class GetDoctorByIdForAdmin implements IGetDoctorByIdForAdmin {
 
             List<DoctorSubscription> subscriptions = this.subscriptionRepository.findAllByDoctorId(doctorId);
 
+            List<DoctorReport> reports = this.doctorReportRepository.getAllByDocteurId(doctor.getId());
+            boolean isReported = !reports.isEmpty();
+
             int appointmentCount = this.appointmentRepository.countAppointmentsByDoctorId(doctorId);
             int patientCount = this.appointmentRepository.countDistinctPatientsByDoctorId(doctorId);
 
@@ -51,7 +58,8 @@ public class GetDoctorByIdForAdmin implements IGetDoctorByIdForAdmin {
                     speciality,
                     subscriptions,
                     appointmentCount,
-                    patientCount
+                    patientCount,
+                    isReported
             );
 
         } catch (DomainException e) {

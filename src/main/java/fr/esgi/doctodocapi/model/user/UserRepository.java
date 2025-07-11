@@ -36,6 +36,8 @@ public interface UserRepository {
      */
     User findByEmail(String email) throws UserNotFoundException;
 
+    User findById(UUID id) throws UserNotFoundException;
+
     /**
      * Saves a user entity.
      *

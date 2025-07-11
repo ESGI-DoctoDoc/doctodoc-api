@@ -17,11 +17,11 @@ public class DoctorReportEntity {
 
     @ManyToOne
     @JoinColumn(name = "reporter_id", nullable = false)
-    private UserEntity userEntity;
+    private UserEntity reporter;
 
     @ManyToOne
     @JoinColumn(name = "doctor_id", nullable = false)
-    private DoctorEntity doctorEntity;
+    private DoctorEntity doctor;
 
     @Column(name = "explanation", nullable = false)
     private String explanation;
@@ -40,20 +40,20 @@ public class DoctorReportEntity {
         this.id = id;
     }
 
-    public UserEntity getUserEntity() {
-        return userEntity;
+    public UserEntity getReporter() {
+        return reporter;
     }
 
-    public void setUserEntity(UserEntity userEntity) {
-        this.userEntity = userEntity;
+    public void setReporter(UserEntity userEntity) {
+        this.reporter = userEntity;
     }
 
-    public DoctorEntity getDoctorEntity() {
-        return doctorEntity;
+    public DoctorEntity getDoctor() {
+        return doctor;
     }
 
-    public void setDoctorEntity(DoctorEntity doctorEntity) {
-        this.doctorEntity = doctorEntity;
+    public void setDoctor(DoctorEntity doctorEntity) {
+        this.doctor = doctorEntity;
     }
 
     public String getExplanation() {
