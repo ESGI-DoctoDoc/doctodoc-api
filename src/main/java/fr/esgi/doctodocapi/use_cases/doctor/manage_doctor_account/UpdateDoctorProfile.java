@@ -59,7 +59,8 @@ public class UpdateDoctorProfile implements IUpdateDoctorProfile {
                     savedDoctor.getPersonalInformations().getFirstName(),
                     savedDoctor.getPersonalInformations().getLastName(),
                     savedDoctor.getConsultationInformations().getAddress(),
-                    savedDoctor.getProfessionalInformations().getBio()
+                    savedDoctor.getProfessionalInformations().getBio(),
+                    savedDoctor.getPersonalInformations().getProfilePictureUrl()
             );
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());

@@ -4,6 +4,7 @@ public record GetUpdatedProfileResponse(
         String firstName,
         String lastName,
         String bio,
-        String address
+        String address,
+        String profilePictureUrl
 ){
 }

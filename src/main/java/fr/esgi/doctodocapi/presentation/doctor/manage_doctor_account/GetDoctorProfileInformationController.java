@@ -31,7 +31,6 @@ public class GetDoctorProfileInformationController {
     @PatchMapping("profile")
     @ResponseStatus(HttpStatus.OK)
     public GetUpdatedProfileResponse update(@Valid @RequestBody UpdateDoctorProfileRequest request) {
-        System.out.println(request);
         return this.updateDoctorProfile.execute(request);
     }
 }
