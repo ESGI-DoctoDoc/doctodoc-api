@@ -86,4 +86,6 @@ public interface DoctorJpaRepository extends JpaRepository<DoctorEntity, UUID> {
 
     @Query("SELECT d FROM DoctorEntity d WHERE LOWER(CONCAT(d.firstName, ' ', d.lastName)) LIKE LOWER(CONCAT('%', :name, '%'))")
     Page<DoctorEntity> searchByDoctorName(@Param("name") String name, Pageable pageable);
+
+    boolean existsByRpps(String rpps);
 }

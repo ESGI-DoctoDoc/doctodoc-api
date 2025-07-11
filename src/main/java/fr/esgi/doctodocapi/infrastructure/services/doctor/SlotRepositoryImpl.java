@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.infrastructure.services.doctor;
 
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.AppointmentEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.SlotEntity;
@@ -9,10 +10,12 @@ import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.MedicalConcernMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotMapper;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
+import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
 import fr.esgi.doctodocapi.model.doctor.exceptions.SlotNotFoundException;
+import jakarta.persistence.EntityManager;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -54,6 +57,8 @@ public class SlotRepositoryImpl implements SlotRepository {
      */
     private final MedicalConcernJpaRepository medicalConcernJpaRepository;
 
+    private final EntityManager entityManager;
+
     /**
      * Constructs a SlotRepositoryImpl with the required repositories and mappers.
      *
@@ -62,12 +67,13 @@ public class SlotRepositoryImpl implements SlotRepository {
      * @param appointmentFacadeMapper Facade mapper for appointment entities and domain objects
      * @param medicalConcernMapper    Mapper for medical concern domain objects and entities
      */
-    public SlotRepositoryImpl(SlotJpaRepository slotJpaRepository, SlotMapper slotMapper, AppointmentFacadeMapper appointmentFacadeMapper, MedicalConcernMapper medicalConcernMapper, MedicalConcernJpaRepository medicalConcernJpaRepository) {
+    public SlotRepositoryImpl(SlotJpaRepository slotJpaRepository, SlotMapper slotMapper, AppointmentFacadeMapper appointmentFacadeMapper, MedicalConcernMapper medicalConcernMapper, MedicalConcernJpaRepository medicalConcernJpaRepository, EntityManager entityManager) {
         this.slotJpaRepository = slotJpaRepository;
         this.slotMapper = slotMapper;
         this.appointmentFacadeMapper = appointmentFacadeMapper;
         this.medicalConcernMapper = medicalConcernMapper;
         this.medicalConcernJpaRepository = medicalConcernJpaRepository;
+        this.entityManager = entityManager;
     }
 
     /**
@@ -184,6 +190,40 @@ public class SlotRepositoryImpl implements SlotRepository {
         return slotEntities.stream()
                 .map(this::mapSlotEntityToDomain)
                 .toList();
+    }
+
+    @Override
+    public Slot findVisibleById(UUID id, List<String> validStatuses) throws SlotNotFoundException {
+        SlotEntity entity = this.slotJpaRepository.findVisibleById(id, validStatuses)
+                .orElseThrow(SlotNotFoundException::new);
+        return mapSlotEntityToDomain(entity);
+    }
+
+    @Override
+    public Slot update(Slot slot) {
+        SlotEntity entity = this.entityManager.getReference(SlotEntity.class, slot.getId());
+
+        entity.setStartHour(slot.getHoursRange().getStart());
+        entity.setEndHour(slot.getHoursRange().getEnd());
+
+        List<UUID> medicalConcernIds = slot.getAvailableMedicalConcerns()
+                .stream()
+                .map(MedicalConcern::getId)
+                .toList();
+        List<MedicalConcernEntity> medicalConcernEntities = this.medicalConcernJpaRepository.findAllById(medicalConcernIds);
+        entity.setMedicalConcerns(medicalConcernEntities);
+
+        SlotEntity updated = this.slotJpaRepository.save(entity);
+
+        return mapSlotEntityToDomain(updated);
+    }
+
+    @Override
+    public Slot delete(UUID slotId) {
+        SlotEntity entity = this.entityManager.getReference(SlotEntity.class, slotId);
+        entity.setDeletedAt(LocalDate.now());
+        SlotEntity updated = this.slotJpaRepository.save(entity);
+        return mapSlotEntityToDomain(updated);
     }
 
     private SlotEntity mapSlotToEntity(Slot slot, DoctorEntity doctorEntity) {

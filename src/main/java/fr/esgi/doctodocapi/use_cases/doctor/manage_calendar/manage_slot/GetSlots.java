@@ -9,8 +9,9 @@ import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotByIdResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.IGetAllSlots;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.IGetSlots;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
@@ -18,12 +19,13 @@ import org.springframework.http.HttpStatus;
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
+import java.util.UUID;
 
 /**
  * Use case for retrieving all the slots of a doctor within a date range (1 week),
  * with pagination support.
  */
-public class GetAllSlots implements IGetAllSlots {
+public class GetSlots implements IGetSlots {
     private static final List<String> VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN = Arrays.asList(
             AppointmentStatus.CONFIRMED.getValue(),
             AppointmentStatus.UPCOMING.getValue(),
@@ -37,7 +39,7 @@ public class GetAllSlots implements IGetAllSlots {
     private final DoctorRepository doctorRepository;
 
 
-    public GetAllSlots(SlotRepository slotRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, SlotResponseMapper slotResponseMapper, DoctorRepository doctorRepository) {
+    public GetSlots(SlotRepository slotRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, SlotResponseMapper slotResponseMapper, DoctorRepository doctorRepository) {
         this.slotRepository = slotRepository;
         this.userRepository = userRepository;
         this.getCurrentUserContext = getCurrentUserContext;
@@ -83,6 +85,16 @@ public class GetAllSlots implements IGetAllSlots {
             }
 
             return this.slotResponseMapper.presentAll(slots);
+        } catch (DomainException e) {
+            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+        }
+    }
+
+    public GetSlotByIdResponse getSlotById(UUID slotId) {
+        try {
+            Slot slot = this.slotRepository.findVisibleById(slotId, VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN);
+
+            return this.slotResponseMapper.presentById(slot);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
