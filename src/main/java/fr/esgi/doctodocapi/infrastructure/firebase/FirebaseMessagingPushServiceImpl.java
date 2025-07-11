@@ -7,8 +7,9 @@ import com.google.firebase.messaging.Notification;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.NotificationEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.NotificationJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.mappers.NotificationMapper;
-import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationMessage;
-import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationPushService;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.TokenFcmRepository;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationMessage;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationPushService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
@@ -19,10 +20,12 @@ public class FirebaseMessagingPushServiceImpl implements NotificationPushService
 
     private final NotificationJpaRepository notificationJpaRepository;
     private final NotificationMapper notificationMapper;
+    private final TokenFcmRepository tokenFcmRepository;
 
-    public FirebaseMessagingPushServiceImpl(NotificationJpaRepository notificationJpaRepository, NotificationMapper notificationMapper) {
+    public FirebaseMessagingPushServiceImpl(NotificationJpaRepository notificationJpaRepository, NotificationMapper notificationMapper, TokenFcmRepository tokenFcmRepository) {
         this.notificationJpaRepository = notificationJpaRepository;
         this.notificationMapper = notificationMapper;
+        this.tokenFcmRepository = tokenFcmRepository;
     }
 
     private static Message build(String fcmToken, NotificationMessage notificationMessage) {
@@ -46,18 +49,20 @@ public class FirebaseMessagingPushServiceImpl implements NotificationPushService
     }
 
     @Override
-    public void send(String fcmToken, NotificationMessage message) {
-        Message firebaseMessageBuild = build(fcmToken, message);
+    public void send(NotificationMessage message) {
+        String fcmToken = this.tokenFcmRepository.get(message.getRecipientId());
+        if (fcmToken != null) {
+            Message firebaseMessageBuild = build(fcmToken, message);
 
-        try {
-            String response = FirebaseMessaging.getInstance().send(firebaseMessageBuild);
-            saveNotification(message);
-            logger.info("Successfully sent message: {}", response);
+            try {
+                String response = FirebaseMessaging.getInstance().send(firebaseMessageBuild);
+                saveNotification(message);
+                logger.info("Successfully sent message: {}", response);
 
-        } catch (FirebaseMessagingException e) {
-            logger.error("Cannot send notification.");
+            } catch (FirebaseMessagingException e) {
+                logger.error("Cannot send notification.");
+            }
         }
-
     }
 
     private void saveNotification(NotificationMessage message) {

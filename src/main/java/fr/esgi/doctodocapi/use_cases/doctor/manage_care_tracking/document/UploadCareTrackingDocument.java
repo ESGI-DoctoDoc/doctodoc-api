@@ -21,9 +21,13 @@ import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_respons
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_document.IUploadCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationMessage;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationMessageType;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationPushService;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -38,8 +42,9 @@ public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
     private final DoctorRepository doctorRepository;
     private final DocumentRepository documentRepository;
     private final NotificationRepository notificationRepository;
+    private final NotificationPushService notificationPushService;
 
-    public UploadCareTrackingDocument(CareTrackingRepository careTrackingRepository, FileStorageService uploadFile, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorRepository doctorRepository, DocumentRepository documentRepository, NotificationRepository notificationRepository) {
+    public UploadCareTrackingDocument(CareTrackingRepository careTrackingRepository, FileStorageService uploadFile, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorRepository doctorRepository, DocumentRepository documentRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService) {
         this.careTrackingRepository = careTrackingRepository;
         this.uploadFile = uploadFile;
         this.userRepository = userRepository;
@@ -47,6 +52,7 @@ public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
         this.doctorRepository = doctorRepository;
         this.documentRepository = documentRepository;
         this.notificationRepository = notificationRepository;
+        this.notificationPushService = notificationPushService;
     }
 
     public GetDocumentForCareTrackingResponse execute(UUID careTrackingId, SaveDocumentRequest request) {
@@ -72,6 +78,7 @@ public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
             this.careTrackingRepository.save(careTracking);
 
             notifyDoctorOfNewDocuments(careTracking, doctor.getId());
+            notifyPatientOfNewDocuments(careTracking, doctor);
 
             return new GetDocumentForCareTrackingResponse(
                     careTrackingDocument.getDocument().getId(),
@@ -117,5 +124,17 @@ public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
                     this.notificationRepository.save(notification);
                 }
         );
+    }
+
+    private void notifyPatientOfNewDocuments(CareTracking careTracking, Doctor doctor) {
+        String doctorFullName = doctor.getPersonalInformations().getFirstName() + " " + doctor.getPersonalInformations().getLastName();
+        NotificationMessage message = NotificationMessageType.newDocumentsInCareTracking(
+                careTracking.getPatient().getUserId(),
+                careTracking.getId(),
+                careTracking.getCaseName(),
+                LocalDateTime.now(),
+                doctorFullName
+        );
+        this.notificationPushService.send(message);
     }
 }
