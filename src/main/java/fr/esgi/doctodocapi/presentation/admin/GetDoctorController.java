@@ -51,7 +51,7 @@ public class GetDoctorController {
     }
 
 
-    @GetMapping("doctors/{id}//medical-concerns")
+    @GetMapping("admin/doctors/{id}/medical-concerns")
     @ResponseStatus(HttpStatus.OK)
     public List<GetAdminDoctorMedicalConcernsResponse> getMedicalConcernsAndQuestions(@PathVariable UUID id) {
         return this.getDoctorMedicalConcernsAndQuestions.get(id);

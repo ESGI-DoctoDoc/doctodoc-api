@@ -13,6 +13,7 @@ import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
 
 import java.util.List;
+import java.util.Map;
 import java.util.UUID;
 
 public class GetDoctorMedicalConcernsAndQuestions implements IGetDoctorMedicalConcernsAndQuestions {
@@ -33,14 +34,25 @@ public class GetDoctorMedicalConcernsAndQuestions implements IGetDoctorMedicalCo
 
                 List<GetAdminDoctorQuestionsResponse> questionsResponses = questions
                         .stream()
-                        .map(question -> new GetAdminDoctorQuestionsResponse(
-                                question.getId(),
-                                question.getQuestion(),
-                                question.getType().getValue(),
-                                question.getOptions(),
-                                question.isMandatory(),
-                                question.getCreatedAt()
-                        ))
+                        .map(question -> {
+                            List<Map<String, String>> mappedOptions = question.getOptions() == null ? List.of() :
+                                    question.getOptions().stream()
+                                            .map(option -> Map.of(
+                                                    "label", option,
+                                                    "value", option.toLowerCase()
+                                            ))
+                                            .toList();
+
+
+                            return new GetAdminDoctorQuestionsResponse(
+                                    question.getId(),
+                                    question.getQuestion(),
+                                    question.getType().getValue(),
+                                    mappedOptions,
+                                    question.isMandatory(),
+                                    question.getCreatedAt()
+                            );
+                        })
                         .toList();
 
                 return new GetAdminDoctorMedicalConcernsResponse(

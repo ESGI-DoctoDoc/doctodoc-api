@@ -47,7 +47,7 @@ public class GetDoctorReports implements IGetDoctorReports {
                                 report.getId(),
                                 reporter,
                                 report.getExplanation(),
-                                report.getStatus().name(),
+                                report.getStatus().name().toLowerCase(),
                                 report.getReportedAt()
                         );
                     })
