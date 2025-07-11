@@ -25,7 +25,6 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
             @Param("date") LocalDate date
     );
 
-    List<SlotEntity> findAllByDoctor_IdAndDateAfter(UUID doctorId, LocalDate date);
     List<SlotEntity> findAllByDoctorIdAndDateGreaterThanEqual(UUID doctorId, LocalDate date);
     Optional<SlotEntity> findFirstByMedicalConcerns_IdAndDate(UUID medicalConcernId, LocalDate date);
 
@@ -130,5 +129,30 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
     Optional<SlotEntity> findVisibleById(
             @Param("slotId") UUID slotId,
             @Param("validStatuses") List<String> validStatuses
+    );
+
+
+    @Query("""
+                SELECT s FROM SlotEntity s
+                JOIN s.medicalConcerns mc
+                WHERE mc.id = :medicalConcernId
+                  AND mc.deletedAt IS NULL
+                  AND s.date > :date
+            """)
+    List<SlotEntity> findAllByDateAfterAndMedicalConcernId(
+            @Param("medicalConcernId") UUID medicalConcernId,
+            @Param("date") LocalDate date
+    );
+
+    @Query("""
+                SELECT s FROM SlotEntity s
+                JOIN s.medicalConcerns mc
+                WHERE mc.id = :medicalConcernId
+                  AND mc.deletedAt IS NULL
+                  AND s.date < :date
+            """)
+    List<SlotEntity> findAllByDateBeforeAndMedicalConcernId(
+            @Param("medicalConcernId") UUID medicalConcernId,
+            @Param("date") LocalDate date
     );
 }
