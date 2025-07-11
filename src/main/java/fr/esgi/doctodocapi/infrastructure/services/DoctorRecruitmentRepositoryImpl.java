@@ -7,6 +7,8 @@ import fr.esgi.doctodocapi.model.doctor_recruitment.DoctorRecruitment;
 import fr.esgi.doctodocapi.model.doctor_recruitment.DoctorRecruitmentRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 /**
  * Implementation of the DoctorRecruitmentRepository interface.
  * This service provides functionality to manage doctor recruitment data,
@@ -45,5 +47,11 @@ public class DoctorRecruitmentRepositoryImpl implements DoctorRecruitmentReposit
     public void save(DoctorRecruitment doctorRecruitmentToSave) {
         DoctorRecruitmentEntity entityToSave = this.doctorRecruitmentMapper.toEntity(doctorRecruitmentToSave);
         this.doctorRecruitmentJpaRepository.save(entityToSave);
+    }
+
+    @Override
+    public List<DoctorRecruitment> getAll() {
+        List<DoctorRecruitmentEntity> entities = this.doctorRecruitmentJpaRepository.findAll();
+        return entities.stream().map(doctorRecruitmentMapper::toDomain).toList();
     }
 }
