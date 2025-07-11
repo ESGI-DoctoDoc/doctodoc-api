@@ -68,6 +68,16 @@ public final class NotificationsType {
     }
 
     // -------------------------------
+    // Doctors
+    // -------------------------------
+    public static Notification addDoctorRecruitment(UUID recipientId, String doctorFullName) {
+        String message = String.format("Un patient souhaite ajouter le médecin %s", doctorFullName);
+        return Notification.init(recipientId, TITLE_CARE_TRACKING, message);
+    }
+
+
+
+    // -------------------------------
     // Private helpers
     // -------------------------------
 
