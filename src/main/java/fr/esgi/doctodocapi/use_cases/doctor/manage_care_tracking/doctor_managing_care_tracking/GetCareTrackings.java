@@ -16,7 +16,6 @@ import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.util.*;
 import java.util.stream.Collectors;
