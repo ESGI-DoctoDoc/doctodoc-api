@@ -36,4 +36,12 @@ public class Calendar {
     public List<Absence> getAbsences() {
         return Collections.unmodifiableList(absences);
     }
+
+    public void updateAbsence(Absence updated) {
+        int index = absences.indexOf(updated);
+        if (index == -1) {
+            throw new IllegalStateException("Cannot update an absence that does not exist in the calendar: " + updated.getId());
+        }
+        absences.set(index, updated);
+    }
 }

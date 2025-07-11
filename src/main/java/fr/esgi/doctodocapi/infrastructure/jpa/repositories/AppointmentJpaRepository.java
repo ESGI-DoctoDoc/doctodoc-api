@@ -119,4 +119,36 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
     );
 
     List<AppointmentEntity> findAllByDoctor_IdAndPatient_IdAndDeletedAtIsNull(UUID doctorId, UUID patientId);
+
+    @Query("""
+    SELECT a FROM AppointmentEntity a
+    WHERE a.doctor.id = :doctorId
+    AND a.date BETWEEN :start AND :end
+    AND a.startHour >= :startHour AND a.endHour <= :endHour
+    AND a.status IN :validStatuses
+    AND a.deletedAt IS NULL
+""")
+    List<AppointmentEntity> findByDoctorIdAndDateRangeAndHourRange(
+            @Param("doctorId") UUID doctorId,
+            @Param("start") LocalDate start,
+            @Param("end") LocalDate end,
+            @Param("startHour") LocalTime startHour,
+            @Param("endHour") LocalTime endHour,
+            @Param("validStatuses") List<String> validStatuses
+    );
+
+    @Query("""
+    SELECT a FROM AppointmentEntity a
+    WHERE a.doctor.id = :doctorId
+    AND a.date = :date
+    AND a.status IN :validStatuses
+    AND a.deletedAt IS NULL
+""")
+    List<AppointmentEntity> findAllByDoctor_IdAndDateAndStatusInAndDeletedAtIsNull(
+            @Param("doctorId") UUID doctorId,
+            @Param("date") LocalDate date,
+            @Param("validStatuses") List<String> validStatuses
+    );
+
+    List<AppointmentEntity> findAllById(UUID appointmentId);
 }

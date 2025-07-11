@@ -64,6 +64,21 @@ public class Absence {
         );
     }
 
+    public void updateSingleDay(String newDescription, LocalDate newDate) {
+        this.description = newDescription;
+        this.absenceRange = AbsenceRange.of(
+                newDate,
+                newDate,
+                LocalTime.MIDNIGHT,
+                LocalTime.of(23, 59)
+        );
+    }
+
+    public void updateRange(String description, LocalDate start, LocalDate end, LocalTime startHour, LocalTime endHour) {
+        this.description = description;
+        this.absenceRange = AbsenceRange.of(start, end, startHour, endHour);
+    }
+
     public UUID getId() {
         return id;
     }

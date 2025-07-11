@@ -161,6 +161,33 @@ public class Appointment {
         this.cancelExplanation = cancelExplanation;
     }
 
+    public void update(Slot newSlot, MedicalConcern newMedicalConcern, LocalDate newDate, LocalTime newStartHour, List<PreAppointmentAnswers> newAnswers, String newDoctorNotes, UUID newCareTrackingId) {
+        HoursRange newRange = HoursRange.of(
+                newStartHour,
+                newStartHour.plusMinutes(newMedicalConcern.getDurationInMinutes().getValue())
+        );
+
+        List<Appointment> otherAppointments = newSlot.getAppointments().stream()
+                .filter(app -> !app.getId().equals(this.id))
+                .filter(app -> app.getStatus() == AppointmentStatus.CONFIRMED || !app.isLockExpired())
+                .toList();
+
+        boolean hasConflict = otherAppointments.stream()
+                .anyMatch(existing -> HoursRange.isTimesOverlap(existing.getHoursRange(), newRange));
+
+        if (hasConflict) {
+            throw new CannotBookAppointmentException();
+        }
+
+        this.slot = newSlot;
+        this.medicalConcern = newMedicalConcern;
+        this.date = newDate;
+        this.hoursRange = newRange;
+        this.preAppointmentAnswers = newAnswers;
+        this.doctorNotes = newDoctorNotes;
+        this.careTrackingId = newCareTrackingId;
+    }
+
 
     public UUID getId() {
         return id;

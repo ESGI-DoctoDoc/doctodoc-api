@@ -127,4 +127,18 @@ public class AbsenceRepositoryImpl implements AbsenceRepository {
 
         return pageResult.getContent().stream().map(absenceMapper::toDomain).toList();
     }
+
+    @Override
+    public Absence update(Absence absence) {
+        AbsenceEntity entity = this.entityManager.find(AbsenceEntity.class, absence.getId());
+
+        entity.setDescription(absence.getDescription());
+        entity.setStartDate(absence.getAbsenceRange().getDateRange().getStart());
+        entity.setEndDate(absence.getAbsenceRange().getDateRange().getEnd());
+        entity.setStartHour(absence.getAbsenceRange().getHoursRange().getStart());
+        entity.setEndHour(absence.getAbsenceRange().getHoursRange().getEnd());
+
+        AbsenceEntity savedEntity = this.absenceJpaRepository.save(entity);
+        return this.absenceMapper.toDomain(savedEntity);
+    }
 }
