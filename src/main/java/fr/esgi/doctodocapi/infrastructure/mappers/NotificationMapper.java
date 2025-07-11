@@ -2,7 +2,7 @@ package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.NotificationEntity;
 import fr.esgi.doctodocapi.model.notification.Notification;
-import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationMessage;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationMessage;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
