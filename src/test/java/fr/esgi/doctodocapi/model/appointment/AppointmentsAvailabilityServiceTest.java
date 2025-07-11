@@ -5,7 +5,7 @@ import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.get_appointment_availability_response.GetTodayAppointmentAvailabilityResponse;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -61,25 +61,25 @@ class AppointmentsAvailabilityServiceTest {
         Slot slot2 = Slot.create(defaultDate2, defaultHour2, defaultHour2.plusHours(1), List.of(medicalConcern1));
 
         // response expected
-        List<GetAppointmentAvailabilityResponse> expected = List.of(
+        List<GetTodayAppointmentAvailabilityResponse> expected = List.of(
                 // slot 1
-                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 15), LocalTime.of(9, 30), false),
-                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 30), LocalTime.of(9, 45), false),
-                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 45), LocalTime.of(10, 0), false),
-                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 0), LocalTime.of(10, 15), false),
-                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 15), LocalTime.of(10, 30), false),
-                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 30), LocalTime.of(10, 45), false),
-                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 45), LocalTime.of(11, 0), false),
-                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 0), LocalTime.of(11, 15), false),
-                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 15), LocalTime.of(11, 30), false),
-                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 30), LocalTime.of(11, 45), false),
-                new GetAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 45), LocalTime.of(12, 0), false),
+                new GetTodayAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 15), LocalTime.of(9, 30), false),
+                new GetTodayAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 30), LocalTime.of(9, 45), false),
+                new GetTodayAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(9, 45), LocalTime.of(10, 0), false),
+                new GetTodayAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 0), LocalTime.of(10, 15), false),
+                new GetTodayAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 15), LocalTime.of(10, 30), false),
+                new GetTodayAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 30), LocalTime.of(10, 45), false),
+                new GetTodayAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(10, 45), LocalTime.of(11, 0), false),
+                new GetTodayAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 0), LocalTime.of(11, 15), false),
+                new GetTodayAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 15), LocalTime.of(11, 30), false),
+                new GetTodayAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 30), LocalTime.of(11, 45), false),
+                new GetTodayAppointmentAvailabilityResponse(slot1.getId(), defaultDate, LocalTime.of(11, 45), LocalTime.of(12, 0), false),
 
                 // slot 2
-                new GetAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 0), LocalTime.of(11, 15), false),
-                new GetAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 15), LocalTime.of(11, 30), false),
-                new GetAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 30), LocalTime.of(11, 45), false),
-                new GetAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 45), LocalTime.of(12, 0), false)
+                new GetTodayAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 0), LocalTime.of(11, 15), false),
+                new GetTodayAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 15), LocalTime.of(11, 30), false),
+                new GetTodayAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 30), LocalTime.of(11, 45), false),
+                new GetTodayAppointmentAvailabilityResponse(slot2.getId(), defaultDate2, LocalTime.of(11, 45), LocalTime.of(12, 0), false)
         );
 
 
@@ -89,7 +89,7 @@ class AppointmentsAvailabilityServiceTest {
         when(this.appointmentRepository.getAppointmentsBySlot(slot1.getId())).thenReturn(List.of());
         when(this.appointmentRepository.getAppointmentsBySlot(slot2.getId())).thenReturn(List.of());
 
-        List<GetAppointmentAvailabilityResponse> results = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern1, slot1.getDate());
+        List<GetTodayAppointmentAvailabilityResponse> results = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern1, slot1.getDate());
 
         assertEquals(expected, results);
         verifyNoMoreInteractions(this.slotRepository, this.appointmentRepository);
@@ -155,15 +155,15 @@ class AppointmentsAvailabilityServiceTest {
         );
 
         // Expected results
-        List<GetAppointmentAvailabilityResponse> expected = List.of(
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 0), LocalTime.of(9, 15), true),
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 15), LocalTime.of(9, 30), true),
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 30), LocalTime.of(9, 45), false),
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 45), LocalTime.of(10, 0), false),
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 0), LocalTime.of(10, 15), true),
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 15), LocalTime.of(10, 30), true),
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 30), LocalTime.of(10, 45), false),
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 45), LocalTime.of(11, 0), false)
+        List<GetTodayAppointmentAvailabilityResponse> expected = List.of(
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 0), LocalTime.of(9, 15), true),
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 15), LocalTime.of(9, 30), true),
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 30), LocalTime.of(9, 45), false),
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 45), LocalTime.of(10, 0), false),
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 0), LocalTime.of(10, 15), true),
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 15), LocalTime.of(10, 30), true),
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 30), LocalTime.of(10, 45), false),
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 45), LocalTime.of(11, 0), false)
         );
 
         // Mocks
@@ -173,7 +173,7 @@ class AppointmentsAvailabilityServiceTest {
         );
 
         // When
-        List<GetAppointmentAvailabilityResponse> result = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern, date);
+        List<GetTodayAppointmentAvailabilityResponse> result = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern, date);
 
         // Then
         assertEquals(expected, result);
@@ -205,13 +205,13 @@ class AppointmentsAvailabilityServiceTest {
         when(appointmentRepository.getAppointmentsBySlot(slot.getId())).thenReturn(List.of());
         when(absenceRepository.findAllByDoctorIdAndDate(doctorId, date)).thenReturn(List.of(absence));
 
-        List<GetAppointmentAvailabilityResponse> expected = List.of(
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 0), LocalTime.of(10, 15), false),
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 30), LocalTime.of(10, 45), false),
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 45), LocalTime.of(11, 0), false)
+        List<GetTodayAppointmentAvailabilityResponse> expected = List.of(
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 0), LocalTime.of(10, 15), false),
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 30), LocalTime.of(10, 45), false),
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(10, 45), LocalTime.of(11, 0), false)
         );
 
-        List<GetAppointmentAvailabilityResponse> result = appointmentsAvailabilityService.getAvailableAppointment(concern, date);
+        List<GetTodayAppointmentAvailabilityResponse> result = appointmentsAvailabilityService.getAvailableAppointment(concern, date);
 
         assertEquals(expected, result);
     }
@@ -238,9 +238,9 @@ class AppointmentsAvailabilityServiceTest {
         when(appointmentRepository.getAppointmentsBySlot(slot.getId())).thenReturn(List.of());
         when(absenceRepository.findAllByDoctorIdAndDate(doctorId, date)).thenReturn(List.of(absence));
 
-        List<GetAppointmentAvailabilityResponse> expected = List.of();
+        List<GetTodayAppointmentAvailabilityResponse> expected = List.of();
 
-        List<GetAppointmentAvailabilityResponse> result = appointmentsAvailabilityService.getAvailableAppointment(concern, date);
+        List<GetTodayAppointmentAvailabilityResponse> result = appointmentsAvailabilityService.getAvailableAppointment(concern, date);
 
         assertEquals(expected, result);
     }
@@ -272,13 +272,13 @@ class AppointmentsAvailabilityServiceTest {
         when(appointmentRepository.getAppointmentsBySlot(slot.getId())).thenReturn(List.of(appointment));
         when(absenceRepository.findAllByDoctorIdAndDate(doctorId, date)).thenReturn(List.of(absence));
 
-        List<GetAppointmentAvailabilityResponse> expected = List.of(
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 0), LocalTime.of(9, 15), false),
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 15), LocalTime.of(9, 30), true),  // réservé
-                new GetAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 45), LocalTime.of(10, 0), false)
+        List<GetTodayAppointmentAvailabilityResponse> expected = List.of(
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 0), LocalTime.of(9, 15), false),
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 15), LocalTime.of(9, 30), true),  // réservé
+                new GetTodayAppointmentAvailabilityResponse(slot.getId(), date, LocalTime.of(9, 45), LocalTime.of(10, 0), false)
         );
 
-        List<GetAppointmentAvailabilityResponse> result = appointmentsAvailabilityService.getAvailableAppointment(concern, date);
+        List<GetTodayAppointmentAvailabilityResponse> result = appointmentsAvailabilityService.getAvailableAppointment(concern, date);
 
         assertEquals(expected, result);
     }

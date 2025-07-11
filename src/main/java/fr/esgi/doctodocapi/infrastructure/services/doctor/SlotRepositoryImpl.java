@@ -1,6 +1,5 @@
 package fr.esgi.doctodocapi.infrastructure.services.doctor;
 
-import fr.esgi.doctodocapi.infrastructure.jpa.entities.AppointmentEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.DoctorEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.MedicalConcernEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.SlotEntity;
@@ -10,7 +9,6 @@ import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentFacadeMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.MedicalConcernMapper;
 import fr.esgi.doctodocapi.infrastructure.mappers.SlotMapper;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
-import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.Slot;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcern;
@@ -22,7 +20,9 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
+import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.UUID;
 
 /**
@@ -172,6 +172,37 @@ public class SlotRepositoryImpl implements SlotRepository {
                 .map(this::mapSlotEntityToDomain)
                 .toList();
     }
+
+    @Override
+    public List<Slot> getByNextDateAndMedicalConcernId(LocalDate date, UUID medicalConcernId) {
+        List<SlotEntity> entities = this.slotJpaRepository.findAllByDateAfterAndMedicalConcernId(medicalConcernId, date);
+
+        Optional<LocalDate> closestNextDate = entities.stream()
+                .map(SlotEntity::getDate)
+                .min(Comparator.naturalOrder()); // la plus proche date future
+
+        return closestNextDate.map(localDate -> entities.stream()
+                .filter(slot -> slot.getDate().equals(localDate))
+                .map(this::mapSlotEntityToDomain)
+                .toList()).orElseGet(List::of);
+
+    }
+
+    @Override
+    public List<Slot> getByPreviousDateAndMedicalConcernId(LocalDate date, UUID medicalConcernId) {
+        List<SlotEntity> entities = this.slotJpaRepository.findAllByDateBeforeAndMedicalConcernId(medicalConcernId, date);
+
+        // Trouve la date la plus récente avant `date`
+        Optional<LocalDate> closestPreviousDate = entities.stream()
+                .map(SlotEntity::getDate)
+                .max(Comparator.naturalOrder());
+
+        return closestPreviousDate.map(localDate -> entities.stream()
+                .filter(slot -> slot.getDate().equals(localDate))
+                .map(this::mapSlotEntityToDomain)
+                .toList()).orElseGet(List::of);
+    }
+
 
     @Override
     public List<Slot> findVisibleByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate, List<String> validStatuses, int page, int size) {
