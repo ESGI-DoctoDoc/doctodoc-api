@@ -1,6 +1,7 @@
 package fr.esgi.doctodocapi.configuration.doctor;
 
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentResponseMapper;
+import fr.esgi.doctodocapi.infrastructure.security.service.GetDoctorFromContext;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.AppointmentsAvailabilityService;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
@@ -40,7 +41,7 @@ public class ManageDoctorAppointmentConfiguration {
     }
 
     @Bean
-    public ICancelDoctorAppointment cancelDoctorAppointment(AppointmentRepository appointmentRepository) {
-        return new CancelDoctorAppointment(appointmentRepository);
+    public ICancelDoctorAppointment cancelDoctorAppointment(AppointmentRepository appointmentRepository, GetDoctorFromContext getDoctorFromContext) {
+        return new CancelDoctorAppointment(appointmentRepository, getDoctorFromContext);
     }
 }
