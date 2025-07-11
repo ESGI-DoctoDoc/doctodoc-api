@@ -22,6 +22,11 @@ public class AbsenceRange {
         );
     }
 
+    public boolean overlapsWith(AbsenceRange other) {
+        return DateRange.isDatesOverlap(this.dateRange, other.dateRange)
+                && HoursRange.isTimesOverlap(this.hoursRange, other.hoursRange);
+    }
+
     public HoursRange getHoursRange() {
         return hoursRange;
     }

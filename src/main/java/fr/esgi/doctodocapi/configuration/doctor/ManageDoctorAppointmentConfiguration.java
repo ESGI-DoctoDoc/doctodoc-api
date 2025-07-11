@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.configuration.doctor;
 
 import fr.esgi.doctodocapi.infrastructure.mappers.AppointmentResponseMapper;
 import fr.esgi.doctodocapi.infrastructure.security.service.GetDoctorFromContext;
+import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.AppointmentsAvailabilityService;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
@@ -11,7 +12,10 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_appointment.*;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot.GetAppointmentsOnAbsence;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.IGetAppointmentsOnAbsence;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.*;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.out.IGetDoctorFromContext;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationPushService;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
@@ -43,5 +47,10 @@ public class ManageDoctorAppointmentConfiguration {
     @Bean
     public ICompleteAppointment completeAppointment(AppointmentRepository appointmentRepository, GetDoctorFromContext getDoctorFromContext) {
         return new CompleteAppointment(getDoctorFromContext, appointmentRepository);
+    }
+
+    @Bean
+    public IUpdateDoctorAppointment updateDoctorAppointment(IGetDoctorFromContext getDoctorFromContext, AppointmentRepository appointmentRepository, MedicalConcernRepository medicalConcernRepository, SlotRepository slotRepository) {
+        return new UpdateDoctorAppointment(getDoctorFromContext, appointmentRepository, medicalConcernRepository, slotRepository);
     }
 }

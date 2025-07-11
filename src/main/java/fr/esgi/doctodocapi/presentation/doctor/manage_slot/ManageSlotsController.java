@@ -4,15 +4,12 @@ import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.ExceptionalS
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.MonthlySlotRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.UpdateSlotRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_slot.WeeklySlotRequest;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.DeleteSlotResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotByIdResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetUpdatedSlotResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_slot.*;
 import jakarta.validation.Valid;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -30,8 +27,6 @@ import java.util.UUID;
 @RequestMapping("doctors")
 @PreAuthorize("hasRole('ROLE_DOCTOR')")
 public class ManageSlotsController {
-    private static final Logger logger = LoggerFactory.getLogger(ManageSlotsController.class);
-
     private final ISaveWeeklySlots saveWeeklySlots;
     private final ISaveMonthlySlots saveMonthlySlots;
     private final IGetSlots getSlots;
@@ -75,7 +70,6 @@ public class ManageSlotsController {
     @PostMapping("/slots")
     @ResponseStatus(HttpStatus.CREATED)
     public GetSlotResponse createExceptionalSlot(@Valid @RequestBody ExceptionalSlotRequest request) {
-        logger.info("[POST /doctors/slots] Received payload: {}", request);
         return this.saveExceptionalSlot.execute(request);
     }
 

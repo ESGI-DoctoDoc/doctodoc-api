@@ -6,6 +6,7 @@ import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.manage_doctor_account
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.manage_doctor_account.GetDoctorProfileInformationResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.manage_doctor_account.SpecialityProfileInfo;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.manage_doctor_account.SubscriptionProfileInfo;
+import fr.esgi.doctodocapi.use_cases.patient.utils.GetDoctorProfileUrl;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -13,7 +14,13 @@ import java.time.format.DateTimeFormatter;
 
 @Service
 public class GetDoctorProfileResponseMapper {
+    private final GetDoctorProfileUrl getDoctorProfileUrl;
+
     private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm");
+
+    public GetDoctorProfileResponseMapper(GetDoctorProfileUrl getDoctorProfileUrl) {
+        this.getDoctorProfileUrl = getDoctorProfileUrl;
+    }
 
     public GetDoctorProfileInformationResponse toResponse(Doctor doctor, DoctorSubscription subscription) {
         SubscriptionProfileInfo subscriptionInfo = null;
@@ -43,7 +50,7 @@ public class GetDoctorProfileResponseMapper {
                 ),
                 subscriptionInfo,
                 doctor.getProfessionalInformations().getBio(),
-                doctor.getPersonalInformations().getProfilePictureUrl()
+                this.getDoctorProfileUrl.getUrl(doctor.getPersonalInformations().getProfilePictureUrl())
         );
     }
 

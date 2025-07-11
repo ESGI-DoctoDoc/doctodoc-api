@@ -1,12 +1,11 @@
 package fr.esgi.doctodocapi.presentation.doctor.manage_absence;
 
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_absence.SaveRangeAbsenceRequest;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_absence.SaveSingleDayAbsenceRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_absence.*;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.absence_response.DeleteAbsenceResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.absence_response.GetAbsenceResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.IDeleteAbsence;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.IGetAbsences;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.ISaveRangeAbsence;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.ISaveSingleDayAbsence;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.absence_response.GetAppointmentOnAbsenceResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_absence.UpdateRangeAbsenceRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.*;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -31,12 +30,16 @@ public class ManageAbsenceController {
     private final IGetAbsences getAbsences;
     private final ISaveRangeAbsence saveRangeAbsence;
     private final ISaveSingleDayAbsence saveSingleDayAbsence;
+    private final IUpdateAbsence updateAbsence;
+    private final IGetAppointmentsOnAbsence getAppointmentsOnAbsence;
 
-    public ManageAbsenceController(IDeleteAbsence deleteAbsence, IGetAbsences getAbsences, ISaveRangeAbsence saveRangeAbsence, ISaveSingleDayAbsence saveSingleDayAbsence) {
+    public ManageAbsenceController(IDeleteAbsence deleteAbsence, IGetAbsences getAbsences, ISaveRangeAbsence saveRangeAbsence, ISaveSingleDayAbsence saveSingleDayAbsence, IUpdateAbsence updateAbsence, IGetAppointmentsOnAbsence getAppointmentsOnAbsence) {
         this.deleteAbsence = deleteAbsence;
         this.getAbsences = getAbsences;
         this.saveRangeAbsence = saveRangeAbsence;
         this.saveSingleDayAbsence = saveSingleDayAbsence;
+        this.updateAbsence = updateAbsence;
+        this.getAppointmentsOnAbsence = getAppointmentsOnAbsence;
     }
 
 
@@ -82,7 +85,31 @@ public class ManageAbsenceController {
      */
     @DeleteMapping("absences/{id}")
     @ResponseStatus(HttpStatus.OK)
-    public void delete(@PathVariable UUID id) {
-        this.deleteAbsence.execute(id);
+    public DeleteAbsenceResponse delete(@PathVariable UUID id) {
+        return this.deleteAbsence.execute(id);
+    }
+
+    @PutMapping("absences/{id}/single-day")
+    @ResponseStatus(HttpStatus.OK)
+    public GetAbsenceResponse updateSingleDay(@PathVariable UUID id, @Valid @RequestBody UpdateSingleDayAbsenceRequest request) {
+        return this.updateAbsence.updateSingleDay(id, request);
+    }
+
+    @PutMapping("absences/{id}/range")
+    @ResponseStatus(HttpStatus.OK)
+    public GetAbsenceResponse updateRange(@PathVariable UUID id, @Valid @RequestBody UpdateRangeAbsenceRequest request) {
+        return this.updateAbsence.updateRange(id, request);
+    }
+
+    @PostMapping("absences/appointments")
+    @ResponseStatus(HttpStatus.OK)
+    public List<GetAppointmentOnAbsenceResponse> getAppointmentsOnAbsence(@Valid @RequestBody GetAppointmentsOnAbsenceBody body) {
+        return this.getAppointmentsOnAbsence.execute(body);
+    }
+
+    @PostMapping("absences/appointments/date")
+    @ResponseStatus(HttpStatus.OK)
+    public List<GetAppointmentOnAbsenceResponse> getAppointmentsOnDateAbsence(@Valid @RequestBody GetAppointmentsOnDateAbsenceBody body) {
+        return this.getAppointmentsOnAbsence.execute(body);
     }
 }
