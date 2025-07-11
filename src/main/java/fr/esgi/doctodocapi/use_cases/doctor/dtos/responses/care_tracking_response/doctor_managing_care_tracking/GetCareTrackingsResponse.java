@@ -11,6 +11,7 @@ public record GetCareTrackingsResponse(
         List<String> files,
         CareTrackingPatientInfo patient,
         List<CareTrackingDoctorInfo> doctors,
-        List<AppointmentInfo> appointments
+        List<AppointmentInfo> appointments,
+        CareTrackingDoctorInfo owner
 ) {
 }

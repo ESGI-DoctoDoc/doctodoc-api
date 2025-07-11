@@ -2,14 +2,8 @@ package fr.esgi.doctodocapi.presentation.doctor.manage_appointment;
 
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.cancel_appointment.CancelDoctorAppointmentRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_appointment.SaveDoctorAppointmentRequest;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetCanceledAppointmentResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentAvailabilityResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.SaveDoctorAppointmentResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.ICancelDoctorAppointment;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.IGetAppointmentsAvailabilityForDoctor;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.IGetDoctorAppointments;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.ISaveDoctorAppointment;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.*;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.*;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpStatus;
@@ -29,12 +23,14 @@ public class ManageDoctorAppointmentsController {
     private final ISaveDoctorAppointment saveDoctorAppointment;
     private final IGetAppointmentsAvailabilityForDoctor getAppointmentsAvailabilityForDoctor;
     private final ICancelDoctorAppointment cancelDoctorAppointment;
+    private final ICompleteAppointment completeAppointment;
 
-    public ManageDoctorAppointmentsController(IGetDoctorAppointments getDoctorAppointments, ISaveDoctorAppointment saveDoctorAppointment, IGetAppointmentsAvailabilityForDoctor getAppointmentsAvailabilityForDoctor, ICancelDoctorAppointment cancelDoctorAppointment) {
+    public ManageDoctorAppointmentsController(IGetDoctorAppointments getDoctorAppointments, ISaveDoctorAppointment saveDoctorAppointment, IGetAppointmentsAvailabilityForDoctor getAppointmentsAvailabilityForDoctor, ICancelDoctorAppointment cancelDoctorAppointment, ICompleteAppointment completeAppointment) {
         this.getDoctorAppointments = getDoctorAppointments;
         this.saveDoctorAppointment = saveDoctorAppointment;
         this.getAppointmentsAvailabilityForDoctor = getAppointmentsAvailabilityForDoctor;
         this.cancelDoctorAppointment = cancelDoctorAppointment;
+        this.completeAppointment = completeAppointment;
     }
 
     @GetMapping("appointments")
@@ -59,6 +55,12 @@ public class ManageDoctorAppointmentsController {
     @ResponseStatus(value = HttpStatus.OK)
     public GetCanceledAppointmentResponse cancelAppointment(@PathVariable UUID id, @Valid @RequestBody CancelDoctorAppointmentRequest cancelDoctorAppointmentRequest) {
         return this.cancelDoctorAppointment.cancel(id, cancelDoctorAppointmentRequest.reason());
+    }
+
+    @PostMapping("appointments/{id}/end")
+    @ResponseStatus(value = HttpStatus.OK)
+    public CompleteAppointmentResponse completeAppointment(@PathVariable UUID id) {
+        return this.completeAppointment.process(id);
     }
 
     @GetMapping("appointments/{id}")
