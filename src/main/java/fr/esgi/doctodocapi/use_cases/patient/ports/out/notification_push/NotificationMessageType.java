@@ -36,6 +36,21 @@ public class NotificationMessageType {
         );
     }
 
+    public static NotificationMessage newDocumentsInCareTracking(UUID recipientId, UUID careTrackingId, String careTrackingName, LocalDateTime date, String doctorFullName) {
+        String message = String.format(
+                "Le médecin %s a ajouté de nouveau document dans votre suivi de dossier '%s' le %s.",
+                doctorFullName,
+                careTrackingName,
+                formatDateTime(date)
+        );
+        return new NotificationMessage(
+                recipientId,
+                TITLE_CARE_TRACKING,
+                message,
+                Map.of("careTracking_id", careTrackingId.toString())
+        );
+    }
+
     private static String formatDateTime(LocalDateTime dateTime) {
         String datePart = formatDate(dateTime.toLocalDate());
         String timePart = formatTime(dateTime.toLocalTime());
