@@ -1,12 +1,16 @@
 package fr.esgi.doctodocapi.use_cases.patient.manage_account;
 
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.admin.AdminRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor_recruitment.DoctorRecruitment;
 import fr.esgi.doctodocapi.model.doctor_recruitment.DoctorRecruitmentRepository;
 import fr.esgi.doctodocapi.model.medical_record.MedicalRecord;
 import fr.esgi.doctodocapi.model.medical_record.MedicalRecordRepository;
+import fr.esgi.doctodocapi.model.notification.Notification;
+import fr.esgi.doctodocapi.model.notification.NotificationRepository;
+import fr.esgi.doctodocapi.model.notification.NotificationsType;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.User;
@@ -21,6 +25,7 @@ import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -39,6 +44,8 @@ public class OnBoardingPatient implements IOnBoardingPatient {
     private final DoctorRecruitmentRepository doctorRecruitmentRepository;
     private final MedicalRecordRepository medicalRecordRepository;
     private final ProfilePresentationMapper profilePresentationMapper;
+    private final AdminRepository adminRepository;
+    private final NotificationRepository notificationRepository;
 
     /**
      * Constructs the OnBoardingPatient service with its dependencies.
@@ -49,7 +56,7 @@ public class OnBoardingPatient implements IOnBoardingPatient {
      * @param doctorRepository            repository for accessing doctor entities
      * @param doctorRecruitmentRepository repository for storing doctor recruitment suggestions
      */
-    public OnBoardingPatient(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, DoctorRecruitmentRepository doctorRecruitmentRepository, MedicalRecordRepository medicalRecordRepository, ProfilePresentationMapper profilePresentationMapper) {
+    public OnBoardingPatient(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, PatientRepository patientRepository, DoctorRepository doctorRepository, DoctorRecruitmentRepository doctorRecruitmentRepository, MedicalRecordRepository medicalRecordRepository, ProfilePresentationMapper profilePresentationMapper, AdminRepository adminRepository, NotificationRepository notificationRepository) {
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
         this.patientRepository = patientRepository;
@@ -57,6 +64,8 @@ public class OnBoardingPatient implements IOnBoardingPatient {
         this.doctorRecruitmentRepository = doctorRecruitmentRepository;
         this.medicalRecordRepository = medicalRecordRepository;
         this.profilePresentationMapper = profilePresentationMapper;
+        this.adminRepository = adminRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     /**
@@ -108,6 +117,7 @@ public class OnBoardingPatient implements IOnBoardingPatient {
 
         DoctorRecruitment doctorToRecruit = DoctorRecruitment.create(firstName, lastName);
         this.doctorRecruitmentRepository.save(doctorToRecruit);
+        notifyAdmin(doctorToRecruit);
     }
 
     /**
@@ -121,5 +131,14 @@ public class OnBoardingPatient implements IOnBoardingPatient {
         if (hasAlreadyMainAccount) {
             throw new HasAlreadyMainAccount();
         }
+    }
+
+    private void notifyAdmin(DoctorRecruitment doctorToRecruit) {
+        String doctorFullName = doctorToRecruit.getFirstName() + " " + doctorToRecruit.getLastName();
+        List<UUID> adminsId = this.adminRepository.getAll();
+        adminsId.forEach(id -> {
+            Notification notification = NotificationsType.addDoctorRecruitment(id, doctorFullName);
+            this.notificationRepository.save(notification);
+        });
     }
 }
