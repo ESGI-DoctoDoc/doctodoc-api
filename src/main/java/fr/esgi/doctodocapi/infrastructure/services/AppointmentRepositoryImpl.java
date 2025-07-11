@@ -104,14 +104,6 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         return appointmentFacadeMapper.mapAppointmentToDomain(appointmentEntity);
     }
 
-
-    @Override
-    public Appointment getByIdAndPatientId(UUID id, UUID patientId) throws AppointmentNotFoundException {
-        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findByIdAndPatient_Id(id, patientId).orElseThrow(AppointmentNotFoundException::new);
-        return appointmentFacadeMapper.mapAppointmentToDomain(appointmentEntity);
-    }
-
-
     /**
      * Retrieves all appointments associated with a specific slot.
      *
@@ -166,10 +158,17 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
     }
 
     @Override
-    public void confirm(Appointment appointment) throws SlotNotFoundException, PatientNotFoundException, DoctorNotFoundException, MedicalConcernNotFoundException, QuestionNotFoundException {
+    public void confirm(Appointment appointment) throws AppointmentNotFoundException {
         AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFoundException::new);
         appointmentEntity.setStatus(appointment.getStatus().getValue());
         appointmentEntity.setLockedAt(appointment.getLockedAt());
+        this.appointmentJpaRepository.save(appointmentEntity);
+    }
+
+    @Override
+    public void complete(Appointment appointment) throws AppointmentNotFoundException {
+        AppointmentEntity appointmentEntity = this.appointmentJpaRepository.findById(appointment.getId()).orElseThrow(AppointmentNotFoundException::new);
+        appointmentEntity.setStatus(appointment.getStatus().getValue());
         this.appointmentJpaRepository.save(appointmentEntity);
     }
 
