@@ -3,8 +3,10 @@ package fr.esgi.doctodocapi.presentation.admin;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.get_doctors.GetDoctorByIdResponse;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.get_doctors.GetDoctorForAdminResponse;
 import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.get_doctors.get_medical_concerns_response.GetAdminDoctorMedicalConcernsResponse;
+import fr.esgi.doctodocapi.use_cases.admin.dtos.responses.get_doctors.get_report_response.GetReportResponse;
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorByIdForAdmin;
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorMedicalConcernsAndQuestions;
+import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorReports;
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorsForAdmin;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -19,11 +21,13 @@ public class GetDoctorController {
     private final IGetDoctorByIdForAdmin getDoctorByIdForAdmin;
     private final IGetDoctorsForAdmin getDoctorsForAdmin;
     private final IGetDoctorMedicalConcernsAndQuestions getDoctorMedicalConcernsAndQuestions;
+    private final IGetDoctorReports getDoctorReports;
 
-    public GetDoctorController(IGetDoctorByIdForAdmin getDoctorByIdForAdmin, IGetDoctorsForAdmin getDoctorsForAdmin, IGetDoctorMedicalConcernsAndQuestions getDoctorMedicalConcernsAndQuestions) {
+    public GetDoctorController(IGetDoctorByIdForAdmin getDoctorByIdForAdmin, IGetDoctorsForAdmin getDoctorsForAdmin, IGetDoctorMedicalConcernsAndQuestions getDoctorMedicalConcernsAndQuestions, IGetDoctorReports getDoctorReports) {
         this.getDoctorByIdForAdmin = getDoctorByIdForAdmin;
         this.getDoctorsForAdmin = getDoctorsForAdmin;
         this.getDoctorMedicalConcernsAndQuestions = getDoctorMedicalConcernsAndQuestions;
+        this.getDoctorReports = getDoctorReports;
     }
 
     @GetMapping("admin/doctors")
@@ -37,6 +41,13 @@ public class GetDoctorController {
     @ResponseStatus(HttpStatus.OK)
     public GetDoctorByIdResponse execute(@PathVariable UUID id) {
         return this.getDoctorByIdForAdmin.execute(id);
+    }
+
+
+    @GetMapping("admin/doctors/{id}/reporting")
+    @ResponseStatus(HttpStatus.OK)
+    public List<GetReportResponse> getReporting(@PathVariable UUID id) {
+        return this.getDoctorReports.get(id);
     }
 
 

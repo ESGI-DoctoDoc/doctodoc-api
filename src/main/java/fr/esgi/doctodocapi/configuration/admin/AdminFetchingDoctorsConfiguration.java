@@ -7,11 +7,14 @@ import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
 import fr.esgi.doctodocapi.model.patient.DoctorReportRepository;
+import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.use_cases.admin.get_doctor.GetDoctorByIdForAdmin;
 import fr.esgi.doctodocapi.use_cases.admin.get_doctor.GetDoctorMedicalConcernsAndQuestions;
+import fr.esgi.doctodocapi.use_cases.admin.get_doctor.GetDoctorReports;
 import fr.esgi.doctodocapi.use_cases.admin.get_doctor.GetDoctorsForAdmin;
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorByIdForAdmin;
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorMedicalConcernsAndQuestions;
+import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorReports;
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorsForAdmin;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -32,5 +35,10 @@ public class AdminFetchingDoctorsConfiguration {
     @Bean
     public IGetDoctorMedicalConcernsAndQuestions getDoctorMedicalConcernsAndQuestions(DoctorRepository doctorRepository, MedicalConcernRepository medicalConcernRepository) {
         return new GetDoctorMedicalConcernsAndQuestions(doctorRepository, medicalConcernRepository);
+    }
+
+    @Bean
+    public IGetDoctorReports getDoctorReports(DoctorRepository doctorRepository, PatientRepository patientRepository, DoctorReportRepository doctorReportRepository) {
+        return new GetDoctorReports(doctorRepository, patientRepository, doctorReportRepository);
     }
 }
