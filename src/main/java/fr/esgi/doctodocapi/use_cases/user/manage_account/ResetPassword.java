@@ -12,7 +12,6 @@ import fr.esgi.doctodocapi.use_cases.user.dtos.requests.UpdatePasswordRequest;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.RequestResetPasswordResponse;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.UpdatePasswordResponse;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.IResetPassword;
-import org.springframework.beans.factory.annotation.Value;
 
 /**
  * Service responsible for handling password reset use cases.

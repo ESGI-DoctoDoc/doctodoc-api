@@ -63,4 +63,6 @@ public interface UserRepository {
      */
     void validateEmail(UUID userId) throws UserNotFoundException;
     void updatePassword(User user) throws UserNotFoundException;
+
+    void changePassword(UUID userId, String newPassword, String oldPassword) throws InvalidPassword, UserNotFoundException;
 }
