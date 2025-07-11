@@ -20,6 +20,7 @@ public record GetDoctorByIdResponse(
         String createdAt,
         SpecialityInfo speciality,
         List<SubscriptionInfo> subscriptions,
-        CounterInfo counter
+        CounterInfo counter,
+        boolean isReported
 ) {
 }

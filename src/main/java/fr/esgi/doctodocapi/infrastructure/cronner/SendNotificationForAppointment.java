@@ -5,8 +5,8 @@ import fr.esgi.doctodocapi.infrastructure.jpa.entities.PatientEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.AppointmentJpaRepository;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.PatientJpaRepository;
 import fr.esgi.doctodocapi.model.appointment.AppointmentStatus;
-import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationMessage;
-import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationService;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationMessage;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationPushService;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.annotation.Scheduled;
@@ -27,12 +27,12 @@ public class SendNotificationForAppointment {
 
     private final AppointmentJpaRepository appointmentJpaRepository;
     private final PatientJpaRepository patientJpaRepository;
-    private final NotificationService notificationService;
+    private final NotificationPushService notificationPushService;
 
-    public SendNotificationForAppointment(AppointmentJpaRepository appointmentJpaRepository, PatientJpaRepository patientJpaRepository, NotificationService notificationService) {
+    public SendNotificationForAppointment(AppointmentJpaRepository appointmentJpaRepository, PatientJpaRepository patientJpaRepository, NotificationPushService notificationPushService) {
         this.appointmentJpaRepository = appointmentJpaRepository;
         this.patientJpaRepository = patientJpaRepository;
-        this.notificationService = notificationService;
+        this.notificationPushService = notificationPushService;
     }
 
     @Scheduled(cron = "0 * * * * *")
@@ -76,18 +76,16 @@ public class SendNotificationForAppointment {
                         .orElseThrow(() -> new CannotFindMainAccountPatient(patient.getUser().getId()));
             }
 
-            String fcmToken = notificationRecipient.getFcmToken();
-            if (fcmToken != null) {
-                String doctorFullName = appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
+            String doctorFullName = appointment.getDoctor().getFirstName() + " " + appointment.getDoctor().getLastName();
                 String formattedDate = appointment.getStartHour().format(TIME_FORMATTER);
                 NotificationMessage message = new NotificationMessage(
-                        appointment.getPatient().getUser().getId(),
+                        notificationRecipient.getId(),
                         "Vous avez pris un rdv avec le docteur " + doctorFullName + " aujourd'hui à  " + formattedDate,
                         "Rappel de RDV",
                         Map.of("appointment_id", appointment.getId().toString())
                 );
-                this.notificationService.send(fcmToken, message);
-            }
+            this.notificationPushService.send(message);
+
         });
     }
 }

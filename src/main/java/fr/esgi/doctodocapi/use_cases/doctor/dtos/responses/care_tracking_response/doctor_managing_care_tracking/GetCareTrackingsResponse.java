@@ -6,10 +6,13 @@ import java.util.UUID;
 public record GetCareTrackingsResponse(
         UUID id,
         String name,
+        String description,
         String createdAt,
+        String closedAt,
         List<String> files,
         CareTrackingPatientInfo patient,
         List<CareTrackingDoctorInfo> doctors,
-        List<AppointmentInfo> appointments
+        List<AppointmentInfo> appointments,
+        CareTrackingDoctorInfo owner
 ) {
 }

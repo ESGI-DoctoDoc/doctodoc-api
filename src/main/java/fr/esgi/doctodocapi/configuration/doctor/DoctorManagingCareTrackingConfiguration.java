@@ -7,23 +7,29 @@ import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.care_tracking.message.MessageRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
+import fr.esgi.doctodocapi.model.notification.NotificationRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.CloseCareTracking;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.GetCareTrackings;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.InitializeCareTracking;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.UpdateCareTracking;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document.DeleteDoctorCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document.GetCareTrackingDocumentContent;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.document.UploadCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.message.GetCareTrackingMessages;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.message.SendCareTrackingMessage;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.ICloseCareTracking;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.IGetCareTrackings;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.IInitializeCareTracking;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.IUpdateCareTracking;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.message.IDeleteDoctorCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.message.IGetCareTrackingMessages;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.message.ISendCareTrackingMessage;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_document.IGetCareTrackingDocumentContent;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_document.IUploadCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationPushService;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -43,8 +49,8 @@ public class DoctorManagingCareTrackingConfiguration {
     }
 
     @Bean
-    public IUploadCareTrackingDocument uploadCareTrackingDocument(CareTrackingRepository careTrackingRepository, FileStorageService uploadFile, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorRepository doctorRepository, DocumentRepository documentRepository) {
-        return new UploadCareTrackingDocument(careTrackingRepository, uploadFile, userRepository, getCurrentUserContext, doctorRepository, documentRepository);
+    public IUploadCareTrackingDocument uploadCareTrackingDocument(CareTrackingRepository careTrackingRepository, FileStorageService uploadFile, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorRepository doctorRepository, DocumentRepository documentRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService) {
+        return new UploadCareTrackingDocument(careTrackingRepository, uploadFile, userRepository, getCurrentUserContext, doctorRepository, documentRepository, notificationRepository, notificationPushService);
     }
 
     @Bean
@@ -53,8 +59,8 @@ public class DoctorManagingCareTrackingConfiguration {
     }
 
     @Bean
-    public ISendCareTrackingMessage sendCareTrackingMessage(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, MessageRepository messageRepository, SimpMessagingTemplate messagingTemplate, CareTrackingMessageResponseMapper careTrackingMessageResponseMapper, FileStorageService fileStorageService) {
-        return new SendCareTrackingMessage(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, messageRepository, messagingTemplate, careTrackingMessageResponseMapper, fileStorageService);
+    public ISendCareTrackingMessage sendCareTrackingMessage(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, MessageRepository messageRepository, SimpMessagingTemplate messagingTemplate, CareTrackingMessageResponseMapper careTrackingMessageResponseMapper, FileStorageService fileStorageService, NotificationRepository notificationRepository) {
+        return new SendCareTrackingMessage(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, messageRepository, messagingTemplate, careTrackingMessageResponseMapper, fileStorageService, notificationRepository);
     }
 
     @Bean
@@ -71,5 +77,15 @@ public class DoctorManagingCareTrackingConfiguration {
     @Bean
     public IDeleteDoctorCareTrackingDocument deleteDoctorCareTrackingDocument(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, DocumentRepository documentRepository, FileStorageService fileStorageService) {
         return new DeleteDoctorCareTrackingDocument(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, documentRepository, fileStorageService);
+    }
+
+    @Bean
+    public IUpdateCareTracking updateCareTracking(CareTrackingRepository careTrackingRepository, GetCurrentUserContext currentUserContext, UserRepository userRepository, DoctorRepository doctorRepository) {
+        return new UpdateCareTracking(careTrackingRepository, currentUserContext, userRepository, doctorRepository);
+    }
+
+    @Bean
+    public ICloseCareTracking closeCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService) {
+        return new CloseCareTracking(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, notificationRepository, notificationPushService);
     }
 }

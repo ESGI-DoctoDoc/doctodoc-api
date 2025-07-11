@@ -40,4 +40,16 @@ public class NotificationRepositoryImpl implements NotificationRepository {
         this.notificationJpaRepository.save(entity);
 
     }
+
+    @Override
+    public List<Notification> getAllByRecipientId(UUID id) {
+        List<NotificationEntity> notifications = this.notificationJpaRepository.findAllByRecipientId(id);
+        return notifications.stream().map(notificationMapper::toDomain).toList();
+    }
+
+    @Override
+    public void save(Notification notification) {
+        NotificationEntity entity = this.notificationMapper.toEntity(notification);
+        this.notificationJpaRepository.save(entity);
+    }
 }

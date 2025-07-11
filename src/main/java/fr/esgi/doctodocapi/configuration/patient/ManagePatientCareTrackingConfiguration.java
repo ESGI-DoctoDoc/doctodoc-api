@@ -5,6 +5,7 @@ import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.care_tracking.CareTrackingRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
+import fr.esgi.doctodocapi.model.notification.NotificationRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.use_cases.patient.manage_care_tracking.*;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.manage_care_tracking.*;
@@ -61,7 +62,7 @@ public class ManagePatientCareTrackingConfiguration {
     }
 
     @Bean
-    public IManageDocumentVisibility manageDocumentVisibility(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext) {
-        return new ManageDocumentVisibility(careTrackingRepository, getPatientFromContext);
+    public IManageDocumentVisibility manageDocumentVisibility(CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, NotificationRepository notificationRepository) {
+        return new ManageDocumentVisibility(careTrackingRepository, getPatientFromContext, notificationRepository);
     }
 }

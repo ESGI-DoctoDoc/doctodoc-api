@@ -9,4 +9,8 @@ public interface NotificationRepository {
     Notification getByIdAndRecipientId(UUID id, UUID userId) throws NotificationNotFoundException;
 
     void markAsRead(Notification notification);
+
+    List<Notification> getAllByRecipientId(UUID id);
+
+    void save(Notification notification);
 }

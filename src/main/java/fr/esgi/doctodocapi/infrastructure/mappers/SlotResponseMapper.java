@@ -1,5 +1,6 @@
 package fr.esgi.doctodocapi.infrastructure.mappers;
 
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotByIdResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.slot_response.GetSlotResponse;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.RecurrenceType;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.RecurrentSlotRepository;
@@ -29,6 +30,14 @@ public class SlotResponseMapper {
                 .toList();
     }
 
+    public GetSlotResponse present(Slot slot) {
+        return toGetSlotResponse(slot);
+    }
+
+    public GetSlotByIdResponse presentById(Slot slot) {
+        return toGetSlotByIdResponse(slot);
+    }
+
     private GetSlotResponse toGetSlotResponse(Slot slot) {
         String recurrence = determineRecurrence(slot);
         Integer dayNumber = determineDayNumber(slot, recurrence);
@@ -43,6 +52,43 @@ public class SlotResponseMapper {
                 recurrence,
                 dayNumber,
                 recurrenceId
+        );
+    }
+
+    public GetSlotByIdResponse toGetSlotByIdResponse(Slot slot) {
+        String recurrence = determineRecurrence(slot);
+        Integer dayNumber = determineDayNumber(slot, recurrence);
+
+        String startDate = null;
+        String endDate = null;
+
+        if (slot.getRecurrenceId() != null) {
+            var recurrent = this.recurrentSlotRepository.findById(slot.getRecurrenceId()).orElse(null);
+            if (recurrent != null) {
+                startDate = formatDate(recurrent.getStartDate());
+                endDate = formatDate(recurrent.getEndDate());
+            }
+        } else {
+            startDate = formatDate(slot.getDate());
+            endDate = startDate;
+        }
+
+        return new GetSlotByIdResponse(
+                slot.getId(),
+                slot.getDate().getDayOfWeek().name().toLowerCase(),
+                formatTime(slot.getHoursRange().getStart()),
+                formatTime(slot.getHoursRange().getEnd()),
+                recurrence,
+                dayNumber,
+                startDate,
+                endDate,
+                slot.getAvailableMedicalConcerns().stream()
+                        .map(mc -> new GetSlotByIdResponse.MedicalConcernResponse(
+                                mc.getId(),
+                                mc.getName(),
+                                mc.getDurationInMinutes().getValue()
+                        ))
+                        .toList()
         );
     }
 

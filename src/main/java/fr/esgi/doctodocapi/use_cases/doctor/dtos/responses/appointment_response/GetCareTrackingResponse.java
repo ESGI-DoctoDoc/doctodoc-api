@@ -6,12 +6,14 @@ import java.util.UUID;
 
 public record GetCareTrackingResponse(
         UUID id,
-        String name
+        String name,
+        String description
 ) {
     public static GetCareTrackingResponse fromDomain(CareTracking careTracking) {
         return new GetCareTrackingResponse(
                 careTracking.getId(),
-                careTracking.getCaseName()
+                careTracking.getCaseName(),
+                careTracking.getDescription()
         );
     }
 }

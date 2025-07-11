@@ -18,6 +18,8 @@ public interface DoctorRepository {
      */
     void save(Doctor doctor);
 
+    Doctor updateProfile(Doctor doctor);
+
     /**
      * Finds a Doctor by the associated User ID.
      *
@@ -60,4 +62,6 @@ public interface DoctorRepository {
     void saveValidationStatus(Doctor doctor);
 
     List<Doctor> searchDoctorsByName(String name, int page, int size);
+
+    boolean existsByRpps(String rpps);
 }

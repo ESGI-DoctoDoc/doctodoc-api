@@ -23,8 +23,6 @@ public interface MedicalConcernJpaRepository extends JpaRepository<MedicalConcer
 
     MedicalConcernEntity findByIdAndDeletedAtIsNull(UUID id);
 
-    boolean existsByIdAndDeletedAtIsNotNull(UUID id);
-
     @Query("SELECT CASE WHEN COUNT(mc) > 0 THEN true ELSE false END FROM MedicalConcernEntity mc WHERE LOWER(CAST(UNACCENT(mc.name) AS string)) = LOWER(CAST(UNACCENT(:name) AS string)) AND mc.doctor.id = :doctorId AND mc.deletedAt IS NULL")
     boolean existsByNameIgnoreCaseAndDoctor_Id(String name, UUID doctorId);
 
@@ -39,10 +37,4 @@ public interface MedicalConcernJpaRepository extends JpaRepository<MedicalConcer
             Pageable pageable
     );
 
-    @Query("""
-        SELECT mc FROM MedicalConcernEntity mc
-        LEFT JOIN FETCH mc.questions
-        WHERE mc.id IN :ids
-    """)
-    List<MedicalConcernEntity> findAllWithQuestionsByIds(@Param("ids") List<UUID> ids);
 }

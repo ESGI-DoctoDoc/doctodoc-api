@@ -2,13 +2,23 @@ package fr.esgi.doctodocapi.infrastructure.mappers;
 
 import fr.esgi.doctodocapi.infrastructure.jpa.entities.NotificationEntity;
 import fr.esgi.doctodocapi.model.notification.Notification;
-import fr.esgi.doctodocapi.use_cases.patient.ports.out.NotificationMessage;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationMessage;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
 
 @Service
 public class NotificationMapper {
+    public NotificationEntity toEntity(Notification message) {
+        NotificationEntity entity = new NotificationEntity();
+        entity.setRecipientId(message.getRecipientId());
+        entity.setTitle(message.getTitle());
+        entity.setContent(message.getContent());
+        entity.setSendAt(message.getSendAt());
+        entity.setIsRead(false);
+        return entity;
+    }
+
     public NotificationEntity toEntity(NotificationMessage message) {
         NotificationEntity entity = new NotificationEntity();
         entity.setRecipientId(message.getRecipientId());
@@ -22,6 +32,7 @@ public class NotificationMapper {
     public Notification toDomain(NotificationEntity entity) {
         return new Notification(
                 entity.getId(),
+                entity.getRecipientId(),
                 entity.getTitle(),
                 entity.getContent(),
                 entity.isRead(),

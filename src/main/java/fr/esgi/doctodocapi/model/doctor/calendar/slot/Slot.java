@@ -64,6 +64,11 @@ public class Slot {
         }
     }
 
+    public void update(HoursRange newHoursRange, List<MedicalConcern> newAvailableMedicalConcerns) {
+        this.setHoursRange(newHoursRange);
+        this.setAvailableMedicalConcerns(newAvailableMedicalConcerns);
+    }
+
     /**
      * Validates that a medical concern is allowed for this slot.
      *

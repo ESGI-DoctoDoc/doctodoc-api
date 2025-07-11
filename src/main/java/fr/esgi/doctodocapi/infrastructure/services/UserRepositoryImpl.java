@@ -89,6 +89,13 @@ public class UserRepositoryImpl implements UserRepository {
         return this.userMapper.toDomain(userFoundByMail);
     }
 
+    @Override
+    public User findById(UUID id) throws UserNotFoundException {
+        UserEntity userFoundById = this.userJpaRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        return this.userMapper.toDomain(userFoundById);
+
+    }
+
     /**
      * Saves a user to the database.
      * This method hashes the user's password before saving.

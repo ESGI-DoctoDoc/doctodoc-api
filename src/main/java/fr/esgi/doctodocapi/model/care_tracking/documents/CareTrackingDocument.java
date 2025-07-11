@@ -18,17 +18,17 @@ public class CareTrackingDocument {
     }
 
     public static CareTrackingDocument create(String name, String typeValue, UUID patientId, UUID careTrackingId) {
-        return create(name, typeValue, patientId, patientId, careTrackingId);
+        return create(name, typeValue, patientId, patientId, careTrackingId, false);
     }
 
-    public static CareTrackingDocument create(String name, String typeValue, UUID patientId, UUID uploadedBy, UUID careTrackingId) {
+    public static CareTrackingDocument create(String name, String typeValue, UUID patientId, UUID uploadedBy, UUID careTrackingId, boolean isShared) {
         DocumentType type = DocumentType.fromValue(typeValue);
         String prefixPath = CareTrackingFolders.FOLDER_ROOT + patientId + CareTrackingFolders.FOLDER_CARE_TRACKING_FILE;
 
         Document document = Document.init(name, prefixPath, type, uploadedBy);
         document.setPath(prefixPath + careTrackingId + "/" + document.getId());
 
-        return new CareTrackingDocument(document, false);
+        return new CareTrackingDocument(document, isShared);
     }
 
     public static CareTrackingDocument copyOf(CareTrackingDocument document) {

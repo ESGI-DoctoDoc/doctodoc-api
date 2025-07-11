@@ -1,9 +1,11 @@
 package fr.esgi.doctodocapi.infrastructure.services.admin;
 
+import fr.esgi.doctodocapi.infrastructure.jpa.entities.AdminEntity;
 import fr.esgi.doctodocapi.infrastructure.jpa.repositories.AdminJpaRepository;
 import fr.esgi.doctodocapi.model.admin.AdminRepository;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 /**
@@ -36,5 +38,11 @@ public class AdminRepositoryImpl implements AdminRepository {
     @Override
     public boolean existsByUserId(UUID userId) {
         return this.adminJpaRepository.existsByUser_id(userId);
+    }
+
+    @Override
+    public List<UUID> getAll() {
+        List<AdminEntity> admins = this.adminJpaRepository.findAll();
+        return admins.stream().map(AdminEntity::getId).toList();
     }
 }

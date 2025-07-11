@@ -112,6 +112,15 @@ public class Doctor extends User {
         this.isVerified = false;
     }
 
+    public void update(String firstName, String lastName, String address, String bio, CoordinatesGps coordinatesGps, String profilePictureUrl) {
+        this.personalInformations.setFirstName(firstName);
+        this.personalInformations.setLastName(lastName);
+        this.professionalInformations.setBio(bio);
+        this.consultationInformations.setAddress(address);
+        this.consultationInformations.setCoordinatesGps(coordinatesGps);
+        this.personalInformations.setProfilePictureUrl(profilePictureUrl);
+    }
+
     /**
      * Verifies that the given birthdate corresponds to an adult (18 years or older).
      *

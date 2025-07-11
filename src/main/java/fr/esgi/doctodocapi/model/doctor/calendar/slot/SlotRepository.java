@@ -40,6 +40,8 @@ public interface SlotRepository {
      */
     List<Slot> saveAll(List<Slot> slots, UUID doctorId);
 
+    Slot save(Slot slot, UUID doctorId);
+
     /**
      * Retrieves all slots for a given doctor starting from a specified date, ordered by date in ascending order.
      *
@@ -47,7 +49,7 @@ public interface SlotRepository {
      * @param startDate the start date from which to retrieve slots (inclusive)
      * @return list of slots for the doctor from the start date onward
      */
-    List<Slot> findAllByDoctorIdAndDateAfter(UUID doctorId, LocalDate startDate);
+    List<Slot> findAllByDoctorIdAndDateGreaterThanEqual(UUID doctorId, LocalDate startDate);
 
     Slot findOneByMedicalConcernAndDate(UUID medicalConcernId, LocalDate date);
 
@@ -58,4 +60,12 @@ public interface SlotRepository {
     List<Slot> getByNextDateAndMedicalConcernId(LocalDate date, UUID doctorId);
 
     List<Slot> getByPreviousDateAndMedicalConcernId(LocalDate date, UUID doctorId);
+
+    List<Slot> findAllByDoctorIdAndDate(UUID doctorId, LocalDate date);
+
+    Slot findVisibleById(UUID slotId, List<String> validStatuses);
+
+    Slot update(Slot slot);
+
+    Slot delete(UUID slotId);
 }
