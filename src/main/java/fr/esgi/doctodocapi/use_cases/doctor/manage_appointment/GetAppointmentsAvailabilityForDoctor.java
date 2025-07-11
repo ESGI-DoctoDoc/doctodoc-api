@@ -7,7 +7,7 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetDoctorAppointmentAvailabilityResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.IGetAppointmentsAvailabilityForDoctor;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
-import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.GetAppointmentAvailabilityResponse;
+import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.flow_to_making_appointment.get_appointment_availability_response.GetTodayAppointmentAvailabilityResponse;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
@@ -27,7 +27,7 @@ public class GetAppointmentsAvailabilityForDoctor implements IGetAppointmentsAva
     public List<GetDoctorAppointmentAvailabilityResponse> execute(UUID medicalConcernId, LocalDate date) {
         try {
             MedicalConcern medicalConcern = this.medicalConcernRepository.getById(medicalConcernId);
-            List<GetAppointmentAvailabilityResponse> appointments = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern, date);
+            List<GetTodayAppointmentAvailabilityResponse> appointments = this.appointmentsAvailabilityService.getAvailableAppointment(medicalConcern, date);
             return appointments.stream()
                     .map(appointment -> new GetDoctorAppointmentAvailabilityResponse(
                             appointment.slotId(),

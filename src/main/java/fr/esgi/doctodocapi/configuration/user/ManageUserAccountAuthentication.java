@@ -7,6 +7,7 @@ import fr.esgi.doctodocapi.model.user.*;
 import fr.esgi.doctodocapi.use_cases.user.authentication.AuthenticateDoctor;
 import fr.esgi.doctodocapi.use_cases.user.authentication.AuthenticatePatient;
 import fr.esgi.doctodocapi.use_cases.user.authentication.AuthenticateUser;
+import fr.esgi.doctodocapi.use_cases.user.manage_account.ChangePassword;
 import fr.esgi.doctodocapi.use_cases.user.manage_account.RegisterUser;
 import fr.esgi.doctodocapi.use_cases.user.manage_account.ResetPassword;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.*;
@@ -41,5 +42,10 @@ public class ManageUserAccountAuthentication {
     @Bean
     public IResetPassword resetPassword(UserRepository userRepository, TokenManager tokenManager, MailSender mailSender) {
         return new ResetPassword(userRepository, tokenManager, mailSender);
+    }
+
+    @Bean
+    public IChangePassword changePassword(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository) {
+        return new ChangePassword(getCurrentUserContext, userRepository);
     }
 }

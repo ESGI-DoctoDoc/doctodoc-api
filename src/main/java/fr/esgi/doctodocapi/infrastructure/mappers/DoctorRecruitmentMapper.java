@@ -10,7 +10,17 @@ public class DoctorRecruitmentMapper {
         DoctorRecruitmentEntity entity = new DoctorRecruitmentEntity();
         entity.setFirstName(doctorRecruitment.getFirstName());
         entity.setLastName(doctorRecruitment.getLastName());
+        entity.setCreatedAt(doctorRecruitment.getCreatedAt());
 
         return entity;
+    }
+
+    public DoctorRecruitment toDomain(DoctorRecruitmentEntity doctorRecruitmentEntity) {
+        return new DoctorRecruitment(
+                doctorRecruitmentEntity.getId(),
+                doctorRecruitmentEntity.getLastName(),
+                doctorRecruitmentEntity.getFirstName(),
+                doctorRecruitmentEntity.getCreatedAt()
+        );
     }
 }

@@ -36,6 +36,8 @@ public interface UserRepository {
      */
     User findByEmail(String email) throws UserNotFoundException;
 
+    User findById(UUID id) throws UserNotFoundException;
+
     /**
      * Saves a user entity.
      *
@@ -61,4 +63,6 @@ public interface UserRepository {
      */
     void validateEmail(UUID userId) throws UserNotFoundException;
     void updatePassword(User user) throws UserNotFoundException;
+
+    void changePassword(UUID userId, String newPassword, String oldPassword) throws InvalidPassword, UserNotFoundException;
 }

@@ -2,6 +2,7 @@ package fr.esgi.doctodocapi.infrastructure.jpa.entities;
 
 import jakarta.persistence.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
@@ -17,6 +18,9 @@ public class DoctorRecruitmentEntity {
 
     @Column(name = "last_name", nullable = false)
     private String lastName;
+
+    @Column(name = "created_at", nullable = false)
+    private LocalDateTime createdAt;
 
     public UUID getId() {
         return id;
@@ -40,5 +44,13 @@ public class DoctorRecruitmentEntity {
 
     public void setLastName(String lastName) {
         this.lastName = lastName;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }
