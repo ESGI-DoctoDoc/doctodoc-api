@@ -97,7 +97,28 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
             Pageable pageable
     );
 
-    List<SlotEntity> findAllByDateAfterAndDoctor_Id(LocalDate dateAfter, UUID doctorId);
 
-    List<SlotEntity> findAllByDateBeforeAndDoctor_Id(LocalDate dateBefore, UUID doctorId);
+    @Query("""
+                SELECT s FROM SlotEntity s
+                JOIN s.medicalConcerns mc
+                WHERE mc.id = :medicalConcernId
+                  AND mc.deletedAt IS NULL
+                  AND s.date > :date
+            """)
+    List<SlotEntity> findAllByDateAfterAndMedicalConcernId(
+            @Param("medicalConcernId") UUID medicalConcernId,
+            @Param("date") LocalDate date
+    );
+
+    @Query("""
+                SELECT s FROM SlotEntity s
+                JOIN s.medicalConcerns mc
+                WHERE mc.id = :medicalConcernId
+                  AND mc.deletedAt IS NULL
+                  AND s.date < :date
+            """)
+    List<SlotEntity> findAllByDateBeforeAndMedicalConcernId(
+            @Param("medicalConcernId") UUID medicalConcernId,
+            @Param("date") LocalDate date
+    );
 }

@@ -201,8 +201,8 @@ public class FlowToMakingAppointment implements IFlowToMakingAppointment {
 
         while (true) {
             List<Slot> slots = searchForward
-                    ? this.slotRepository.getByNextDateAndDoctorId(searchDate, doctorId)
-                    : this.slotRepository.getByPreviousDateAndDoctorId(searchDate, doctorId);
+                    ? this.slotRepository.getByNextDateAndMedicalConcernId(searchDate, medicalConcern.getId())
+                    : this.slotRepository.getByPreviousDateAndMedicalConcernId(searchDate, medicalConcern.getId());
 
             if (slots.isEmpty()) {
                 logger.info("No {} one found", searchForward ? "next" : "previous");

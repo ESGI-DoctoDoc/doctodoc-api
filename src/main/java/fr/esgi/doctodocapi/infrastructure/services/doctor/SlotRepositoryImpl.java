@@ -159,8 +159,8 @@ public class SlotRepositoryImpl implements SlotRepository {
     }
 
     @Override
-    public List<Slot> getByNextDateAndDoctorId(LocalDate date, UUID doctorId) {
-        List<SlotEntity> entities = this.slotJpaRepository.findAllByDateAfterAndDoctor_Id(date, doctorId);
+    public List<Slot> getByNextDateAndMedicalConcernId(LocalDate date, UUID medicalConcernId) {
+        List<SlotEntity> entities = this.slotJpaRepository.findAllByDateAfterAndMedicalConcernId(medicalConcernId, date);
 
         Optional<LocalDate> closestNextDate = entities.stream()
                 .map(SlotEntity::getDate)
@@ -174,8 +174,8 @@ public class SlotRepositoryImpl implements SlotRepository {
     }
 
     @Override
-    public List<Slot> getByPreviousDateAndDoctorId(LocalDate date, UUID doctorId) {
-        List<SlotEntity> entities = this.slotJpaRepository.findAllByDateBeforeAndDoctor_Id(date, doctorId);
+    public List<Slot> getByPreviousDateAndMedicalConcernId(LocalDate date, UUID medicalConcernId) {
+        List<SlotEntity> entities = this.slotJpaRepository.findAllByDateBeforeAndMedicalConcernId(medicalConcernId, date);
 
         // Trouve la date la plus récente avant `date`
         Optional<LocalDate> closestPreviousDate = entities.stream()
