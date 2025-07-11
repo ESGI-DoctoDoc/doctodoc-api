@@ -37,6 +37,7 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
     LEFT JOIN appointments a ON s.slot_id = a.slot_id
     WHERE s.doctor_id = :doctorId
     AND s.date >= :startDate
+    AND s.deleted_at IS NULL
     AND (
         EXISTS (
             SELECT 1 FROM slots_medical_concerns smc1
@@ -71,6 +72,7 @@ public interface SlotJpaRepository extends JpaRepository<SlotEntity, UUID> {
     LEFT JOIN appointments a ON s.slot_id = a.slot_id
     WHERE s.doctor_id = :doctorId
     AND s.date BETWEEN :startDate AND :endDate
+    AND s.deleted_at IS NULL
     AND (
         EXISTS (
             SELECT 1 FROM slots_medical_concerns smc1
