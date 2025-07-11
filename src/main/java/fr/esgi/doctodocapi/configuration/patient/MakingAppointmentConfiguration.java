@@ -8,6 +8,7 @@ import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.slot.SlotRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
+import fr.esgi.doctodocapi.model.notification.NotificationRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.patient.make_appointment.*;
@@ -29,13 +30,13 @@ public class MakingAppointmentConfiguration {
     }
 
     @Bean
-    public IValidateAppointment validateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext) {
-        return new ValidateAppointment(slotRepository, patientRepository, medicalConcernRepository, appointmentRepository, doctorRepository, careTrackingRepository, getPatientFromContext);
+    public IValidateAppointment validateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, NotificationRepository notificationRepository) {
+        return new ValidateAppointment(slotRepository, patientRepository, medicalConcernRepository, appointmentRepository, doctorRepository, careTrackingRepository, getPatientFromContext, notificationRepository);
     }
 
     @Bean
-    public ICancelAppointment cancelAppointment(AppointmentRepository appointmentRepository, GetPatientFromContext getPatientFromContext) {
-        return new CancelAppointment(appointmentRepository, getPatientFromContext);
+    public ICancelAppointment cancelAppointment(AppointmentRepository appointmentRepository, GetPatientFromContext getPatientFromContext, NotificationRepository notificationRepository) {
+        return new CancelAppointment(appointmentRepository, getPatientFromContext, notificationRepository);
     }
 
     @Bean

@@ -7,6 +7,7 @@ public record DoctorInfo(
         boolean isOnboardingCompleted,
         String firstName,
         String lastName,
+        String avatarUrl,
         boolean isLicenseActivated,
         boolean isVerified
 ) {

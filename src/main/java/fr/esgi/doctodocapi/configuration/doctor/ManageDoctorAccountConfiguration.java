@@ -23,6 +23,7 @@ import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_doctor_account.docum
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.AddressAutoCompleteInput;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.AddressCoordinatesFetcher;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
+import fr.esgi.doctodocapi.use_cases.patient.utils.GetDoctorProfileUrl;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -36,8 +37,8 @@ public class ManageDoctorAccountConfiguration {
     }
 
     @Bean
-    public IGetDoctorInformation getDoctorInformation(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorSubscriptionRepository doctorSubscriptionRepository) {
-        return new GetDoctorInformation(userRepository, doctorRepository, getCurrentUserContext, doctorSubscriptionRepository);
+    public IGetDoctorInformation getDoctorInformation(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorSubscriptionRepository doctorSubscriptionRepository, GetDoctorProfileUrl getDoctorProfileUrl) {
+        return new GetDoctorInformation(userRepository, doctorRepository, getCurrentUserContext, doctorSubscriptionRepository, getDoctorProfileUrl);
     }
 
     @Bean

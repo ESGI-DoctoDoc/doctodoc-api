@@ -6,37 +6,37 @@ import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFoundException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetCanceledAppointmentResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.ICancelDoctorAppointment;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.CompleteAppointmentResponse;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.ICompleteAppointment;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
 
 import java.util.Objects;
 import java.util.UUID;
 
-public class CancelDoctorAppointment implements ICancelDoctorAppointment {
-    private final AppointmentRepository appointmentRepository;
+public class CompleteAppointment implements ICompleteAppointment {
     private final GetDoctorFromContext getDoctorFromContext;
+    private final AppointmentRepository appointmentRepository;
 
-    public CancelDoctorAppointment(AppointmentRepository appointmentRepository, GetDoctorFromContext getDoctorFromContext) {
-        this.appointmentRepository = appointmentRepository;
+    public CompleteAppointment(GetDoctorFromContext getDoctorFromContext, AppointmentRepository appointmentRepository) {
         this.getDoctorFromContext = getDoctorFromContext;
+        this.appointmentRepository = appointmentRepository;
     }
 
-    public GetCanceledAppointmentResponse cancel(UUID id, String reason) {
+    public CompleteAppointmentResponse process(UUID id) {
         try {
             Doctor doctor = this.getDoctorFromContext.get();
             Appointment appointment = this.appointmentRepository.getById(id);
+
             if (!Objects.equals(doctor.getId(), appointment.getDoctor().getId())) {
                 throw new AppointmentNotFoundException();
             }
-            appointment.cancel(reason);
-            this.appointmentRepository.cancel(appointment);
-            // todo : send a mail to confirm
-            // todo : send a mail for the doctor
-            return new GetCanceledAppointmentResponse();
+            appointment.completed();
+            this.appointmentRepository.complete(appointment);
+            return new CompleteAppointmentResponse();
         } catch (DomainException e) {
-            throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
+            throw new ApiException(HttpStatus.NOT_FOUND, e.getCode(), e.getMessage());
         }
+
     }
 }

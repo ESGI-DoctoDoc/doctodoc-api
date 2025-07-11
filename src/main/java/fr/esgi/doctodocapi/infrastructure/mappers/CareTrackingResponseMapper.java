@@ -35,9 +35,18 @@ public class CareTrackingResponseMapper {
                 ))
                 .toList();
 
+
+        CareTrackingDoctorInfo creatorResponse = new CareTrackingDoctorInfo(
+                creator.getId(),
+                creator.getPersonalInformations().getFirstName(),
+                creator.getPersonalInformations().getLastName(),
+                this.getDoctorProfileUrl.getUrl(creator.getPersonalInformations().getProfilePictureUrl())
+        );
+
         return new GetCareTrackingsResponse(
                 careTracking.getId(),
                 careTracking.getCaseName(),
+                careTracking.getDescription(),
                 careTracking.getCreatedAt().format(DATE_FORMATTER),
                 careTracking.getClosedAt() != null ? careTracking.getClosedAt().format(DATE_FORMATTER) : null,
                 documentsUrl,
@@ -61,7 +70,8 @@ public class CareTrackingResponseMapper {
                                 appointment.getStatus().getValue(),
                                 appointment.getDoctorNotes()
                         ))
-                        .toList()
+                        .toList(),
+                creatorResponse
         );
     }
 }

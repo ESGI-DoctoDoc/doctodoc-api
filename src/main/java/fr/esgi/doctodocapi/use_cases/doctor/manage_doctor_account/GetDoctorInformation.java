@@ -11,6 +11,7 @@ import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.doctor_information_re
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.doctor_information_response.UserInfo;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.doctor_information.IGetDoctorInformation;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.patient.utils.GetDoctorProfileUrl;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
@@ -22,12 +23,14 @@ public class GetDoctorInformation implements IGetDoctorInformation {
     private final DoctorRepository doctorRepository;
     private final GetCurrentUserContext getCurrentUserContext;
     private final DoctorSubscriptionRepository doctorSubscriptionRepository;
+    private final GetDoctorProfileUrl getDoctorProfileUrl;
 
-    public GetDoctorInformation(UserRepository userRepository, DoctorRepository doctorRepository, GetCurrentUserContext getCurrentUserContext, DoctorSubscriptionRepository doctorSubscriptionRepository) {
+    public GetDoctorInformation(UserRepository userRepository, DoctorRepository doctorRepository, GetCurrentUserContext getCurrentUserContext, DoctorSubscriptionRepository doctorSubscriptionRepository, GetDoctorProfileUrl getDoctorProfileUrl) {
         this.userRepository = userRepository;
         this.doctorRepository = doctorRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.doctorSubscriptionRepository = doctorSubscriptionRepository;
+        this.getDoctorProfileUrl = getDoctorProfileUrl;
     }
 
     public DoctorInfoResponse execute() {
@@ -45,6 +48,7 @@ public class GetDoctorInformation implements IGetDoctorInformation {
             UUID doctorId = null;
             String firstName = null;
             String lastName = null;
+            String avatarUrl = null;
 
             if (optionalDoctor.isPresent()) {
                 Doctor doctor = optionalDoctor.get();
@@ -53,6 +57,8 @@ public class GetDoctorInformation implements IGetDoctorInformation {
                 lastName = doctor.getPersonalInformations().getLastName();
                 isVerified = doctor.isVerified();
                 hasOnBoardingDone = true;
+                avatarUrl = this.getDoctorProfileUrl.getUrl(doctor.getPersonalInformations().getProfilePictureUrl());
+
 
                 hasLicense = this.doctorSubscriptionRepository
                         .findActivePaidSubscriptionByDoctorId(doctor.getId())
@@ -73,6 +79,7 @@ public class GetDoctorInformation implements IGetDoctorInformation {
                     hasOnBoardingDone,
                     firstName,
                     lastName,
+                    avatarUrl,
                     hasLicense,
                     isVerified
             );

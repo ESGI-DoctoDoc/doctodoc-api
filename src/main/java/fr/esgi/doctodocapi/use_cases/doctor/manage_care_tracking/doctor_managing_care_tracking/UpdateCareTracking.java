@@ -11,9 +11,11 @@ import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_care_tracking.d
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.GetCareTrackingResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.IUpdateCareTracking;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.exceptions.UnauthorizedToUpdateCareTrackingException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
+import java.util.Objects;
 import java.util.UUID;
 
 public class UpdateCareTracking implements IUpdateCareTracking {
@@ -36,6 +38,10 @@ public class UpdateCareTracking implements IUpdateCareTracking {
             Doctor doctor = doctorRepository.findDoctorByUserId(user.getId());
 
             CareTracking careTracking = careTrackingRepository.getByIdAndDoctor(careTrackingId, doctor);
+            if (!Objects.equals(doctor.getId(), careTracking.getCreatorId())) {
+                throw new UnauthorizedToUpdateCareTrackingException();
+            }
+
             careTracking.update(request.name(), request.description());
             CareTracking savedCareTracking = careTrackingRepository.update(careTracking);
             return new GetCareTrackingResponse(
