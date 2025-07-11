@@ -251,5 +251,8 @@ public class DoctorRepositoryImpl implements DoctorRepository {
         return doctors.stream().map(this.doctorFacadeMapper::mapDoctorToDomain).toList();
     }
 
-
+    @Override
+    public boolean existsByRpps(String rpps) {
+        return doctorJpaRepository.existsByRpps(rpps);
+    }
 }

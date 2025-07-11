@@ -39,6 +39,7 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
         mc.deletedAt IS NULL
         OR (mc.deletedAt IS NOT NULL AND a.status IN :validStatuses)
     )
+    AND a.slot.deletedAt IS NULL
     ORDER BY a.date ASC
 """)
     Page<AppointmentEntity> findVisibleAppointmentsByDoctorIdAndDateBetween(

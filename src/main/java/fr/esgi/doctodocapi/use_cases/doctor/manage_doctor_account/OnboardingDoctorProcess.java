@@ -1,14 +1,19 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account;
 
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.admin.AdminRepository;
 import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.personal_information.CoordinatesGps;
+import fr.esgi.doctodocapi.model.doctor.professionnal_informations.vo.rpps.RppsAlreadyExistException;
 import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.document.DocumentType;
+import fr.esgi.doctodocapi.model.notification.Notification;
+import fr.esgi.doctodocapi.model.notification.NotificationRepository;
+import fr.esgi.doctodocapi.model.notification.NotificationsType;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserNotFoundException;
 import fr.esgi.doctodocapi.model.user.UserRepository;
@@ -38,6 +43,8 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
     private final UserRepository userRepository;
     private final GetCurrentUserContext getCurrentUserContext;
     private final DocumentRepository documentRepository;
+    private final AdminRepository adminRepository;
+    private final NotificationRepository notificationRepository;
     private final SpecialityRepository specialityRepository;
     private final AddressCoordinatesFetcher addressCoordinatesFetcher;
 
@@ -48,11 +55,13 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
      * @param userRepository        the repository to manage user entities
      * @param getCurrentUserContext component to retrieve the currently authenticated user context
      */
-    public OnboardingDoctorProcess(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DocumentRepository documentRepository, SpecialityRepository specialityRepository, AddressCoordinatesFetcher addressCoordinatesFetcher) {
+    public OnboardingDoctorProcess(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DocumentRepository documentRepository, AdminRepository adminRepository, NotificationRepository notificationRepository, SpecialityRepository specialityRepository, AddressCoordinatesFetcher addressCoordinatesFetcher) {
         this.doctorRepository = doctorRepository;
         this.userRepository = userRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.documentRepository = documentRepository;
+        this.adminRepository = adminRepository;
+        this.notificationRepository = notificationRepository;
         this.specialityRepository = specialityRepository;
         this.addressCoordinatesFetcher = addressCoordinatesFetcher;
     }
@@ -76,6 +85,10 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
             boolean doctorAlreadyExist = this.doctorRepository.isExistsById(user.getId());
             if (doctorAlreadyExist) {
                 throw new DoctorAccountAlreadyExist();
+            }
+
+            if (this.doctorRepository.existsByRpps(request.rpps())) {
+                throw new RppsAlreadyExistException();
             }
 
             List<Document> uploadedDocuments = request.doctorDocuments().stream()
@@ -102,11 +115,8 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
 
             Doctor doctor = Doctor.createFromOnBoarding(user, request, uploadedDocuments, profilePictureUrl, speciality, coordinates);
 
-            for (Document document : uploadedDocuments) {
-                doctor.getProfessionalInformations().addDocument(document);
-            }
-
             this.doctorRepository.save(doctor);
+            notifyAdmin();
             return new OnboardingProcessResponse(user.getId());
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
@@ -127,5 +137,13 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
         } catch (UserNotFoundException e) {
             throw new UserNotFoundException();
         }
+    }
+
+    private void notifyAdmin() {
+        List<UUID> adminsId = this.adminRepository.getAll();
+        adminsId.forEach(id -> {
+            Notification notification = NotificationsType.verifyDoctor(id);
+            this.notificationRepository.save(notification);
+        });
     }
 }
