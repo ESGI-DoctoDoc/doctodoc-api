@@ -5,12 +5,14 @@ import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.appointment.exceptions.AppointmentNotFoundException;
+import fr.esgi.doctodocapi.model.appointment.exceptions.CannotCompleteAppointmentException;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.appointment_response.CompleteAppointmentResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.ICompleteAppointment;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -27,6 +29,13 @@ public class CompleteAppointment implements ICompleteAppointment {
         try {
             Doctor doctor = this.getDoctorFromContext.get();
             Appointment appointment = this.appointmentRepository.getById(id);
+
+            LocalDateTime appointmentDate = LocalDateTime.of(appointment.getDate(), appointment.getHoursRange().getStart());
+            LocalDateTime now = LocalDateTime.now();
+
+            if (appointmentDate.isAfter(now)) {
+                throw new CannotCompleteAppointmentException();
+            }
 
             if (!Objects.equals(doctor.getId(), appointment.getDoctor().getId())) {
                 throw new AppointmentNotFoundException();

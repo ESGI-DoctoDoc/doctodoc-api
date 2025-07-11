@@ -29,6 +29,7 @@ import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.messag
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_document.IGetCareTrackingDocumentContent;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_document.IUploadCareTrackingDocument;
 import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationPushService;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -48,8 +49,8 @@ public class DoctorManagingCareTrackingConfiguration {
     }
 
     @Bean
-    public IUploadCareTrackingDocument uploadCareTrackingDocument(CareTrackingRepository careTrackingRepository, FileStorageService uploadFile, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorRepository doctorRepository, DocumentRepository documentRepository, NotificationRepository notificationRepository) {
-        return new UploadCareTrackingDocument(careTrackingRepository, uploadFile, userRepository, getCurrentUserContext, doctorRepository, documentRepository, notificationRepository);
+    public IUploadCareTrackingDocument uploadCareTrackingDocument(CareTrackingRepository careTrackingRepository, FileStorageService uploadFile, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorRepository doctorRepository, DocumentRepository documentRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService) {
+        return new UploadCareTrackingDocument(careTrackingRepository, uploadFile, userRepository, getCurrentUserContext, doctorRepository, documentRepository, notificationRepository, notificationPushService);
     }
 
     @Bean
@@ -84,7 +85,7 @@ public class DoctorManagingCareTrackingConfiguration {
     }
 
     @Bean
-    public ICloseCareTracking closeCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository) {
-        return new CloseCareTracking(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, notificationRepository);
+    public ICloseCareTracking closeCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService) {
+        return new CloseCareTracking(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, notificationRepository, notificationPushService);
     }
 }

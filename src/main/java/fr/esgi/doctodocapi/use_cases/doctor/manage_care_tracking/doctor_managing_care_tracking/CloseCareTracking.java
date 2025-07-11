@@ -14,6 +14,9 @@ import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_respons
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_care_tracking.doctor_managing_care_tracking.doctor_managing_care_tracking.ICloseCareTracking;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.exceptions.UnauthorizedToCloseCareTrackingException;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationMessage;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationMessageType;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationPushService;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
@@ -28,13 +31,16 @@ public class CloseCareTracking implements ICloseCareTracking {
     private final DoctorRepository doctorRepository;
     private final CareTrackingRepository careTrackingRepository;
     private final NotificationRepository notificationRepository;
+    private final NotificationPushService notificationPushService;
 
-    public CloseCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository) {
+
+    public CloseCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService) {
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
         this.doctorRepository = doctorRepository;
         this.careTrackingRepository = careTrackingRepository;
         this.notificationRepository = notificationRepository;
+        this.notificationPushService = notificationPushService;
     }
 
     public CloseCareTrackingResponse execute(UUID careTrackingId) {
@@ -54,6 +60,7 @@ public class CloseCareTracking implements ICloseCareTracking {
             UUID closedCareTracking = this.careTrackingRepository.close(careTracking);
 
             notifyDoctorOfCloseCareTracking(careTracking);
+            notifyPatientOfCloseCareTracking(careTracking, doctor);
             return new CloseCareTrackingResponse(closedCareTracking);
 
         } catch (DomainException e) {
@@ -69,5 +76,17 @@ public class CloseCareTracking implements ICloseCareTracking {
                     this.notificationRepository.save(notification);
                 }
         );
+    }
+
+    private void notifyPatientOfCloseCareTracking(CareTracking careTracking, Doctor creator) {
+        String doctorFullName = creator.getPersonalInformations().getFirstName() + " " + creator.getPersonalInformations().getLastName();
+        NotificationMessage message = NotificationMessageType.closeCareTracking(
+                careTracking.getPatient().getUserId(),
+                careTracking.getId(),
+                careTracking.getCaseName(),
+                careTracking.getClosedAt(),
+                doctorFullName
+        );
+        this.notificationPushService.send(message);
     }
 }

@@ -1,10 +1,12 @@
 package fr.esgi.doctodocapi.configuration.doctor;
 
 import fr.esgi.doctodocapi.infrastructure.mappers.GetDoctorProfileResponseMapper;
+import fr.esgi.doctodocapi.model.admin.AdminRepository;
 import fr.esgi.doctodocapi.model.admin.speciality.SpecialityRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
+import fr.esgi.doctodocapi.model.notification.NotificationRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.AddressAutocomplete;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_doctor_account.GetDoctorInformation;
@@ -32,8 +34,8 @@ import org.springframework.context.annotation.Configuration;
 public class ManageDoctorAccountConfiguration {
 
     @Bean
-    public IOnboardingDoctor onboardingDoctorProcess(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DocumentRepository documentRepository, SpecialityRepository specialityRepository, AddressCoordinatesFetcher addressCoordinatesFetcher) {
-        return new OnboardingDoctorProcess(doctorRepository, userRepository, getCurrentUserContext, documentRepository, specialityRepository, addressCoordinatesFetcher);
+    public IOnboardingDoctor onboardingDoctorProcess(DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DocumentRepository documentRepository, AdminRepository adminRepository, NotificationRepository notificationRepository, SpecialityRepository specialityRepository, AddressCoordinatesFetcher addressCoordinatesFetcher) {
+        return new OnboardingDoctorProcess(doctorRepository, userRepository, getCurrentUserContext, documentRepository, adminRepository, notificationRepository, specialityRepository, addressCoordinatesFetcher);
     }
 
     @Bean
