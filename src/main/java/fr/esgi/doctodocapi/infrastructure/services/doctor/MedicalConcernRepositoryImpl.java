@@ -82,7 +82,10 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
     @Override
     public List<MedicalConcern> getMedicalConcerns(Doctor doctor) {
         List<MedicalConcernEntity> entities = this.medicalConcernJpaRepository.findAllByDoctor_IdAndDeletedAtIsNull(doctor.getId());
-        return entities.stream().map(medicalConcernMapper::toDomain).toList();
+        return entities.stream().map(medicalConcernEntity -> {
+            List<Question> questions = this.getDoctorQuestions(medicalConcernEntity.getId());
+            return this.medicalConcernMapper.toDomain(medicalConcernEntity, questions);
+        }).toList();
     }
 
     @Override
@@ -100,6 +103,11 @@ public class MedicalConcernRepositoryImpl implements MedicalConcernRepository {
     @Override
     public List<Question> getDoctorQuestions(MedicalConcern medicalConcern) {
         List<QuestionEntity> entities = this.questionJpaRepository.findAllByMedicalConcern_Id(medicalConcern.getId());
+        return entities.stream().map(questionMapper::toDomain).toList();
+    }
+
+    public List<Question> getDoctorQuestions(UUID medicalConcernId) {
+        List<QuestionEntity> entities = this.questionJpaRepository.findAllByMedicalConcern_Id(medicalConcernId);
         return entities.stream().map(questionMapper::toDomain).toList();
     }
 

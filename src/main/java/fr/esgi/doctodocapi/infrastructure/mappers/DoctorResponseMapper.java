@@ -38,7 +38,7 @@ public class DoctorResponseMapper {
         );
     }
 
-    public GetDoctorByIdResponse toAdminDetailResponse(Doctor doctor, Speciality speciality, List<DoctorSubscription> subscriptions, int appointmentCount, int patientCount) {
+    public GetDoctorByIdResponse toAdminDetailResponse(Doctor doctor, Speciality speciality, List<DoctorSubscription> subscriptions, int appointmentCount, int patientCount, boolean isReported) {
         return new GetDoctorByIdResponse(
                 doctor.getId(),
                 doctor.getPersonalInformations().getFirstName(),
@@ -59,7 +59,8 @@ public class DoctorResponseMapper {
                 new CounterInfo(
                         appointmentCount,
                         patientCount
-                )
+                ),
+                isReported
         );
     }
 }

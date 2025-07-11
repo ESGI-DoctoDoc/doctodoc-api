@@ -10,6 +10,9 @@ import fr.esgi.doctodocapi.model.patient.DoctorReportRepository;
 import jakarta.persistence.EntityManager;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+import java.util.UUID;
+
 @Repository
 public class DoctorReportRepositoryImpl implements DoctorReportRepository {
     private final DoctorReportMapper doctorReportMapper;
@@ -29,5 +32,11 @@ public class DoctorReportRepositoryImpl implements DoctorReportRepository {
         DoctorReportEntity entity = this.doctorReportMapper.toEntity(doctorReport, doctorEntity, userEntity);
 
         this.doctorReportJpaRepository.save(entity);
+    }
+
+    @Override
+    public List<DoctorReport> getAllByDocteurId(UUID id) {
+        List<DoctorReportEntity> entities = this.doctorReportJpaRepository.findAllByDoctor_Id(id);
+        return entities.stream().map(doctorReportMapper::toDomain).toList();
     }
 }
