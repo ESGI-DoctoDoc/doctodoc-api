@@ -1,6 +1,5 @@
 package fr.esgi.doctodocapi.model;
 
-import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.vo.email.Email;
 import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
@@ -16,27 +15,14 @@ public class Anonymizer {
         user.setPhoneNumber(anonymizePhone());
     }
 
-    public static void anonymize(Patient patient) {
-        patient.setFirstName(anonymizeFirstName());
-        patient.setLastName(anonymizeName());
-        patient.setPhoneNumber(anonymizePhone());
-        patient.setEmail(anonymizeEmail());
-        patient.setDoctor(null);
-    }
-
-    private static String anonymizeName() {
-        return "NOM" + UUID.randomUUID().toString().substring(0, 6);
-    }
-
-    private static String anonymizeFirstName() {
-        return "PRE" + UUID.randomUUID().toString().substring(0, 6);
-    }
-
     private static Email anonymizeEmail() {
         return Email.of("user" + UUID.randomUUID().toString().substring(0, 6) + "@example.com");
     }
 
     private static PhoneNumber anonymizePhone() {
-        return PhoneNumber.of("+3360000" + (int) (Math.random() * 10000));
+        int firstDigit = 9;
+        int rest = 100_000_000 + (int) (Math.random() * 900_000_000);
+        String phone = "+33" + firstDigit + String.valueOf(rest).substring(1);
+        return PhoneNumber.of(phone);
     }
 }

@@ -1,7 +1,6 @@
 package fr.esgi.doctodocapi.configuration.patient;
 
-import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
-import fr.esgi.doctodocapi.model.patient.PatientRepository;
+import fr.esgi.doctodocapi.infrastructure.security.service.GetUserFromContext;
 import fr.esgi.doctodocapi.model.user.MailSender;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.patient.manage_account.DeletePatientAccount;
@@ -26,7 +25,7 @@ public class ManageAccountUseCaseConfiguration {
     }
 
     @Bean
-    public IDeletePatientAccount deletePatientAccount(GetPatientFromContext getPatientFromContext, UserRepository userRepository, PatientRepository patientRepository) {
-        return new DeletePatientAccount(getPatientFromContext, userRepository, patientRepository);
+    public IDeletePatientAccount deletePatientAccount(GetUserFromContext getUserFromContext, UserRepository userRepository) {
+        return new DeletePatientAccount(getUserFromContext, userRepository);
     }
 }
