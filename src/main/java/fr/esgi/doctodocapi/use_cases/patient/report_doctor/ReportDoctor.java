@@ -43,6 +43,8 @@ public class ReportDoctor implements IReportDoctor {
 
     }
 
+    /// Gestion des notifications et mail (à déplacer)
+
     private void sendMail(Patient patient, Doctor doctor) {
         String patientFirstName = patient.getFirstName();
         String doctorFirstName = doctor.getPersonalInformations().getFirstName();

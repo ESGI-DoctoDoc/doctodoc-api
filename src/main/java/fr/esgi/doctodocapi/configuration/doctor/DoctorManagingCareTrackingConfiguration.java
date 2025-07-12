@@ -9,6 +9,7 @@ import fr.esgi.doctodocapi.model.doctor.care_tracking.message.MessageRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.notification.NotificationRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
+import fr.esgi.doctodocapi.model.user.MailSender;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.CloseCareTracking;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.GetCareTrackings;
@@ -85,7 +86,7 @@ public class DoctorManagingCareTrackingConfiguration {
     }
 
     @Bean
-    public ICloseCareTracking closeCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService) {
-        return new CloseCareTracking(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, notificationRepository, notificationPushService);
+    public ICloseCareTracking closeCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService, MailSender mailSender) {
+        return new CloseCareTracking(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, notificationRepository, notificationPushService, mailSender);
     }
 }

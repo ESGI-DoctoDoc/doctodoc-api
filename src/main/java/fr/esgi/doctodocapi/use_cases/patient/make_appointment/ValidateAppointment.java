@@ -220,7 +220,7 @@ public class ValidateAppointment implements IValidateAppointment {
     }
 
 
-    /// Gestion des notifications et rendez-vous (à déplacer)
+    /// Gestion des notifications et mail (à déplacer)
 
     private void sendMailToPatient(Appointment appointment) {
         Patient appointmentPatient = appointment.getPatient();
