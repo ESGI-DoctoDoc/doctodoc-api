@@ -2,9 +2,13 @@ package fr.esgi.doctodocapi.use_cases.patient.report_doctor;
 
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.admin.AdminRepository;
 import fr.esgi.doctodocapi.model.doctor.Doctor;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor_report.DoctorReport;
+import fr.esgi.doctodocapi.model.notification.Notification;
+import fr.esgi.doctodocapi.model.notification.NotificationRepository;
+import fr.esgi.doctodocapi.model.notification.NotificationsType;
 import fr.esgi.doctodocapi.model.patient.DoctorReportRepository;
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.user.MailSender;
@@ -13,17 +17,24 @@ import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.ReportDoctorRequest;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.report_doctor.IReportDoctor;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+import java.util.UUID;
+
 public class ReportDoctor implements IReportDoctor {
     private final DoctorReportRepository doctorReportRepository;
     private final DoctorRepository doctorRepository;
     private final GetPatientFromContext getPatientFromContext;
     private final MailSender mailSender;
+    private final AdminRepository adminRepository;
+    private final NotificationRepository notificationRepository;
 
-    public ReportDoctor(DoctorReportRepository doctorReportRepository, DoctorRepository doctorRepository, GetPatientFromContext getPatientFromContext, MailSender mailSender) {
+    public ReportDoctor(DoctorReportRepository doctorReportRepository, DoctorRepository doctorRepository, GetPatientFromContext getPatientFromContext, MailSender mailSender, AdminRepository adminRepository, NotificationRepository notificationRepository) {
         this.doctorReportRepository = doctorReportRepository;
         this.doctorRepository = doctorRepository;
         this.getPatientFromContext = getPatientFromContext;
         this.mailSender = mailSender;
+        this.adminRepository = adminRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     public void report(ReportDoctorRequest reportDoctorRequest) {
@@ -37,6 +48,7 @@ public class ReportDoctor implements IReportDoctor {
             );
             this.doctorReportRepository.save(doctorReport);
             sendMail(patient, doctor);
+            notifyAdmin(doctor, patient);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
@@ -73,5 +85,13 @@ public class ReportDoctor implements IReportDoctor {
                 subject,
                 body
         );
+    }
+
+    private void notifyAdmin(Doctor doctor, Patient patient) {
+        List<UUID> adminsId = this.adminRepository.getAll();
+        adminsId.forEach(id -> {
+            Notification notification = NotificationsType.report(id, doctor, patient);
+            this.notificationRepository.save(notification);
+        });
     }
 }
