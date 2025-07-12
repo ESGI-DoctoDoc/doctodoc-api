@@ -193,6 +193,7 @@ public class ValidateAppointment implements IValidateAppointment {
             this.appointmentRepository.confirm(appointment);
 
             sendMailToPatient(appointment);
+            sendMailToDoctor(appointment);
             notifyDoctorOfNewAppointment(patient, appointment);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
@@ -222,6 +223,60 @@ public class ValidateAppointment implements IValidateAppointment {
 
     /// Gestion des notifications et mail (à déplacer)
 
+    private void sendMailToDoctor(Appointment appointment) {
+        String doctorFirstName = appointment.getDoctor().getPersonalInformations().getFirstName();
+        String doctorLastName = appointment.getDoctor().getPersonalInformations().getLastName();
+        String patientFirstName = appointment.getPatient().getFirstName();
+        String patientLastName = appointment.getPatient().getFirstName();
+
+        String appointmentDate = appointment.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String appointmentTime = appointment.getHoursRange().getStart().format(DateTimeFormatter.ofPattern("HH:mm"));
+        String clinicAddress = appointment.getDoctor().getConsultationInformations().getAddress();
+
+        String subject = "Nouveau rendez-vous";
+
+        String body = String.format("""
+                        Bonjour Dr %s %s,
+                        
+                        Vous avez un nouveau rendez-vous avec le patient %s %s.
+                        
+                        📅 Date : %s
+                        🕒 Heure : %s
+                        📍 Lieu : %s
+                        
+                        
+                        En cas d’empêchement, vous pouvez annuler ou reprogrammer votre rendez-vous via votre espace personnel.
+                        
+                        Cordialement,
+                        Doctodoc.
+                        """,
+                doctorFirstName,
+                doctorLastName,
+                patientFirstName,
+                patientLastName,
+                appointmentDate,
+                appointmentTime,
+                clinicAddress
+        );
+
+        this.mailSender.sendMail(
+                appointment.getDoctor().getEmail().getValue(),
+                subject,
+                body,
+                new Invitation(
+                        new Organizer(
+                                appointment.getDoctor().getEmail().getValue(),
+                                doctorFirstName,
+                                doctorLastName
+                        ),
+                        clinicAddress,
+                        LocalDateTime.of(appointment.getDate(), appointment.getHoursRange().getStart()),
+                        LocalDateTime.of(appointment.getDate(), appointment.getHoursRange().getEnd())
+                )
+        );
+    }
+
+
     private void sendMailToPatient(Appointment appointment) {
         Patient appointmentPatient = appointment.getPatient();
         sendMail(appointmentPatient, appointment);
@@ -233,6 +288,7 @@ public class ValidateAppointment implements IValidateAppointment {
             }
         }
     }
+
 
     private void sendMail(Patient patient, Appointment appointment) {
         String doctorFirstName = appointment.getDoctor().getPersonalInformations().getFirstName();

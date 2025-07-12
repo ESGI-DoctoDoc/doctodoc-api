@@ -48,6 +48,7 @@ public class CancelAppointment implements ICancelAppointment {
             appointment.cancel(cancelAppointmentRequest.reason());
             this.appointmentRepository.cancel(appointment);
             sendMailToPatient(appointment);
+            sendMailToDoctor(appointment);
             notifyDoctorOfCancelAppointment(patient, appointment);
 
         } catch (DomainException e) {
@@ -56,6 +57,46 @@ public class CancelAppointment implements ICancelAppointment {
     }
 
     /// Gestion des notifications et mail (à déplacer)
+
+    private void sendMailToDoctor(Appointment appointment) {
+        String doctorFirstName = appointment.getDoctor().getPersonalInformations().getFirstName();
+        String doctorLastName = appointment.getDoctor().getPersonalInformations().getLastName();
+        String patientFirstName = appointment.getPatient().getFirstName();
+        String patientLastName = appointment.getPatient().getFirstName();
+
+        String appointmentDate = appointment.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String appointmentTime = appointment.getHoursRange().getStart().format(DateTimeFormatter.ofPattern("HH:mm"));
+        String clinicAddress = appointment.getDoctor().getConsultationInformations().getAddress();
+
+        String subject = "Rendez-vous annulé";
+
+        String body = String.format("""
+                        Bonjour Dr %s %s,
+                        
+                        Le rendez-vous avec le patient %s %s a été annulé.
+                        
+                        📅 Date : %s
+                        🕒 Heure : %s
+                        📍 Lieu : %s
+                        
+                        Cordialement,
+                        Doctodoc.
+                        """,
+                doctorFirstName,
+                doctorLastName,
+                patientFirstName,
+                patientLastName,
+                appointmentDate,
+                appointmentTime,
+                clinicAddress
+        );
+
+        this.mailSender.sendMail(
+                appointment.getDoctor().getEmail().getValue(),
+                subject,
+                body
+        );
+    }
 
     private void sendMailToPatient(Appointment appointment) {
         Patient appointmentPatient = appointment.getPatient();
