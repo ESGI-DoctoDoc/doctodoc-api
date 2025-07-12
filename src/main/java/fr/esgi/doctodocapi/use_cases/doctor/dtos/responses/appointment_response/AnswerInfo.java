@@ -4,6 +4,7 @@ import java.util.UUID;
 
 public record AnswerInfo(
         UUID id,
+        String question,
         String answer
 ) {
 }

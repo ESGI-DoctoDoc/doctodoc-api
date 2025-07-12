@@ -32,7 +32,7 @@ public class AppointmentResponseMapper {
                 buildPatientInfo(appointment),
                 buildMedicalConcernInfo(appointment),
                 mapCareTrackingGeneric(careTracking, GetCareTrackingResponse::fromDomain),
-                mapAnswersGeneric(appointment, answer -> new AnswerInfo(answer.getQuestion().getId(), answer.getResponse())),
+                mapAnswersGeneric(appointment, answer -> new AnswerInfo(answer.getQuestion().getId(), answer.getQuestion().getQuestion(), answer.getResponse())),
                 appointment.getDate().toString(),
                 appointment.getHoursRange().getStart().toString(),
                 appointment.getHoursRange().getEnd().toString(),
