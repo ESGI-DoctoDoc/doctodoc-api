@@ -1,4 +1,4 @@
-package fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_absence;
+package fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_absence;
 
 import java.time.LocalDate;
 import java.time.LocalTime;
