@@ -46,6 +46,8 @@ public interface UserRepository {
      */
     User save(User user);
 
+    void anonymise(User user);
+
     /**
      * Checks if a user exists with the given email or phone number.
      *
