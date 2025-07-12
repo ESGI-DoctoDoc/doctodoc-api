@@ -40,8 +40,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 public class DoctorManagingCareTrackingConfiguration {
 
     @Bean
-    public IInitializeCareTracking initializeCareTracking(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, PatientRepository patientRepository, AppointmentRepository appointmentRepository) {
-        return new InitializeCareTracking(careTrackingRepository, doctorRepository, userRepository, getCurrentUserContext, patientRepository, appointmentRepository);
+    public IInitializeCareTracking initializeCareTracking(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, PatientRepository patientRepository, AppointmentRepository appointmentRepository, MailSender mailSender) {
+        return new InitializeCareTracking(careTrackingRepository, doctorRepository, userRepository, getCurrentUserContext, patientRepository, appointmentRepository, mailSender);
     }
 
     @Bean
