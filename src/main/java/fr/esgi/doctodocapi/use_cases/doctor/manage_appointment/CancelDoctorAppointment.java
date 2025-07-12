@@ -47,7 +47,7 @@ public class CancelDoctorAppointment implements ICancelDoctorAppointment {
 
     private void notifyPatient(Appointment appointment) {
         NotificationMessage message = NotificationMessageType.cancelAppointment(
-                appointment.getPatient().getId(),
+                appointment.getPatient().getUserId(),
                 appointment.getDate(),
                 appointment.getHoursRange().getStart(),
                 appointment.getCancelExplanation()
