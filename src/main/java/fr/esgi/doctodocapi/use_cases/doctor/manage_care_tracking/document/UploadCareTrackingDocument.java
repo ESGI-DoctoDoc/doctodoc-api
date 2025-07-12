@@ -13,6 +13,7 @@ import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.notification.Notification;
 import fr.esgi.doctodocapi.model.notification.NotificationRepository;
 import fr.esgi.doctodocapi.model.notification.NotificationsType;
+import fr.esgi.doctodocapi.model.user.MailSender;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_care_tracking.SaveDocumentRequest;
@@ -43,8 +44,9 @@ public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
     private final DocumentRepository documentRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationPushService notificationPushService;
+    private final MailSender mailSender;
 
-    public UploadCareTrackingDocument(CareTrackingRepository careTrackingRepository, FileStorageService uploadFile, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorRepository doctorRepository, DocumentRepository documentRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService) {
+    public UploadCareTrackingDocument(CareTrackingRepository careTrackingRepository, FileStorageService uploadFile, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorRepository doctorRepository, DocumentRepository documentRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService, MailSender mailSender) {
         this.careTrackingRepository = careTrackingRepository;
         this.uploadFile = uploadFile;
         this.userRepository = userRepository;
@@ -53,6 +55,7 @@ public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
         this.documentRepository = documentRepository;
         this.notificationRepository = notificationRepository;
         this.notificationPushService = notificationPushService;
+        this.mailSender = mailSender;
     }
 
     public GetDocumentForCareTrackingResponse execute(UUID careTrackingId, SaveDocumentRequest request) {
@@ -79,6 +82,7 @@ public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
 
             notifyDoctorOfNewDocuments(careTracking, doctor.getId());
             notifyPatientOfNewDocuments(careTracking, doctor);
+            sendMail(careTracking, doctor);
 
             return new GetDocumentForCareTrackingResponse(
                     careTrackingDocument.getDocument().getId(),
@@ -111,6 +115,37 @@ public class UploadCareTrackingDocument implements IUploadCareTrackingDocument {
         }
 
         return careTracking;
+    }
+
+    /// Gestion des notifications et mail (à déplacer)
+
+    private void sendMail(CareTracking careTracking, Doctor doctor) {
+        String patientFirstName = careTracking.getPatient().getFirstName();
+        String doctorFirstName = doctor.getPersonalInformations().getFirstName();
+        String doctorLastName = doctor.getPersonalInformations().getLastName();
+        String careTrackingName = careTracking.getCaseName();
+
+        String subject = "Nouveaux documents dans le suivi de dossier " + careTrackingName;
+
+        String body = String.format("""
+                        Bonjour %s,
+                        
+                        Le Dr %s %s a mis à disposition de nouveaux documents dans votre suivi de dossier %s.
+                        
+                        Cordialement,
+                        L’équipe Doctodoc.
+                        """,
+                patientFirstName,
+                doctorFirstName,
+                doctorLastName,
+                careTrackingName
+        );
+
+        this.mailSender.sendMail(
+                careTracking.getPatient().getEmail().getValue(),
+                subject,
+                body
+        );
     }
 
     private void notifyDoctorOfNewDocuments(CareTracking careTracking, UUID uploaderId) {

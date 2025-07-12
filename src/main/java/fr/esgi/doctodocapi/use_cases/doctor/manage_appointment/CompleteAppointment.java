@@ -12,7 +12,7 @@ import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_appointment.IComplet
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import org.springframework.http.HttpStatus;
 
-import java.time.LocalDateTime;
+import java.time.LocalDate;
 import java.util.Objects;
 import java.util.UUID;
 
@@ -30,10 +30,9 @@ public class CompleteAppointment implements ICompleteAppointment {
             Doctor doctor = this.getDoctorFromContext.get();
             Appointment appointment = this.appointmentRepository.getById(id);
 
-            LocalDateTime appointmentDate = LocalDateTime.of(appointment.getDate(), appointment.getHoursRange().getStart());
-            LocalDateTime now = LocalDateTime.now();
+            LocalDate now = LocalDate.now();
 
-            if (appointmentDate.isAfter(now)) {
+            if (appointment.getDate().isAfter(now)) {
                 throw new CannotCompleteAppointmentException();
             }
 
