@@ -43,6 +43,7 @@ public class DoctorResponseMapper {
                 doctor.getId(),
                 doctor.getPersonalInformations().getFirstName(),
                 doctor.getPersonalInformations().getLastName(),
+                doctor.getProfessionalInformations().getBio(),
                 doctor.getEmail().getValue(),
                 doctor.getPhoneNumber().getValue(),
                 doctor.getPersonalInformations().getBirthDate().getValue().toString(),
@@ -61,7 +62,12 @@ public class DoctorResponseMapper {
                         appointmentCount,
                         patientCount
                 ),
-                isReported
+                isReported,
+                new AddressInfo(
+                        doctor.getConsultationInformations().getAddress(),
+                        doctor.getConsultationInformations().getCoordinatesGps().getClinicLatitude(),
+                        doctor.getConsultationInformations().getCoordinatesGps().getClinicLongitude()
+                )
         );
     }
 }
