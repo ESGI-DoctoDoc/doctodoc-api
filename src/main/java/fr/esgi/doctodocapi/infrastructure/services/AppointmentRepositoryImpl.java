@@ -335,11 +335,15 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         entity.setStartHour(appointment.getHoursRange().getStart());
         entity.setEndHour(appointment.getHoursRange().getEnd());
         entity.setDoctorNotes(appointment.getDoctorNotes());
-
         entity.setStatus(appointment.getStatus().getValue());
 
+        entity.getAppointmentQuestions().clear();
+        appointmentJpaRepository.save(entity);
+
         List<PreAppointmentAnswersEntity> existingAnswers = preAppointmentAnswersJpaRepository.findAllByAppointment_Id(appointment.getId());
-        preAppointmentAnswersJpaRepository.deleteAll(existingAnswers);
+        if (!existingAnswers.isEmpty()) {
+            preAppointmentAnswersJpaRepository.deleteAll(existingAnswers);
+        }
 
         List<PreAppointmentAnswersEntity> newAnswers = appointment.getPreAppointmentAnswers().stream()
                 .map(answer -> {
@@ -351,6 +355,7 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
 
         preAppointmentAnswersJpaRepository.saveAll(newAnswers);
 
+        entity.getAppointmentQuestions().addAll(newAnswers);
         appointmentJpaRepository.save(entity);
     }
 }

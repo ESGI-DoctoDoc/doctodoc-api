@@ -5,9 +5,12 @@ import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.invoice.DoctorInvoiceRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
 import fr.esgi.doctodocapi.model.user.UserRepository;
+import fr.esgi.doctodocapi.use_cases.admin.ports.out.InvoiceFetcher;
+import fr.esgi.doctodocapi.use_cases.doctor.manage_subscription.FetchDoctorInvoiceForSubscription;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_subscription.GetDoctorSubscription;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_subscription.PayDoctorSubscription;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.IPayDoctorSubscription;
+import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_subscription.IFetchDoctorInvoiceForSubscription;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_subscription.IGetDoctorSubscription;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.PaymentProcess;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
@@ -25,5 +28,10 @@ public class ManageDoctorPaymentConfiguration {
     @Bean
     public IGetDoctorSubscription getDoctorSubscription(DoctorSubscriptionRepository doctorSubscriptionRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorInvoiceRepository doctorInvoiceRepository, DoctorSubscriptionResponseMapper doctorSubscriptionResponseMapper) {
         return new GetDoctorSubscription(doctorSubscriptionRepository, doctorRepository, userRepository, getCurrentUserContext, doctorInvoiceRepository, doctorSubscriptionResponseMapper);
+    }
+
+    @Bean
+    public IFetchDoctorInvoiceForSubscription fetchDoctorInvoiceForSubscription(DoctorInvoiceRepository invoiceRepository, InvoiceFetcher invoiceFetcher) {
+        return new FetchDoctorInvoiceForSubscription(invoiceRepository, invoiceFetcher);
     }
 }
