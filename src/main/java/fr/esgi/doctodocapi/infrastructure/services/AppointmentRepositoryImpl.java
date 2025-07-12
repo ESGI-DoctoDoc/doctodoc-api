@@ -28,6 +28,7 @@ import org.springframework.stereotype.Repository;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -298,5 +299,63 @@ public class AppointmentRepositoryImpl implements AppointmentRepository {
         return appointments.stream()
                 .map(appointmentFacadeMapper::mapAppointmentToDomain)
                 .toList();
+    }
+
+    @Override
+    public List<Appointment> findAppointmentsByDoctorIdAndDateRangeAndHourRange(UUID doctorId, LocalDate start, LocalDate end, LocalTime startHour, LocalTime endHour, List<String> validStatuses) {
+        List<AppointmentEntity> entities = this.appointmentJpaRepository.findByDoctorIdAndDateRangeAndHourRange(doctorId, start, end, startHour, endHour, validStatuses);
+        return entities.stream().map(appointmentFacadeMapper::mapAppointmentToDomain).toList();
+    }
+
+    @Override
+    public List<Appointment> findAppointmentsByDoctorIdAndDate(UUID doctorId, LocalDate date, List<String> validStatuses) {
+        List<AppointmentEntity> entities = this.appointmentJpaRepository
+                .findAllByDoctor_IdAndDateAndStatusInAndDeletedAtIsNull(doctorId, date, validStatuses);
+
+        return entities.stream()
+                .map(appointmentFacadeMapper::mapAppointmentToDomain)
+                .toList();
+    }
+
+    @Override
+    public void update(Appointment appointment) {
+        AppointmentEntity entity = this.appointmentJpaRepository.findById(appointment.getId())
+                .orElseThrow(AppointmentNotFoundException::new);
+
+        SlotEntity slotEntity = this.entityManager.getReference(SlotEntity.class, appointment.getSlot().getId());
+        MedicalConcernEntity medicalConcernEntity = this.entityManager.getReference(MedicalConcernEntity.class, appointment.getMedicalConcern().getId());
+        CareTrackingEntity careTrackingEntity = appointment.getCareTrackingId() != null
+                ? this.entityManager.getReference(CareTrackingEntity.class, appointment.getCareTrackingId())
+                : null;
+
+        entity.setSlot(slotEntity);
+        entity.setMedicalConcern(medicalConcernEntity);
+        entity.setCareTracking(careTrackingEntity);
+        entity.setDate(appointment.getDate());
+        entity.setStartHour(appointment.getHoursRange().getStart());
+        entity.setEndHour(appointment.getHoursRange().getEnd());
+        entity.setDoctorNotes(appointment.getDoctorNotes());
+        entity.setStatus(appointment.getStatus().getValue());
+
+        entity.getAppointmentQuestions().clear();
+        appointmentJpaRepository.save(entity);
+
+        List<PreAppointmentAnswersEntity> existingAnswers = preAppointmentAnswersJpaRepository.findAllByAppointment_Id(appointment.getId());
+        if (!existingAnswers.isEmpty()) {
+            preAppointmentAnswersJpaRepository.deleteAll(existingAnswers);
+        }
+
+        List<PreAppointmentAnswersEntity> newAnswers = appointment.getPreAppointmentAnswers().stream()
+                .map(answer -> {
+                    QuestionEntity questionEntity = questionJpaRepository.findById(answer.getQuestion().getId())
+                            .orElseThrow(QuestionNotFoundException::new);
+                    return preAppointmentAnswersMapper.toEntity(answer.getResponse(), entity, questionEntity);
+                })
+                .toList();
+
+        preAppointmentAnswersJpaRepository.saveAll(newAnswers);
+
+        entity.getAppointmentQuestions().addAll(newAnswers);
+        appointmentJpaRepository.save(entity);
     }
 }

@@ -5,6 +5,7 @@ import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.user.User;
 
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -52,4 +53,10 @@ public interface AppointmentRepository {
     List<Appointment> searchAppointmentsByDoctorAndPatientName(UUID doctorId, String patientName, int page, int size);
 
     List<Appointment> findAppointmentsByDoctorIdAndPatientId(UUID doctorId, UUID patientId);
+
+    List<Appointment> findAppointmentsByDoctorIdAndDateRangeAndHourRange(UUID doctorId, LocalDate start, LocalDate end, LocalTime startHour, LocalTime endHour, List<String> validStatuses);
+
+    List<Appointment> findAppointmentsByDoctorIdAndDate(UUID doctorId, LocalDate date, List<String> validStatuses);
+
+    void update(Appointment appointment);
 }
