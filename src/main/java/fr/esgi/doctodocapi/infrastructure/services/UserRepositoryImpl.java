@@ -113,6 +113,14 @@ public class UserRepositoryImpl implements UserRepository {
         return this.userMapper.toDomain(userSaved);
     }
 
+    @Override
+    public void anonymise(User user) {
+        UserEntity userFoundById = this.userJpaRepository.findById(user.getId()).orElseThrow(UserNotFoundException::new);
+        userFoundById.setEmail(user.getEmail().getValue());
+        userFoundById.setPhoneNumber(user.getPhoneNumber().getValue());
+        this.userJpaRepository.save(userFoundById);
+    }
+
     /**
      * Checks if a user with the specified email or phone number exists.
      *
