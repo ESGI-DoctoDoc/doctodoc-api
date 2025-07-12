@@ -6,6 +6,7 @@ import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
 import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concern.MedicalConcernRepository;
 import fr.esgi.doctodocapi.model.doctor.payment.subscription.DoctorSubscriptionRepository;
+import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.patient.DoctorReportRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
 import fr.esgi.doctodocapi.use_cases.admin.get_doctor.GetDoctorByIdForAdmin;
@@ -16,6 +17,7 @@ import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorByIdFor
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorMedicalConcernsAndQuestions;
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorReports;
 import fr.esgi.doctodocapi.use_cases.admin.ports.in.get_doctor.IGetDoctorsForAdmin;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.FileStorageService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
@@ -28,8 +30,8 @@ public class AdminFetchingDoctorsConfiguration {
     }
 
     @Bean
-    public IGetDoctorByIdForAdmin getDoctorByIdForAdmin(DoctorRepository doctorRepository, SpecialityRepository specialityRepository, DoctorSubscriptionRepository subscriptionRepository, AppointmentRepository appointmentRepository, DoctorResponseMapper doctorResponseMapper, DoctorReportRepository doctorReportRepository) {
-        return new GetDoctorByIdForAdmin(doctorRepository, specialityRepository, subscriptionRepository, appointmentRepository, doctorResponseMapper, doctorReportRepository);
+    public IGetDoctorByIdForAdmin getDoctorByIdForAdmin(DoctorRepository doctorRepository, SpecialityRepository specialityRepository, DoctorSubscriptionRepository subscriptionRepository, AppointmentRepository appointmentRepository, DoctorResponseMapper doctorResponseMapper, DoctorReportRepository doctorReportRepository, DocumentRepository documentRepository, FileStorageService fileStorageService) {
+        return new GetDoctorByIdForAdmin(doctorRepository, specialityRepository, subscriptionRepository, appointmentRepository, doctorResponseMapper, doctorReportRepository, documentRepository, fileStorageService);
     }
 
     @Bean

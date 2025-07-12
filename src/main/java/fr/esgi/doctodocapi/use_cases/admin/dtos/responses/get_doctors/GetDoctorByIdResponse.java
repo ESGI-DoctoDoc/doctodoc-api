@@ -15,6 +15,7 @@ public record GetDoctorByIdResponse(
         String phone,
         String birthdate,
         String rpps,
+        List<String> files,
         boolean isVerified,
         boolean isEmailVerified,
         String createdAt,

@@ -1,5 +1,7 @@
 package fr.esgi.doctodocapi.model.notification;
 
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -76,8 +78,9 @@ public final class NotificationsType {
         return Notification.init(recipientId, TITLE_DOCTEUR, message);
     }
 
-    public static Notification verifyDoctor(UUID recipientId) {
-        String message = "Un nouveau docteur souhaite accèder à DoctoDoc";
+    public static Notification verifyDoctor(UUID recipientId, Doctor doctor) {
+        String fullName = doctor.getPersonalInformations().getFirstName() + " " + doctor.getPersonalInformations().getLastName();
+        String message = String.format("Un nouveau docteur souhaite accèder à la plateforme : %s", fullName);
         return Notification.init(recipientId, TITLE_DOCTEUR, message);
     }
 
