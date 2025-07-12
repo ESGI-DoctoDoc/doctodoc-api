@@ -2,9 +2,6 @@ package fr.esgi.doctodocapi.use_cases.user.manage_account;
 
 import fr.esgi.doctodocapi.model.user.MailSender;
 import fr.esgi.doctodocapi.use_cases.user.ports.in.ISendAccountValidationEmail;
-import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentRequestContext;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import java.util.UUID;
 
