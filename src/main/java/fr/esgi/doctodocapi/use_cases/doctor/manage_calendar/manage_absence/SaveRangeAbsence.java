@@ -96,6 +96,10 @@ public class SaveRangeAbsence implements ISaveRangeAbsence {
         );
 
         for (Appointment appointment : appointments) {
+            if (AppointmentStatus.COMPLETED.equals(appointment.getStatus())) {
+                continue;
+            }
+
             boolean isDateMatch =
                     !appointment.getDate().isBefore(absence.getAbsenceRange().getDateRange().getStart()) &&
                             !appointment.getDate().isAfter(absence.getAbsenceRange().getDateRange().getEnd());
