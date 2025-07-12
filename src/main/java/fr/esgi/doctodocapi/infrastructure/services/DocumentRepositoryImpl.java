@@ -66,6 +66,24 @@ public class DocumentRepositoryImpl implements DocumentRepository {
         saveTraces(document);
     }
 
+    @Override
+    public List<Document> getByDoctorId(UUID doctorId) throws DocumentNotFoundException {
+        List<DocumentEntity> entities = this.documentJpaRepository.findAllByUploadedBy(doctorId);
+
+        if (entities.isEmpty()) {
+            throw new DocumentNotFoundException();
+        }
+
+        return entities.stream()
+                .map(entity -> {
+                    List<DocumentTrace> traces = entity.getTraces().stream()
+                            .map(this.documentTraceMapper::toDomain)
+                            .toList();
+                    return this.documentMapper.toDomain(entity, traces);
+                })
+                .toList();
+    }
+
     private void saveTraces(Document document) {
         List<DocumentTracesEntity> traces = document.getTraces().stream().map(trace -> this.documentTraceFacadeMapper.toEntity(document.getId(), trace)).toList();
         this.documentTracesJpaRepository.saveAll(traces);

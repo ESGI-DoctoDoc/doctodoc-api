@@ -38,7 +38,7 @@ public class DoctorResponseMapper {
         );
     }
 
-    public GetDoctorByIdResponse toAdminDetailResponse(Doctor doctor, Speciality speciality, List<DoctorSubscription> subscriptions, int appointmentCount, int patientCount, boolean isReported) {
+    public GetDoctorByIdResponse toAdminDetailResponse(Doctor doctor, Speciality speciality, List<DoctorSubscription> subscriptions, int appointmentCount, int patientCount, boolean isReported, List<String> files) {
         return new GetDoctorByIdResponse(
                 doctor.getId(),
                 doctor.getPersonalInformations().getFirstName(),
@@ -47,6 +47,7 @@ public class DoctorResponseMapper {
                 doctor.getPhoneNumber().getValue(),
                 doctor.getPersonalInformations().getBirthDate().getValue().toString(),
                 doctor.getProfessionalInformations().getRpps().getValue(),
+                files,
                 doctor.isVerified(),
                 doctor.isEmailVerified(),
                 doctor.getCreatedAt().toString(),
