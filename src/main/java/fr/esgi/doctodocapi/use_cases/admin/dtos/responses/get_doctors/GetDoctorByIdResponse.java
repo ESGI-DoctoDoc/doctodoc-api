@@ -11,6 +11,7 @@ public record GetDoctorByIdResponse(
         UUID id,
         String firstName,
         String lastName,
+        String bio,
         String email,
         String phone,
         String birthdate,
@@ -22,6 +23,7 @@ public record GetDoctorByIdResponse(
         SpecialityInfo speciality,
         List<SubscriptionInfo> subscriptions,
         CounterInfo counter,
-        boolean isReported
+        boolean isReported,
+        AddressInfo address
 ) {
 }
