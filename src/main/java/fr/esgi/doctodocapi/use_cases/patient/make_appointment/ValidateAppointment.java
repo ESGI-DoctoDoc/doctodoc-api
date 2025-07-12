@@ -199,14 +199,38 @@ public class ValidateAppointment implements IValidateAppointment {
         }
     }
 
+    /**
+     * Extracts pre-appointment answers from the appointment request.
+     * This method processes the responses provided in the appointment request,
+     * retrieves the corresponding questions, and creates PreAppointmentAnswers objects.
+     *
+     * @param saveAppointmentRequest The request containing the responses to pre-appointment questions
+     * @return A list of PreAppointmentAnswers objects
+     */
+    private List<PreAppointmentAnswers> extractedPreAppointmentAnswers(SaveAppointmentRequest saveAppointmentRequest) {
+        List<PreAppointmentAnswers> answers = new ArrayList<>();
+
+        List<SaveAnswersForAnAppointmentRequest> answersForAnAppointmentRequests = saveAppointmentRequest.responses();
+        answersForAnAppointmentRequests.forEach(request -> {
+            Question question = this.medicalConcernRepository.getQuestionById(request.questionId());
+            answers.add(PreAppointmentAnswers.of(question, request.answer()));
+        });
+
+        return answers;
+    }
+
+
+    /// Gestion des notifications et rendez-vous (à déplacer)
+
     private void sendMailToPatient(Appointment appointment) {
         Patient appointmentPatient = appointment.getPatient();
-        if (appointmentPatient.isMainAccount()) {
-            sendMail(appointment.getPatient(), appointment);
-        } else {
-            sendMail(appointment.getPatient(), appointment);
+        sendMail(appointmentPatient, appointment);
+
+        if (!appointmentPatient.isMainAccount()) {
             Patient mainPatient = this.patientRepository.getByUserId(appointmentPatient.getUserId()).orElseThrow(PatientNotFoundException::new);
-            sendMail(mainPatient, appointment);
+            if (!Objects.equals(mainPatient.getEmail(), appointmentPatient.getEmail())) {
+                sendMail(mainPatient, appointment);
+            }
         }
     }
 
@@ -261,26 +285,6 @@ public class ValidateAppointment implements IValidateAppointment {
         );
     }
 
-
-    /**
-     * Extracts pre-appointment answers from the appointment request.
-     * This method processes the responses provided in the appointment request,
-     * retrieves the corresponding questions, and creates PreAppointmentAnswers objects.
-     *
-     * @param saveAppointmentRequest The request containing the responses to pre-appointment questions
-     * @return A list of PreAppointmentAnswers objects
-     */
-    private List<PreAppointmentAnswers> extractedPreAppointmentAnswers(SaveAppointmentRequest saveAppointmentRequest) {
-        List<PreAppointmentAnswers> answers = new ArrayList<>();
-
-        List<SaveAnswersForAnAppointmentRequest> answersForAnAppointmentRequests = saveAppointmentRequest.responses();
-        answersForAnAppointmentRequests.forEach(request -> {
-            Question question = this.medicalConcernRepository.getQuestionById(request.questionId());
-            answers.add(PreAppointmentAnswers.of(question, request.answer()));
-        });
-
-        return answers;
-    }
 
     private void notifyDoctorOfNewAppointment(Patient patient, Appointment appointment) {
         String patientFullName = patient.getFirstName() + " " + patient.getLastName();

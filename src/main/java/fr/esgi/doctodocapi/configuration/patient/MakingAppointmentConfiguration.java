@@ -37,8 +37,8 @@ public class MakingAppointmentConfiguration {
     }
 
     @Bean
-    public ICancelAppointment cancelAppointment(AppointmentRepository appointmentRepository, GetPatientFromContext getPatientFromContext, NotificationRepository notificationRepository) {
-        return new CancelAppointment(appointmentRepository, getPatientFromContext, notificationRepository);
+    public ICancelAppointment cancelAppointment(AppointmentRepository appointmentRepository, GetPatientFromContext getPatientFromContext, NotificationRepository notificationRepository, PatientRepository patientRepository, MailSender mailSender) {
+        return new CancelAppointment(appointmentRepository, getPatientFromContext, notificationRepository, patientRepository, mailSender);
     }
 
     @Bean
