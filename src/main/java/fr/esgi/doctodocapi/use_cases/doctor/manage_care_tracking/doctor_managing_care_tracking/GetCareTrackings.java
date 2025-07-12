@@ -46,7 +46,6 @@ public class GetCareTrackings implements IGetCareTrackings {
             User user = userRepository.findByEmail(username);
             Doctor doctor = doctorRepository.findDoctorByUserId(user.getId());
 
-
             List<CareTracking> careTrackings = careTrackingRepository.findAll(doctor.getId(), page, size);
 
             return careTrackings.stream()
@@ -73,9 +72,11 @@ public class GetCareTrackings implements IGetCareTrackings {
         try {
             String username = this.getCurrentUserContext.getUsername();
             User user = this.userRepository.findByEmail(username);
-            Doctor creator = this.doctorRepository.findDoctorByUserId(user.getId());
+            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctor(careTrackingId, creator);
+            CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctor(careTrackingId, doctor);
+
+            Doctor creator = doctorRepository.getById(careTracking.getCreatorId());
 
             List<Appointment> appointments = getAppointments(careTracking);
 
