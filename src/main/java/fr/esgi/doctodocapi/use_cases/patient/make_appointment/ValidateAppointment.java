@@ -1,5 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.patient.make_appointment;
 
+import fr.esgi.doctodocapi.infrastructure.brevo.Invitation;
+import fr.esgi.doctodocapi.infrastructure.brevo.Organizer;
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
@@ -20,7 +22,9 @@ import fr.esgi.doctodocapi.model.notification.Notification;
 import fr.esgi.doctodocapi.model.notification.NotificationRepository;
 import fr.esgi.doctodocapi.model.notification.NotificationsType;
 import fr.esgi.doctodocapi.model.patient.Patient;
+import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
+import fr.esgi.doctodocapi.model.user.MailSender;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.save_appointment.SaveAnswersForAnAppointmentRequest;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.save_appointment.SaveAppointmentRequest;
@@ -28,6 +32,8 @@ import fr.esgi.doctodocapi.use_cases.patient.dtos.responses.LockedAppointmentRes
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.make_appointment.IValidateAppointment;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -68,6 +74,8 @@ public class ValidateAppointment implements IValidateAppointment {
 
     private final GetPatientFromContext getPatientFromContext;
     private final NotificationRepository notificationRepository;
+    private final MailSender mailSender;
+
 
     /**
      * Constructs a ValidateAppointment service with the required repositories.
@@ -79,7 +87,7 @@ public class ValidateAppointment implements IValidateAppointment {
      * @param doctorRepository         Repository for accessing doctor data
      * @param getPatientFromContext    get patient from context
      */
-    public ValidateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, NotificationRepository notificationRepository) {
+    public ValidateAppointment(SlotRepository slotRepository, PatientRepository patientRepository, MedicalConcernRepository medicalConcernRepository, AppointmentRepository appointmentRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, GetPatientFromContext getPatientFromContext, NotificationRepository notificationRepository, MailSender mailSender) {
         this.slotRepository = slotRepository;
         this.patientRepository = patientRepository;
         this.medicalConcernRepository = medicalConcernRepository;
@@ -88,6 +96,7 @@ public class ValidateAppointment implements IValidateAppointment {
         this.careTrackingRepository = careTrackingRepository;
         this.getPatientFromContext = getPatientFromContext;
         this.notificationRepository = notificationRepository;
+        this.mailSender = mailSender;
     }
 
     /**
@@ -156,7 +165,6 @@ public class ValidateAppointment implements IValidateAppointment {
      * Confirms a previously locked appointment.
      * This method retrieves the appointment with the specified ID, changes its status to confirmed,
      * and updates it in the repository.
-     * Note: There is a TODO to implement email notification to the patient and user.
      *
      * @param id The unique identifier of the appointment to confirm
      * @throws ApiException If the appointment cannot be confirmed or does not exist
@@ -183,9 +191,10 @@ public class ValidateAppointment implements IValidateAppointment {
             }
 
             this.appointmentRepository.confirm(appointment);
-            // todo send an email to inform the patient and if it's not main account, send to user
 
-            notifyDoctorOfNewAppointment(appointment);
+            sendMailToPatient(appointment);
+            sendMailToDoctor(appointment);
+            notifyDoctorOfNewAppointment(patient, appointment);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
@@ -211,8 +220,130 @@ public class ValidateAppointment implements IValidateAppointment {
         return answers;
     }
 
-    private void notifyDoctorOfNewAppointment(Appointment appointment) {
-        String patientFullName = appointment.getPatient().getFirstName() + " " + appointment.getPatient().getLastName();
+
+    /// Gestion des notifications et mail (à déplacer)
+
+    private void sendMailToDoctor(Appointment appointment) {
+        String doctorFirstName = appointment.getDoctor().getPersonalInformations().getFirstName();
+        String doctorLastName = appointment.getDoctor().getPersonalInformations().getLastName();
+        String patientFirstName = appointment.getPatient().getFirstName();
+        String patientLastName = appointment.getPatient().getFirstName();
+
+        String appointmentDate = appointment.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String appointmentTime = appointment.getHoursRange().getStart().format(DateTimeFormatter.ofPattern("HH:mm"));
+        String clinicAddress = appointment.getDoctor().getConsultationInformations().getAddress();
+
+        String subject = "Nouveau rendez-vous";
+
+        String body = String.format("""
+                        Bonjour Dr %s %s,
+                        
+                        Vous avez un nouveau rendez-vous avec le patient %s %s.
+                        
+                        📅 Date : %s
+                        🕒 Heure : %s
+                        📍 Lieu : %s
+                        
+                        
+                        En cas d’empêchement, vous pouvez annuler ou reprogrammer votre rendez-vous via votre espace personnel.
+                        
+                        Cordialement,
+                        Doctodoc.
+                        """,
+                doctorFirstName,
+                doctorLastName,
+                patientFirstName,
+                patientLastName,
+                appointmentDate,
+                appointmentTime,
+                clinicAddress
+        );
+
+        this.mailSender.sendMail(
+                appointment.getDoctor().getEmail().getValue(),
+                subject,
+                body,
+                new Invitation(
+                        new Organizer(
+                                appointment.getDoctor().getEmail().getValue(),
+                                doctorFirstName,
+                                doctorLastName
+                        ),
+                        clinicAddress,
+                        LocalDateTime.of(appointment.getDate(), appointment.getHoursRange().getStart()),
+                        LocalDateTime.of(appointment.getDate(), appointment.getHoursRange().getEnd())
+                )
+        );
+    }
+
+
+    private void sendMailToPatient(Appointment appointment) {
+        Patient appointmentPatient = appointment.getPatient();
+        sendMail(appointmentPatient, appointment);
+
+        if (!appointmentPatient.isMainAccount()) {
+            Patient mainPatient = this.patientRepository.getByUserId(appointmentPatient.getUserId()).orElseThrow(PatientNotFoundException::new);
+            if (!Objects.equals(mainPatient.getEmail(), appointmentPatient.getEmail())) {
+                sendMail(mainPatient, appointment);
+            }
+        }
+    }
+
+
+    private void sendMail(Patient patient, Appointment appointment) {
+        String doctorFirstName = appointment.getDoctor().getPersonalInformations().getFirstName();
+        String doctorLastName = appointment.getDoctor().getPersonalInformations().getLastName();
+        String patientFirstName = patient.getFirstName();
+        String appointmentDate = appointment.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String appointmentTime = appointment.getHoursRange().getStart().format(DateTimeFormatter.ofPattern("HH:mm"));
+        String clinicAddress = appointment.getDoctor().getConsultationInformations().getAddress();
+
+        String subject = "Confirmation de votre rendez-vous médical avec le Dr " + doctorFirstName + " " + doctorLastName;
+
+        String body = String.format("""
+                        Bonjour %s,
+                        
+                        Votre rendez-vous avec le Dr %s %s a bien été confirmé.
+                        
+                        📅 Date : %s
+                        🕒 Heure : %s
+                        📍 Lieu : %s
+                        
+                        Merci de vous présenter 10 minutes à l’avance muni(e) de votre carte vitale et d’une pièce d’identité.
+                        
+                        En cas d’empêchement, vous pouvez annuler ou reprogrammer votre rendez-vous via votre espace personnel.
+                        
+                        Cordialement,
+                        Doctodoc.
+                        """,
+                patientFirstName,
+                doctorFirstName,
+                doctorLastName,
+                appointmentDate,
+                appointmentTime,
+                clinicAddress
+        );
+
+        this.mailSender.sendMail(
+                patient.getEmail().getValue(),
+                subject,
+                body,
+                new Invitation(
+                        new Organizer(
+                                appointment.getDoctor().getEmail().getValue(),
+                                doctorFirstName,
+                                doctorLastName
+                        ),
+                        clinicAddress,
+                        LocalDateTime.of(appointment.getDate(), appointment.getHoursRange().getStart()),
+                        LocalDateTime.of(appointment.getDate(), appointment.getHoursRange().getEnd())
+                )
+        );
+    }
+
+
+    private void notifyDoctorOfNewAppointment(Patient patient, Appointment appointment) {
+        String patientFullName = patient.getFirstName() + " " + patient.getLastName();
         Notification notification = NotificationsType.newAppointment(
                 appointment.getDoctor().getId(),
                 appointment.getDate(),

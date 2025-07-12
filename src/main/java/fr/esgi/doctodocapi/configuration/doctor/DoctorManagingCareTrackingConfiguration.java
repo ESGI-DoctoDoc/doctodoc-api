@@ -9,6 +9,7 @@ import fr.esgi.doctodocapi.model.doctor.care_tracking.message.MessageRepository;
 import fr.esgi.doctodocapi.model.document.DocumentRepository;
 import fr.esgi.doctodocapi.model.notification.NotificationRepository;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
+import fr.esgi.doctodocapi.model.user.MailSender;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.CloseCareTracking;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.doctor_managing_care_tracking.GetCareTrackings;
@@ -39,8 +40,8 @@ import org.springframework.messaging.simp.SimpMessagingTemplate;
 public class DoctorManagingCareTrackingConfiguration {
 
     @Bean
-    public IInitializeCareTracking initializeCareTracking(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, PatientRepository patientRepository, AppointmentRepository appointmentRepository) {
-        return new InitializeCareTracking(careTrackingRepository, doctorRepository, userRepository, getCurrentUserContext, patientRepository, appointmentRepository);
+    public IInitializeCareTracking initializeCareTracking(CareTrackingRepository careTrackingRepository, DoctorRepository doctorRepository, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, PatientRepository patientRepository, AppointmentRepository appointmentRepository, MailSender mailSender) {
+        return new InitializeCareTracking(careTrackingRepository, doctorRepository, userRepository, getCurrentUserContext, patientRepository, appointmentRepository, mailSender);
     }
 
     @Bean
@@ -49,8 +50,8 @@ public class DoctorManagingCareTrackingConfiguration {
     }
 
     @Bean
-    public IUploadCareTrackingDocument uploadCareTrackingDocument(CareTrackingRepository careTrackingRepository, FileStorageService uploadFile, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorRepository doctorRepository, DocumentRepository documentRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService) {
-        return new UploadCareTrackingDocument(careTrackingRepository, uploadFile, userRepository, getCurrentUserContext, doctorRepository, documentRepository, notificationRepository, notificationPushService);
+    public IUploadCareTrackingDocument uploadCareTrackingDocument(CareTrackingRepository careTrackingRepository, FileStorageService uploadFile, UserRepository userRepository, GetCurrentUserContext getCurrentUserContext, DoctorRepository doctorRepository, DocumentRepository documentRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService, MailSender mailSender) {
+        return new UploadCareTrackingDocument(careTrackingRepository, uploadFile, userRepository, getCurrentUserContext, doctorRepository, documentRepository, notificationRepository, notificationPushService, mailSender);
     }
 
     @Bean
@@ -85,7 +86,7 @@ public class DoctorManagingCareTrackingConfiguration {
     }
 
     @Bean
-    public ICloseCareTracking closeCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService) {
-        return new CloseCareTracking(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, notificationRepository, notificationPushService);
+    public ICloseCareTracking closeCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService, MailSender mailSender) {
+        return new CloseCareTracking(getCurrentUserContext, userRepository, doctorRepository, careTrackingRepository, notificationRepository, notificationPushService, mailSender);
     }
 }
