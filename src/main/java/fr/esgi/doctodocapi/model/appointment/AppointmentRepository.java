@@ -57,5 +57,6 @@ public interface AppointmentRepository {
     List<Appointment> findAppointmentsByDoctorIdAndDateRangeAndHourRange(UUID doctorId, LocalDate start, LocalDate end, LocalTime startHour, LocalTime endHour, List<String> validStatuses);
 
     List<Appointment> findAppointmentsByDoctorIdAndDate(UUID doctorId, LocalDate date, List<String> validStatuses);
+
     void update(Appointment appointment);
 }
