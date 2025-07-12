@@ -118,7 +118,18 @@ public interface AppointmentJpaRepository extends JpaRepository<AppointmentEntit
             Pageable pageable
     );
 
-    List<AppointmentEntity> findAllByDoctor_IdAndPatient_IdAndDeletedAtIsNull(UUID doctorId, UUID patientId);
+    @Query("""
+SELECT a
+FROM AppointmentEntity a
+WHERE a.doctor.id = :doctorId
+  AND a.patient.id = :patientId
+  AND a.deletedAt IS NULL
+  AND a.status <> 'locked'
+""")
+    List<AppointmentEntity> findAllByDoctor_IdAndPatient_IdAndDeletedAtIsNull(
+            @Param("doctorId") UUID doctorId,
+            @Param("patientId") UUID patientId
+    );
 
     @Query("""
     SELECT a FROM AppointmentEntity a
