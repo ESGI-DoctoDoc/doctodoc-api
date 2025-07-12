@@ -4,7 +4,7 @@ import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_absence.*;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.absence_response.DeleteAbsenceResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.absence_response.GetAbsenceResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.absence_response.GetAppointmentOnAbsenceResponse;
-import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_absence.UpdateRangeAbsenceRequest;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_absence.UpdateRangeAbsenceRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.*;
 import jakarta.validation.Valid;
 import org.springframework.format.annotation.DateTimeFormat;

@@ -185,7 +185,7 @@ public class ValidateAppointment implements IValidateAppointment {
             this.appointmentRepository.confirm(appointment);
             // todo send an email to inform the patient and if it's not main account, send to user
 
-            notifyDoctorOfNewAppointment(patient, appointment);
+            notifyDoctorOfNewAppointment(appointment);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
@@ -211,8 +211,8 @@ public class ValidateAppointment implements IValidateAppointment {
         return answers;
     }
 
-    private void notifyDoctorOfNewAppointment(Patient patient, Appointment appointment) {
-        String patientFullName = patient.getFirstName() + " " + patient.getLastName();
+    private void notifyDoctorOfNewAppointment(Appointment appointment) {
+        String patientFullName = appointment.getPatient().getFirstName() + " " + appointment.getPatient().getLastName();
         Notification notification = NotificationsType.newAppointment(
                 appointment.getDoctor().getId(),
                 appointment.getDate(),

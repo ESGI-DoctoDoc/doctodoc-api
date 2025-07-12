@@ -11,6 +11,7 @@ import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_absence.*;
 import fr.esgi.doctodocapi.use_cases.doctor.manage_calendar.manage_slot.GetAppointmentsOnAbsence;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.*;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.IGetDoctorFromContext;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationPushService;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -29,18 +30,18 @@ public class ManageAbsenceConfiguration {
     }
 
     @Bean
-    public ISaveRangeAbsence saveRangeAbsence(AbsenceRepository absenceRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, AbsenceResponseMapper absenceResponseMapper, DoctorRepository doctorRepository, AbsenceValidationService absenceValidationService) {
-        return new SaveRangeAbsence(absenceRepository, getCurrentUserContext, userRepository, absenceResponseMapper, doctorRepository, absenceValidationService);
+    public ISaveRangeAbsence saveRangeAbsence(AbsenceRepository absenceRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, AbsenceResponseMapper absenceResponseMapper, DoctorRepository doctorRepository, AbsenceValidationService absenceValidationService, AppointmentRepository appointmentRepository, NotificationPushService notificationPushService) {
+        return new SaveRangeAbsence(absenceRepository, getCurrentUserContext, userRepository, absenceResponseMapper, doctorRepository, absenceValidationService, appointmentRepository, notificationPushService);
     }
 
     @Bean
-    public ISaveSingleDayAbsence saveSingleDayAbsence(AbsenceRepository absenceRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, AbsenceResponseMapper absenceResponseMapper, DoctorRepository doctorRepository, AbsenceValidationService absenceValidationService) {
-        return new SaveSingleDayAbsence(absenceRepository, getCurrentUserContext, userRepository, absenceResponseMapper, doctorRepository, absenceValidationService);
+    public ISaveSingleDayAbsence saveSingleDayAbsence(AbsenceRepository absenceRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, AbsenceResponseMapper absenceResponseMapper, DoctorRepository doctorRepository, AbsenceValidationService absenceValidationService, AppointmentRepository appointmentRepository, NotificationPushService notificationPushService) {
+        return new SaveSingleDayAbsence(absenceRepository, getCurrentUserContext, userRepository, absenceResponseMapper, doctorRepository, absenceValidationService, appointmentRepository, notificationPushService);
     }
 
     @Bean
-    public IUpdateAbsence updateAbsence(AbsenceRepository absenceRepository, AppointmentRepository appointmentRepository, AbsenceResponseMapper absenceResponseMapper, AbsenceValidationService absenceValidationService, IGetDoctorFromContext getDoctorFromContext) {
-        return new UpdateAbsence(absenceRepository, appointmentRepository, absenceResponseMapper, absenceValidationService, getDoctorFromContext);
+    public IUpdateAbsence updateAbsence(AbsenceRepository absenceRepository, AppointmentRepository appointmentRepository, AbsenceResponseMapper absenceResponseMapper, AbsenceValidationService absenceValidationService, IGetDoctorFromContext getDoctorFromContext, NotificationPushService notificationPushService) {
+        return new UpdateAbsence(absenceRepository, appointmentRepository, absenceResponseMapper, absenceValidationService, getDoctorFromContext, notificationPushService);
     }
 
     @Bean
