@@ -1,20 +1,20 @@
 package fr.esgi.doctodocapi.model.doctor;
 
 import fr.esgi.doctodocapi.model.admin.speciality.Speciality;
-import fr.esgi.doctodocapi.model.doctor.personal_information.CoordinatesGps;
-import fr.esgi.doctodocapi.model.document.Document;
-import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_doctor_account.OnBoardingDoctorRequest;
 import fr.esgi.doctodocapi.model.doctor.calendar.Calendar;
 import fr.esgi.doctodocapi.model.doctor.consultation_informations.DoctorConsultationInformations;
 import fr.esgi.doctodocapi.model.doctor.exceptions.DoctorMustHaveMajority;
+import fr.esgi.doctodocapi.model.doctor.personal_information.CoordinatesGps;
 import fr.esgi.doctodocapi.model.doctor.personal_information.DoctorPersonnalInformations;
 import fr.esgi.doctodocapi.model.doctor.personal_information.Gender;
 import fr.esgi.doctodocapi.model.doctor.professionnal_informations.DoctorProfessionalInformations;
+import fr.esgi.doctodocapi.model.document.Document;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.vo.birthdate.Birthdate;
 import fr.esgi.doctodocapi.model.vo.email.Email;
 import fr.esgi.doctodocapi.model.vo.password.Password;
 import fr.esgi.doctodocapi.model.vo.phone_number.PhoneNumber;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_doctor_account.OnBoardingDoctorRequest;
 
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -254,6 +254,11 @@ public class Doctor extends User {
     public void setRefused(boolean refused) {
         isRefused = refused;
     }
+
+    public Email getMail() {
+        return super.getEmail();
+    }
+
 
     @Override
     public boolean equals(Object o) {
