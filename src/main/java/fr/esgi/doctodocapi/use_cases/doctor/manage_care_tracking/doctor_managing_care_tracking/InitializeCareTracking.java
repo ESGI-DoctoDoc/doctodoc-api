@@ -85,7 +85,7 @@ public class InitializeCareTracking implements IInitializeCareTracking {
 
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH'h'mm")
                 .withLocale(Locale.FRENCH);
-        String formattedDate = careTracking.getClosedAt().format(formatter);
+        String formattedDate = careTracking.getCreatedAt().format(formatter);
 
         String subject = "Nouveau suivi de dossier " + careTrackingName;
 
