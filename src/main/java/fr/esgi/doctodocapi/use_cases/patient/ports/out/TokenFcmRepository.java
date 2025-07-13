@@ -5,6 +5,6 @@ import java.util.UUID;
 public interface TokenFcmRepository {
     void save(UUID patientId, String tokenFcm);
 
-    String get(UUID patientId);
+    String get(UUID userId);
 
 }

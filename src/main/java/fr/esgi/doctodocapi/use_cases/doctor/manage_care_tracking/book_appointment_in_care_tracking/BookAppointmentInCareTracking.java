@@ -1,5 +1,7 @@
 package fr.esgi.doctodocapi.use_cases.doctor.manage_care_tracking.book_appointment_in_care_tracking;
 
+import fr.esgi.doctodocapi.infrastructure.brevo.Invitation;
+import fr.esgi.doctodocapi.infrastructure.brevo.Organizer;
 import fr.esgi.doctodocapi.model.DomainException;
 import fr.esgi.doctodocapi.model.appointment.Appointment;
 import fr.esgi.doctodocapi.model.appointment.AppointmentRepository;
@@ -18,6 +20,7 @@ import fr.esgi.doctodocapi.model.doctor.consultation_informations.medical_concer
 import fr.esgi.doctodocapi.model.patient.Patient;
 import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
 import fr.esgi.doctodocapi.model.patient.PatientRepository;
+import fr.esgi.doctodocapi.model.user.MailSender;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.manage_care_tracking.book_appointment_in_care_tracking.BookAppointmentRequest;
@@ -28,8 +31,11 @@ import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.UUID;
 
 public class BookAppointmentInCareTracking implements IBookAppointmentInCareTracking {
@@ -41,8 +47,9 @@ public class BookAppointmentInCareTracking implements IBookAppointmentInCareTrac
     private final GetCurrentUserContext getCurrentUserContext;
     private final UserRepository userRepository;
     private final DoctorRepository doctorRepository;
+    private final MailSender mailSender;
 
-    public BookAppointmentInCareTracking(CareTrackingRepository careTrackingRepository, AppointmentRepository appointmentRepository, SlotRepository slotRepository, MedicalConcernRepository medicalConcernRepository, PatientRepository patientRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository) {
+    public BookAppointmentInCareTracking(CareTrackingRepository careTrackingRepository, AppointmentRepository appointmentRepository, SlotRepository slotRepository, MedicalConcernRepository medicalConcernRepository, PatientRepository patientRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, MailSender mailSender) {
         this.careTrackingRepository = careTrackingRepository;
         this.appointmentRepository = appointmentRepository;
         this.slotRepository = slotRepository;
@@ -51,6 +58,7 @@ public class BookAppointmentInCareTracking implements IBookAppointmentInCareTrac
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
         this.doctorRepository = doctorRepository;
+        this.mailSender = mailSender;
     }
 
 
@@ -72,6 +80,7 @@ public class BookAppointmentInCareTracking implements IBookAppointmentInCareTrac
             careTracking.addAppointment(appointment.getId());
 
             UUID savedAppointment = this.appointmentRepository.save(appointment);
+            sendMailToPatient(appointment);
             return new BookedAppointmentResponse(savedAppointment);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
@@ -110,5 +119,70 @@ public class BookAppointmentInCareTracking implements IBookAppointmentInCareTrac
             answers.add(PreAppointmentAnswers.of(question, response.answer()));
         }
         return answers;
+    }
+
+    /// Gestion des notifications et mail (à déplacer)
+
+    private void sendMailToPatient(Appointment appointment) {
+        Patient appointmentPatient = appointment.getPatient();
+        sendMail(appointmentPatient, appointment);
+
+        if (!appointmentPatient.isMainAccount()) {
+            Patient mainPatient = this.patientRepository.getByUserId(appointmentPatient.getUserId()).orElseThrow(PatientNotFoundException::new);
+            if (!Objects.equals(mainPatient.getEmail(), appointmentPatient.getEmail())) {
+                sendMail(mainPatient, appointment);
+            }
+        }
+    }
+
+    private void sendMail(Patient patient, Appointment appointment) {
+        String doctorFirstName = appointment.getDoctor().getPersonalInformations().getFirstName();
+        String doctorLastName = appointment.getDoctor().getPersonalInformations().getLastName();
+        String patientFirstName = patient.getFirstName();
+        String appointmentDate = appointment.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String appointmentTime = appointment.getHoursRange().getStart().format(DateTimeFormatter.ofPattern("HH:mm"));
+        String clinicAddress = appointment.getDoctor().getConsultationInformations().getAddress();
+
+        String subject = "Confirmation de votre rendez-vous médical avec le Dr " + doctorFirstName + " " + doctorLastName;
+
+        String body = String.format("""
+                        Bonjour %s,
+                        
+                        Votre rendez-vous avec le Dr %s %s a bien été confirmé.
+                        
+                        📅 Date : %s
+                        🕒 Heure : %s
+                        📍 Lieu : %s
+                        
+                        Merci de vous présenter 10 minutes à l’avance muni(e) de votre carte vitale et d’une pièce d’identité.
+                        
+                        En cas d’empêchement, vous pouvez annuler ou reprogrammer votre rendez-vous via votre espace personnel.
+                        
+                        Cordialement,
+                        Doctodoc.
+                        """,
+                patientFirstName,
+                doctorFirstName,
+                doctorLastName,
+                appointmentDate,
+                appointmentTime,
+                clinicAddress
+        );
+
+        this.mailSender.sendMail(
+                patient.getEmail().getValue(),
+                subject,
+                body,
+                new Invitation(
+                        new Organizer(
+                                appointment.getDoctor().getEmail().getValue(),
+                                doctorFirstName,
+                                doctorLastName
+                        ),
+                        clinicAddress,
+                        LocalDateTime.of(appointment.getDate(), appointment.getHoursRange().getStart()),
+                        LocalDateTime.of(appointment.getDate(), appointment.getHoursRange().getEnd())
+                )
+        );
     }
 }

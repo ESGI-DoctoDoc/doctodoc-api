@@ -2,35 +2,96 @@ package fr.esgi.doctodocapi.use_cases.patient.report_doctor;
 
 import fr.esgi.doctodocapi.infrastructure.security.service.GetPatientFromContext;
 import fr.esgi.doctodocapi.model.DomainException;
+import fr.esgi.doctodocapi.model.admin.AdminRepository;
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor_report.DoctorReport;
+import fr.esgi.doctodocapi.model.notification.Notification;
+import fr.esgi.doctodocapi.model.notification.NotificationRepository;
+import fr.esgi.doctodocapi.model.notification.NotificationsType;
 import fr.esgi.doctodocapi.model.patient.DoctorReportRepository;
 import fr.esgi.doctodocapi.model.patient.Patient;
+import fr.esgi.doctodocapi.model.user.MailSender;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
 import fr.esgi.doctodocapi.use_cases.patient.dtos.requests.ReportDoctorRequest;
 import fr.esgi.doctodocapi.use_cases.patient.ports.in.report_doctor.IReportDoctor;
 import org.springframework.http.HttpStatus;
 
+import java.util.List;
+import java.util.UUID;
+
 public class ReportDoctor implements IReportDoctor {
     private final DoctorReportRepository doctorReportRepository;
+    private final DoctorRepository doctorRepository;
     private final GetPatientFromContext getPatientFromContext;
+    private final MailSender mailSender;
+    private final AdminRepository adminRepository;
+    private final NotificationRepository notificationRepository;
 
-    public ReportDoctor(DoctorReportRepository doctorReportRepository, GetPatientFromContext getPatientFromContext) {
+    public ReportDoctor(DoctorReportRepository doctorReportRepository, DoctorRepository doctorRepository, GetPatientFromContext getPatientFromContext, MailSender mailSender, AdminRepository adminRepository, NotificationRepository notificationRepository) {
         this.doctorReportRepository = doctorReportRepository;
+        this.doctorRepository = doctorRepository;
         this.getPatientFromContext = getPatientFromContext;
+        this.mailSender = mailSender;
+        this.adminRepository = adminRepository;
+        this.notificationRepository = notificationRepository;
     }
 
     public void report(ReportDoctorRequest reportDoctorRequest) {
         try {
             Patient patient = this.getPatientFromContext.get();
+            Doctor doctor = this.doctorRepository.getById(reportDoctorRequest.doctorId());
             DoctorReport doctorReport = DoctorReport.create(
                     patient.getUserId(),
                     reportDoctorRequest.doctorId(),
                     reportDoctorRequest.explanation()
             );
             this.doctorReportRepository.save(doctorReport);
+            sendMail(patient, doctor);
+            notifyAdmin(doctor, patient);
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
 
+    }
+
+    /// Gestion des notifications et mail (à déplacer)
+
+    private void sendMail(Patient patient, Doctor doctor) {
+        String patientFirstName = patient.getFirstName();
+        String doctorFirstName = doctor.getPersonalInformations().getFirstName();
+        String doctorLastName = doctor.getPersonalInformations().getLastName();
+
+
+        String subject = "Confirmation de votre signalement concernant le Dr " + doctorFirstName + " " + doctorLastName;
+
+        String body = String.format("""
+                        Bonjour %s,
+                        
+                        Votre signalement concernant le Dr %s %s a bien été pris en compte par notre équipe.
+                        
+                        Nous vous remercions de votre vigilance. Si des informations complémentaires sont nécessaires, nous reviendrons vers vous.
+                        
+                        Cordialement,
+                        L’équipe Doctodoc.
+                        """,
+                patientFirstName,
+                doctorFirstName,
+                doctorLastName
+        );
+
+        this.mailSender.sendMail(
+                patient.getEmail().getValue(),
+                subject,
+                body
+        );
+    }
+
+    private void notifyAdmin(Doctor doctor, Patient patient) {
+        List<UUID> adminsId = this.adminRepository.getAll();
+        adminsId.forEach(id -> {
+            Notification notification = NotificationsType.report(id, doctor, patient);
+            this.notificationRepository.save(notification);
+        });
     }
 }

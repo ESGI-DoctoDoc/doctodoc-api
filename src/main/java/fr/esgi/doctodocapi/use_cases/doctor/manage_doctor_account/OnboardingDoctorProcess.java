@@ -116,7 +116,7 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
             Doctor doctor = Doctor.createFromOnBoarding(user, request, uploadedDocuments, profilePictureUrl, speciality, coordinates);
 
             this.doctorRepository.save(doctor);
-            notifyAdmin();
+            notifyAdmin(doctor);
             return new OnboardingProcessResponse(user.getId());
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
@@ -139,10 +139,10 @@ public class OnboardingDoctorProcess implements IOnboardingDoctor {
         }
     }
 
-    private void notifyAdmin() {
+    private void notifyAdmin(Doctor doctor) {
         List<UUID> adminsId = this.adminRepository.getAll();
         adminsId.forEach(id -> {
-            Notification notification = NotificationsType.verifyDoctor(id);
+            Notification notification = NotificationsType.verifyDoctor(id, doctor);
             this.notificationRepository.save(notification);
         });
     }

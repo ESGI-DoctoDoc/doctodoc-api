@@ -28,8 +28,8 @@ public class TokenFcmRepositoryImpl implements TokenFcmRepository {
     }
 
     @Override
-    public String get(UUID patientId) {
-        PatientEntity entity = this.patientJpaRepository.findById(patientId).orElseThrow(PatientNotFoundException::new);
+    public String get(UUID userId) {
+        PatientEntity entity = this.patientJpaRepository.findByUser_IdAndIsMainAccount(userId, true).orElseThrow(PatientNotFoundException::new);
         String fcmToken = entity.getFcmToken();
 
         if (fcmToken == null) {

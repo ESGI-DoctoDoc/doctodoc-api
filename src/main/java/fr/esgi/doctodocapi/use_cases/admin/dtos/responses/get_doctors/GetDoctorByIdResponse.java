@@ -11,16 +11,19 @@ public record GetDoctorByIdResponse(
         UUID id,
         String firstName,
         String lastName,
+        String bio,
         String email,
         String phone,
         String birthdate,
         String rpps,
+        List<String> files,
         boolean isVerified,
         boolean isEmailVerified,
         String createdAt,
         SpecialityInfo speciality,
         List<SubscriptionInfo> subscriptions,
         CounterInfo counter,
-        boolean isReported
+        boolean isReported,
+        AddressInfo address
 ) {
 }

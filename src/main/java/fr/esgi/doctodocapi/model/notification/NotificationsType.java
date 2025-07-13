@@ -1,5 +1,8 @@
 package fr.esgi.doctodocapi.model.notification;
 
+import fr.esgi.doctodocapi.model.doctor.Doctor;
+import fr.esgi.doctodocapi.model.patient.Patient;
+
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.time.format.DateTimeFormatter;
@@ -16,6 +19,7 @@ public final class NotificationsType {
     private static final String TITLE_APPOINTMENT_CANCELED = "Rendez-vous annulé";
     private static final String TITLE_CARE_TRACKING = "Suivi de dossier";
     private static final String TITLE_DOCTEUR = "Docteur";
+    private static final String TITLE_REPORT = "Signalement";
 
     private NotificationsType() {
     }
@@ -76,9 +80,21 @@ public final class NotificationsType {
         return Notification.init(recipientId, TITLE_DOCTEUR, message);
     }
 
-    public static Notification verifyDoctor(UUID recipientId) {
-        String message = "Un nouveau docteur souhaite accèder à DoctoDoc";
+    public static Notification verifyDoctor(UUID recipientId, Doctor doctor) {
+        String fullName = doctor.getPersonalInformations().getFirstName() + " " + doctor.getPersonalInformations().getLastName();
+        String message = String.format("Un nouveau docteur souhaite accèder à la plateforme : %s", fullName);
         return Notification.init(recipientId, TITLE_DOCTEUR, message);
+    }
+
+    // -------------------------------
+    // Reports
+    // -------------------------------
+
+    public static Notification report(UUID recipientId, Doctor doctor, Patient patient) {
+        String fullName = doctor.getPersonalInformations().getFirstName() + " " + doctor.getPersonalInformations().getLastName();
+        String patientFullName = patient.getFirstName() + " " + patient.getLastName();
+        String message = String.format("Le docteur %s a été signalé par le patient %s", fullName, patientFullName);
+        return Notification.init(recipientId, TITLE_REPORT, message);
     }
 
     // -------------------------------

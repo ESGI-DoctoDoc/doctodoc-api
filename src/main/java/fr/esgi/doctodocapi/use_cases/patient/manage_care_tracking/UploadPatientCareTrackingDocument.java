@@ -34,7 +34,7 @@ public class UploadPatientCareTrackingDocument implements IUploadPatientCareTrac
             Patient patient = this.getPatientFromContext.get();
             CareTracking careTracking = this.careTrackingRepository.getByIdAndPatient(id, patient);
 
-            CareTrackingDocument careTrackingDocument = CareTrackingDocument.create(saveDocumentRequest.filename(), saveDocumentRequest.type(), patient.getId(), careTracking.getId());
+            CareTrackingDocument careTrackingDocument = CareTrackingDocument.create(saveDocumentRequest.filename(), saveDocumentRequest.type(), patient.getUserId(), careTracking.getId());
             careTracking.addDocument(careTrackingDocument);
             this.careTrackingRepository.save(careTracking);
 

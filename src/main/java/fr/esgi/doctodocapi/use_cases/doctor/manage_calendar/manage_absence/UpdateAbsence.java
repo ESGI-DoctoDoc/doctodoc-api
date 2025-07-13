@@ -11,17 +11,22 @@ import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceValidationService;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.ExpiredAbsenceException;
 import fr.esgi.doctodocapi.model.vo.hours_range.HoursRange;
+import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_absence.UpdateRangeAbsenceRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.requests.save_absence.UpdateSingleDayAbsenceRequest;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.absence_response.GetAbsenceResponse;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.in.manage_absence.IUpdateAbsence;
 import fr.esgi.doctodocapi.use_cases.doctor.ports.out.IGetDoctorFromContext;
 import fr.esgi.doctodocapi.use_cases.exceptions.ApiException;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationMessage;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationMessageType;
+import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.NotificationPushService;
 import org.springframework.http.HttpStatus;
 
 import java.time.LocalDate;
 import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
+
 public class UpdateAbsence implements IUpdateAbsence {
 
     private static final List<String> VALID_STATUSES_FOR_DELETED_MEDICAL_CONCERN = Arrays.asList(
@@ -35,13 +40,15 @@ public class UpdateAbsence implements IUpdateAbsence {
     private final AbsenceResponseMapper absenceResponseMapper;
     private final AbsenceValidationService absenceValidationService;
     private final IGetDoctorFromContext getDoctorFromContext;
+    private final NotificationPushService notificationPushService;
 
-    public UpdateAbsence(AbsenceRepository absenceRepository, AppointmentRepository appointmentRepository, AbsenceResponseMapper absenceResponseMapper, AbsenceValidationService absenceValidationService, IGetDoctorFromContext getDoctorFromContext) {
+    public UpdateAbsence(AbsenceRepository absenceRepository, AppointmentRepository appointmentRepository, AbsenceResponseMapper absenceResponseMapper, AbsenceValidationService absenceValidationService, IGetDoctorFromContext getDoctorFromContext, NotificationPushService notificationPushService) {
         this.absenceRepository = absenceRepository;
         this.appointmentRepository = appointmentRepository;
         this.absenceResponseMapper = absenceResponseMapper;
         this.absenceValidationService = absenceValidationService;
         this.getDoctorFromContext = getDoctorFromContext;
+        this.notificationPushService = notificationPushService;
     }
 
     public GetAbsenceResponse updateSingleDay(UUID absenceId, UpdateSingleDayAbsenceRequest request) {
@@ -105,6 +112,10 @@ public class UpdateAbsence implements IUpdateAbsence {
         );
 
         for (Appointment appointment : appointments) {
+            if (AppointmentStatus.COMPLETED.equals(appointment.getStatus())) {
+                continue;
+            }
+
             boolean isDateMatch =
                     !appointment.getDate().isBefore(absence.getAbsenceRange().getDateRange().getStart()) &&
                             !appointment.getDate().isAfter(absence.getAbsenceRange().getDateRange().getEnd());
@@ -115,7 +126,18 @@ public class UpdateAbsence implements IUpdateAbsence {
             if (isDateMatch && isTimeOverlap) {
                 appointment.cancel("Le rendez-vous a été annulé car il chevauche une période d'absence du docteur.");
                 appointmentRepository.cancel(appointment);
+                notifyPatient(appointment);
             }
         }
+    }
+
+    private void notifyPatient(Appointment appointment) {
+        NotificationMessage message = NotificationMessageType.cancelAppointment(
+                appointment.getPatient().getUserId(),
+                appointment.getDate(),
+                appointment.getHoursRange().getStart(),
+                appointment.getCancelExplanation()
+        );
+        this.notificationPushService.send(message);
     }
 }

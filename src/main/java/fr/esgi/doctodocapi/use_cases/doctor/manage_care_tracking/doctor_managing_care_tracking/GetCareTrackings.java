@@ -44,15 +44,17 @@ public class GetCareTrackings implements IGetCareTrackings {
 
         try {
             User user = userRepository.findByEmail(username);
-            Doctor creator = doctorRepository.findDoctorByUserId(user.getId());
+            Doctor doctor = doctorRepository.findDoctorByUserId(user.getId());
 
-            List<CareTracking> careTrackings = careTrackingRepository.findAll(creator.getId(), page, size);
+            List<CareTracking> careTrackings = careTrackingRepository.findAll(doctor.getId(), page, size);
 
             return careTrackings.stream()
                     .map(careTracking -> {
                         List<Appointment> appointments = getAppointments(careTracking);
 
                         List<Doctor> doctors = getDoctorList(careTracking);
+
+                        Doctor creator = doctorRepository.getById(careTracking.getCreatorId());
 
                         List<String> files = getDocumentFiles(careTracking);
 
@@ -70,9 +72,11 @@ public class GetCareTrackings implements IGetCareTrackings {
         try {
             String username = this.getCurrentUserContext.getUsername();
             User user = this.userRepository.findByEmail(username);
-            Doctor creator = this.doctorRepository.findDoctorByUserId(user.getId());
+            Doctor doctor = this.doctorRepository.findDoctorByUserId(user.getId());
 
-            CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctor(careTrackingId, creator);
+            CareTracking careTracking = this.careTrackingRepository.getByIdAndDoctor(careTrackingId, doctor);
+
+            Doctor creator = doctorRepository.getById(careTracking.getCreatorId());
 
             List<Appointment> appointments = getAppointments(careTracking);
 

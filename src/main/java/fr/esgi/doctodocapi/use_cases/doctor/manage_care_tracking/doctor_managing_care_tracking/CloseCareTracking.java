@@ -8,6 +8,7 @@ import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.notification.Notification;
 import fr.esgi.doctodocapi.model.notification.NotificationRepository;
 import fr.esgi.doctodocapi.model.notification.NotificationsType;
+import fr.esgi.doctodocapi.model.user.MailSender;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.use_cases.doctor.dtos.responses.care_tracking_response.doctor_managing_care_tracking.CloseCareTrackingResponse;
@@ -20,10 +21,8 @@ import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.Notific
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.UUID;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 
 public class CloseCareTracking implements ICloseCareTracking {
     private final GetCurrentUserContext getCurrentUserContext;
@@ -32,15 +31,17 @@ public class CloseCareTracking implements ICloseCareTracking {
     private final CareTrackingRepository careTrackingRepository;
     private final NotificationRepository notificationRepository;
     private final NotificationPushService notificationPushService;
+    private final MailSender mailSender;
 
 
-    public CloseCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService) {
+    public CloseCareTracking(GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, DoctorRepository doctorRepository, CareTrackingRepository careTrackingRepository, NotificationRepository notificationRepository, NotificationPushService notificationPushService, MailSender mailSender) {
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
         this.doctorRepository = doctorRepository;
         this.careTrackingRepository = careTrackingRepository;
         this.notificationRepository = notificationRepository;
         this.notificationPushService = notificationPushService;
+        this.mailSender = mailSender;
     }
 
     public CloseCareTrackingResponse execute(UUID careTrackingId) {
@@ -61,11 +62,47 @@ public class CloseCareTracking implements ICloseCareTracking {
 
             notifyDoctorOfCloseCareTracking(careTracking);
             notifyPatientOfCloseCareTracking(careTracking, doctor);
+            sendMail(careTracking, doctor);
             return new CloseCareTrackingResponse(closedCareTracking);
 
         } catch (DomainException e) {
             throw new ApiException(HttpStatus.BAD_REQUEST, e.getCode(), e.getMessage());
         }
+    }
+
+    /// Gestion des notifications et mail (à déplacer)
+
+    private void sendMail(CareTracking careTracking, Doctor doctor) {
+        String patientFirstName = careTracking.getPatient().getFirstName();
+        String doctorFirstName = doctor.getPersonalInformations().getFirstName();
+        String doctorLastName = doctor.getPersonalInformations().getLastName();
+        String careTrackingName = careTracking.getCaseName();
+
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd MMMM yyyy 'à' HH'h'mm")
+                .withLocale(Locale.FRENCH);
+        String formattedDate = careTracking.getClosedAt().format(formatter);
+
+        String subject = "Cloture de votre suivi de dossier " + careTrackingName;
+
+        String body = String.format("""
+                        Bonjour %s,
+                        
+                        Le Dr %s %s a clos votre suivi de dossier le %s.
+                        
+                        Cordialement,
+                        L’équipe Doctodoc.
+                        """,
+                patientFirstName,
+                doctorFirstName,
+                doctorLastName,
+                formattedDate
+        );
+
+        this.mailSender.sendMail(
+                careTracking.getPatient().getEmail().getValue(),
+                subject,
+                body
+        );
     }
 
     private void notifyDoctorOfCloseCareTracking(CareTracking careTracking) {
