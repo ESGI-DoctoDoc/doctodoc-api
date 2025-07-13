@@ -62,7 +62,7 @@ public class CancelAppointment implements ICancelAppointment {
         String doctorFirstName = appointment.getDoctor().getPersonalInformations().getFirstName();
         String doctorLastName = appointment.getDoctor().getPersonalInformations().getLastName();
         String patientFirstName = appointment.getPatient().getFirstName();
-        String patientLastName = appointment.getPatient().getFirstName();
+        String patientLastName = appointment.getPatient().getLastName();
 
         String appointmentDate = appointment.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
         String appointmentTime = appointment.getHoursRange().getStart().format(DateTimeFormatter.ofPattern("HH:mm"));
