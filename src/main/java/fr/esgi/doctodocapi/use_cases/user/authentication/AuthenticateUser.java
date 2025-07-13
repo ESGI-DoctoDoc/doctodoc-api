@@ -1,10 +1,10 @@
 package fr.esgi.doctodocapi.use_cases.user.authentication;
 
 import fr.esgi.doctodocapi.model.admin.AdminRepository;
-import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.user.*;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthenticationException;
 import fr.esgi.doctodocapi.use_cases.exceptions.authentication.AuthentificationMessageException;
+import fr.esgi.doctodocapi.use_cases.exceptions.authentication.BadCodeMessageException;
 import fr.esgi.doctodocapi.use_cases.user.dtos.requests.LoginRequest;
 import fr.esgi.doctodocapi.use_cases.user.dtos.requests.ValidateDoubleAuthRequest;
 import fr.esgi.doctodocapi.use_cases.user.dtos.responses.LoginResponse;
@@ -116,11 +116,11 @@ public class AuthenticateUser implements IAuthenticateUser {
                 this.userRepository.updateDoubleAuthCode(null, userFoundByEmail.getId());
                 return userFoundByEmail;
             } else {
-                throw new AuthenticationException(AuthentificationMessageException.BAD_DOUBLE_AUTH_CODE);
+                throw new BadCodeMessageException(AuthentificationMessageException.BAD_DOUBLE_AUTH_CODE);
             }
 
         } catch (UserNotFoundException e) {
-            throw new AuthenticationException(AuthentificationMessageException.BAD_DOUBLE_AUTH_CODE);
+            throw new BadCodeMessageException(AuthentificationMessageException.BAD_DOUBLE_AUTH_CODE);
         }
     }
 
