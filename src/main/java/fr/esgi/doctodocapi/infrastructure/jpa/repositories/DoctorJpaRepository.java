@@ -17,28 +17,56 @@ public interface DoctorJpaRepository extends JpaRepository<DoctorEntity, UUID> {
 
     @Query(value = """
             SELECT d.*
-                FROM doctors d
-                JOIN specialities s ON d.speciality_id = s.speciality_id
-                WHERE
-                    (
-                        :name IS NULL OR (
-                            LOWER(d.first_name || ' ' || d.last_name) LIKE CONCAT('%', LOWER(:name), '%')
-                            OR LOWER(d.last_name || ' ' || d.first_name) LIKE CONCAT('%', LOWER(:name), '%')
+            FROM doctors d
+            JOIN specialities s ON d.speciality_id = s.speciality_id
+            WHERE
+                (
+                    :name IS NULL OR (
+                        LOWER(d.first_name || ' ' || d.last_name) LIKE CONCAT('%', LOWER(:name), '%')
+                        OR LOWER(d.last_name || ' ' || d.first_name) LIKE CONCAT('%', LOWER(:name), '%')
+                    )
+                )
+                AND (:speciality IS NULL OR LOWER(s.name) = LOWER(:speciality))
+                AND (
+                    cardinality(:languages) = 0
+                    OR EXISTS (
+                        SELECT 1
+                        FROM unnest(d.languages) AS lang
+                        WHERE EXISTS (
+                            SELECT 1
+                            FROM unnest(:languages) AS input_lang
+                            WHERE LOWER(lang) = LOWER(input_lang)
                         )
                     )
-                    AND (:speciality IS NULL OR LOWER(s.name) = LOWER(:speciality))
-                    AND (
-                        cardinality(:languages) = 0
-                        OR EXISTS (
-                            SELECT 1
-                            FROM unnest(d.languages) AS lang
-                            WHERE EXISTS (
-                                SELECT 1
-                                FROM unnest(:languages) AS input_lang
-                                WHERE LOWER(lang) = LOWER(input_lang)
+                )
+            """,
+            countQuery = """
+                    SELECT COUNT(*)
+                    FROM doctors d
+                    JOIN specialities s ON d.speciality_id = s.speciality_id
+                    WHERE
+                        (
+                            :name IS NULL OR (
+                                LOWER(d.first_name || ' ' || d.last_name) LIKE CONCAT('%', LOWER(:name), '%')
+                                OR LOWER(d.last_name || ' ' || d.first_name) LIKE CONCAT('%', LOWER(:name), '%')
                             )
                         )
-                    )""", nativeQuery = true)
+                        AND (:speciality IS NULL OR LOWER(s.name) = LOWER(:speciality))
+                        AND (
+                            cardinality(:languages) = 0
+                            OR EXISTS (
+                                SELECT 1
+                                FROM unnest(d.languages) AS lang
+                                WHERE EXISTS (
+                                    SELECT 1
+                                    FROM unnest(:languages) AS input_lang
+                                    WHERE LOWER(lang) = LOWER(input_lang)
+                                )
+                            )
+                        )
+                    """,
+            nativeQuery = true
+    )
     Page<DoctorEntity> searchDoctors(
             @Param("name") String name,
             @Param("speciality") String speciality,
@@ -51,7 +79,12 @@ public interface DoctorJpaRepository extends JpaRepository<DoctorEntity, UUID> {
             FROM doctors d
             JOIN specialities s ON d.speciality_id = s.speciality_id
             JOIN (
-                SELECT DISTINCT ON (doctor_id) *
+                SELECT DISTINCT ON (doctor_id)
+                    subscription_id,
+                    doctor_id,
+                    start_date,
+                    end_date,
+                    created_at
                 FROM doctor_subscriptions
                 ORDER BY doctor_id, start_date DESC
             ) sub ON sub.doctor_id = d.doctor_id
@@ -76,13 +109,52 @@ public interface DoctorJpaRepository extends JpaRepository<DoctorEntity, UUID> {
                       )
                   )
               )
-            """, nativeQuery = true)
+            """,
+            countQuery = """
+                    SELECT COUNT(*)
+                    FROM doctors d
+                    JOIN specialities s ON d.speciality_id = s.speciality_id
+                    JOIN (
+                        SELECT DISTINCT ON (doctor_id)
+                            subscription_id,
+                            doctor_id,
+                            start_date,
+                            end_date,
+                            created_at
+                        FROM doctor_subscriptions
+                        ORDER BY doctor_id, start_date DESC
+                    ) sub ON sub.doctor_id = d.doctor_id
+                    JOIN doctor_invoices i ON i.subscription_id = sub.subscription_id AND i.state = 'PAID'
+                    WHERE (sub.end_date IS NULL OR sub.end_date::date >= CURRENT_DATE)
+                      AND (
+                          :name IS NULL OR (
+                              LOWER(d.first_name || ' ' || d.last_name) LIKE CONCAT('%', LOWER(:name), '%')
+                              OR LOWER(d.last_name || ' ' || d.first_name) LIKE CONCAT('%', LOWER(:name), '%')
+                          )
+                      )
+                      AND (:speciality IS NULL OR LOWER(s.name) = LOWER(:speciality))
+                      AND (
+                          cardinality(:languages) = 0
+                          OR EXISTS (
+                              SELECT 1
+                              FROM unnest(d.languages) AS lang
+                              WHERE EXISTS (
+                                  SELECT 1
+                                  FROM unnest(:languages) AS input_lang
+                                  WHERE LOWER(lang) = LOWER(input_lang)
+                              )
+                          )
+                      )
+                    """,
+            nativeQuery = true
+    )
     Page<DoctorEntity> searchValidDoctors(
             @Param("name") String name,
             @Param("speciality") String speciality,
             @Param("languages") String[] languages,
             Pageable pageable
     );
+
 
     @Query("SELECT d FROM DoctorEntity d WHERE LOWER(CONCAT(d.firstName, ' ', d.lastName)) LIKE LOWER(CONCAT('%', :name, '%'))")
     Page<DoctorEntity> searchByDoctorName(@Param("name") String name, Pageable pageable);
