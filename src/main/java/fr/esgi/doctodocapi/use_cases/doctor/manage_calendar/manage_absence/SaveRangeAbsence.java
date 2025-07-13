@@ -10,6 +10,10 @@ import fr.esgi.doctodocapi.model.doctor.DoctorRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.Absence;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceRepository;
 import fr.esgi.doctodocapi.model.doctor.calendar.absence.AbsenceValidationService;
+import fr.esgi.doctodocapi.model.patient.Patient;
+import fr.esgi.doctodocapi.model.patient.PatientNotFoundException;
+import fr.esgi.doctodocapi.model.patient.PatientRepository;
+import fr.esgi.doctodocapi.model.user.MailSender;
 import fr.esgi.doctodocapi.model.user.User;
 import fr.esgi.doctodocapi.model.user.UserRepository;
 import fr.esgi.doctodocapi.model.vo.hours_range.HoursRange;
@@ -23,8 +27,10 @@ import fr.esgi.doctodocapi.use_cases.patient.ports.out.notification_push.Notific
 import fr.esgi.doctodocapi.use_cases.user.ports.out.GetCurrentUserContext;
 import org.springframework.http.HttpStatus;
 
+import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 
 /**
  * Use case for saving a ranged absence (with start/end date and optional hours)
@@ -45,8 +51,10 @@ public class SaveRangeAbsence implements ISaveRangeAbsence {
     private final AbsenceValidationService absenceValidationService;
     private final AppointmentRepository appointmentRepository;
     private final NotificationPushService notificationPushService;
+    private final MailSender mailSender;
+    private final PatientRepository patientRepository;
 
-    public SaveRangeAbsence(AbsenceRepository absenceRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, AbsenceResponseMapper absenceResponseMapper, DoctorRepository doctorRepository, AbsenceValidationService absenceValidationService, AppointmentRepository appointmentRepository, NotificationPushService notificationPushService) {
+    public SaveRangeAbsence(AbsenceRepository absenceRepository, GetCurrentUserContext getCurrentUserContext, UserRepository userRepository, AbsenceResponseMapper absenceResponseMapper, DoctorRepository doctorRepository, AbsenceValidationService absenceValidationService, AppointmentRepository appointmentRepository, NotificationPushService notificationPushService, MailSender mailSender, PatientRepository patientRepository) {
         this.absenceRepository = absenceRepository;
         this.getCurrentUserContext = getCurrentUserContext;
         this.userRepository = userRepository;
@@ -55,6 +63,8 @@ public class SaveRangeAbsence implements ISaveRangeAbsence {
         this.absenceValidationService = absenceValidationService;
         this.appointmentRepository = appointmentRepository;
         this.notificationPushService = notificationPushService;
+        this.mailSender = mailSender;
+        this.patientRepository = patientRepository;
     }
 
     /**
@@ -111,8 +121,60 @@ public class SaveRangeAbsence implements ISaveRangeAbsence {
                 appointment.cancel("Le rendez-vous a été annulé car il chevauche une période d'absence du docteur.");
                 appointmentRepository.cancel(appointment);
                 notifyPatient(appointment);
+                sendMailToPatient(appointment);
             }
         }
+    }
+
+    /// Gestion des notifications et mail (à déplacer)
+
+    private void sendMailToPatient(Appointment appointment) {
+        Patient appointmentPatient = appointment.getPatient();
+        sendMail(appointmentPatient, appointment);
+
+        if (!appointmentPatient.isMainAccount()) {
+            Patient mainPatient = this.patientRepository.getByUserId(appointmentPatient.getUserId()).orElseThrow(PatientNotFoundException::new);
+            if (!Objects.equals(mainPatient.getEmail(), appointmentPatient.getEmail())) {
+                sendMail(mainPatient, appointment);
+            }
+        }
+    }
+
+    private void sendMail(Patient patient, Appointment appointment) {
+        String doctorFirstName = appointment.getDoctor().getPersonalInformations().getFirstName();
+        String doctorLastName = appointment.getDoctor().getPersonalInformations().getLastName();
+        String patientFirstName = patient.getFirstName();
+        String appointmentDate = appointment.getDate().format(DateTimeFormatter.ofPattern("dd/MM/yyyy"));
+        String appointmentTime = appointment.getHoursRange().getStart().format(DateTimeFormatter.ofPattern("HH:mm"));
+        String clinicAddress = appointment.getDoctor().getConsultationInformations().getAddress();
+
+        String subject = "Annulation du rendez-vous médical avec le Dr " + doctorFirstName + " " + doctorLastName;
+
+        String body = String.format("""
+                        Bonjour %s,
+                        
+                        Votre rendez-vous avec le Dr %s %s a été annulé.
+                        
+                        📅 Date : %s
+                        🕒 Heure : %s
+                        📍 Lieu : %s
+                        
+                        Cordialement,
+                        Doctodoc.
+                        """,
+                patientFirstName,
+                doctorFirstName,
+                doctorLastName,
+                appointmentDate,
+                appointmentTime,
+                clinicAddress
+        );
+
+        this.mailSender.sendMail(
+                patient.getEmail().getValue(),
+                subject,
+                body
+        );
     }
 
     private void notifyPatient(Appointment appointment) {

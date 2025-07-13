@@ -1,12 +1,17 @@
 package fr.esgi.doctodocapi.infrastructure.api_sms;
 
+import fr.esgi.doctodocapi.model.user.MessageFailed;
 import fr.esgi.doctodocapi.model.user.MessageSender;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
 
 @Service
 public class MessageSenderImpl implements MessageSender {
@@ -35,24 +40,22 @@ public class MessageSenderImpl implements MessageSender {
                 """, phoneNumber, message);
         HttpRequest.BodyPublishers.ofString(json);
 
-//        try {
-//            String response = HttpClient.newHttpClient().send(
-//                    HttpRequest.newBuilder()
-//                            .uri(URI.create(apiUrl))
-//                            .header("Content-Type", "application/json")
-//                            .header("X-TopMessage-Key", apiKey)
-//                            .POST(HttpRequest.BodyPublishers.ofString(json))
-//                            .build(),
-//                    HttpResponse.BodyHandlers.ofString()
-//            ).body();
-//            logger.info("Message sent : {}", response);
-        logger.info("Message sent : {}", message);
+        try {
+            String response = HttpClient.newHttpClient().send(
+                    HttpRequest.newBuilder()
+                            .uri(URI.create(apiUrl))
+                            .header("Content-Type", "application/json")
+                            .header("X-TopMessage-Key", apiKey)
+                            .POST(HttpRequest.BodyPublishers.ofString(json))
+                            .build(),
+                    HttpResponse.BodyHandlers.ofString()
+            ).body();
+            logger.info("Message sent : {}", response);
+//        logger.info("Message sent : {}", message);
 
-//        } catch (IOException | InterruptedException e) {
-//            logger.error("Error in sending message");
-//            throw new MessageFailed();
-//        }
-
-
+        } catch (IOException | InterruptedException e) {
+            logger.error("Error in sending message");
+            throw new MessageFailed();
+        }
     }
 }
